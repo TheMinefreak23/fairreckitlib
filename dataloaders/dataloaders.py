@@ -23,7 +23,7 @@ def dataloader(dataset: str) -> Dict[str, pd.DataFrame]:
         df.set_index(CONFIGS.get(sub_dataset, "index_key", fallback=None), inplace=True)
         dfs.update(dict(sub_dataset=df))
     
-    # Return the dataframe
+    # Return the dataframe(s) in a dictionary
     return dfs
 
 # from dataloaders import dataloaders as dl
