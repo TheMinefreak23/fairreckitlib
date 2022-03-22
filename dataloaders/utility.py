@@ -17,3 +17,8 @@ def get_args() -> ArgumentParser:
     parser = ArgumentParser()
     parser.add_argument("--config-path", type=str, dest="config_path", default="")
     return parser
+
+
+# This program has been developed by students from the bachelor Computer Science at
+# Utrecht University within the Software Project course.
+# © Copyright Utrecht University (Department of Information and Computing Sciences)
