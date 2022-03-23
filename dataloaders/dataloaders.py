@@ -1,5 +1,8 @@
 
 """
+This program has been developed by students from the bachelor Computer Science at
+Utrecht University within the Software Project course.
+© Copyright Utrecht University (Department of Information and Computing Sciences)
 
 """
 
@@ -18,19 +21,10 @@ def dataloader(dataset: str) -> Dict[str, pd.DataFrame]:
     for sub_dataset in [section for section in CONFIGS.sections() if section.startswith(dataset)]:
         params = dict(delimiter=CONFIGS.get(sub_dataset, "delimeter", fallback=","), names=CONFIGS.get(sub_dataset, "headers").split(","))
         if CONFIGS.get(sub_dataset, "timestamp", fallback=None):
-            params.update(dict(date_parser=CONFIGS.get(sub_dataset, "timestamp").split(",")))
+            params.update(dict(parse_dates=CONFIGS.get(sub_dataset, "timestamp").split(",")))
         df = pd.read_csv(CONFIGS.get(sub_dataset, "file_path"), **params)
         df.set_index(CONFIGS.get(sub_dataset, "index_key", fallback=None), inplace=True)
         dfs.update(dict(sub_dataset=df))
     
     # Return the dataframe(s) in a dictionary
     return dfs
-
-# from dataloaders import dataloaders as dl
-# dl.dataloader('lfm_360k')
-
-
-
-# This program has been developed by students from the bachelor Computer Science at
-# Utrecht University within the Software Project course.
-# © Copyright Utrecht University (Department of Information and Computing Sciences)
