@@ -18,11 +18,27 @@ Utrecht University within the Software Project course.
 from abc import ABCMeta, abstractmethod
 import time
 import pandas as pd
+import callback as cb
+
+import sys
+
+sys.path.append('..\\H_repo_lib\\dataloaders')
+import dataloaders as dl
+
+
+'''
+This class contains all the necessary functions to run the entire data pipeline.
+From loading in the required dataset(s) to aggregating them, converting the ratings, 
+splitting it into train/test set, and saving these in the designated folder.
+'''
 class DataPipeline(metaclass=ABCMeta):
 
     def __init__(self):
         pass
 
+    '''
+    Runs the entire data pipeline
+    '''
     def run(self, df_name, dest_folder_path, ratio, filters, callback, **args):
         callback.on_begin_pipeline()
 
@@ -31,16 +47,20 @@ class DataPipeline(metaclass=ABCMeta):
         self.aggregate(filters, callback)
         self.convert(callback)
         self.split(ratio, callback)
-        self.save(dest_folder_path, callback)
+        self.save_sets(dest_folder_path, callback)
         end = time.time()
 
         callback.on_end_pipeline(end - start)
 
+    '''
+    Loads in the desired dataset using the dataloader function.
+    This function returns a dictionary containing the dataframe and metadata. 
+    '''
     def load_df(self, df_name, callback):
         callback.on_begin_load_df(df_name)
 
         start = time.time()
-        # load in the dataset as df
+        dl.dataloader(df_name)
         end = time.time()
 
         callback.on_end_load_df(end - start)
@@ -79,4 +99,12 @@ class DataPipeline(metaclass=ABCMeta):
         # save the train and test sets to the given destination
         end = time.time()
 
-        callback.on_saved_sets(end - start)
+        callback.on_saved_sets(dest_folder_path, end - start)
+
+
+# LINES BELOW ONLY FOR TESTING
+# DELETE LATER
+
+callback = cb.DataPipelineConsole()
+dp = DataPipeline()
+dp.run('ml_100k_u', '..\\Datasets\\', (80, 20), ['gender', 'age'], callback)
