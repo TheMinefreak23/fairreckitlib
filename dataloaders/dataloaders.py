@@ -19,7 +19,7 @@ def dataloader(dataset: str) -> Dict[str, pd.DataFrame]:
     """
     dfs = dict()
     for sub_dataset in [section for section in CONFIGS.sections() if section.startswith(dataset)]:
-        params = dict(delimiter=CONFIGS.get(sub_dataset, "delimeter", fallback=","), names=CONFIGS.get(sub_dataset, "headers").split(","))
+        params = dict(delimiter=CONFIGS.get(sub_dataset, "delimiter", fallback=","), names=CONFIGS.get(sub_dataset, "headers").split(","))
         if CONFIGS.get(sub_dataset, "timestamp", fallback=None):
             params.update(dict(parse_dates=CONFIGS.get(sub_dataset, "timestamp").split(",")))
         df = pd.read_csv(CONFIGS.get(sub_dataset, "file_path"), **params)
