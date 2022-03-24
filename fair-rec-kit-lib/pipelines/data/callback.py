@@ -57,7 +57,7 @@ class DataPipelineCallback(metaclass=ABCMeta):
 class DataPipelineConsole(DataPipelineCallback):
 
     def on_begin_pipeline(self):
-        print('Starting Data Pipeline: ', api_name)
+        print('Starting Data Pipeline')
 
     def on_begin_load_df(self, file_path):
         print('Loading in the dataframe from: ', file_path)
