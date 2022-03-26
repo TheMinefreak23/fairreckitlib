@@ -29,41 +29,43 @@ sys.path.append('..\\H_repo_lib\\dataloaders')
 import dataloaders as dl
 
 
-'''
-This class contains all the necessary functions to run the entire data pipeline.
-From loading in the required dataset(s) to aggregating them, converting the ratings, 
-splitting it into train/test set, and saving these in the designated folder.
-'''
-class DataPipeline(metaclass=ABCMeta):
 
+class DataPipeline(metaclass=ABCMeta):
+    '''This class contains all the necessary functions to run the entire data pipeline.
+
+    From loading in the required dataset(s) to aggregating them, converting the ratings, 
+    splitting it into train/test set, and saving these in the designated folder.
+    '''
     def __init__(self):
         pass
 
-    '''
-    Runs the entire data pipeline
-    '''
-    def run(self, df_name, dest_folder_path, ratio, filters, callback, **args):
+    
+    def run(self, df_name, dest_folder_path, ratio, time_split, filters, callback, **args):
+        '''Runs the entire data pipeline by calling all functions of the class in order.'''
         callback.on_begin_pipeline()
 
         start = time.time()
         df = self.load_df(df_name, callback)
         self.aggregate(df, filters, callback)
         self.convert(df, callback)
-        tt_pairs = self.split(df, ratio, callback)
+        tt_pairs = self.split(df, ratio, time_split, callback)
         self.save_sets(tt_pairs, dest_folder_path, callback)
         end = time.time()
 
         callback.on_end_pipeline(end - start)
 
-    '''
-    Loads in the desired dataset using the dataloader function.
-    This function returns a dictionary containing the pandas dataframe and metadata. 
-    '''
+    
     def load_df(self, df_name, callback):
+        '''Loads in the desired dataset using the dataloader function.
+
+        This function returns a dictionary containing the pandas dataframe(s) belonging to the given dataset. 
+        '''
         callback.on_begin_load_df(df_name)
 
         start = time.time()
-        df_dict = dl.dataloader(df_name)
+        # There is a bug that needs to be solved before the dataloader function can be used here
+        #df_dict = dl.dataloader(df_name)
+        #df = df_dict['sub_dataset']
         df = pd.read_csv('..\\Datasets\\ml-100k\\u.data', delimiter='\t', engine='python')
         end = time.time()
 
@@ -71,10 +73,9 @@ class DataPipeline(metaclass=ABCMeta):
 
         return df
 
-    '''
-    Aggregates the dataframe using the given filters.
-    '''
+
     def aggregate(self, df, filters, callback):
+        '''Aggregates the dataframe using the given filters.'''
         callback.on_begin_aggregate(filters)
 
         start = time.time()
@@ -85,10 +86,9 @@ class DataPipeline(metaclass=ABCMeta):
 
         return df
 
-    '''
-    Converts the ratings in the dataframe to be X
-    '''
+    
     def convert(self, df, callback):
+        '''Converts the ratings in the dataframe to be X'''
         callback.on_begin_convert()
 
         start = time.time()
@@ -99,15 +99,16 @@ class DataPipeline(metaclass=ABCMeta):
 
         return df
 
-    '''
-    Splits the dataframe into a train and test set using the given ratio.
-    This will either be 80/20 (or a similar ratio), random, or time.
-    '''
-    def split(self, df, ratio, callback):
+    
+    def split(self, df, ratio, time_split, callback):
+        '''Splits the dataframe into a train and test set.
+        
+        This will be split 80/20 (or a similar ratio), and be done either random, or timestamp-wise.
+        '''
         callback.on_begin_split(ratio)
 
         start = time.time()
-        # TODO split the dataset into train&test using the given ratio
+        # TODO split the dataset into train&test using the given ratio and do it random or time-wise
         tt_pairs = xf.partition_rows(df, 2, rng_spec=None)
         end = time.time()
 
@@ -115,10 +116,9 @@ class DataPipeline(metaclass=ABCMeta):
 
         return tt_pairs
 
-    '''
-    Saves the train and test set to the desired folder to be used in the model pipeline.
-    '''
+    
     def save_sets(self, tt_pairs, dest_folder_path, callback):
+        '''Saves the train and test set to the desired folder.'''
         callback.on_saving_sets(dest_folder_path)
 
         start = time.time()
@@ -137,4 +137,4 @@ class DataPipeline(metaclass=ABCMeta):
 
 callback = cb.DataPipelineConsole()
 dp = DataPipeline()
-dp.run('ml_100k_u', '..\\Datasets\\', (80, 20), ['gender', 'age'], callback)
+dp.run('ml_100k_u', '..\\Datasets\\', (80, 20), False, ['gender', 'age'], callback)
