@@ -1,3 +1,9 @@
+"""
+This program has been developed by students from the bachelor Computer Science at
+Utrecht University within the Software Project course.
+© Copyright Utrecht University (Department of Information and Computing Sciences)
+
+"""
 #we want to define our general modules here
 from configparser import ConfigParser
 from argparse import ArgumentParser
@@ -20,6 +26,7 @@ def get_args() -> ArgumentParser:
 
 def create_sample(file_name: str, line_numbers: int) -> None:
     """
+    This function takes the path of the text file and the number of lines to be copied to the sample file
     """
     rows = []
     with open(file_name, 'r') as f:
@@ -28,7 +35,3 @@ def create_sample(file_name: str, line_numbers: int) -> None:
     with open(file_name + ".sample", 'w', newline="") as f:
         for line in rows:
             f.write(line)
-
-# This program has been developed by students from the bachelor Computer Science at
-# Utrecht University within the Software Project course.
-# © Copyright Utrecht University (Department of Information and Computing Sciences)

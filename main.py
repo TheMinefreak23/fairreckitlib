@@ -1,3 +1,9 @@
+"""
+This program has been developed by students from the bachelor Computer Science at
+Utrecht University within the Software Project course.
+© Copyright Utrecht University (Department of Information and Computing Sciences)
+
+"""
 from dataloaders import dataloaders as dl
 
 # Running the following 2 lines will read in the dataset that is passed as argument
@@ -10,6 +16,4 @@ print(f"{df[list(df.keys())[0]][:2]}")
 
 
 
-# This program has been developed by students from the bachelor Computer Science at
-# Utrecht University within the Software Project course.
-# © Copyright Utrecht University (Department of Information and Computing Sciences)
+
