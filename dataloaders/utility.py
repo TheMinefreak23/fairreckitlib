@@ -18,6 +18,16 @@ def get_args() -> ArgumentParser:
     parser.add_argument("--config-path", type=str, dest="config_path", default="")
     return parser
 
+def create_sample(file_name: str, line_numbers: int) -> None:
+    """
+    """
+    rows = []
+    with open(file_name, 'r') as f:
+        for line in range(line_numbers):
+            rows.append(f.readline())
+    with open(file_name + ".sample", 'w', newline="") as f:
+        for line in rows:
+            f.write(line)
 
 # This program has been developed by students from the bachelor Computer Science at
 # Utrecht University within the Software Project course.
