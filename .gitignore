@@ -1,3 +1,8 @@
+data/
+results/
+**/*.egg-info/**
+.vscode/
+
 .DS_Store
 .huskyrc.json
 out
@@ -32,6 +37,7 @@ obj/**
 tmp/**
 .python-version
 .vs/
+.idea/
 test-results*.xml
 xunit-test-results.xml
 build/ci/performance/performance-results.json
