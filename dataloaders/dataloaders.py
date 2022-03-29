@@ -7,7 +7,7 @@ Utrecht University within the Software Project course.
 """
 
 import pandas as pd
-from dataloaders.utility import get_configs
+from utility import get_configs
 from typing import Dict
 import os
 
@@ -32,7 +32,8 @@ def dataloader(dataset: str) -> Dict[str, pd.DataFrame]:
         if CONFIGS.get(sub_dataset, "timestamp", fallback=None):
             params.update(dict(parse_dates=CONFIGS.get(sub_dataset, "timestamp").split(",")))
         df = pd.read_csv(CONFIGS.get(sub_dataset, "file_path"), engine='python', **params)
-        dfs.update({sub_dataset: df})
+        df.set_index(CONFIGS.get(sub_dataset, "index_key", fallback=None), inplace=True)
+        dfs.update(dict(sub_dataset=df))
     
     # Return the dataframe(s) in a dictionary
     return dfs
