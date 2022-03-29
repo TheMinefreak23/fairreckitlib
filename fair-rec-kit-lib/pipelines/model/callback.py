@@ -1,4 +1,4 @@
-""""
+"""
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -30,6 +30,14 @@ class ModelPipelineCallback(metaclass=ABCMeta):
         raise NotImplementedError()
 
     @abstractmethod
+    def on_begin_model(self, model_name):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def on_create_folder(self, folder_path):
+        raise NotImplementedError()
+
+    @abstractmethod
     def on_create_model(self, model_name, params):
         raise NotImplementedError()
 
@@ -47,6 +55,10 @@ class ModelPipelineCallback(metaclass=ABCMeta):
 
     @abstractmethod
     def on_end_test_model(self, model, test_set, elapsed_time):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def on_end_model(self, model_name):
         raise NotImplementedError()
 
     @abstractmethod
@@ -74,6 +86,12 @@ class ModelPipelineConsole(ModelPipelineCallback):
         print('Loaded test set in {0:1.4f}s'.format(elapsed_time))
         print('')
 
+    def on_begin_model(self, model_name):
+        print('Starting model:', model_name)
+
+    def on_create_folder(self, folder_path):
+        print('Creating folder:', folder_path)
+
     def on_create_model(self, model_name, params):
         print('Creating model', model_name)
         print('')
@@ -95,6 +113,10 @@ class ModelPipelineConsole(ModelPipelineCallback):
 
     def on_end_test_model(self, model, test_set, elapsed_time):
         print('Tested model in {0:1.4f}s'.format(elapsed_time))
+        print('')
+
+    def on_end_model(self, model_name):
+        print('Finished model:', model_name)
         print('')
 
     def on_end_pipeline(self, api_name):
