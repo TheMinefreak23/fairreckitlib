@@ -1,4 +1,4 @@
-""""
+"""
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -7,7 +7,6 @@ Utrecht University within the Software Project course.
 from implicit.als import AlternatingLeastSquares
 from implicit.bpr import BayesianPersonalizedRanking
 from implicit.lmf import LogisticMatrixFactorization
-from implicit.nearest_neighbours import CosineRecommender, TFIDFRecommender, BM25Recommender
 import numpy as np
 import pandas as pd
 from scipy import sparse
@@ -19,27 +18,46 @@ class RecommenderImplicit(RecommenderAlgorithm):
 
     def __init__(self, algo, params):
         RecommenderAlgorithm.__init__(self, algo, params)
-        self._train_user_items = None
+        self.__train_user_items = None
 
     def train(self, train_set):
-        self._train_user_items = sparse.csr_matrix(
+        self.__train_user_items = sparse.csr_matrix(
             (train_set['rating'], (train_set['user'], train_set['item']))
         ).T.tocsr()
 
-        self._algo.fit(self._train_user_items)
+        self._algo.fit(self.__train_user_items)
 
     def recommend(self, user, num_items=10):
         items, scores = self._algo.recommend(
             user,
-            self._train_user_items[user],
+            self.__train_user_items[user],
             N=num_items,
             filter_already_liked_items=True
         )
 
         return pd.DataFrame({ 'item': items, 'score': scores })
 
+    def recommend_batch(self, users, num_items=10):
+        items, scores = self._algo.recommend(
+            users,
+            self.__train_user_items[users],
+            N=num_items,
+            filter_already_liked_items=True
+        )
 
-def create_recommender_als(params):
+        result = pd.DataFrame()
+
+        for i in range(len(users)):
+            result = result.append(pd.DataFrame({
+                'user': np.full(num_items, users[i]),
+                'item': items[i],
+                'score': scores[i]
+            }), ignore_index=True)
+
+        return result
+
+
+def create_recommender_alternating_least_squares(params):
     return RecommenderImplicit(AlternatingLeastSquares(
         factors=params['factors'],
         regularization=params['regularization'],
@@ -49,11 +67,11 @@ def create_recommender_als(params):
         iterations=params['iterations'],
         calculate_training_loss=params['calculate_training_loss'],
         num_threads=0,
-        random_state=None
+        random_state=params['random_seed']
     ), params)
 
 
-def create_recommender_bpr(params):
+def create_recommender_bayesian_personalized_ranking(params):
     return RecommenderImplicit(BayesianPersonalizedRanking(
         factors=params['factors'],
         learning_rate=params['learning_rate'],
@@ -62,11 +80,11 @@ def create_recommender_bpr(params):
         iterations=params['iterations'],
         num_threads=0,
         verify_negative_samples=params['verify_negative_samples'],
-        random_state=None
+        random_state=params['random_seed']
     ), params)
 
 
-def create_recommender_lmf(params):
+def create_recommender_logistic_matrix_factorization(params):
     return RecommenderImplicit(LogisticMatrixFactorization(
         factors=params['factors'],
         learning_rate=params['learning_rate'],
@@ -75,28 +93,5 @@ def create_recommender_lmf(params):
         iterations=params['iterations'],
         neg_prop=params['neg_prop'],
         num_threads=0,
-        random_state=None
-    ), params)
-
-
-def create_recommender_cosine(params):
-    return RecommenderImplicit(CosineRecommender(
-        K=params['K'],
-        num_threads=0
-    ), params)
-
-
-def create_recommender_tfidf(params):
-    return RecommenderImplicit(TFIDFRecommender(
-        K=params['K'],
-        num_threads=0
-    ), params)
-
-
-def create_recommender_bm25(params):
-    return RecommenderImplicit(BM25Recommender(
-        K=params['K'],
-        K1=params['K1'],
-        B=params['B'],
-        num_threads=0
+        random_state=params['random_seed']
     ), params)

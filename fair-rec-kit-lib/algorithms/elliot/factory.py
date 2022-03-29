@@ -1,4 +1,4 @@
-""""
+"""
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -12,6 +12,14 @@ from .recommenders import *
 
 def get_elliot_recommender_factory():
     return ELLIOT_API, {
+        FUNK_SVD: {
+            GET_DEFAULT_PARAMS_FUNC: get_defaults_funk_svd,
+            CREATE_FUNC: create_recommender_funk_svd
+        },
+        ITEM_KNN: {
+            GET_DEFAULT_PARAMS_FUNC: get_defaults_item_knn,
+            CREATE_FUNC: create_recommender_item_knn
+        },
         MULTI_VAE: {
             GET_DEFAULT_PARAMS_FUNC: get_defaults_multi_vae,
             CREATE_FUNC: create_recommender_multi_vae
@@ -20,21 +28,17 @@ def get_elliot_recommender_factory():
             GET_DEFAULT_PARAMS_FUNC: get_defaults_most_pop,
             CREATE_FUNC: create_recommender_most_pop
         },
+        PURE_SVD: {
+            GET_DEFAULT_PARAMS_FUNC: get_defaults_pure_svd,
+            CREATE_FUNC: create_recommender_pure_svd
+        },
         RANDOM: {
             GET_DEFAULT_PARAMS_FUNC: get_defaults_random,
             CREATE_FUNC: create_recommender_random
         },
-        SVD_PURE: {
-            GET_DEFAULT_PARAMS_FUNC: get_defaults_svd_pure,
-            CREATE_FUNC: create_recommender_svd_pure
-        },
         SVD_PP: {
             GET_DEFAULT_PARAMS_FUNC: get_defaults_svd_pp,
             CREATE_FUNC: create_recommender_svd_pp
-        },
-        ITEM_KNN: {
-            GET_DEFAULT_PARAMS_FUNC: get_defaults_item_knn,
-            CREATE_FUNC: create_recommender_item_knn
         },
         USER_KNN: {
             GET_DEFAULT_PARAMS_FUNC: get_defaults_user_knn,
@@ -45,12 +49,13 @@ def get_elliot_recommender_factory():
 
 def get_elliot_recommender_names():
     return ELLIOT_API, [
+        FUNK_SVD,
+        ITEM_KNN,
         MULTI_VAE,
         MOST_POP,
+        PURE_SVD,
         RANDOM,
-        SVD_PURE,
         SVD_PP,
-        ITEM_KNN,
         USER_KNN
     ]
 

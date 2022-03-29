@@ -1,4 +1,4 @@
-""""
+"""
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -6,10 +6,11 @@ Utrecht University within the Software Project course.
 
 ELLIOT_API = 'Elliot'
 
-MULTI_VAE = 'Multi VAE'
-MOST_POP = 'Most Popular'
+FUNK_SVD = 'FunkSVD'
+ITEM_KNN = 'ItemKNN'
+MULTI_VAE = 'MultiVAE'
+MOST_POP = 'MostPop'
 RANDOM = 'Random'
-SVD_PURE = 'SVD (Pure)'
-SVD_PP = 'SVD++'
-ITEM_KNN = 'Item k-NN'
-USER_KNN = 'User k-NN'
+PURE_SVD = 'PureSVD'
+SVD_PP = 'SVDpp'
+USER_KNN = 'UserKNN'
