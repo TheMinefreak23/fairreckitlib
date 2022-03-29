@@ -1,5 +1,7 @@
 data/
 results/
+**/*.egg-info/**
+.vscode/
 
 .DS_Store
 .huskyrc.json
