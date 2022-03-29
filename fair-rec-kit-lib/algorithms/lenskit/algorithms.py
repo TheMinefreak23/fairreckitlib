@@ -5,14 +5,15 @@ Utrecht University within the Software Project course.
 """
 
 from lenskit.algorithms.als import BiasedMF, ImplicitMF
-from lenskit.algorithms.basic import PopScore
+from lenskit.algorithms.basic import PopScore, Random
 from lenskit.algorithms.bias import Bias
 from lenskit.algorithms.funksvd import FunkSVD
 from lenskit.algorithms.item_knn import ItemItem
 from lenskit.algorithms.user_knn import UserUser
+from seedbank import numpy_rng
 
 
-def create_als_biased_mf(params):
+def create_biased_mf(params):
     return BiasedMF(
         params['features'],
         iterations=params['iterations'],
@@ -20,13 +21,13 @@ def create_als_biased_mf(params):
         damping=params['damping'],
         bias=params['bias'],
         method=params['method'],
-        rng_spec=None,
+        rng_spec=numpy_rng(spec=params['random_seed']),
         progress=None,
         save_user_features=True
     )
 
 
-def create_als_implicit_mf(params):
+def create_implicit_mf(params):
     return ImplicitMF(
         params['features'],
         iterations=params['features'],
@@ -34,7 +35,7 @@ def create_als_implicit_mf(params):
         weight=params['weight'],
         use_ratings=params['use_ratings'],
         method=params['method'],
-        rng_spec=None,
+        rng_spec=numpy_rng(spec=params['random_seed']),
         progress=None,
         save_user_features=True
     )
@@ -43,6 +44,13 @@ def create_als_implicit_mf(params):
 def create_pop_score(params):
     return PopScore(
         score_method=params['score_method']
+    )
+
+
+def create_random(params):
+    return Random(
+        selector=None,
+        rng_spec=numpy_rng(spec=params['random_seed'])
     )
 
 
@@ -67,7 +75,7 @@ def create_funk_svd(params):
     )
 
 
-def create_knn_item_item(params):
+def create_item_item(params):
     return ItemItem(
         params['max_nnbrs'],
         min_nbrs=params['min_nbrs'],
@@ -77,7 +85,7 @@ def create_knn_item_item(params):
     )
 
 
-def create_knn_user_user(params):
+def create_user_user(params):
     return UserUser(
         params['max_nnbrs'],
         min_nbrs=params['min_nbrs'],
