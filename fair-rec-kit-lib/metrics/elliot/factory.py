@@ -13,60 +13,60 @@ from .metrics import *
 def get_elliot_metric_factory():
     return ELLIOT_API, {
         NDCG: {
-            CREATE_FUNC: create_simple_metric
-            CATEGORY: ACCURACY
+            CREATE_FUNC: create_metric_ndcg,
+            CATEGORY: ACCURACY,
             NAME: 'nDCG'
         },
         PRECISION: {
-            CREATE_FUNC: create_metric_precision
+            CREATE_FUNC: create_metric_precision,
             CATEGORY: ACCURACY
         },
         RECALL: {
-            CREATE_FUNC: create_metric_recall
+            CREATE_FUNC: create_metric_recall,
             CATEGORY: ACCURACY
         },
         MAP: {
-            CREATE_FUNC: create_metric_map
+            CREATE_FUNC: create_metric_map,
             CATEGORY: ACCURACY
         },
         MAR: {
-            CREATE_FUNC: create_metric_random
+            CREATE_FUNC: create_metric_mar,
             CATEGORY: ACCURACY
         },
         RMSE: {
-            CREATE_FUNC: create_recommender_svd_pure
+            CREATE_FUNC: create_metric,
             CATEGORY: RATING
         },
         MAE: {
-            CREATE_FUNC: create_recommender_svd_pp
+            CREATE_FUNC: create_metric,
             CATEGORY: RATING
         },
         MRR: {
-            CREATE_FUNC: create_recommender_item_knn
+            CREATE_FUNC: create_metric,
             CATEGORY: ACCURACY
         },
         USER_COVERAGE_N: {
-            CREATE_FUNC: create_recommender_user_knn
+            CREATE_FUNC: create_metric,
             CATEGORY: COVERAGE
         },
         USER_COVERAGE: {
-            CREATE_FUNC: create_recommender_user_knn
+            CREATE_FUNC: create_metric,
             CATEGORY: COVERAGE
         },
         ITEM_COVERAGE: {
-            CREATE_FUNC: create_recommender_user_knn
+            CREATE_FUNC: create_metric,
             CATEGORY: COVERAGE
         },
         BIAS_DISPARITY_BD: {
-            CREATE_FUNC: create_recommender_user_knn
+            CREATE_FUNC: create_metric,
             CATEGORY: FAIRNESS
         },
         GINI_INDEX: {
-            CREATE_FUNC: create_recommender_user_knn
+            CREATE_FUNC: create_metric,
             CATEGORY: DIVERSITY
         },
         EFD: {
-            CREATE_FUNC: create_recommender_user_knn
+            CREATE_FUNC: create_metric,
             CATEGORY: NOVELTY
         },
     }
@@ -75,6 +75,8 @@ def get_elliot_metric_factory():
 def get_elliot_metric_names():
     return ELLIOT_API, [
         NDCG,
+        PRECISION,
+        RECALL,
         MAP,
         MAR,
         RMSE,

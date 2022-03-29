@@ -16,18 +16,6 @@ class EvaluatorElliot(Evaluator):
         Evaluator.__init__(self, metric, params)
 
     def evaluate(self, test_set, recs):
-
-        # Modify base proxy configuration.
-        with open(config_dir + ) as file:
-            data = yaml.safe_load(file)
-            data['experiment']['evaluation'] = {'simple_metrics': metrics}
-            data['experiment']['models'] = {'ProxyRecommender': {'path': rec_dir + path}}
-
-        with open(config_dir + 'restore_rec.yml', 'w') as file:
-            output = yaml.dump(data, file)
-
-        # Evaluate the resulting recommendations.
-        run_experiment(config_dir + 'restore_rec.yml')
         #TODO
 
 class Metric:
@@ -36,13 +24,32 @@ class Metric:
 
 class SimpleMetric(Metric):
     def configure(self):
-
+            #TODO
 
 class ComplexMetric(Metric):
     def configure(self):
+            #TODO
 
-def create_simple_metric(name):
-    return EvaluatorElliot({},metric)
+def create_metric(params):
+    return EvaluatorElliot(None,params)
+
+def create_metric_ndcg(params):
+    return EvaluatorElliot(None,params)
+
+def create_metric_precision(params):
+    return EvaluatorElliot(None,params)
+
+def create_metric_recall(params):
+    return EvaluatorElliot(None,params)
+
+def create_metric_map(params):
+    return EvaluatorElliot(None,params)
+
+def create_metric_mar(params):
+    return EvaluatorElliot(None,params)
+
+def create_simple_metric(params):
+    return EvaluatorElliot(None,params)
 
 def create_simple_metric_k(params):
     return EvaluatorElliot(None, params)

@@ -7,6 +7,8 @@ Utrecht University within the Software Project course.
 ELLIOT_API = 'Elliot'
 
 NDCG = 'normalized Discounted Cumulative Gain'
+PRECISION = 'Precision'
+RECALL = 'Recall'
 MAP = 'Mean Average Precision'
 MAR = 'Mean Average Recall'
 RMSE = "Root Mean Squared Error"
