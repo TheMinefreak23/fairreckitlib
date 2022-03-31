@@ -17,7 +17,7 @@ jobs:
         with:
           python-version: '3.9.x' # Define your project python version
       - id: run-tests
-        uses: dima-engineer/pytest-reporter@v1.0.1
+        uses: dima-engineer/pytest-reporter@v1.1.3
         with:
           cov-omit-list: tests/*
           cov-threshold-single: 85
