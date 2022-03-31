@@ -4,6 +4,8 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+import time
+
 from implicit.als import AlternatingLeastSquares
 from implicit.bpr import BayesianPersonalizedRanking
 from implicit.lmf import LogisticMatrixFactorization
@@ -23,7 +25,7 @@ class RecommenderImplicit(RecommenderAlgorithm):
     def train(self, train_set):
         self.__train_user_items = sparse.csr_matrix(
             (train_set['rating'], (train_set['user'], train_set['item']))
-        ).T.tocsr()
+        )
 
         self._algo.fit(self.__train_user_items)
 
@@ -58,6 +60,9 @@ class RecommenderImplicit(RecommenderAlgorithm):
 
 
 def create_recommender_alternating_least_squares(params):
+    if params['random_seed'] is None:
+        params['random_seed'] = int(time.time())
+
     return RecommenderImplicit(AlternatingLeastSquares(
         factors=params['factors'],
         regularization=params['regularization'],
@@ -72,6 +77,9 @@ def create_recommender_alternating_least_squares(params):
 
 
 def create_recommender_bayesian_personalized_ranking(params):
+    if params['random_seed'] is None:
+        params['random_seed'] = int(time.time())
+
     return RecommenderImplicit(BayesianPersonalizedRanking(
         factors=params['factors'],
         learning_rate=params['learning_rate'],
@@ -85,6 +93,9 @@ def create_recommender_bayesian_personalized_ranking(params):
 
 
 def create_recommender_logistic_matrix_factorization(params):
+    if params['random_seed'] is None:
+        params['random_seed'] = int(time.time())
+
     return RecommenderImplicit(LogisticMatrixFactorization(
         factors=params['factors'],
         learning_rate=params['learning_rate'],

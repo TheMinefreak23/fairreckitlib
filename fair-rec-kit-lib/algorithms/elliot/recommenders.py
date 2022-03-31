@@ -4,6 +4,8 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+import time
+
 from ..recommender import RecommenderAlgorithm
 
 
@@ -23,7 +25,9 @@ class RecommenderElliot(RecommenderAlgorithm):
 
 
 def create_recommender_funk_svd(params):
-    params['batch_size'] = 512
+    if params['seed'] is None:
+        params['seed'] = int(time.time())
+
     return RecommenderElliot(None, params)
 
 
@@ -31,12 +35,14 @@ def create_recommender_item_knn(params):
     return RecommenderElliot(None, params)
 
 
-def create_recommender_multi_vae(params):
-    params['batch_size'] = 512
+def create_recommender_most_pop(params):
     return RecommenderElliot(None, params)
 
 
-def create_recommender_most_pop(params):
+def create_recommender_multi_vae(params):
+    if params['seed'] is None:
+        params['seed'] = int(time.time())
+
     return RecommenderElliot(None, params)
 
 
@@ -45,11 +51,16 @@ def create_recommender_pure_svd(params):
 
 
 def create_recommender_random(params):
+    if params['random_seed'] is None:
+        params['random_seed'] = int(time.time())
+
     return RecommenderElliot(None, params)
 
 
 def create_recommender_svd_pp(params):
-    params['batch_size'] = 512
+    if params['seed'] is None:
+        params['seed'] = int(time.time())
+
     return RecommenderElliot(None, params)
 
 

@@ -4,36 +4,61 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from ..params import *
 
-def get_defaults_alternating_least_squares():
+
+def get_params_alternating_least_squares():
     return {
-        'factors': 100,
-        'regularization': 0.01,
-        'use_native': True,
-        'use_cg': True,
-        'iterations': 15,
-        'calculate_training_loss': False,
-        'random_seed': None
+        PARAM_KEY_VALUES: [
+            create_param_factors(100),
+            _create_param_iterations(15, 50),
+            _create_param_regularization(0.01),
+            create_param_seed('random_seed')
+        ],
+        PARAM_KEY_OPTIONS: [
+            create_param_bool('calculate_training_loss', False),
+            create_param_bool('use_cg', True),
+            create_param_bool('use_native', True)
+        ]
     }
 
 
-def get_defaults_bayesian_personalized_ranking():
+def get_params_bayesian_personalized_ranking():
     return {
-        'factors': 100,
-        'learning_rate': 0.01,
-        'regularization': 0.01,
-        'iterations': 100,
-        'verify_negative_samples': True,
-        'random_seed': None
+        PARAM_KEY_VALUES: [
+            create_param_factors(100),
+            _create_param_iterations(100, 1000),
+            _create_param_regularization(0.01),
+            _create_param_learning_rate(0.01),
+            create_param_seed('random_seed')
+        ],
+        PARAM_KEY_OPTIONS: [
+            create_param_bool('verify_negative_samples', True)
+        ]
     }
 
 
-def get_defaults_logistic_matrix_factorization():
+def get_params_logistic_matrix_factorization():
     return {
-        'factors': 30,
-        'learning_rate': 1.00,
-        'regularization': 0.6,
-        'iterations': 30,
-        'neg_prop': 30,
-        'random_seed': None
+        PARAM_KEY_VALUES: [
+            create_param_factors(30),
+            _create_param_iterations(30, 100),
+            _create_param_regularization(0.6),
+            _create_param_learning_rate(1.00),
+            create_value_param('neg_prop', 1, 50, 30),
+            create_param_seed('random_seed')
+        ],
+        PARAM_KEY_OPTIONS: []
     }
+
+
+def _create_param_iterations(iterations, max_iterations):
+    return create_value_param('iterations', 1, max_iterations, iterations)
+
+
+def _create_param_learning_rate(learning_rate):
+    return create_value_param('learning_rate', 0.0001, 1.0, learning_rate)
+
+
+def _create_param_regularization(regularization):
+    return create_value_param('regularization', 0.0001, 1.0, regularization)

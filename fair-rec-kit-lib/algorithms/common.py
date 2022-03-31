@@ -5,5 +5,5 @@ Utrecht University within the Software Project course.
 """
 
 API_NAME = 'API'
-GET_DEFAULT_PARAMS_FUNC = 'get_params'
+GET_PARAMS_FUNC = 'get_params'
 CREATE_FUNC = 'create'

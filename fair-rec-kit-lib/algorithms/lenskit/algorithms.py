@@ -4,6 +4,8 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+import time
+
 from lenskit.algorithms.als import BiasedMF, ImplicitMF
 from lenskit.algorithms.basic import PopScore, Random
 from lenskit.algorithms.bias import Bias
@@ -14,12 +16,15 @@ from seedbank import numpy_rng
 
 
 def create_biased_mf(params):
+    if params['random_seed'] is None:
+        params['random_seed'] = int(time.time())
+
     return BiasedMF(
         params['features'],
         iterations=params['iterations'],
-        reg=params['reg'],
+        reg=(params['user_reg'], params['item_reg']),
         damping=params['damping'],
-        bias=params['bias'],
+        bias=True,
         method=params['method'],
         rng_spec=numpy_rng(spec=params['random_seed']),
         progress=None,
@@ -28,6 +33,9 @@ def create_biased_mf(params):
 
 
 def create_implicit_mf(params):
+    if params['random_seed'] is None:
+        params['random_seed'] = int(time.time())
+
     return ImplicitMF(
         params['features'],
         iterations=params['features'],
@@ -48,6 +56,9 @@ def create_pop_score(params):
 
 
 def create_random(params):
+    if params['random_seed'] is None:
+        params['random_seed'] = int(time.time())
+
     return Random(
         selector=None,
         rng_spec=numpy_rng(spec=params['random_seed'])
