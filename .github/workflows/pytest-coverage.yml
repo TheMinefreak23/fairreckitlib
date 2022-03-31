@@ -1,0 +1,23 @@
+name: pytest-reporter workflow
+
+on:
+  pull_request:
+    branches: stable
+  schedule:
+    - cron: '0 22 * * *'
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    name: Unit tests
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.9.x' # Define your project python version
+      - id: run-tests
+        uses: dima-engineer/pytest-reporter@v1.0.1
+        with:
+          cov-omit-list: tests/*
+          cov-threshold-single: 85
+          cov-threshold-total: 90
