@@ -1,6 +1,7 @@
 name: Pylint
 
 on:
+  workflow_dispatch:
   push:
     branches: [stable, dev]
   pull_request:
