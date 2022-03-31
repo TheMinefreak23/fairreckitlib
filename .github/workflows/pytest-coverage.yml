@@ -1,6 +1,7 @@
 name: pytest-reporter workflow
 
 on:
+  workflow_dispatch:
   pull_request:
     branches: stable
   schedule:
