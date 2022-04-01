@@ -19,7 +19,7 @@ class RecommenderPipeline(ModelPipeline):
         file_path = model_folder + self.stringify_model(model) + '.tsv'
         test_users = self.test_set.user.unique()
 
-        batch_size = 1000
+        batch_size = 10000
         start_index = 0
         total = len(test_users)
         print(total)

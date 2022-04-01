@@ -6,6 +6,6 @@ Utrecht University within the Software Project course.
 
 IMPLICIT_API = 'Implicit'
 
-ALTERNATING_LEAST_SQUARES = 'AlternatingLeastSquares'
-BAYESIAN_PERSONALIZED_RANKING = 'BayesianPersonalizedRanking'
-LOGISTIC_MATRIX_FACTORIZATION = 'LogisticMatrixFactorization'
+IMPLICIT_ALS = 'AlternatingLeastSquares'
+IMPLICIT_BPR = 'BayesianPersonalizedRanking'
+IMPLICIT_LMF = 'LogisticMatrixFactorization'

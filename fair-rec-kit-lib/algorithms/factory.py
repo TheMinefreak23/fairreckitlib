@@ -9,6 +9,34 @@ from .implicit.factory import *
 from .lenskit.factory import *
 
 
+def get_algorithm_list_from_factory(api_factory):
+    algos = []
+
+    for rec_name in api_factory:
+        algos.append({
+            'name': rec_name,
+            'params': api_factory[rec_name][GET_PARAMS_FUNC]()
+        })
+
+    return algos
+
+
+def get_recommender_api_list():
+    rec_factory = get_recommender_factory()
+
+    result = []
+
+    for rec_api in rec_factory:
+        api_factory = rec_factory[rec_api]
+
+        result.append({
+            'name': rec_api,
+            'recommenders': get_algorithm_list_from_factory(api_factory)
+        })
+
+    return result
+
+
 def get_recommender_factory():
     elliot_api, elliot_factory = get_elliot_recommender_factory()
     implicit_api, implicit_factory = get_implicit_recommender_factory()
@@ -18,16 +46,4 @@ def get_recommender_factory():
         elliot_api: elliot_factory,
         implicit_api: implicit_factory,
         lenskit_api: lenskit_factory,
-    }
-
-
-def get_recommender_names():
-    elliot_api, elliot_names = get_elliot_recommender_names()
-    implicit_api, implicit_names = get_implicit_recommender_names()
-    lenskit_api, lenskit_names = get_lenskit_recommender_names()
-
-    return {
-        elliot_api: elliot_names,
-        implicit_api: implicit_names,
-        lenskit_api: lenskit_names,
     }

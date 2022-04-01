@@ -25,6 +25,25 @@ class RecommenderPipelineElliot(RecommenderPipeline):
 
         return temp_folder
 
+    def __clear_temp_folder(self, temp_folder):
+        for file in os.listdir(temp_folder):
+            file_name = os.fsdecode(file)
+            file_path = os.path.join(temp_folder, file_name)
+            if os.path.isdir(file_path):
+                os.rmdir(file_path)
+            else:
+                os.remove(file_path)
+
+        os.rmdir(temp_folder)
+
+    def __clear_unused_epochs(self, num_epochs, model_folder):
+        used_epoch = 'it=' + str(num_epochs)
+        for file in os.listdir(model_folder):
+            file_name = os.fsdecode(file)
+            if used_epoch not in file_name:
+                file_path = os.path.join(model_folder, file_name)
+                os.remove(file_path)
+
     def load_train_test_set(self, train_set_path, test_set_path, callback):
         self.train_set_path = train_set_path
         self.test_set_path = test_set_path
@@ -48,7 +67,6 @@ class RecommenderPipelineElliot(RecommenderPipeline):
                 'models': {
                     model.name: params
                 },
-                'gpu': 1,
                 'evaluation': {
                     'simple_metrics': ['Precision']
                 },
@@ -64,3 +82,7 @@ class RecommenderPipelineElliot(RecommenderPipeline):
         # stops the elliot logo from being spammed to the console
         from elliot.run import run_experiment
         run_experiment(yml_path)
+
+        self.__clear_temp_folder(temp_folder)
+        if params.get('epochs'):
+            self.__clear_unused_epochs(params['epochs'], model_folder)

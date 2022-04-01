@@ -6,7 +6,7 @@ Utrecht University within the Software Project course.
 
 LENSKIT_API = 'LensKit'
 
-BIASED_MF = 'BiasedMF'
-IMPLICIT_MF = 'ImplicitMF'
-POP_SCORE = 'PopScore'
-RANDOM = 'Random'
+LENSKIT_BIASED_MF = 'BiasedMF'
+LENSKIT_IMPLICIT_MF = 'ImplicitMF'
+LENSKIT_POP_SCORE = 'PopScore'
+LENSKIT_RANDOM = 'Random'
