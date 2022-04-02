@@ -9,6 +9,9 @@ from abc import ABCMeta, abstractmethod
 
 class ModelPipelineCallback(metaclass=ABCMeta):
 
+    def __init__(self):
+        pass
+
     @abstractmethod
     def on_begin_pipeline(self, api_name):
         raise NotImplementedError()
@@ -77,7 +80,6 @@ class ModelPipelineConsole(ModelPipelineCallback):
 
     def on_end_load_train_set(self, file_path, train_set, elapsed_time):
         print('Loaded train set in {0:1.4f}s'.format(elapsed_time))
-        print('')
 
     def on_begin_load_test_set(self, file_path):
         print('Loading test set from', file_path)
@@ -106,18 +108,16 @@ class ModelPipelineConsole(ModelPipelineCallback):
 
     def on_end_train_model(self, model, train_set, elapsed_time):
         print('Trained model in {0:1.4f}s'.format(elapsed_time))
-        print('')
 
     def on_begin_test_model(self, model, test_set):
         print('Testing model...')
 
     def on_end_test_model(self, model, test_set, elapsed_time):
         print('Tested model in {0:1.4f}s'.format(elapsed_time))
-        print('')
 
     def on_end_model(self, model_name):
-        print('Finished model:', model_name)
         print('')
+        print('Finished model:', model_name)
 
     def on_end_pipeline(self, api_name):
         print('Finished Model Pipeline:', api_name)

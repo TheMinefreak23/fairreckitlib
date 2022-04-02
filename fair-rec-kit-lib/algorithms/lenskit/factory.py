@@ -13,19 +13,19 @@ from .recommenders import *
 def get_lenskit_recommender_factory():
     return LENSKIT_API, {
         LENSKIT_BIASED_MF: {
-            GET_PARAMS_FUNC: get_params_biased_mf,
-            CREATE_FUNC: create_recommender_biased_mf
+            FUNC_GET_ALGORITHM_PARAMS: get_params_biased_mf,
+            FUNC_CREATE_ALGORITHM: create_recommender_biased_mf
         },
         LENSKIT_IMPLICIT_MF: {
-            GET_PARAMS_FUNC: get_params_implicit_mf,
-            CREATE_FUNC: create_recommender_implicit_mf
+            FUNC_GET_ALGORITHM_PARAMS: get_params_implicit_mf,
+            FUNC_CREATE_ALGORITHM: create_recommender_implicit_mf
         },
         LENSKIT_POP_SCORE: {
-            GET_PARAMS_FUNC: get_params_pop_score,
-            CREATE_FUNC: create_recommender_pop_score
+            FUNC_GET_ALGORITHM_PARAMS: get_params_pop_score,
+            FUNC_CREATE_ALGORITHM: create_recommender_pop_score
         },
         LENSKIT_RANDOM: {
-            GET_PARAMS_FUNC: get_params_random,
-            CREATE_FUNC: create_recommender_random
+            FUNC_GET_ALGORITHM_PARAMS: get_params_random,
+            FUNC_CREATE_ALGORITHM: create_recommender_random
         }
     }

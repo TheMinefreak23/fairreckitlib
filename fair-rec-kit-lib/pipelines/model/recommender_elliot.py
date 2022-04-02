@@ -7,6 +7,7 @@ Utrecht University within the Software Project course.
 import os
 import yaml
 
+from ..common import *
 from .recommender import RecommenderPipeline
 
 
@@ -18,7 +19,7 @@ class RecommenderPipelineElliot(RecommenderPipeline):
         self.test_set_path = None
 
     def __create_temp_folder(self, model_folder, callback):
-        temp_folder = model_folder + 'temp/'
+        temp_folder = os.path.join(model_folder, 'temp')
         if not os.path.isdir(temp_folder):
             callback.on_create_folder(temp_folder)
             os.mkdir(temp_folder)
@@ -53,15 +54,15 @@ class RecommenderPipelineElliot(RecommenderPipeline):
         params['meta'] = {'verbose': True, 'save_recs': True, 'save_weights': False}
 
         temp_folder = self.__create_temp_folder(model_folder, callback)
-        yml_path = temp_folder + 'config.yml'
+        yml_path = os.path.join(temp_folder, 'config.yml')
 
         data = {
             'experiment': {
                 'dataset': self.dataset_name,
                 'data_config': {
                     'strategy': 'fixed',
-                    'train_path': '../../../' + self.train_set_path,
-                    'test_path': '../../../' + self.test_set_path,
+                    'train_path': os.path.join('..', '..', '..', '..', self.train_set_path),
+                    'test_path': os.path.join('..', '..', '..', '..', self.test_set_path),
                 },
                 'top_k': kwargs['num_items'],
                 'models': {
@@ -86,3 +87,8 @@ class RecommenderPipelineElliot(RecommenderPipeline):
         self.__clear_temp_folder(temp_folder)
         if params.get('epochs'):
             self.__clear_unused_epochs(params['epochs'], model_folder)
+
+
+def create_recommender_pipeline_elliot():
+    api, factory = get_elliot_recommender_factory()
+    return RecommenderPipelineElliot(api, factory)

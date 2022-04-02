@@ -4,83 +4,106 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-'''
+"""
 1. load in the dataset using .tsv files
 2. aggregate the dataset (optional) (should not be fully implemented yet)
 3. convert the ratings (should not be fully implemented yet)
 4. split the dataset into train/test using either a set ratio, random, or timestamps
 5. return the .tsv files so the model pipeline can load in the train and test .tsv files
-'''
-import sys
-sys.path.append('..\\H_repo_lib\\dataloaders')
+"""
 
-import dataloaders as dl
 from abc import ABCMeta, abstractmethod
+import os
+import sys
 import time
-import pandas as pd
-import lenskit.crossfold as xf
-import callback as cb
 
-
+from experiment.config import EXP_KEY_DATASET_SPLIT_PARAMS
+from experiment.config import EXP_KEY_DATASET_SPLIT_TEST_RATIO
+from experiment.config import EXP_KEY_DATASET_SPLIT_TYPE
 
 
 class DataPipeline(metaclass=ABCMeta):
-    '''This class contains all the necessary functions to run the entire data pipeline.
+    """This class contains all the necessary functions to run the entire data pipeline.
 
-    From loading in the required dataset(s) to aggregating them, converting the ratings, 
+    From loading in the required dataset(s) to aggregating them, converting the ratings,
     splitting it into train/test set, and saving these in the designated folder.
-    '''
+    """
 
-    def __init__(self):
-        pass
 
-    def run(self, df_name, dest_folder_path, ratio, time_split, filters, callback, **args):
-        '''Runs the entire data pipeline by calling all functions of the class in order.'''
+    def __init__(self, split_factory):
+        self.split_datasets = dict()
+        self.split_factory = split_factory
+
+    def run(self, dst_dir, dataset, prefilters, rating_modifier, split, callback, **kwargs):
+        """Runs the entire data pipeline by calling all functions of the class in order."""
         callback.on_begin_pipeline()
 
         start = time.time()
-        df = self.load_df(df_name, callback)
-        self.aggregate(df, filters, callback)
-        self.convert(df, callback)
-        tt_pairs = self.split(df, ratio, time_split, callback)
-        self.save_sets(tt_pairs, dest_folder_path, callback)
+        data_dir = self.create_data_dir(dst_dir, dataset.name)
+        df = self.load_df(dataset, callback)
+        df = self.aggregate(df, prefilters, callback)
+        df = self.convert(df, rating_modifier, callback)
+        train_set, test_set = self.split(df, split, callback)
+        train_path, test_path = self.save_sets(
+            train_set[['user', 'item', 'rating']],
+            test_set[['user', 'item', 'rating']],
+            data_dir,
+            callback
+        )
         end = time.time()
 
         callback.on_end_pipeline(end - start)
 
-    def load_df(self, df_name, callback):
-        '''Loads in the desired dataset using the dataloader function.
+        return data_dir, train_path, test_path
 
-        This function returns a dictionary containing the pandas dataframe(s) belonging to the given dataset. 
-        '''
-        callback.on_begin_load_df(df_name)
+    def create_data_dir(self, dst_dir, dataset_name):
+        if not self.split_datasets.get(dataset_name):
+            self.split_datasets[dataset_name] = 0
+
+        index = self.split_datasets[dataset_name]
+        data_dir = os.path.join(dst_dir, dataset_name + '_' + str(index))
+        os.mkdir(data_dir)
+        self.split_datasets[dataset_name] += 1
+
+        return data_dir
+
+    def load_df(self, dataset, callback):
+        """Loads in the desired dataset using the dataloader function.
+
+        This function returns a dictionary containing the pandas dataframe(s) belonging to the given dataset.
+        """
+        callback.on_begin_load_df(dataset.name)
 
         start = time.time()
-        # There is a bug that needs to be solved before the dataloader function can be used here
-        #df_dict = dl.dataloader(df_name)
-        #df = df_dict['sub_dataset']
-        df = pd.read_csv('..\\Datasets\\ml-100k\\u.data',
-                         delimiter='\t', engine='python')
+        df = dataset.load_matrix_df()
         end = time.time()
 
         callback.on_end_load_df(end - start)
 
         return df
 
-    def aggregate(self, df, filters, callback):
-        '''Aggregates the dataframe using the given filters.'''
-        callback.on_begin_aggregate(filters)
+    def aggregate(self, df, prefilters, callback):
+        """Aggregates the dataframe using the given filters."""
+        if len(prefilters) == 0:
+            return df
+
+        callback.on_begin_aggregate(prefilters)
 
         start = time.time()
         # TODO aggregated the set using the given filters
+        for filter in prefilters:
+            continue
         end = time.time()
 
         callback.on_end_aggregate(end - start)
 
         return df
 
-    def convert(self, df, callback):
-        '''Converts the ratings in the dataframe to be X'''
+    def convert(self, df, rating_modifier, callback):
+        """Converts the ratings in the dataframe to be X"""
+        if rating_modifier is None:
+            return df
+
         callback.on_begin_convert()
 
         start = time.time()
@@ -91,49 +114,36 @@ class DataPipeline(metaclass=ABCMeta):
 
         return df
 
-    def split(self, df, ratio, time_split, callback):
-        '''Splits the dataframe into a train and test set.
+    def split(self, df, split_config, callback):
+        """Splits the dataframe into a train and test set.
 
         This will be split 80/20 (or a similar ratio), and be done either random, or timestamp-wise.
-        '''
-        callback.on_begin_split(ratio)
+        """
+        test_ratio = split_config[EXP_KEY_DATASET_SPLIT_TEST_RATIO]
+        callback.on_begin_split(test_ratio)
 
         start = time.time()
-        # TODO split the dataset into train&test using the given ratio and do it random or time-wise
-        # LensKit splitting
-        tt_pairs = xf.partition_rows(df, 2, rng_spec=None)
-        # Elliot splitting
-        # WIP, need to fix elliot env first
+        splitter = self.split_factory[split_config[EXP_KEY_DATASET_SPLIT_TYPE]]()
+        params = split_config[EXP_KEY_DATASET_SPLIT_PARAMS]
+        train_set, test_set = splitter.run(df, test_ratio, params)
         end = time.time()
 
         callback.on_end_split(end - start)
 
-        return tt_pairs
+        return train_set, test_set
 
-    def save_sets(self, tt_pairs, dest_folder_path, callback):
-        '''Saves the train and test sets to the desired folder.'''
-        callback.on_saving_sets(dest_folder_path)
+    def save_sets(self, train_set, test_set, data_dir, callback):
+        """Saves the train and test sets to the desired folder."""
+        callback.on_saving_sets(data_dir)
+
+        train_path = os.path.join(data_dir, 'train_set.tsv')
+        test_path = os.path.join(data_dir, 'test_set.tsv')
 
         start = time.time()
-        i = 0
-        for (train, test) in tt_pairs:
-            train.to_csv(dest_folder_path + 'train' +
-                         str(i) + '.tsv', sep='\t')
-            test.to_csv(dest_folder_path + 'test' + str(i) + '.tsv', sep='\t')
-            i += 1
+        train_set.to_csv(train_path, sep='\t', header=False, index=False)
+        test_set.to_csv(test_path, sep='\t', header=False, index=False)
         end = time.time()
 
-        callback.on_saved_sets(dest_folder_path, end - start)
+        callback.on_saved_sets(data_dir, end - start)
 
-
-''' LINES BELOW ONLY FOR TESTING, DELETE LATER
-The current status of the data pipeline is that the dataset can be loaded in as a pandas dataframe,
-next, the aggregation and converting are identity functions as of now, 
-and then the dataframe gets split into train/test sets.
-For now a LensKit function is used and 2 pairs of train/test sets are saved to the given folder.
-'''
-
-callback = cb.DataPipelineConsole()
-dp = DataPipeline()
-dp.run('ml_100k_u', '..\\Datasets\\', (80, 20),
-       False, ['gender', 'age'], callback)
+        return train_path, test_path

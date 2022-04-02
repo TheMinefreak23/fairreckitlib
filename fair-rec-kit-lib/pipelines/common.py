@@ -4,8 +4,4 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-ALGORITHM_NAME = 'name'
-ALGORITHM_PARAMS = 'params'
-
-FUNC_GET_ALGORITHM_PARAMS = 'f_get_algorithm_params'
-FUNC_CREATE_ALGORITHM = 'f_create_algorithm'
+from algorithms.factory import *

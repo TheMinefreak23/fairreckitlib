@@ -27,7 +27,7 @@ class RecommenderImplicit(RecommenderAlgorithm):
             (train_set['rating'], (train_set['user'], train_set['item']))
         )
 
-        self._algo.fit(self.__train_user_items)
+        self._algo.fit(self.__train_user_items, False)
 
     def recommend(self, user, num_items=10):
         items, scores = self._algo.recommend(

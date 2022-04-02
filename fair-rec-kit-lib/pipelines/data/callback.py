@@ -9,6 +9,9 @@ from abc import ABCMeta, abstractmethod
 
 class DataPipelineCallback(metaclass=ABCMeta):
 
+    def __init__(self):
+        pass
+
     @abstractmethod
     def on_begin_pipeline(self):
         raise NotImplementedError()

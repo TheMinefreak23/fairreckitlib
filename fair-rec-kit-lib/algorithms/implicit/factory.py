@@ -13,15 +13,15 @@ from .recommenders import *
 def get_implicit_recommender_factory():
     return IMPLICIT_API, {
         IMPLICIT_ALS: {
-            GET_PARAMS_FUNC: get_params_alternating_least_squares,
-            CREATE_FUNC: create_recommender_alternating_least_squares
+            FUNC_GET_ALGORITHM_PARAMS: get_params_alternating_least_squares,
+            FUNC_CREATE_ALGORITHM: create_recommender_alternating_least_squares
         },
         IMPLICIT_BPR: {
-            GET_PARAMS_FUNC: get_params_bayesian_personalized_ranking,
-            CREATE_FUNC: create_recommender_bayesian_personalized_ranking
+            FUNC_GET_ALGORITHM_PARAMS: get_params_bayesian_personalized_ranking,
+            FUNC_CREATE_ALGORITHM: create_recommender_bayesian_personalized_ranking
         },
         IMPLICIT_LMF: {
-            GET_PARAMS_FUNC: get_params_logistic_matrix_factorization,
-            CREATE_FUNC: create_recommender_logistic_matrix_factorization
+            FUNC_GET_ALGORITHM_PARAMS: get_params_logistic_matrix_factorization,
+            FUNC_CREATE_ALGORITHM: create_recommender_logistic_matrix_factorization
         }
     }

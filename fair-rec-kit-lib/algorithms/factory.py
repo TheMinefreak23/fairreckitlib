@@ -14,8 +14,8 @@ def get_algorithm_list_from_factory(api_factory):
 
     for rec_name in api_factory:
         algos.append({
-            'name': rec_name,
-            'params': api_factory[rec_name][GET_PARAMS_FUNC]()
+            ALGORITHM_NAME: rec_name,
+            ALGORITHM_PARAMS: api_factory[rec_name][FUNC_GET_ALGORITHM_PARAMS]()
         })
 
     return algos
