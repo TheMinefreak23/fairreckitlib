@@ -32,7 +32,7 @@ def dataloader(dataset: str) -> Dict[str, pd.DataFrame]:
         if CONFIGS.get(sub_dataset, "timestamp", fallback=None):
             params.update(dict(parse_dates=CONFIGS.get(sub_dataset, "timestamp").split(",")))
         df = pd.read_csv(CONFIGS.get(sub_dataset, "file_path"), engine='python', **params)
-        df.set_index(CONFIGS.get(sub_dataset, "index_key", fallback=None), inplace=True)
+        # df.set_index(CONFIGS.get(sub_dataset, "index_key", fallback=None), inplace=True)
         dfs.update(dict(sub_dataset=df))
     
     # Return the dataframe(s) in a dictionary
