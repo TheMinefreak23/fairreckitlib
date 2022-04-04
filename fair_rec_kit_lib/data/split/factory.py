@@ -16,3 +16,4 @@ def get_split_factory():
         SPLIT_RANDOM: create_random_splitter,
         SPLIT_TEMPORAL: create_temporal_splitter
     }
+    

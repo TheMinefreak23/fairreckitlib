@@ -2,9 +2,8 @@
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
-"""
 
-"""
+
 For each selected dataset in an experiment this function is called once
     
     dataset:        pointer to the original dataset class

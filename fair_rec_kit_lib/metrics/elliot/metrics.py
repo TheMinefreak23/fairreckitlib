@@ -3,6 +3,7 @@ This program has been developed by students from the bachelor Computer Science a
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
+
 import elliot.run
 import yaml
 
@@ -17,6 +18,7 @@ class EvaluatorElliot(Evaluator):
 
     def evaluate(self, test_set, recs):
         #TODO
+        raise NotImplementedError
 
 class Metric:
     _name=''
@@ -25,10 +27,12 @@ class Metric:
 class SimpleMetric(Metric):
     def configure(self):
             #TODO
+            raise NotImplementedError
 
 class ComplexMetric(Metric):
     def configure(self):
             #TODO
+            raise NotImplementedError
 
 def create_metric(params):
     return EvaluatorElliot(None,params)

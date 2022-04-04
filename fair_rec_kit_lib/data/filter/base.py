@@ -12,7 +12,7 @@ base class to filter a df (not a dataset in particular), as long as the df
 contains a 'user' and 'item' column.
 
 Dataset class is not really necessary here, but when combined with the
-data.format module it needs to know about them to construct them. 
+data.format module it needs to know about them to construct them.
 
 Together with a factory pattern similar to the data.split module
 we can define a variety of filters to exclude rows that do not satisfy the filter

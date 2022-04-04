@@ -2,9 +2,8 @@
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
-"""
 
-"""
+
 1. load in the dataset using .tsv files
 2. aggregate the dataset (optional) (should not be fully implemented yet)
 3. convert the ratings (should not be fully implemented yet)
@@ -12,14 +11,14 @@ Utrecht University within the Software Project course.
 5. return the .tsv files so the model pipeline can load in the train and test .tsv files
 """
 
-from abc import ABCMeta, abstractmethod
 import os
 import sys
 import time
 
-from experiment.config import EXP_KEY_DATASET_SPLIT_PARAMS
-from experiment.config import EXP_KEY_DATASET_SPLIT_TEST_RATIO
-from experiment.config import EXP_KEY_DATASET_SPLIT_TYPE
+from abc import ABCMeta, abstractmethod
+from fair_rec_kit_lib.experiment.common import EXP_KEY_DATASET_SPLIT_PARAMS
+from fair_rec_kit_lib.experiment.common import EXP_KEY_DATASET_SPLIT_TEST_RATIO
+from fair_rec_kit_lib.experiment.common import EXP_KEY_DATASET_SPLIT_TYPE
 
 
 class DataPipeline(metaclass=ABCMeta):
@@ -70,7 +69,7 @@ class DataPipeline(metaclass=ABCMeta):
     def load_df(self, dataset, callback):
         """Loads in the desired dataset using the dataloader function.
 
-        This function returns a dictionary containing the pandas dataframe(s) belonging to the given dataset.
+        Returns a dictionary containing the pandas dataframe(s) belonging to the given dataset.
         """
         callback.on_begin_load_df(dataset.name)
 

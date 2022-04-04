@@ -11,9 +11,8 @@ from abc import ABCMeta, abstractmethod
 base class to format a df (not a dataset in particular), as long as the df
 contains a 'user' and 'item' column.
 
-
-Dataset class will provide all relevant info on how the 'user' and/or 'item' 
-are connected to other files and thus new headers (columns). 
+Dataset class will provide all relevant info on how the 'user' and/or 'item'
+are connected to other files and thus new headers (columns).
 
 Together with a factory pattern similar to the data.split module
 we can define a variety of formatters to add/change/remove headers

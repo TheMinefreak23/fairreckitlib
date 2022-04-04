@@ -6,10 +6,12 @@ Utrecht University within the Software Project course.
 
 """
 
-import pandas as pd
-from utility import get_configs
 from typing import Dict
 import os
+
+import pandas as pd
+from .utility import get_configs
+
 
 CONFIGS = get_configs(os.path.dirname(os.path.abspath(__file__)) + "\\config.ini")
 
@@ -17,7 +19,7 @@ def dataloader(dataset: str) -> Dict[str, pd.DataFrame]:
     """
     This function reads all the files of the dataset that its name is given,
     and loads the content of the files in dataframes based on the read config file.
-    
+
     Arguments:
         dataset: The name of the dataset to be loaded
 
@@ -34,6 +36,6 @@ def dataloader(dataset: str) -> Dict[str, pd.DataFrame]:
         df = pd.read_csv(CONFIGS.get(sub_dataset, "file_path"), **params)
         # df.set_index(CONFIGS.get(sub_dataset, "index_key", fallback=None), inplace=True)
         dfs.update({sub_dataset: df})
-    
+
     # Return the dataframe(s) in a dictionary
     return dfs

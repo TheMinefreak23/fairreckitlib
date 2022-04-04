@@ -6,7 +6,6 @@ Utrecht University within the Software Project course.
 
 from abc import ABCMeta, abstractmethod
 
-
 """
 base class to preprocess a dataset to a standardized interface:
 

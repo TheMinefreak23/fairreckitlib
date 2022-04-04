@@ -4,11 +4,11 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from algorithms.factory import *
-from data.set import DATASET_LFM_360K, DATASET_LFM_1B, DATASET_LFM_2B
-from data.set import DATASET_ML_100K, DATASET_ML_25M
-from data.split.factory import SPLIT_RANDOM
-from data.split.factory import SPLIT_TEMPORAL
+from fair_rec_kit_lib.algorithms.common import ALGORITHM_NAME, ALGORITHM_PARAMS
+from fair_rec_kit_lib.data.set import DATASET_LFM_360K, DATASET_LFM_1B, DATASET_LFM_2B
+from fair_rec_kit_lib.data.set import DATASET_ML_100K, DATASET_ML_25M
+from fair_rec_kit_lib.data.split.factory import SPLIT_RANDOM
+from fair_rec_kit_lib.data.split.factory import SPLIT_TEMPORAL
 
 EXP_KEY_NAME = 'name'
 

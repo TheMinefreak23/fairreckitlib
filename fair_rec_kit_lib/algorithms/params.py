@@ -15,11 +15,11 @@ PARAM_KEY_MAX = 'max'
 PARAM_KEY_DEFAULT = 'default'
 
 
-def create_value_param(name, min, max, default):
+def create_value_param(name, min_val, max_val, default):
     return {
         PARAM_KEY_NAME: name,
-        PARAM_KEY_MIN: min,
-        PARAM_KEY_MAX: max,
+        PARAM_KEY_MIN: min_val,
+        PARAM_KEY_MAX: max_val,
         PARAM_KEY_DEFAULT: default
     }
 

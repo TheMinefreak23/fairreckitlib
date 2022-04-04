@@ -4,9 +4,9 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from .elliot.factory import *
-from .implicit.factory import *
-from .lenskit.factory import *
+from .elliot_alg.factory import *
+from .implicit_alg.factory import *
+from .lenskit_alg.factory import *
 
 
 def get_algorithm_list_from_factory(api_factory):
