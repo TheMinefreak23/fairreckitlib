@@ -6,14 +6,16 @@ Utrecht University within the Software Project course.
 
 import os
 
-from algorithms.factory import get_algorithm_list_from_factory, get_recommender_factory
-from data.registry import DataRegistry
-from experiment.config import *
-from experiment.run import run_experiment
+from fair_rec_kit_lib.experiment import common
+from .algorithms.factory import get_algorithm_list_from_factory, get_recommender_factory
+from .data.registry import DataRegistry
+from .experiment.run import run_experiment
 
 
 class RecommenderSystem:
-
+    """
+    Top level API intended for use by applications
+    """
     def __init__(self, data_dir, result_dir):
         self.data_registry = DataRegistry(data_dir)
         self.recommender_models = get_recommender_factory()
@@ -32,7 +34,7 @@ class RecommenderSystem:
         raise NotImplementedError()
 
     def run_experiment(self, config):
-        result_dir = os.path.join(self.result_dir, config[EXP_KEY_NAME])
+        result_dir = os.path.join(self.result_dir, config[common.EXP_KEY_NAME])
         if os.path.isdir(result_dir):
             raise IOError('Result already exists: ' + result_dir)
 
