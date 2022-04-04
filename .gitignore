@@ -1,4 +1,3 @@
-data/
 results/
 **/*.egg-info/**
 .vscode/
