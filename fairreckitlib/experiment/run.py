@@ -4,14 +4,14 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from fair_rec_kit_lib.pipelines.data.callback import DataPipelineConsole
-from fair_rec_kit_lib.pipelines.data.run import run_data_pipeline
-from fair_rec_kit_lib.pipelines.evaluation.run import run_evaluation_pipelines
-from fair_rec_kit_lib.pipelines.model.callback import ModelPipelineConsole
-from fair_rec_kit_lib.pipelines.model.run import run_recommender_model_pipelines
-from fair_rec_kit_lib.experiment.config import EXP_KEY_DATASETS, EXP_KEY_MODELS, EXP_KEY_EVALUATION
-from fair_rec_kit_lib.experiment.config import EXP_KEY_TOP_K
-from fair_rec_kit_lib.experiment.config import EXP_KEY_TYPE, EXP_TYPE_PREDICTION, EXP_TYPE_RECOMMENDATION
+from fairreckitlib.pipelines.data.callback import DataPipelineConsole
+from fairreckitlib.pipelines.data.run import run_data_pipeline
+from fairreckitlib.pipelines.evaluation.run import run_evaluation_pipelines
+from fairreckitlib.pipelines.model.callback import ModelPipelineConsole
+from fairreckitlib.pipelines.model.run import run_recommender_model_pipelines
+from fairreckitlib.experiment.config import EXP_KEY_DATASETS, EXP_KEY_MODELS, EXP_KEY_EVALUATION
+from fairreckitlib.experiment.config import EXP_KEY_TOP_K
+from fairreckitlib.experiment.config import EXP_KEY_TYPE, EXP_TYPE_PREDICTION, EXP_TYPE_RECOMMENDATION
 
 
 def run_experiment(output_dir, data_registry, config):

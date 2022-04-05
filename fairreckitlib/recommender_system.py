@@ -6,7 +6,7 @@ Utrecht University within the Software Project course.
 
 import os
 
-from fair_rec_kit_lib.experiment import common
+from fairreckitlib.experiment import common
 from .algorithms.factory import get_algorithm_list_from_factory, get_recommender_factory
 from .data.registry import DataRegistry
 from .experiment.run import run_experiment

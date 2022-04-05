@@ -16,9 +16,9 @@ import sys
 import time
 
 from abc import ABCMeta, abstractmethod
-from fair_rec_kit_lib.experiment.common import EXP_KEY_DATASET_SPLIT_PARAMS
-from fair_rec_kit_lib.experiment.common import EXP_KEY_DATASET_SPLIT_TEST_RATIO
-from fair_rec_kit_lib.experiment.common import EXP_KEY_DATASET_SPLIT_TYPE
+from fairreckitlib.experiment.common import EXP_KEY_DATASET_SPLIT_PARAMS
+from fairreckitlib.experiment.common import EXP_KEY_DATASET_SPLIT_TEST_RATIO
+from fairreckitlib.experiment.common import EXP_KEY_DATASET_SPLIT_TYPE
 
 
 class DataPipeline(metaclass=ABCMeta):

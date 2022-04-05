@@ -4,11 +4,11 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from fair_rec_kit_lib.algorithms.elliot_alg.factory import get_elliot_recommender_factory
-from fair_rec_kit_lib.algorithms.implicit_alg.common import IMPLICIT_API
-from fair_rec_kit_lib.algorithms.implicit_alg.factory import get_implicit_recommender_factory
-from fair_rec_kit_lib.algorithms.lenskit_alg.common import LENSKIT_API
-from fair_rec_kit_lib.algorithms.lenskit_alg.factory import get_lenskit_recommender_factory
+from fairreckitlib.algorithms.elliot_alg.factory import get_elliot_recommender_factory
+from fairreckitlib.algorithms.implicit_alg.common import IMPLICIT_API
+from fairreckitlib.algorithms.implicit_alg.factory import get_implicit_recommender_factory
+from fairreckitlib.algorithms.lenskit_alg.common import LENSKIT_API
+from fairreckitlib.algorithms.lenskit_alg.factory import get_lenskit_recommender_factory
 from .elliot.factory import *
 
 

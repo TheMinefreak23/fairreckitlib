@@ -10,9 +10,9 @@ import time
 
 import pandas as pd
 
-from fair_rec_kit_lib.algorithms.common import FUNC_CREATE_ALGORITHM
-from fair_rec_kit_lib.experiment.config import EXP_KEY_MODEL_NAME
-from fair_rec_kit_lib.experiment.config import EXP_KEY_MODEL_PARAMS
+from fairreckitlib.algorithms.common import FUNC_CREATE_ALGORITHM
+from fairreckitlib.experiment.config import EXP_KEY_MODEL_NAME
+from fairreckitlib.experiment.config import EXP_KEY_MODEL_PARAMS
 
 
 class ModelPipeline(metaclass=ABCMeta):

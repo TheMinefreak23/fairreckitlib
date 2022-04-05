@@ -4,11 +4,11 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from fair_rec_kit_lib.data.split.factory import get_split_factory
-from fair_rec_kit_lib.experiment.config import EXP_KEY_DATASET_NAME
-from fair_rec_kit_lib.experiment.config import EXP_KEY_DATASET_PREFILTERS
-from fair_rec_kit_lib.experiment.config import EXP_KEY_DATASET_RATING_MODIFIER
-from fair_rec_kit_lib.experiment.config import EXP_KEY_DATASET_SPLIT
+from fairreckitlib.data.split.factory import get_split_factory
+from fairreckitlib.experiment.config import EXP_KEY_DATASET_NAME
+from fairreckitlib.experiment.config import EXP_KEY_DATASET_PREFILTERS
+from fairreckitlib.experiment.config import EXP_KEY_DATASET_RATING_MODIFIER
+from fairreckitlib.experiment.config import EXP_KEY_DATASET_SPLIT
 from .pipeline import DataPipeline
 
 def run_data_pipeline(output_dir, data_registry, datasets_config, callback):
