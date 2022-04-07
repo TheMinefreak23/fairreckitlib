@@ -7,6 +7,7 @@ Utrecht University within the Software Project course.
 from .elliot_alg.factory import *
 from .implicit_alg.factory import *
 from .lenskit_alg.factory import *
+from .surprise_alg.factory import *
 
 
 def get_algorithm_list_from_factory(api_factory):
@@ -19,6 +20,16 @@ def get_algorithm_list_from_factory(api_factory):
         })
 
     return algos
+
+
+def get_predictor_factory():
+    lenskit_api, lenskit_factory = get_lenskit_predictor_factory()
+    surprise_api, surprise_factory = get_surprise_predictor_factory()
+
+    return {
+        lenskit_api: lenskit_factory,
+        surprise_api: surprise_factory,
+    }
 
 
 def get_recommender_api_list():

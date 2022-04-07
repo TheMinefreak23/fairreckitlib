@@ -12,5 +12,9 @@ from .algorithm import Algorithm
 class PredictorAlgorithm(Algorithm, metaclass=ABCMeta):
 
     @abstractmethod
-    def predict(self, user, items):
+    def predict(self, user, item):
         raise NotImplementedError
+
+    @abstractmethod
+    def predict_batch(self, user_item_pairs):
+        raise NotImplementedError()

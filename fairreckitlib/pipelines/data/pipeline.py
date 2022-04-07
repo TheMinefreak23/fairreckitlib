@@ -28,7 +28,6 @@ class DataPipeline(metaclass=ABCMeta):
     splitting it into train/test set, and saving these in the designated folder.
     """
 
-
     def __init__(self, split_factory):
         self.split_datasets = dict()
         self.split_factory = split_factory
@@ -42,6 +41,8 @@ class DataPipeline(metaclass=ABCMeta):
         df = self.load_df(dataset, callback)
         df = self.aggregate(df, prefilters, callback)
         df = self.convert(df, rating_modifier, callback)
+        rating_scale = (df['rating'].min(), df['rating'].max())
+        rating_type = dataset.ratings
         train_set, test_set = self.split(df, split, callback)
         train_path, test_path = self.save_sets(
             train_set[['user', 'item', 'rating']],
@@ -53,7 +54,7 @@ class DataPipeline(metaclass=ABCMeta):
 
         callback.on_end_pipeline(end - start)
 
-        return data_dir, train_path, test_path
+        return data_dir, train_path, test_path, rating_scale, rating_type
 
     def create_data_dir(self, dst_dir, dataset_name):
         if not self.split_datasets.get(dataset_name):

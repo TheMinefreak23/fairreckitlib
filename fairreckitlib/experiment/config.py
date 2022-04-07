@@ -7,7 +7,9 @@ Utrecht University within the Software Project course.
 from fairreckitlib.algorithms.common import FUNC_GET_ALGORITHM_PARAMS
 from fairreckitlib.algorithms.elliot_alg.factory import get_elliot_recommender_factory
 from fairreckitlib.algorithms.implicit_alg.factory import get_implicit_recommender_factory
+from fairreckitlib.algorithms.lenskit_alg.factory import get_lenskit_predictor_factory
 from fairreckitlib.algorithms.lenskit_alg.factory import get_lenskit_recommender_factory
+from fairreckitlib.algorithms.surprise_alg.factory import get_surprise_predictor_factory
 from fairreckitlib.algorithms.params import get_param_defaults
 from .common import *
 
@@ -40,7 +42,19 @@ def create_config_api_models(func_get_api_factory):
     return api_name, models
 
 
-def create_config_all_models(elliot=True, implicit=True, lenskit=True):
+def create_config_all_predictor_models(lenskit=True, surprise=True):
+    models = {}
+
+    if lenskit:
+        lenskit_api, lenskit_models = create_config_api_models(get_lenskit_predictor_factory)
+        models[lenskit_api] = lenskit_models
+    if surprise:
+        surprise_api, surprise_models = create_config_api_models(get_surprise_predictor_factory)
+        models[surprise_api] = surprise_models
+
+    return models
+
+def create_config_all_recommender_models(elliot=True, implicit=True, lenskit=True):
     models = {}
 
     if elliot:

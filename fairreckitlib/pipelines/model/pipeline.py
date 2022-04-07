@@ -26,21 +26,27 @@ class ModelPipeline(metaclass=ABCMeta):
         self.train_set = None
         self.test_set = None
 
-    def run(self, dataset_name, train_set_path, test_set_path, output_dir, models, callback, **kwargs):
+    def run(self, dataset_name, train_path, test_path, rating_scale, rating_type, output_dir, models, num_threads,
+            callback, **kwargs):
         callback.on_begin_pipeline(self.api_name)
 
         self.dataset_name = dataset_name
-        self.load_train_test_set(train_set_path, test_set_path, callback)
-        model_dirs = self.run_batch(models, output_dir, callback, **kwargs)
+        self.load_train_test_set(train_path, test_path, callback)
+        model_dirs = self.run_batch(models, rating_scale, rating_type, output_dir, num_threads, callback, **kwargs)
 
         callback.on_end_pipeline(self.api_name)
 
         return model_dirs
 
-    def create_model(self, model_name, params, callback):
+    def create_model(self, model_name, params, rating_scale, rating_type, num_threads, callback):
         callback.on_create_model(model_name, params)
 
-        model = self.factory[model_name][FUNC_CREATE_ALGORITHM](params)
+        model = self.factory[model_name][FUNC_CREATE_ALGORITHM](
+            params,
+            num_threads=num_threads,
+            rating_scale=rating_scale,
+            rating_type=rating_type
+        )
         model.name = model_name
 
         return model
@@ -72,38 +78,42 @@ class ModelPipeline(metaclass=ABCMeta):
 
         callback.on_end_load_test_set(test_set_path, self.test_set, end - start)
 
-    def load_train_test_set(self, train_set_path, test_set_path, callback):
-        self.load_train_set(train_set_path, callback)
-        self.load_test_set(test_set_path, callback)
+    def load_train_test_set(self, train_path, test_path, callback):
+        self.load_train_set(train_path, callback)
+        self.load_test_set(test_path, callback)
 
-    def run_batch(self, models, output_dir, callback, **kwargs):
+    def run_batch(self, models, rating_scale, rating_type, output_dir, num_threads, callback, **kwargs):
         model_dirs = []
         for _, model in enumerate(models):
             model_dirs.append(self.run_model(
                 model[EXP_KEY_MODEL_NAME],
                 model[EXP_KEY_MODEL_PARAMS],
+                rating_scale,
+                rating_type,
                 output_dir,
+                num_threads,
                 callback,
                 **kwargs
             ))
 
         return model_dirs
 
-    def run_model(self, model_name, model_params, output_dir, callback, **kwargs):
-        model_dir, model = self.begin_model(model_name, model_params, output_dir, callback)
+    def run_model(self, model_name, model_params, rating_scale, rating_type, output_dir, num_threads, callback, **kwargs):
+        model_dir, model = self.begin_model(model_name, model_params, rating_scale, rating_type, output_dir,
+                                            num_threads, callback)
         self.train_test_model(model, model_dir, callback, **kwargs)
         self.end_model(model_name, callback)
 
         return model_dir
 
-    def begin_model(self, model_name, model_params, output_dir, callback):
+    def begin_model(self, model_name, model_params, rating_scale, rating_type, output_dir, num_threads, callback):
         if self.tested_models.get(model_name) is None:
             self.tested_models[model_name] = 0
 
         callback.on_begin_model(model_name)
 
         model_dir = self.create_model_output_dir(output_dir, model_name, callback)
-        model = self.create_model(model_name, model_params, callback)
+        model = self.create_model(model_name, model_params, rating_scale, rating_type, num_threads, callback)
 
         return model_dir, model
 
@@ -116,8 +126,25 @@ class ModelPipeline(metaclass=ABCMeta):
 
         callback.on_end_train_model(model, self.train_set, end - start)
 
-    @abstractmethod
     def test_model(self, model, model_dir, callback, **kwargs):
+        callback.on_begin_test_model(model, self.test_set)
+        start = time.time()
+
+        batch_size = 10000
+        file_path = os.path.join(model_dir, 'ratings.tsv')
+
+        self.test_model_ratings(
+            model,
+            file_path,
+            batch_size,
+            **kwargs
+        )
+
+        end = time.time()
+        callback.on_end_test_model(model, self.test_set, end - start)
+
+    @abstractmethod
+    def test_model_ratings(self, model, output_path, batch_size, **kwargs):
         raise NotImplementedError()
 
     def train_test_model(self, model, model_dir, callback, **kwargs):
@@ -128,12 +155,3 @@ class ModelPipeline(metaclass=ABCMeta):
         self.tested_models[model_name] += 1
 
         callback.on_end_model(model_name)
-
-    @staticmethod
-    def stringify_model(model):
-        result = model.name
-        params = model.get_params()
-        for param_name in params:
-            result = result + "_" + param_name + "=" + str(params[param_name])
-
-        return result

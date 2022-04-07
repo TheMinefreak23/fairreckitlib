@@ -49,6 +49,17 @@ def get_params_implicit_mf():
     }
 
 
+def get_params_item_item():
+    return {
+        PARAM_KEY_VALUES: [
+            _create_param_max_nnbrs(),
+            _create_param_min_nnbrs(),
+            _create_param_min_sim(1e-06)
+        ],
+        PARAM_KEY_OPTIONS: []
+    }
+
+
 def get_params_pop_score():
     options = [
         'quantile',
@@ -73,12 +84,35 @@ def get_params_random():
     }
 
 
+def get_params_user_user():
+    return {
+        PARAM_KEY_VALUES: [
+            _create_param_max_nnbrs(),
+            _create_param_min_nnbrs(),
+            _create_param_min_sim(0.0)
+        ],
+        PARAM_KEY_OPTIONS: []
+    }
+
+
 def _create_param_features(min):
     return create_value_param('features', min, 50, 10)
 
 
 def _create_param_iterations():
     return create_value_param('iterations', 1, 50, 20)
+
+
+def _create_param_max_nnbrs():
+    return create_value_param('max_nnbrs', 1, 50, 10)
+
+
+def _create_param_min_nnbrs():
+    return create_value_param('min_nbrs', 1, 50, 1)
+
+
+def _create_param_min_sim(min_sim):
+    return create_value_param('min_sim', 0.0, 10.0, min_sim)
 
 
 def _create_param_reg(name):

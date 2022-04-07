@@ -3,9 +3,10 @@ This program has been developed by students from the bachelor Computer Science a
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
+
 import numpy as np
 from lenskit.algorithms import Recommender
-from lenskit.batch import recommend
+import lenskit.batch as batch
 
 from ..recommender import RecommenderAlgorithm
 from .algorithms import *
@@ -13,17 +14,18 @@ from .algorithms import *
 
 class RecommenderLensKit(RecommenderAlgorithm):
 
-    def __init__(self, algo, params):
-        RecommenderAlgorithm.__init__(self, Recommender.adapt(algo), params)
+    def __init__(self, algo, params, **kwargs):
+        RecommenderAlgorithm.__init__(self, Recommender.adapt(algo), params, **kwargs)
 
     def train(self, train_set):
-        self._algo.fit(train_set)
+        self.algo.fit(train_set)
 
     def recommend(self, user, num_items=10):
-        return self._algo.recommend(user, n=num_items)
+        return self.algo.recommend(user, n=num_items)
 
     def recommend_batch(self, users, num_items=10):
-        recs = recommend(self._algo, users, num_items)
+        n_jobs = self.num_threads if self.num_threads > 0 else None
+        recs = batch.recommend(self.algo, users, num_items, n_jobs=n_jobs)
 
         # random algo does not produce a score
         if recs.get('score') is None:
@@ -32,17 +34,25 @@ class RecommenderLensKit(RecommenderAlgorithm):
         return recs[['user', 'item', 'score']]
 
 
-def create_recommender_biased_mf(params):
-    return RecommenderLensKit(create_biased_mf(params), params)
+def create_recommender_biased_mf(params, **kwargs):
+    return RecommenderLensKit(create_biased_mf(params), params, **kwargs)
 
 
-def create_recommender_implicit_mf(params):
-    return RecommenderLensKit(create_implicit_mf(params), params)
+def create_recommender_implicit_mf(params, **kwargs):
+    return RecommenderLensKit(create_implicit_mf(params), params, **kwargs)
 
 
-def create_recommender_pop_score(params):
-    return RecommenderLensKit(create_pop_score(params), params)
+def create_recommender_item_item(params, **kwargs):
+    return RecommenderLensKit(create_item_item(params, kwargs['rating_type']), params, **kwargs)
 
 
-def create_recommender_random(params):
-    return RecommenderLensKit(create_random(params), params)
+def create_recommender_pop_score(params, **kwargs):
+    return RecommenderLensKit(create_pop_score(params), params, **kwargs)
+
+
+def create_recommender_random(params, **kwargs):
+    return RecommenderLensKit(create_random(params), params, **kwargs)
+
+
+def create_recommender_user_user(params, **kwargs):
+    return RecommenderLensKit(create_user_user(params, kwargs['rating_type']), params, **kwargs)
