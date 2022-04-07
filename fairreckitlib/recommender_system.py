@@ -7,7 +7,9 @@ Utrecht University within the Software Project course.
 import os
 
 from fairreckitlib.experiment import common
-from .algorithms.factory import get_algorithm_list_from_factory, get_recommender_factory
+from .algorithms.factory import get_algorithm_list_from_factory
+from .algorithms.factory import get_predictor_factory
+from .algorithms.factory import get_recommender_factory
 from .data.registry import DataRegistry
 from .experiment.run import run_experiment
 
@@ -18,6 +20,7 @@ class RecommenderSystem:
     """
     def __init__(self, data_dir, result_dir):
         self.data_registry = DataRegistry(data_dir)
+        self.predictor_models = get_predictor_factory()
         self.recommender_models = get_recommender_factory()
 
         self.result_dir = result_dir
@@ -33,7 +36,7 @@ class RecommenderSystem:
         # evaluate additional metrics
         raise NotImplementedError()
 
-    def run_experiment(self, config):
+    def run_experiment(self, config, num_threads=0):
         result_dir = os.path.join(self.result_dir, config[common.EXP_KEY_NAME])
         if os.path.isdir(result_dir):
             raise IOError('Result already exists: ' + result_dir)
@@ -46,7 +49,8 @@ class RecommenderSystem:
         run_experiment(
             run_0_dir,
             self.data_registry,
-            config
+            config,
+            num_threads
         )
 
     def validate_experiment(self, experiment_dir, num_runs):
@@ -61,14 +65,20 @@ class RecommenderSystem:
         return self.data_registry.get_info()
 
     def get_available_predictors(self):
-        raise NotImplementedError()
+        predictors = {}
+
+        for algo_api in self.predictor_models:
+            api_factory = self.predictor_models[algo_api]
+            predictors[algo_api] = get_algorithm_list_from_factory(api_factory)
+
+        return predictors
 
     def get_available_recommenders(self):
         recommenders = {}
 
-        for rec_api in self.recommender_models:
-            api_factory = self.recommender_models[rec_api]
-            recommenders[rec_api] = get_algorithm_list_from_factory(api_factory)
+        for algo_api in self.recommender_models:
+            api_factory = self.recommender_models[algo_api]
+            recommenders[algo_api] = get_algorithm_list_from_factory(api_factory)
 
         return recommenders
 

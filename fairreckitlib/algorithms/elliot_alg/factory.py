@@ -20,13 +20,13 @@ def get_elliot_recommender_factory():
             FUNC_GET_ALGORITHM_PARAMS: get_params_item_knn,
             FUNC_CREATE_ALGORITHM: create_recommender_item_knn
         },
-        ELLIOT_MULTI_VAE: {
-            FUNC_GET_ALGORITHM_PARAMS: get_params_multi_vae,
-            FUNC_CREATE_ALGORITHM: create_recommender_multi_vae
-        },
         ELLIOT_MOST_POP: {
             FUNC_GET_ALGORITHM_PARAMS: get_params_most_pop,
             FUNC_CREATE_ALGORITHM: create_recommender_most_pop
+        },
+        ELLIOT_MULTI_VAE: {
+            FUNC_GET_ALGORITHM_PARAMS: get_params_multi_vae,
+            FUNC_CREATE_ALGORITHM: create_recommender_multi_vae
         },
         ELLIOT_PURE_SVD: {
             FUNC_GET_ALGORITHM_PARAMS: get_params_pure_svd,

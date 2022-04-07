@@ -9,13 +9,13 @@ from abc import ABCMeta, abstractmethod
 
 class Algorithm(metaclass=ABCMeta):
 
-    def __init__(self, algo, params):
-        self._algo = algo
-        self._params = params
+    def __init__(self, algo, params, **kwargs):
+        self.algo = algo
+        self.params = params
+
+        self.num_threads = kwargs['num_threads']
+        self.rating_scale = kwargs['rating_scale']
 
     @abstractmethod
     def train(self, train_set):
         raise NotImplementedError
-
-    def get_params(self):
-        return self._params

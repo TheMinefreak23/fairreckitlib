@@ -11,8 +11,8 @@ from ..recommender import RecommenderAlgorithm
 
 class RecommenderElliot(RecommenderAlgorithm):
 
-    def __init__(self, algo, params):
-        RecommenderAlgorithm.__init__(self, algo, params)
+    def __init__(self, algo, params, **kwargs):
+        RecommenderAlgorithm.__init__(self, algo, params, **kwargs)
 
     def train(self, train_set):
         raise NotImplementedError()
@@ -24,45 +24,45 @@ class RecommenderElliot(RecommenderAlgorithm):
         raise NotImplementedError()
 
 
-def create_recommender_funk_svd(params):
+def create_recommender_funk_svd(params, **kwargs):
     if params['seed'] is None:
         params['seed'] = int(time.time())
 
-    return RecommenderElliot(None, params)
+    return RecommenderElliot(None, params, **kwargs)
 
 
-def create_recommender_item_knn(params):
-    return RecommenderElliot(None, params)
+def create_recommender_item_knn(params, **kwargs):
+    return RecommenderElliot(None, params, **kwargs)
 
 
-def create_recommender_most_pop(params):
-    return RecommenderElliot(None, params)
+def create_recommender_most_pop(params, **kwargs):
+    return RecommenderElliot(None, params, **kwargs)
 
 
-def create_recommender_multi_vae(params):
+def create_recommender_multi_vae(params, **kwargs):
     if params['seed'] is None:
         params['seed'] = int(time.time())
 
-    return RecommenderElliot(None, params)
+    return RecommenderElliot(None, params, **kwargs)
 
 
-def create_recommender_pure_svd(params):
-    return RecommenderElliot(None, params)
+def create_recommender_pure_svd(params, **kwargs):
+    return RecommenderElliot(None, params, **kwargs)
 
 
-def create_recommender_random(params):
+def create_recommender_random(params, **kwargs):
     if params['random_seed'] is None:
         params['random_seed'] = int(time.time())
 
-    return RecommenderElliot(None, params)
+    return RecommenderElliot(None, params, **kwargs)
 
 
-def create_recommender_svd_pp(params):
+def create_recommender_svd_pp(params, **kwargs):
     if params['seed'] is None:
         params['seed'] = int(time.time())
 
-    return RecommenderElliot(None, params)
+    return RecommenderElliot(None, params, **kwargs)
 
 
-def create_recommender_user_knn(params):
-    return RecommenderElliot(None, params)
+def create_recommender_user_knn(params, **kwargs):
+    return RecommenderElliot(None, params, **kwargs)

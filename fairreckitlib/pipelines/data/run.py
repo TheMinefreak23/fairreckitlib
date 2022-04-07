@@ -11,6 +11,7 @@ from fairreckitlib.experiment.config import EXP_KEY_DATASET_RATING_MODIFIER
 from fairreckitlib.experiment.config import EXP_KEY_DATASET_SPLIT
 from .pipeline import DataPipeline
 
+
 def run_data_pipeline(output_dir, data_registry, datasets_config, callback):
     data_tuples = []
 
@@ -19,7 +20,7 @@ def run_data_pipeline(output_dir, data_registry, datasets_config, callback):
         dataset_name = config[EXP_KEY_DATASET_NAME]
         dataset = data_registry.get_set(dataset_name)
 
-        data_dir, train_set_path, test_set_path = dp.run(
+        data_dir, train_set_path, test_set_path, rating_scale, rating_type = dp.run(
             output_dir,
             dataset,
             config[EXP_KEY_DATASET_PREFILTERS],
@@ -28,7 +29,7 @@ def run_data_pipeline(output_dir, data_registry, datasets_config, callback):
             callback
         )
 
-        tuple = (dataset, data_dir, train_set_path, test_set_path)
+        tuple = (dataset, data_dir, train_set_path, test_set_path, rating_scale, rating_type)
         data_tuples.append(tuple)
 
     return data_tuples

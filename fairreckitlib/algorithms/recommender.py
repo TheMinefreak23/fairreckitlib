@@ -11,9 +11,6 @@ from .algorithm import Algorithm
 
 class RecommenderAlgorithm(Algorithm, metaclass=ABCMeta):
 
-    def __init__(self, algo, params):
-        Algorithm.__init__(self, algo, params)
-
     @abstractmethod
     def recommend(self, user, num_items=10):
         raise NotImplementedError()
