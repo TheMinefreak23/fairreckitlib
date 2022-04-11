@@ -1,14 +1,14 @@
 import enum
 
 
+class RecType(enum.Enum):
+    Prediction = 'prediction'
+    Recommendation = 'recommendation'
+
+
 class MetricLibrary(enum.Enum):
     Lenskit = 'Lenskit'
     Rexmex = 'Rexmex'
-
-
-class MainCategory(enum.Enum):
-    Prediction = 'Prediction'
-    Recommendation = 'Recommendation'
 
 
 class MetricCategory(enum.Enum):
@@ -47,3 +47,14 @@ class Metric(enum.Enum):
     # ??
     dir = 'DIR'
     pairwise_fairness = 'Pairwise Fairness'
+
+
+def metric_matches_type(metric, type):
+    metrics_by_type = {
+        RecType.Recommendation: [Metric.ndcg, Metric.precision, Metric.recall, Metric.mrr],
+        RecType.Prediction: [Metric.rmse, Metric.mae]
+    }
+
+    # If it's in neither list, it means it can be used for both types
+    generic = not (metric in metrics_by_type[RecType.Prediction] or metric in metrics_by_type[RecType.Recommendation])
+    return generic or metric in metrics_by_type[type]

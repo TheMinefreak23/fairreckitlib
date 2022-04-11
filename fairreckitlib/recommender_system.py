@@ -73,4 +73,8 @@ class RecommenderSystem:
         return recommenders
 
     def get_available_metrics(self):
-        raise NotImplementedError()
+        # TODO refactor
+        from metrics.evaluator_lenskit import EvaluatorLenskit
+        from metrics.evaluator_rexmex import EvaluatorRexmex
+        EvaluatorLenskit.metricDict.keys() + EvaluatorRexmex.metricDict.keys()
+        #raise NotImplementedError()
