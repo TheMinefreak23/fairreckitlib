@@ -117,9 +117,14 @@ class RecommenderSystem:
         """Gets the available datasets of the recommender system."""
         return self.data_registry.get_info()
 
+    
     def get_available_metrics(self):
-        """Gets the available metrics of the recommender system."""
-        raise NotImplementedError()
+        # TODO refactor
+        from metrics.evaluator_lenskit import EvaluatorLenskit
+        from metrics.evaluator_rexmex import EvaluatorRexmex
+        EvaluatorLenskit.metricDict.keys() + EvaluatorRexmex.metricDict.keys()
+        #raise NotImplementedError()
+
 
     def get_available_predictors(self):
         """Gets the available predictors of the recommender system.
