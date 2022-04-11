@@ -4,32 +4,24 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from fairreckitlib.data.split.factory import get_split_factory
-from fairreckitlib.experiment.config import EXP_KEY_DATASET_NAME
-from fairreckitlib.experiment.config import EXP_KEY_DATASET_PREFILTERS
-from fairreckitlib.experiment.config import EXP_KEY_DATASET_RATING_MODIFIER
-from fairreckitlib.experiment.config import EXP_KEY_DATASET_SPLIT
+from fairreckitlib.experiment.common import EXP_KEY_DATASET_NAME
 from .pipeline import DataPipeline
 
 
-def run_data_pipeline(output_dir, data_registry, datasets_config, callback):
-    data_tuples = []
+def run_data_pipeline(output_dir, data_registry, split_factory,
+                      datasets_config, event_dispatcher):
+    """TODO"""
+    data_result = []
 
-    dp = DataPipeline(get_split_factory())
-    for config in datasets_config:
-        dataset_name = config[EXP_KEY_DATASET_NAME]
+    data_pipeline = DataPipeline(split_factory, event_dispatcher)
+    for data_config in datasets_config:
+        dataset_name = data_config[EXP_KEY_DATASET_NAME]
         dataset = data_registry.get_set(dataset_name)
 
-        data_dir, train_set_path, test_set_path, rating_scale, rating_type = dp.run(
+        data_result.append(data_pipeline.run(
             output_dir,
             dataset,
-            config[EXP_KEY_DATASET_PREFILTERS],
-            config[EXP_KEY_DATASET_RATING_MODIFIER],
-            config[EXP_KEY_DATASET_SPLIT],
-            callback
-        )
+            data_config
+        ))
 
-        tuple = (dataset, data_dir, train_set_path, test_set_path, rating_scale, rating_type)
-        data_tuples.append(tuple)
-
-    return data_tuples
+    return data_result

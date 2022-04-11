@@ -4,11 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from fairreckitlib.algorithms.common import ALGORITHM_NAME, ALGORITHM_PARAMS
-from fairreckitlib.data.set import DATASET_LFM_360K, DATASET_LFM_1B, DATASET_LFM_2B
-from fairreckitlib.data.set import DATASET_ML_100K, DATASET_ML_25M
-from fairreckitlib.data.split.factory import SPLIT_RANDOM
-from fairreckitlib.data.split.factory import SPLIT_TEMPORAL
+from fairreckitlib.algorithms.constants import ALGORITHM_NAME, ALGORITHM_PARAMS
 
 EXP_KEY_NAME = 'name'
 
@@ -25,7 +21,6 @@ EXP_KEY_DATASET_RATING_MODIFIER = 'rating_modifier'
 EXP_KEY_DATASET_SPLIT = 'splitting'
 EXP_KEY_DATASET_SPLIT_TEST_RATIO = 'test_ratio'
 EXP_KEY_DATASET_SPLIT_TYPE = 'type'
-EXP_KEY_DATASET_SPLIT_PARAMS = 'params'
 
 EXP_KEY_MODELS = 'models'
 EXP_KEY_MODEL_NAME = ALGORITHM_NAME

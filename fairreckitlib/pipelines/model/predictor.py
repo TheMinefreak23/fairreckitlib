@@ -4,13 +4,14 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-import os
-
-from ..common import *
 from .pipeline import ModelPipeline
 
 
 class PredictorPipeline(ModelPipeline):
+    """Prediction Pipeline that computes user/item rating predictions.
+
+    The (user,item) prediction will be computed and for each pair that is present in the test set.
+    """
 
     def test_model_ratings(self, model, output_path, batch_size, **kwargs):
         start_index = 0
@@ -19,13 +20,3 @@ class PredictorPipeline(ModelPipeline):
             predictions = model.predict_batch(user_batch)
             predictions.to_csv(output_path, mode='a', sep='\t', header=False, index=False)
             start_index += batch_size
-
-
-def create_predictor_pipeline_lenskit():
-    api, factory = get_lenskit_predictor_factory()
-    return PredictorPipeline(api, factory)
-
-
-def create_predictor_pipeline_surprise():
-    api, factory = get_surprise_predictor_factory()
-    return PredictorPipeline(api, factory)

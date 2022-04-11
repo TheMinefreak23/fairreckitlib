@@ -4,10 +4,20 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ..params import *
+from ..params import PARAM_KEY_OPTIONS
+from ..params import PARAM_KEY_VALUES
+from ..params import create_value_param
+from ..params import create_param_bool
+from ..params import create_param_seed
+from ..params import create_param_factors
 
 
-def get_params_baseline_only_als():
+def get_surprise_params_baseline_only_als():
+    """Gets the parameters of the BaselineOnly ALS algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             _create_param_epochs(10),
@@ -18,7 +28,12 @@ def get_params_baseline_only_als():
     }
 
 
-def get_params_baseline_only_sgd():
+def get_surprise_params_baseline_only_sgd():
+    """Gets the parameters of the BaselineOnly SGD algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             _create_param_epochs(20),
@@ -29,7 +44,12 @@ def get_params_baseline_only_sgd():
     }
 
 
-def get_params_co_clustering():
+def get_surprise_params_co_clustering():
+    """Gets the parameters of the CoClustering algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             _create_param_epochs(20),
@@ -40,7 +60,12 @@ def get_params_co_clustering():
         PARAM_KEY_OPTIONS: []
     }
 
-def get_params_nmf():
+def get_surprise_params_nmf():
+    """Gets the parameters of the NMF algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             create_param_factors(15),
@@ -61,14 +86,12 @@ def get_params_nmf():
     }
 
 
-def get_params_empty():
-    return {
-        PARAM_KEY_VALUES: [],
-        PARAM_KEY_OPTIONS: []
-    }
+def get_surprise_params_svd():
+    """Gets the parameters of the SVD algorithm.
 
-
-def get_params_svd():
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             create_param_factors(100),
@@ -85,7 +108,12 @@ def get_params_svd():
     }
 
 
-def get_params_svd_pp():
+def get_surprise_params_svd_pp():
+    """Gets the parameters of the SVDpp algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             create_param_factors(20),

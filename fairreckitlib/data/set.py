@@ -59,6 +59,9 @@ class Dataset:
         else:
             raise NotImplementedError()
 
+    def get_file_path(self):
+        return os.path.join(self.dir, self.name + '.tsv')
+
     def get_info(self):
         return {
             'num_users': self.num_users,
@@ -75,5 +78,4 @@ class Dataset:
         if self.timestamp:
             names.append('timestamp')
 
-        file_path = os.path.join(self.dir, self.name + '.tsv')
-        return pd.read_csv(file_path, sep='\t', header=None, names=names)
+        return pd.read_csv(self.get_file_path(), sep='\t', header=None, names=names)

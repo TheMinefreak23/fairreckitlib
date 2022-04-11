@@ -4,10 +4,20 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ..params import *
+from ..params import PARAM_KEY_OPTIONS
+from ..params import PARAM_KEY_VALUES
+from ..params import create_option_param
+from ..params import create_param_factors
+from ..params import create_param_seed
+from ..params import create_value_param
 
 
-def get_params_funk_svd():
+def get_elliot_params_funk_svd():
+    """Gets the parameters of the FunkSVD algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             _create_param_epochs(),
@@ -22,7 +32,12 @@ def get_params_funk_svd():
     }
 
 
-def get_params_item_knn():
+def get_elliot_params_item_knn():
+    """Gets the parameters of the ItemKNN algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             _create_param_neighbours()
@@ -34,7 +49,12 @@ def get_params_item_knn():
     }
 
 
-def get_params_multi_vae():
+def get_elliot_params_multi_vae():
+    """Gets the parameters of the MultiVAE algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             _create_param_batch_size(),
@@ -50,14 +70,12 @@ def get_params_multi_vae():
     }
 
 
-def get_params_most_pop():
-    return {
-        PARAM_KEY_VALUES: [],
-        PARAM_KEY_OPTIONS: []
-    }
+def get_elliot_params_pure_svd():
+    """Gets the parameters of the PureSVD algorithm.
 
-
-def get_params_pure_svd():
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             create_param_factors(10),
@@ -67,7 +85,12 @@ def get_params_pure_svd():
     }
 
 
-def get_params_random():
+def get_elliot_params_random():
+    """Gets the parameters of the Random algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             create_param_seed('random_seed')
@@ -76,7 +99,12 @@ def get_params_random():
     }
 
 
-def get_params_svd_pp():
+def get_elliot_params_svd_pp():
+    """Gets the parameters of the SVDpp algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             _create_param_epochs(),
@@ -91,7 +119,12 @@ def get_params_svd_pp():
     }
 
 
-def get_params_user_knn():
+def get_elliot_params_user_knn():
+    """Gets the parameters of the UserKNN algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             _create_param_neighbours()

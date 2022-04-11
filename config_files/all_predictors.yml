@@ -1,0 +1,103 @@
+datasets:
+- name: ML-100K
+  prefilters: []
+  rating_modifier: null
+  splitting:
+    test_ratio: 0.2
+    type: random
+- name: ML-100K
+  prefilters: []
+  rating_modifier: null
+  splitting:
+    test_ratio: 0.3
+    type: random
+evaluation: {}
+models:
+  LensKit:
+  - name: BiasedMF
+    params:
+      damping: 5.0
+      features: 10
+      item_reg: 0.1
+      iterations: 20
+      method: cd
+      random_seed: null
+      user_reg: 0.1
+  - name: ImplicitMF
+    params:
+      features: 10
+      iterations: 20
+      method: cg
+      random_seed: null
+      reg: 0.1
+      use_ratings: false
+      weight: 40.0
+  - name: ItemItem
+    params:
+      max_nnbrs: 10
+      min_nbrs: 1
+      min_sim: 1.0e-06
+  - name: PopScore
+    params:
+      score_method: quantile
+  - name: UserUser
+    params:
+      max_nnbrs: 10
+      min_nbrs: 1
+      min_sim: 0.0
+  Surprise:
+  - name: BaselineOnlyALS
+    params:
+      epochs: 10
+      reg_i: 10
+      reg_u: 15
+  - name: BaselineOnlySGD
+    params:
+      epochs: 20
+      learning_rate: 0.005
+      regularization: 0.02
+  - name: CoClustering
+    params:
+      epochs: 20
+      item_clusters: 3
+      random_seed: null
+      user_clusters: 3
+  - name: NMF
+    params:
+      biased: false
+      epochs: 50
+      factors: 15
+      init_high: 1
+      init_low: 0
+      lr_bi: 0.005
+      lr_bu: 0.005
+      random_seed: null
+      reg_bi: 0.02
+      reg_bu: 0.02
+      reg_pu: 0.06
+      reg_qi: 0.06
+  - name: NormalPredictor
+    params: {}
+  - name: SlopeOne
+    params: {}
+  - name: SVD
+    params:
+      biased: true
+      epochs: 20
+      factors: 100
+      init_mean: 0
+      init_std_dev: 0.1
+      learning_rate: 0.005
+      random_seed: null
+      regularization: 0.02
+  - name: SVDpp
+    params:
+      epochs: 20
+      factors: 20
+      init_mean: 0
+      init_std_dev: 0.1
+      learning_rate: 0.007
+      random_seed: null
+      regularization: 0.02
+name: 1649686577_HelloFRK
+type: prediction

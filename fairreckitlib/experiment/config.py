@@ -4,7 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from fairreckitlib.algorithms.common import FUNC_GET_ALGORITHM_PARAMS
+from fairreckitlib.algorithms.factory import FUNC_GET_ALGORITHM_PARAMS
 from fairreckitlib.algorithms.elliot_alg.factory import get_elliot_recommender_factory
 from fairreckitlib.algorithms.implicit_alg.factory import get_implicit_recommender_factory
 from fairreckitlib.algorithms.lenskit_alg.factory import get_lenskit_predictor_factory
@@ -21,25 +21,23 @@ def create_config_dataset(dataset_name, test_ratio, split_type):
         EXP_KEY_DATASET_RATING_MODIFIER: None,
         EXP_KEY_DATASET_SPLIT: {
             EXP_KEY_DATASET_SPLIT_TEST_RATIO: test_ratio,
-            EXP_KEY_DATASET_SPLIT_TYPE: split_type,
-            EXP_KEY_DATASET_SPLIT_PARAMS: {}
+            EXP_KEY_DATASET_SPLIT_TYPE: split_type
         }
     }
 
 
 def create_config_api_models(func_get_api_factory):
-    api_name, api_factory = func_get_api_factory()
+    api_factory = func_get_api_factory()
 
     models = []
-    for model_name in api_factory:
-        entry = api_factory[model_name]
+    for model_name, entry in api_factory.get_entries().items():
         params = entry[FUNC_GET_ALGORITHM_PARAMS]()
         models.append({
             EXP_KEY_MODEL_NAME: model_name,
             EXP_KEY_MODEL_PARAMS: get_param_defaults(params)
         })
 
-    return api_name, models
+    return api_factory.get_api_name(), models
 
 
 def create_config_all_predictor_models(lenskit=True, surprise=True):
