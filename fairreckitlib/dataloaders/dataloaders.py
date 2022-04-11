@@ -21,16 +21,23 @@ class dataloader_base(ABC):
     """
     configs = None
     _dataset_name = None
-    data_frames = {}
+    data_frame = None
     _user_cat = None
     _item_cat = None
 
     def __init__(self) -> None:
         self.configs = get_configs(os.path.dirname(os.path.abspath(__file__)) + "\\config.ini")
 
+    def save_to_tsv(self, file_path: str) -> None:
+        """
+        """
+        self.data_frame.to_csv(file_path, header=False, sep='\t', index=False)
+
 class dataloader_360k(dataloader_base):
-    """_summary_
     """
+    In order to load 360k 
+    """
+    
     
     def __init__(self):
         super(dataloader_360k, self).__init__()
@@ -42,39 +49,32 @@ class dataloader_360k(dataloader_base):
         and loads the content of the files in dataframes based on the read config file.
         """
 
-        for sub_dataset in [section for section in self.configs.sections() if section.startswith(self._dataset_name)]:
-            params = dict(delimiter=self.configs.get(sub_dataset, "delimiter", fallback=","),
-                          names=self.configs.get(sub_dataset, "headers").split(","),
-                          engine='python')
-            if self.configs.get(sub_dataset, "timestamp", fallback=None):
-                params.update(dict(parse_dates=self.configs.get(sub_dataset, "timestamp").split(",")))
-            df = pd.read_csv(self.configs.get(sub_dataset, "file_path"), **params)
-            self.data_frames.update({sub_dataset: df})
+        sub_dataset = "lfm_360k_usersha1-artmbid-artname-plays"
+        params = dict(delimiter=self.configs.get(sub_dataset, "delimiter", fallback=","),
+                      names=self.configs.get(sub_dataset, "headers").split(","),
+                      engine='python', usecols=[0, 2, 3])
+        self.data_frames = pd.read_csv(self.configs.get(sub_dataset, "file_path"), **params)
     
-    def get_user_item_matrix(self) -> sparse.csr_matrix:
+    def get_user_item_matrix(self) -> None:
         """
+        Void function to make sparse user-item matrix
         """
-        df = self.data_frames["lfm_360k_usersha1-artmbid-artname-plays"].copy()
-
-        df['user_id'] = df['user-mboxsha1'].map(lambda x: zlib.adler32(str(x).encode('utf-8', errors='ignore')))
-        df['artist_id'] = df['artist-name'].map(lambda x: zlib.adler32(str(x).encode('utf-8', errors='ignore')))
+        self.data_frame['user_id'] = self.data_frame['user-sha1'].map(lambda x: zlib.adler32(str(x).encode('utf-8', errors='ignore')))
+        self.data_frame['artist_id'] = self.data_frame['artist-name'].map(lambda x: zlib.adler32(str(x).encode('utf-8', errors='ignore')))
         
-        self.data_frames["lfm_360k_usersha1-artmbid-artname-plays"] = df
-
-        users = df["user_id"].unique()
-        items = df["artist_id"].unique()
+        users = self.data_frame["user_id"].unique()
+        items = self.data_frame["artist_id"].unique()
         shape = (len(users), len(items))
 
         # Create indices for users and items
         self._user_cat = CategoricalDtype(categories=sorted(users), ordered=True)
         self._item_cat = CategoricalDtype(categories=sorted(items), ordered=True)
-        user_index = df["user_id"].astype(self._user_cat).cat.codes
-        item_index = df["artist_id"].astype(self._item_cat).cat.codes
+        user_index = self.data_frame["user_id"].astype(self._user_cat).cat.codes
+        item_index = self.data_frame["artist_id"].astype(self._item_cat).cat.codes
 
         # Conversion via COO matrix
-        coo = sparse.coo_matrix((df["plays"].astype(np.float32), (user_index, item_index)), shape=shape)
-        return coo.tocsr()
-
+        coo = sparse.coo_matrix((self.data_frame["plays"].astype(np.float32), (user_index, item_index)), shape=shape)
+        self.data_frame = pd.DataFrame.sparse.from_spmatrix(coo.tocsr())
 
     def get_user_id(self, user_index: int) -> int:
         """
