@@ -4,10 +4,20 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ..params import *
+from ..params import PARAM_KEY_OPTIONS
+from ..params import PARAM_KEY_VALUES
+from ..params import create_option_param
+from ..params import create_param_bool
+from ..params import create_param_seed
+from ..params import create_value_param
 
 
-def get_params_biased_mf():
+def get_lenskit_params_biased_mf():
+    """Gets the parameters of the BiasedMF algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     methods = [
         'cd',
         'lu'
@@ -28,7 +38,12 @@ def get_params_biased_mf():
     }
 
 
-def get_params_implicit_mf():
+def get_lenskit_params_implicit_mf():
+    """Gets the parameters of the ImplicitMF algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     methods = [
         'cg',
         'lu'
@@ -49,7 +64,12 @@ def get_params_implicit_mf():
     }
 
 
-def get_params_item_item():
+def get_lenskit_params_item_item():
+    """Gets the parameters of the ItemItem algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             _create_param_max_nnbrs(),
@@ -60,7 +80,12 @@ def get_params_item_item():
     }
 
 
-def get_params_pop_score():
+def get_lenskit_params_pop_score():
+    """Gets the parameters of the PopScore algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     options = [
         'quantile',
         'rank',
@@ -75,7 +100,12 @@ def get_params_pop_score():
     }
 
 
-def get_params_random():
+def get_lenskit_params_random():
+    """Gets the parameters of the Random algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             create_param_seed('random_seed')
@@ -84,7 +114,12 @@ def get_params_random():
     }
 
 
-def get_params_user_user():
+def get_lenskit_params_user_user():
+    """Gets the parameters of the UserUser algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             _create_param_max_nnbrs(),
@@ -95,8 +130,8 @@ def get_params_user_user():
     }
 
 
-def _create_param_features(min):
-    return create_value_param('features', min, 50, 10)
+def _create_param_features(min_features):
+    return create_value_param('features', min_features, 50, 10)
 
 
 def _create_param_iterations():

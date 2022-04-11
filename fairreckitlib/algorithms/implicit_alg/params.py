@@ -4,10 +4,20 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ..params import *
+from ..params import PARAM_KEY_OPTIONS
+from ..params import PARAM_KEY_VALUES
+from ..params import create_param_factors
+from ..params import create_param_bool
+from ..params import create_param_seed
+from ..params import create_value_param
 
 
-def get_params_alternating_least_squares():
+def get_implicit_params_alternating_least_squares():
+    """Gets the parameters of the AlternatingLeastSquares algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             create_param_factors(100),
@@ -23,7 +33,12 @@ def get_params_alternating_least_squares():
     }
 
 
-def get_params_bayesian_personalized_ranking():
+def get_implicit_params_bayesian_personalized_ranking():
+    """Gets the parameters of the BayesianPersonalizedRanking algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             create_param_factors(100),
@@ -38,7 +53,12 @@ def get_params_bayesian_personalized_ranking():
     }
 
 
-def get_params_logistic_matrix_factorization():
+def get_implicit_params_logistic_matrix_factorization():
+    """Gets the parameters of the LogisticMatrixFactorization algorithm.
+
+    Returns:
+        (dict) containing array like values and options.
+    """
     return {
         PARAM_KEY_VALUES: [
             create_param_factors(30),

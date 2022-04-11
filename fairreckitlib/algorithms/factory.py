@@ -4,57 +4,121 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from .elliot_alg.factory import *
-from .implicit_alg.factory import *
-from .lenskit_alg.factory import *
-from .surprise_alg.factory import *
+from .constants import ALGORITHM_NAME
+from .constants import ALGORITHM_PARAMS
+
+FUNC_GET_ALGORITHM_PARAMS = 'f_get_algorithm_params'
+FUNC_CREATE_ALGORITHM = 'f_create_algorithm'
 
 
-def get_algorithm_list_from_factory(api_factory):
-    algos = []
+class AlgorithmFactory:
+    """Algorithm Factory with available algorithms.
 
-    for rec_name in api_factory:
-        algos.append({
-            ALGORITHM_NAME: rec_name,
-            ALGORITHM_PARAMS: api_factory[rec_name][FUNC_GET_ALGORITHM_PARAMS]()
-        })
+    Args:
+        api_name(str): name of the API associated with the algorithm factory.
+    """
+    def __init__(self, api_name):
+        self.__api_name = api_name
+        self.__factory = {}
 
-    return algos
+    def add(self, algo_name, func_create_algo, func_get_algo_params):
+        """Adds an algorithm to the factory.
+
+        This function raises a KeyError when the name of the algorithm
+        is already registered for this algorithm factory.
+
+        Args:
+            algo_name(str): name of the algorithm.
+            func_create_algo(function): creation function that takes the
+                algorithm parameters and **kwargs.
+            func_get_algo_params(function): get parameters function that
+                describes all parameters for the algorithm.
+        """
+        if self.__factory.get(algo_name) is not None:
+            raise KeyError('Algorithm already exists: ' + algo_name)
+
+        self.__factory[algo_name] = {
+            FUNC_CREATE_ALGORITHM: func_create_algo,
+            FUNC_GET_ALGORITHM_PARAMS: func_get_algo_params
+        }
+
+    def create(self, algo_name, algo_params, **kwargs):
+        """Creates the algorithm with the specified name and parameters.
+
+        Args:
+            algo_name(str): name of the algorithm.
+            algo_params(dict): parameters of the algorithm.
+
+        Keyword Args:
+            num_threads(int): the max number of threads the algorithm can use.
+        """
+        if self.__factory.get(algo_name) is None:
+            raise KeyError('Algorithm does not exist: ' + algo_name)
+
+        func_create_algo = self.__factory[algo_name][FUNC_CREATE_ALGORITHM]
+        algo = func_create_algo(algo_params, **kwargs)
+        algo.name = algo_name
+
+        return algo
+
+    def get_api_name(self):
+        """Gets the name of the API associated with the factory.
+
+        Returns:
+            api_name(str) name of the API.
+        """
+        return self.__api_name
+
+    def get_available(self):
+        """Gets the available algorithms in the factory.
+
+        Returns:
+            algo_list(array like): dict entries with algorithm name and params.
+        """
+        algo_list = []
+
+        for algo_name, entry in self.__factory.items():
+            algo_params = entry[FUNC_GET_ALGORITHM_PARAMS]()
+            algo_list.append({
+                ALGORITHM_NAME: algo_name,
+                ALGORITHM_PARAMS: algo_params
+            })
+
+        return algo_list
+
+    def get_entries(self):
+        """Gets the algorithm entries of the factory.
+
+        Returns:
+            factory entries(dict)
+        """
+        return dict(self.__factory)
 
 
-def get_predictor_factory():
-    lenskit_api, lenskit_factory = get_lenskit_predictor_factory()
-    surprise_api, surprise_factory = get_surprise_predictor_factory()
+def create_algorithm_factory_from_list(api_name, algo_list):
+    """Creates an AlgorithmFactory from a list of tuples.
 
-    return {
-        lenskit_api: lenskit_factory,
-        surprise_api: surprise_factory,
-    }
+    Each tuple consists of:
 
+    1) algorithm name
+    2) algorithm creation function
+    3) algorithm params function
 
-def get_recommender_api_list():
-    rec_factory = get_recommender_factory()
+    Args:
+        api_name(str): name of the API associated with the factory.
+        algo_list(array like): list of tuples.
 
-    result = []
+    Returns:
+        (AlgorithmFactory) filled with the specified tuples.
+    """
+    factory = AlgorithmFactory(api_name)
 
-    for rec_api in rec_factory:
-        api_factory = rec_factory[rec_api]
+    for _, algo in enumerate(algo_list):
+        (algo_name, func_create_algo, func_get_algo_params) = algo
+        factory.add(
+            algo_name,
+            func_create_algo,
+            func_get_algo_params
+        )
 
-        result.append({
-            'name': rec_api,
-            'recommenders': get_algorithm_list_from_factory(api_factory)
-        })
-
-    return result
-
-
-def get_recommender_factory():
-    elliot_api, elliot_factory = get_elliot_recommender_factory()
-    implicit_api, implicit_factory = get_implicit_recommender_factory()
-    lenskit_api, lenskit_factory = get_lenskit_recommender_factory()
-
-    return {
-        elliot_api: elliot_factory,
-        implicit_api: implicit_factory,
-        lenskit_api: lenskit_factory,
-    }
+    return factory

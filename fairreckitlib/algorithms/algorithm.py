@@ -8,14 +8,31 @@ from abc import ABCMeta, abstractmethod
 
 
 class Algorithm(metaclass=ABCMeta):
+    """Base class for FairRecKit algorithms.
 
-    def __init__(self, algo, params, **kwargs):
-        self.algo = algo
-        self.params = params
+    An algorithm is used for carrying out recommender system experiments.
 
+    Keyword Args:
+        num_threads(int): the max number of threads the algorithm can use.
+    """
+    def __init__(self, **kwargs):
         self.num_threads = kwargs['num_threads']
-        self.rating_scale = kwargs['rating_scale']
+
+    @abstractmethod
+    def get_params(self):
+        """Get the parameters of the algorithm.
+
+        Returns:
+            dict with the algorithm parameters.
+        """
+        raise NotImplementedError()
 
     @abstractmethod
     def train(self, train_set):
-        raise NotImplementedError
+        """Trains the model on the specified train set.
+
+        Args:
+            train_set(pandas.DataFrame): with at least three columns:
+                'user', 'item', 'rating'.
+        """
+        raise NotImplementedError()

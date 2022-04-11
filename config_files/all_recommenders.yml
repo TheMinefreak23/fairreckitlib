@@ -3,14 +3,12 @@ datasets:
   prefilters: []
   rating_modifier: null
   splitting:
-    params: {}
     test_ratio: 0.2
     type: random
 - name: ML-100K
   prefilters: []
   rating_modifier: null
   splitting:
-    params: {}
     test_ratio: 0.3
     type: random
 evaluation: {}
@@ -30,6 +28,8 @@ models:
       implementation: aiolli
       neighbours: 40
       similarity: cosine
+  - name: MostPop
+    params: {}
   - name: MultiVAE
     params:
       batch_size: 512
@@ -40,8 +40,6 @@ models:
       lr: 0.001
       reg_lambda: 0.01
       seed: null
-  - name: MostPop
-    params: {}
   - name: PureSVD
     params:
       factors: 10
@@ -108,12 +106,22 @@ models:
       reg: 0.1
       use_ratings: false
       weight: 40.0
+  - name: ItemItem
+    params:
+      max_nnbrs: 10
+      min_nbrs: 1
+      min_sim: 1.0e-06
   - name: PopScore
     params:
       score_method: quantile
   - name: Random
     params:
       random_seed: null
-name: 1648941230_HelloFRK
+  - name: UserUser
+    params:
+      max_nnbrs: 10
+      min_nbrs: 1
+      min_sim: 0.0
+name: 1649686622_HelloFRK
 top_K: 10
 type: recommendation
