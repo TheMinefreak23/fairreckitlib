@@ -58,7 +58,8 @@ class Experiment:
                 data_transition.test_set_path,
                 model_dirs,
                 config[EXP_KEY_EVALUATION],
-                self.event_dispatcher
+                self.event_dispatcher,
+                **kwargs
             )
 
         self.__detach_event_listeners()

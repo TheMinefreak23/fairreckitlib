@@ -1,3 +1,4 @@
+import os.path
 from datetime import datetime
 
 import json
@@ -99,7 +100,7 @@ class EvaluationPipeline:
 
         print('Writing evaluations to file..')
         lk_string = '_lk' if self.test_use_lenskit else ''
-        out_file = open("evaluations_"+self.name+lk_string+".json", "w")
+        out_file = open(os.path.dirname(recs_path)+"/evaluations.json", "w")
         json.dump({'evaluations': evaluations}, out_file, indent=4)
         # TODO: write entry in the overview JSON
         print('Saved evaluations.')
