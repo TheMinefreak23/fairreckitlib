@@ -30,11 +30,11 @@ def run_model_pipelines(output_dir, data_transition, model_factory,
 
     for api_name, models in models_config.items():
         model_pipeline = model_factory.create_pipeline(api_name, event_dispatcher)
-        model_dirs.append(model_pipeline.run(
+        model_dirs += model_pipeline.run(
             output_dir,
             data_transition,
             models,
             **kwargs
-        ))
+        )
 
     return model_dirs
