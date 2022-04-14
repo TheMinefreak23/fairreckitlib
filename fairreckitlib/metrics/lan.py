@@ -69,4 +69,4 @@ filters = [
 ]
 
 pipeline = EvaluationPipeline(test_result, test360_profile, metrics, k, filters)
-pipeline.run()
+#pipeline.run()
