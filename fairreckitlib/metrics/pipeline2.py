@@ -7,7 +7,7 @@ import pandas as pd
 
 from fairreckitlib.metrics.evaluator_lenskit import EvaluatorLenskit
 from fairreckitlib.metrics.evaluator_rexmex import EvaluatorRexmex
-from fairreckitlib.metrics.metrics2 import metric_matches_type
+from fairreckitlib.metrics.common import metric_matches_type
 
 
 class EvaluationPipeline:
