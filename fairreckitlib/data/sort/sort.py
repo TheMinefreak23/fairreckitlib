@@ -8,4 +8,6 @@ import pandas
 
 def sort_data(df, header, ascending):
     """Returns the dataset, sorted by the given header, ascending or descending."""
-    return df.sort_values(by=header, ascending=ascending)
+    if header in df.columns:
+        return df.sort_values(by=header, ascending=ascending)
+    else: return df
