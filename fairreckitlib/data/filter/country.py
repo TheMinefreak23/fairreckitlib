@@ -12,9 +12,12 @@ class CountryFilter(DataFilter):
     def __init__(self, df):
         self.df = df
     
-    def run(self, df, filter_value):
+    def run(self, df, country):
+        """Country == name of the country that you want to filter on. 
+        All other countries get filtered out.
+        """
         if 'country' in df.columns:
-            filter = df['country'] == filter_value
+            filter = df['country'] == country
             return df.loc[filter]
         else: return df
 

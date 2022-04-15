@@ -12,9 +12,10 @@ class GenderFilter(DataFilter):
     def __init__(self, df):
         self.df = df
     
-    def run(self, df, filter_value):
+    def run(self, df, gender):
+        """Gender == 'female' to keep only female users. Otherwise only male users."""
         if 'gender' in df.columns:
-            if filter_value == 'female': filter = df['gender'] == 'f' or df['gender'] == 'female'
+            if gender == 'female': filter = df['gender'] == 'f' or df['gender'] == 'female'
             else: filter = df['gender'] == 'm' or df['gender'] == 'male'
             return df.loc[filter]
         else: return df
