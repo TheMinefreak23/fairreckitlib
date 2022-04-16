@@ -28,7 +28,10 @@ class Experiment:
         self.event_dispatcher = event_dispatcher
 
     def run(self, output_dir, config, num_threads):
+        """ Run experiment, returns an overview of the results file paths"""
         self.__attach_event_listeners()
+
+        results = []
 
         data_result = run_data_pipeline(
             output_dir,
@@ -39,6 +42,7 @@ class Experiment:
         )
 
         for data_transition in data_result:
+
             kwargs = {'num_threads': num_threads}
             if config[EXP_KEY_TYPE] is EXP_TYPE_RECOMMENDATION:
                 kwargs['num_items'] = config[EXP_KEY_TOP_K]
@@ -62,7 +66,11 @@ class Experiment:
                 **kwargs
             )
 
+            results = self.add_result_to_overview(results, data_transition.dataset, config[EXP_KEY_MODELS], model_dirs)
+
         self.__detach_event_listeners()
+
+        return results
 
     def __attach_event_listeners(self):
         event_listeners = Experiment.get_events()
@@ -81,3 +89,18 @@ class Experiment:
         events += get_model_events()
         events += get_evaluation_events()
         return events
+
+    def add_result_to_overview(self, results, dataset, models, model_dirs):
+        """Add result to overview of results file paths"""
+
+        for model in models:
+            result = {'dataset': dataset.name, 'model': model}
+
+        for model_dir in model_dirs:
+            # Our evaluations are in the same directory as the model ratings
+            result['dir'] = model_dir
+            results.append(result)
+
+        return results
+
+

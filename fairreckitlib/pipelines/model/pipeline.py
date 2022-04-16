@@ -28,6 +28,7 @@ class ModelPipeline(metaclass=ABCMeta):
         event_dispatcher(EventDispatcher): used to dispatch model/IO events
             when running the pipeline.
     """
+
     def __init__(self, api_name, algo_factory, event_dispatcher):
         self.api_name = api_name
         self.algo_factory = algo_factory
@@ -160,6 +161,8 @@ class ModelPipeline(metaclass=ABCMeta):
             **kwargs
         )
 
+        self.write_settings_file(model_dir, model_params)
+
         return model_dir, model, start
 
     def create_model_output_dir(self, output_dir, model_name):
@@ -266,6 +269,15 @@ class ModelPipeline(metaclass=ABCMeta):
         """
         self.load_train_set(train_set_path)
         self.load_test_set(test_set_path)
+
+    def write_settings_file(self, settings_dir, model_params):
+        """Write model params in settings file in model results directory"""
+        import json
+
+        # TODO callback
+
+        with open(settings_dir+'/settings.json', 'w') as file:
+            json.dump(model_params, file, indent=4)
 
     def test_model(self, model, model_dir, **kwargs):
         """Tests the specified model using the test set.
