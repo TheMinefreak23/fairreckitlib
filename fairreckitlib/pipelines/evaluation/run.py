@@ -16,7 +16,7 @@ For each selected dataset in an experiment this function is called once
     
 Could store the performance results in their respective model_dirs
 """
-from fairreckitlib.metrics.lan import Test
+from fairreckitlib.metrics.common import Test
 from fairreckitlib.metrics.pipeline2 import EvaluationPipeline
 
 

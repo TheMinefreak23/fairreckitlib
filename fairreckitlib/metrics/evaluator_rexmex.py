@@ -1,4 +1,4 @@
-""""
+"""
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -6,8 +6,8 @@ Utrecht University within the Software Project course.
 
 import pandas as pd
 
-from fairreckitlib.metrics.evaluator2 import Evaluator
-from fairreckitlib.metrics.metrics2 import Metric
+from fairreckitlib.metrics.evaluator import Evaluator
+from fairreckitlib.metrics.common import Metric
 
 
 class EvaluatorRexmex(Evaluator):
