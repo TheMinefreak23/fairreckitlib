@@ -123,6 +123,10 @@ class RecommenderPipelineElliot(RecommenderPipeline):
         used_epoch = 'it=' + str(num_epochs)
         for file in os.listdir(model_dir):
             file_name = os.fsdecode(file)
+            # skip model settings json
+            if 'settings.json' in file_name:
+                continue
+
             file_path = os.path.join(model_dir, file_name)
 
             if used_epoch not in file_name:
@@ -140,6 +144,10 @@ class RecommenderPipelineElliot(RecommenderPipeline):
         """
         for file in os.listdir(model_dir):
             file_name = os.fsdecode(file)
+            # skip the model settings json
+            if '.tsv' not in file_name:
+                continue
+
             src_path = os.path.join(model_dir, file_name)
             dst_path = os.path.join(model_dir, RATING_OUTPUT_FILE)
 

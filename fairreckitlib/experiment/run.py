@@ -51,6 +51,8 @@ class Experiment:
         """
         self.__attach_event_listeners()
 
+        results = []
+
         data_result = run_data_pipeline(
             output_dir,
             self.__factories.data_registry,
@@ -60,6 +62,7 @@ class Experiment:
         )
 
         for data_transition in data_result:
+
             kwargs = {'num_threads': num_threads}
             if config.type == EXP_TYPE_RECOMMENDATION:
                 kwargs['num_items'] = config.top_k
@@ -85,7 +88,11 @@ class Experiment:
                     **kwargs
                 )
 
+            results = add_result_to_overview(results, data_transition.dataset, config.models, model_dirs)
+
         self.__detach_event_listeners()
+
+        return results
 
     def __attach_event_listeners(self):
         event_listeners = Experiment.get_events()
@@ -113,6 +120,19 @@ class Experiment:
         return events
 
 
+def add_result_to_overview(results, dataset, models, model_dirs):
+    """Add result to overview of results file paths"""
+
+    for model in models:
+        result = {'dataset': dataset.name, 'model': model}
+
+    for model_dir in model_dirs:
+        # Our evaluations are in the same directory as the model ratings
+        result['dir'] = model_dir
+        results.append(result)
+
+    return results
+
 def run_experiment(output_dir, experiment_factories, experiment_config,
                    event_dispatcher, num_threads=0, verbose=True):
     """Runs an experiment with the specified configuration.
@@ -131,7 +151,7 @@ def run_experiment(output_dir, experiment_factories, experiment_config,
         verbose=verbose
     )
 
-    experiment.run(
+    return experiment.run(
         output_dir,
         experiment_config,
         num_threads

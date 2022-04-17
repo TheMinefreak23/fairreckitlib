@@ -35,7 +35,6 @@ class ModelPipeline(metaclass=ABCMeta):
         event_dispatcher(EventDispatcher): used to dispatch model/IO events
             when running the pipeline.
     """
-
     def __init__(self, api_name, algo_factory, event_dispatcher):
         self.api_name = api_name
         self.algo_factory = algo_factory
