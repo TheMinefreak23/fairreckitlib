@@ -67,6 +67,20 @@ class ModelFactory:
             event_dispatcher
         )
 
+    def get_algorithm_factory(self, api_name):
+        """Gets the algorithm factory for the specified API name.
+
+        Args:
+            api_name(str): name of the API to get the factory from.
+
+        Returns:
+            algo_factory(AlgorithmFactory): the requested API factory.
+        """
+        if api_name not in self.__factory:
+            return None
+
+        return self.__factory[api_name][ALGORITHM_FACTORY]
+
     def get_available_algorithms(self):
         """Gets the available algorithms in the factory for each API.
 
@@ -82,6 +96,19 @@ class ModelFactory:
             result[api_name] = api_dict[ALGORITHM_FACTORY].get_available()
 
         return result
+
+    def get_available_api_names(self):
+        """Gets the names of the available APIs in the factory.
+
+        Returns:
+            api_names(array like): list API names.
+        """
+        api_names = []
+
+        for api_name, _ in self.__factory.items():
+            api_names.append(api_name)
+
+        return api_names
 
 
 def create_model_factory_from_api_tuples(api_tuples):

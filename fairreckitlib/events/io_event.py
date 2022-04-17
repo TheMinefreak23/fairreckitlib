@@ -10,6 +10,23 @@ ON_REMOVE_FILE = 'on_remove_file'
 ON_RENAME_FILE = 'on_rename_file'
 
 
+def get_io_events():
+    """Gets all IO events.
+
+    The callback functions are specified below and serve as a default
+    implementation including the keyword arguments that are available.
+
+    Returns:
+        (array like) list of pairs in the format (event_id, func_on_event)
+    """
+    return [
+        (ON_MAKE_DIR, on_make_dir),
+        (ON_REMOVE_DIR, on_remove_dir),
+        (ON_REMOVE_FILE, on_remove_file),
+        (ON_RENAME_FILE, on_rename_file)
+    ]
+
+
 def on_make_dir(event_listener, **kwargs):
     """Callback function when a new directory is created.
 

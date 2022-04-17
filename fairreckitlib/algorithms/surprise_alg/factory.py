@@ -15,7 +15,7 @@ from surprise.prediction_algorithms import SVD
 from surprise.prediction_algorithms import SVDpp
 
 from ..factory import create_algorithm_factory_from_list
-from ..params import get_params_empty
+from ..params import get_empty_parameters
 from .params import get_surprise_params_baseline_only_als
 from .params import get_surprise_params_baseline_only_sgd
 from .params import get_surprise_params_co_clustering
@@ -61,11 +61,11 @@ def get_surprise_predictor_factory():
          ),
         (SURPRISE_NORMAL_PREDICTOR,
          _create_predictor_normal_predictor,
-         get_params_empty
+         get_empty_parameters
          ),
         (SURPRISE_SLOPE_ONE,
          _create_predictor_slope_one,
-         get_params_empty
+         get_empty_parameters
          ),
         (SURPRISE_SVD,
          _create_predictor_svd,

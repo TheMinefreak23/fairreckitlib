@@ -5,6 +5,7 @@ Utrecht University within the Software Project course.
 """
 
 from abc import ABCMeta, abstractmethod
+from dataclasses import dataclass
 import os
 import time
 
@@ -12,11 +13,17 @@ import pandas as pd
 
 from fairreckitlib.events import io_event
 from fairreckitlib.events import model_event
-from fairreckitlib.experiment.config import EXP_KEY_MODEL_NAME
-from fairreckitlib.experiment.config import EXP_KEY_MODEL_PARAMS
 
 MODEL_USER_BATCH_SIZE = 10000
 RATING_OUTPUT_FILE = 'ratings.tsv'
+
+
+@dataclass
+class ModelConfig:
+    """Model Configuration."""
+
+    name: str
+    params: dict
 
 
 class ModelPipeline(metaclass=ABCMeta):
@@ -46,7 +53,7 @@ class ModelPipeline(metaclass=ABCMeta):
         Args:
             output_dir(str): the path of the directory to store the output.
             data_transition(DataTransition): data input.
-            models_config(array like): dict entries with algorithm configurations.
+            models_config(array like): list of ModelConfig objects.
 
         Keyword Args:
             num_threads(int): the max number of threads an algorithm can use.
@@ -97,7 +104,7 @@ class ModelPipeline(metaclass=ABCMeta):
         Args:
             output_dir(str): the path of the directory to store the output.
             data_transition(DataTransition): data input.
-            model_config(dict): with algorithm configurations.
+            model_config(ModelConfig): the algorithm model configuration.
 
         Keyword Args:
             num_threads(int): the max number of threads an algorithm can use.
@@ -108,8 +115,8 @@ class ModelPipeline(metaclass=ABCMeta):
             model_dir(str): the directory where computed ratings are stored.
         """
         model_dir, model, start = self.begin_model(
-            model_config[EXP_KEY_MODEL_NAME],
-            model_config[EXP_KEY_MODEL_PARAMS],
+            model_config.name,
+            model_config.params,
             output_dir,
             rating_scale=data_transition.rating_scale,
             rating_type=data_transition.rating_type,
