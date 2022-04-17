@@ -25,6 +25,7 @@ class RecommenderSystem:
     """
     Top level API intended for use by applications
     """
+
     def __init__(self, data_dir, result_dir, verbose=True):
         self.data_registry = DataRegistry(data_dir)
         self.split_factory = get_split_factory()
@@ -92,7 +93,7 @@ class RecommenderSystem:
 
         self.event_dispatcher.remove_listener(io_event.ON_MAKE_DIR, self, io_event.on_make_dir)
 
-        run_experiment(
+        result_overview = run_experiment(
             run_0_dir,
             ExperimentFactories(
                 self.data_registry,
@@ -104,6 +105,8 @@ class RecommenderSystem:
             num_threads=num_threads,
             verbose=self.verbose
         )
+
+        self.write_storage_file(run_0_dir, result_overview)
 
     def run_experiment_from_yml(self, file_path, num_threads=0):
         """Runs an experiment from a yml file.
@@ -131,6 +134,20 @@ class RecommenderSystem:
         # TODO run the same experiment again for 'num_runs'
         raise NotImplementedError()
 
+    def write_storage_file(self, run_0_dir, results):
+        """Write a JSON file with overview of the results file paths"""
+        import json
+
+        formatted_results = map(lambda result: {
+                'name': result['dataset'] + result['model'],
+                'evaluation_path': result['dir'] + '\\evaluation.tsv',
+                'ratings_path': result['dir'] + '\\ratings.tsv',
+                'ratings_settings_path': result['dir'] + '\\settings.tsv'
+            }, results)
+
+        with open(run_0_dir+'/overview.json', 'w') as file:
+            json.dump({'overview': list(formatted_results)}, file, indent=4)
+
     def get_available_datasets(self):
         """Gets the available datasets of the recommender system."""
         return self.data_registry.get_info()
@@ -140,7 +157,7 @@ class RecommenderSystem:
         from metrics.evaluator_lenskit import EvaluatorLenskit
         from metrics.evaluator_rexmex import EvaluatorRexmex
         EvaluatorLenskit.metricDict.keys() + EvaluatorRexmex.metricDict.keys()
-        #raise NotImplementedError()
+        # raise NotImplementedError()
 
     def get_available_predictors(self):
         """Gets the available predictors of the recommender system.
