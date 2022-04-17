@@ -28,7 +28,7 @@ def run_evaluation_pipelines(dataset, train_path, test_path, model_dirs, eval_co
         print('model_dir:')
         print(model_dir)
         dir_name = os.path.dirname(model_dir)
-        from fairreckitlib.metrics.metrics2 import RecType
+        from fairreckitlib.metrics.common import RecType
         test = Test(name=dir_name, train_path=train_path, test_path=test_path, recs_path=model_dir+'/ratings.tsv', rec_type=RecType.Recommendation) # TODO refactor
         pipeline = EvaluationPipeline(test, '', eval_config['metrics'], kwargs['num_items'], eval_config['filters'])
         pipeline.run()
