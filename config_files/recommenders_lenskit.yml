@@ -1,0 +1,16 @@
+datasets:
+- name: ML-100K
+  splitting:
+    test_ratio: 0.2
+    type: random
+models:
+  LensKit:
+  - name: BiasedMF
+  - name: ImplicitMF
+  - name: ItemItem
+  - name: PopScore
+  - name: Random
+  - name: UserUser
+name: Recommenders_LensKit
+top_K: 10
+type: recommendation

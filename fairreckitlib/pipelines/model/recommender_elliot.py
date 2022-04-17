@@ -7,8 +7,6 @@ Utrecht University within the Software Project course.
 import os
 import yaml
 
-from elliot.run import run_experiment
-
 from fairreckitlib.events import io_event
 from .pipeline import RATING_OUTPUT_FILE
 from .recommender import RecommenderPipeline
@@ -58,6 +56,8 @@ class RecommenderPipelineElliot(RecommenderPipeline):
         with open(yml_path, 'w', encoding='utf-8') as file:
             yaml.dump(data, file)
 
+        # stops the logo from being spammed to the console
+        from elliot.run import run_experiment
         run_experiment(yml_path)
 
         self.__clear_temp_dir(temp_dir)

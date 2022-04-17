@@ -7,7 +7,7 @@ Utrecht University within the Software Project course.
 import time
 
 from ..factory import create_algorithm_factory_from_list
-from ..params import get_params_empty
+from ..params import get_empty_parameters
 from .params import get_elliot_params_funk_svd
 from .params import get_elliot_params_item_knn
 from .params import get_elliot_params_multi_vae
@@ -46,7 +46,7 @@ def get_elliot_recommender_factory():
          ),
         (ELLIOT_MOST_POP,
          _create_recommender_most_pop,
-         get_params_empty
+         get_empty_parameters
          ),
         (ELLIOT_MULTI_VAE,
          _create_recommender_multi_vae,

@@ -13,7 +13,7 @@ def run_model_pipelines(output_dir, data_transition, model_factory,
         output_dir(str): the path of the directory to store the output.
         data_transition(DataTransition): data input.
         model_factory(ModelFactory): the model factory with available algorithms.
-        models_config(dict): containing model configurations keyed by API.
+        models_config(dict): containing list of ModelConfig's keyed by API name.
         event_dispatcher(EventDispatcher): used to dispatch model/IO events
             when running the model pipelines.
 
