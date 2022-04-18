@@ -23,6 +23,7 @@ class RecommenderSystem:
     """
     Top level API intended for use by applications
     """
+
     def __init__(self, data_dir, result_dir, verbose=True):
         self.data_registry = DataRegistry(data_dir)
         self.split_factory = get_split_factory()
@@ -117,14 +118,12 @@ class RecommenderSystem:
         """Gets the available datasets of the recommender system."""
         return self.data_registry.get_info()
 
-    
     def get_available_metrics(self):
         # TODO refactor
         from metrics.evaluator_lenskit import EvaluatorLenskit
         from metrics.evaluator_rexmex import EvaluatorRexmex
         EvaluatorLenskit.metricDict.keys() + EvaluatorRexmex.metricDict.keys()
-        #raise NotImplementedError()
-
+        # raise NotImplementedError()
 
     def get_available_predictors(self):
         """Gets the available predictors of the recommender system.
