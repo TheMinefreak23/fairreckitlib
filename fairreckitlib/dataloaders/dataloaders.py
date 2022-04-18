@@ -5,7 +5,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 
 """
-from abc import ABC
+from abc import ABC, abstractmethod
 import pandas as pd
 import numpy as np
 from utility import get_configs
@@ -30,15 +30,15 @@ class dataloader_base(ABC):
         self._item_cat = None
         self._filters = []
     
-    @ABC.abstractmethod    
+    @abstractmethod    
     def load_data(self) -> None:
         ...
     
-    @ABC.abstractmethod    
+    @abstractmethod    
     def filter_df(self) -> None:
         ...
     
-    @ABC.abstractmethod    
+    @abstractmethod    
     def get_user_item_matrix(self) -> None:
         ...
 
@@ -75,6 +75,7 @@ class dataloader_base(ABC):
 
     def get_user_id(self, user_index: int) -> int:
         """
+        this function takes the converted user index which is in user-item matrix and returns the user_ID in original dataset
         """
         df = pd.array([user_index])
         user_ids = list(df.astype(self._user_cat).cat.categories)
@@ -82,6 +83,7 @@ class dataloader_base(ABC):
 
     def get_item_id(self, item_index: int) -> int:
         """
+        this function takes item_index in user-item matrix and returns the item_ID in original dataset
         """
         df = pd.array([item_index])
         item_ids = list(df.astype(self._item_cat).cat.categories)
@@ -126,7 +128,7 @@ class dataloader_360k(dataloader_base):
         df = pd.read_csv(self.get_file_path(self.configs.get(self._dataset_name, 'file_path'),
                                             file_name),
                          **params)
-        df_filters = [str(df[k]) == str(v) if k != 'age'
+        df_filters = [str(df[k]).lower() == str(v).lower() if k != 'age'
                       else df[k].astype(int).between(int(filters[k][0]), int(filters[k][1]), inclusive = True)
                       for k, v in filters.items()]
         df = df[ft.reduce(lambda x,y: x and y, df_filters)]["user-sha1"]
@@ -165,6 +167,7 @@ class dataloader_360k(dataloader_base):
 
 def get_dataloader(dataset_name: str, config_path: str = "") -> dataloader_base:
     """
+    this function takes the name of the dataset and returns its dataloader. the config_path is optional
     """
     if dataset_name == "LFM-360K":
         return dataloader_360k(config_path)
