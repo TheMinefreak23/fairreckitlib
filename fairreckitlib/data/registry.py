@@ -23,7 +23,7 @@ class DataRegistry:
             dataset_dir = os.path.join(data_dir, file_name)
             # skip all entries that are not a directory
             if not os.path.isdir(dataset_dir):
-                continue  # break
+                continue
 
             dataset_path = os.path.join(dataset_dir, file_name + '.tsv')
             if not os.path.isfile(dataset_path):
