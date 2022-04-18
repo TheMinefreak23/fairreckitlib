@@ -139,7 +139,7 @@ class RecommenderSystem:
         import json
 
         formatted_results = map(lambda result: {
-                'name': result['dataset'] + result['model'],
+                'name': result['dataset'] + '_' + result['model'],
                 'evaluation_path': result['dir'] + '\\evaluation.tsv',
                 'ratings_path': result['dir'] + '\\ratings.tsv',
                 'ratings_settings_path': result['dir'] + '\\settings.tsv'

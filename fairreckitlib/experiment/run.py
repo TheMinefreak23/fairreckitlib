@@ -3,7 +3,7 @@ This program has been developed by students from the bachelor Computer Science a
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
-
+import os.path
 from dataclasses import dataclass
 
 from ..data.registry import DataRegistry
@@ -88,7 +88,7 @@ class Experiment:
                     **kwargs
                 )
 
-            results = add_result_to_overview(results, data_transition.dataset, config.models, model_dirs)
+            results = add_result_to_overview(results, model_dirs)
 
         self.__detach_event_listeners()
 
@@ -120,15 +120,16 @@ class Experiment:
         return events
 
 
-def add_result_to_overview(results, dataset, models, model_dirs):
+def add_result_to_overview(results, model_dirs):
     """Add result to overview of results file paths"""
-
-    for model in models:
-        result = {'dataset': dataset.name, 'model': model}
 
     for model_dir in model_dirs:
         # Our evaluations are in the same directory as the model ratings
-        result['dir'] = model_dir
+        result = {
+            'dataset': os.path.basename(os.path.dirname(model_dir)),
+            'model': os.path.basename(model_dir),
+            'dir': model_dir
+        }
         results.append(result)
 
     return results
