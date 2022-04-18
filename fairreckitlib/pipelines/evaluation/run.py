@@ -16,20 +16,26 @@ For each selected dataset in an experiment this function is called once
     
 Could store the performance results in their respective model_dirs
 """
-from fairreckitlib.metrics.lan import Test
+from fairreckitlib.metrics.common import Test
 from fairreckitlib.metrics.pipeline2 import EvaluationPipeline
 
 
 def run_evaluation_pipelines(dataset, train_path, test_path, model_dirs, eval_config, callback, **kwargs):
     print('model_dirs:')
     print(model_dirs)
+
     for model_dir in model_dirs:
         import os
         print('model_dir:')
         print(model_dir)
         dir_name = os.path.dirname(model_dir)
-        from fairreckitlib.metrics.metrics2 import RecType
-        test = Test(name=dir_name, train_path=train_path, test_path=test_path, recs_path=model_dir+'/ratings.tsv', rec_type=RecType.Recommendation) # TODO refactor
+        from fairreckitlib.metrics.common import RecType
+
+        # Create a test instance TODO refactor
+        test = Test(name=dir_name, train_path=train_path, test_path=test_path,
+                    recs_path=model_dir+'/ratings.tsv', rec_type=RecType.Recommendation)
+
         pipeline = EvaluationPipeline(test, '', eval_config['metrics'], kwargs['num_items'], eval_config['filters'])
         pipeline.run()
+
     pass
