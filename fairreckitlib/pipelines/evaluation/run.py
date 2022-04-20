@@ -20,7 +20,7 @@ from fairreckitlib.metrics.common import Test
 from fairreckitlib.metrics.pipeline2 import EvaluationPipeline
 
 
-def run_evaluation_pipelines(dataset, train_path, test_path, model_dirs, eval_config, callback, **kwargs):
+def run_evaluation_pipelines(dataset, train_path, test_path, model_dirs, eval_config, event_dispatcher, **kwargs):
     print('model_dirs:')
     print(model_dirs)
 
@@ -35,7 +35,8 @@ def run_evaluation_pipelines(dataset, train_path, test_path, model_dirs, eval_co
         test = Test(name=dir_name, train_path=train_path, test_path=test_path,
                     recs_path=model_dir+'/ratings.tsv', rec_type=RecType.Recommendation)
 
-        pipeline = EvaluationPipeline(test, '', eval_config['metrics'], kwargs['num_items'], eval_config['filters'])
+        pipeline = EvaluationPipeline(test, '', eval_config['metrics'], kwargs['num_items'], eval_config['filters'],
+                                      event_dispatcher)
         pipeline.run()
 
     pass
