@@ -12,11 +12,24 @@ import time
 from fairreckitlib.data.set import Dataset
 from fairreckitlib.events import data_event
 from fairreckitlib.events import io_event
-from fairreckitlib.experiment.common import EXP_KEY_DATASET_PREFILTERS
-from fairreckitlib.experiment.common import EXP_KEY_DATASET_RATING_MODIFIER
-from fairreckitlib.experiment.common import EXP_KEY_DATASET_SPLIT
-from fairreckitlib.experiment.common import EXP_KEY_DATASET_SPLIT_TEST_RATIO
-from fairreckitlib.experiment.common import EXP_KEY_DATASET_SPLIT_TYPE
+
+
+@dataclass
+class SplitConfig:
+    """Dataset Splitting Configuration."""
+
+    test_ratio: float
+    type: str
+
+
+@dataclass
+class DatasetConfig:
+    """Dataset Configuration."""
+
+    name: str
+    prefilters: []
+    rating_modifier: None
+    splitting: SplitConfig
 
 
 @dataclass
@@ -59,7 +72,7 @@ class DataPipeline(metaclass=ABCMeta):
         Args:
             output_dir(str): the path of the directory to store the output.
             dataset(Dataset): the dataset to run the pipeline on.
-            data_config(dict):
+            data_config(DatasetConfig): the dataset configuration.
 
         Returns:
             data_output(DataTransition): the output of the pipeline.
@@ -73,9 +86,9 @@ class DataPipeline(metaclass=ABCMeta):
 
         data_dir = self.create_data_output_dir(output_dir, dataset)
         dataframe = self.load_from_dataset(dataset)
-        dataframe = self.filter_rows(dataframe, data_config[EXP_KEY_DATASET_PREFILTERS])
-        dataframe = self.convert_ratings(dataframe, data_config[EXP_KEY_DATASET_RATING_MODIFIER])
-        train_set, test_set = self.split(dataframe, data_config[EXP_KEY_DATASET_SPLIT])
+        dataframe = self.filter_rows(dataframe, data_config.prefilters)
+        dataframe = self.convert_ratings(dataframe, data_config.rating_modifier)
+        train_set, test_set = self.split(dataframe, data_config.splitting)
         train_set_path, test_set_path = self.save_sets(data_dir, train_set, test_set)
 
         end = time.time()
@@ -226,30 +239,27 @@ class DataPipeline(metaclass=ABCMeta):
             dataframe(pandas.DataFrame): the dataset to split with at least
                 three columns: 'user', 'item', 'rating'. In addition, the 'timestamp' column
                 is required for temporal splits.
-            split_config(dict): containing the desired split type and split test ratio.
+            split_config(SplitConfig): the dataset splitting configuration.
 
         Returns:
             train_set(pandas.DataFrame): the train set split of the specified dataframe.
             test_set(pandas.DataFrame): the test set split of the specified dataframe.
         """
-        split_type = split_config[EXP_KEY_DATASET_SPLIT_TYPE]
-        test_ratio = split_config[EXP_KEY_DATASET_SPLIT_TEST_RATIO]
-
         self.event_dispatcher.dispatch(
             data_event.ON_BEGIN_SPLIT_DATASET,
-            split_type=split_type,
-            test_ratio=test_ratio
+            split_type=split_config.type,
+            test_ratio=split_config.test_ratio
         )
 
         start = time.time()
-        splitter = self.split_factory[split_type]()
-        train_set, test_set = splitter.run(dataframe, test_ratio, {})
+        splitter = self.split_factory[split_config.type]()
+        train_set, test_set = splitter.run(dataframe, split_config.test_ratio, {})
         end = time.time()
 
         self.event_dispatcher.dispatch(
             data_event.ON_END_SPLIT_DATASET,
-            split_type=split_type,
-            test_ratio=test_ratio,
+            split_type=split_config.type,
+            test_ratio=split_config.test_ratio,
             elapsed_time=end - start
         )
 

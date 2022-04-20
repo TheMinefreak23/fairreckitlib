@@ -34,6 +34,19 @@ class DataRegistry:
             # TODO load in metadata and pass this to the Dataset constructor
             self.__registry[file_name] = Dataset(file_name, dataset_dir)
 
+    def get_available(self):
+        """Gets the names of the available datasets in the registry.
+
+        Returns:
+            dataset_names(array like): list dataset names.
+        """
+        dataset_names = []
+
+        for dataset_name in self.__registry:
+            dataset_names.append(dataset_name)
+
+        return dataset_names
+
     def get_info(self):
         info = {}
         for dataset_name in self.__registry:

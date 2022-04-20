@@ -8,13 +8,15 @@ import os
 
 from .data.registry import DataRegistry
 from .data.split.factory import get_split_factory
+from .events import config_event
 from .events import io_event
 from .events.dispatcher import EventDispatcher
-from .experiment.common import EXP_KEY_NAME
-from .experiment.common import EXP_KEY_TYPE
-from .experiment.common import EXP_TYPE_PREDICTION
-from .experiment.common import EXP_TYPE_RECOMMENDATION
-from .experiment.experiment import Experiment
+from .experiment.constants import EXP_TYPE_PREDICTION
+from .experiment.constants import EXP_TYPE_RECOMMENDATION
+from .experiment.config import ExperimentConfig
+from .experiment.parsing.run import parse_experiment_config_from_yml
+from .experiment.run import ExperimentFactories
+from .experiment.run import run_experiment
 from .pipelines.model.factory import create_predictor_model_factory
 from .pipelines.model.factory import create_recommender_model_factory
 
@@ -32,16 +34,6 @@ class RecommenderSystem:
 
         self.verbose = verbose
         self.event_dispatcher = EventDispatcher()
-
-        event_listeners = [
-            (io_event.ON_MAKE_DIR, io_event.on_make_dir),
-            (io_event.ON_REMOVE_DIR, io_event.on_remove_dir),
-            (io_event.ON_REMOVE_FILE, io_event.on_remove_file),
-            (io_event.ON_RENAME_FILE, io_event.on_rename_file)
-        ]
-
-        for _, (event, func_on_event) in enumerate(event_listeners):
-            self.event_dispatcher.add_listener(event, self, func_on_event)
 
         self.result_dir = result_dir
         if not os.path.isdir(self.result_dir):
@@ -65,11 +57,26 @@ class RecommenderSystem:
         # TODO evaluate additional metrics
         raise NotImplementedError()
 
-    def run_experiment(self, config, num_threads=0):
-        """TODO"""
-        result_dir = os.path.join(self.result_dir, config[EXP_KEY_NAME])
+    def run_experiment(self, config, num_threads=0, validate_config=False):
+        """Runs an experiment with the specified configuration.
+
+        Args:
+            config(ExperimentConfig): the configuration of the experiment.
+            num_threads(int): the max number of threads the model pipeline can use.
+            validate_config(bool): whether to validate the configuration beforehand.
+        """
+        result_dir = os.path.join(self.result_dir, config.name)
         if os.path.isdir(result_dir):
             raise IOError('Result already exists: ' + result_dir)
+
+        if not isinstance(config, ExperimentConfig):
+            raise ValueError('Invalid experiment configuration')
+
+        if validate_config:
+            # TODO and set argument default to True
+            raise NotImplementedError()
+
+        self.event_dispatcher.add_listener(io_event.ON_MAKE_DIR, self, io_event.on_make_dir)
 
         os.mkdir(result_dir)
         self.event_dispatcher.dispatch(
@@ -84,26 +91,39 @@ class RecommenderSystem:
             dir=run_0_dir
         )
 
-        if config[EXP_KEY_TYPE] == EXP_TYPE_PREDICTION:
-            model_factory = self.predictor_factory
-        elif config[EXP_KEY_TYPE] == EXP_TYPE_RECOMMENDATION:
-            model_factory = self.recommender_factory
-        else:
-            raise NotImplementedError()
+        self.event_dispatcher.remove_listener(io_event.ON_MAKE_DIR, self, io_event.on_make_dir)
 
-        experiment = Experiment(
-            self.data_registry,
-            self.split_factory,
-            model_factory,
+        result_overview = run_experiment(
+            run_0_dir,
+            ExperimentFactories(
+                self.data_registry,
+                self.split_factory,
+                self.__get_model_factory(config.type)
+            ),
+            config,
             self.event_dispatcher,
+            num_threads=num_threads,
             verbose=self.verbose
         )
 
-        experiment.run(
-            run_0_dir,
-            config,
-            num_threads
-        )
+        self.write_storage_file(run_0_dir, result_overview)
+
+    def run_experiment_from_yml(self, file_path, num_threads=0):
+        """Runs an experiment from a yml file.
+
+        Args:
+            file_path(str): path to the yml file without extension.
+            num_threads(int): the max number of threads the model pipeline can use.
+        """
+        self.event_dispatcher.add_listener(config_event.ON_PARSE, self, config_event.on_parse)
+        config = parse_experiment_config_from_yml(file_path, self)
+        self.event_dispatcher.remove_listener(config_event.ON_PARSE, self, config_event.on_parse)
+
+        # parsing failed
+        if config is None:
+            return
+
+        self.run_experiment(config, num_threads=num_threads, validate_config=False)
 
     def validate_experiment(self, experiment_dir, num_runs):
         """TODO"""
@@ -113,6 +133,20 @@ class RecommenderSystem:
 
         # TODO run the same experiment again for 'num_runs'
         raise NotImplementedError()
+
+    def write_storage_file(self, run_0_dir, results):
+        """Write a JSON file with overview of the results file paths"""
+        import json
+
+        formatted_results = map(lambda result: {
+                'name': result['dataset'] + '_' + result['model'],
+                'evaluation_path': result['dir'] + '\\evaluation.tsv',
+                'ratings_path': result['dir'] + '\\ratings.tsv',
+                'ratings_settings_path': result['dir'] + '\\settings.tsv'
+            }, results)
+
+        with open(run_0_dir+'/overview.json', 'w') as file:
+            json.dump({'overview': list(formatted_results)}, file, indent=4)
 
     def get_available_datasets(self):
         """Gets the available datasets of the recommender system."""
@@ -150,3 +184,11 @@ class RecommenderSystem:
     def get_available_splitters(self):
         """Gets the available splitters of the recommender system."""
         raise NotImplementedError()
+
+    def __get_model_factory(self, experiment_type):
+        if experiment_type == EXP_TYPE_PREDICTION:
+            return self.predictor_factory
+        if experiment_type == EXP_TYPE_RECOMMENDATION:
+            return self.recommender_factory
+
+        return None

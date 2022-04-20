@@ -1,0 +1,17 @@
+datasets:
+- name: ML-100K
+  splitting:
+    test_ratio: 0.2
+    type: random
+models:
+  Surprise:
+  - name: BaselineOnlyALS
+  - name: BaselineOnlySGD
+  - name: CoClustering
+  - name: NMF
+  - name: NormalPredictor
+  - name: SlopeOne
+  - name: SVD
+  - name: SVDpp
+name: Predictors_Surprise
+type: prediction

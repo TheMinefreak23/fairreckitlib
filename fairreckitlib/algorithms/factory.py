@@ -45,9 +45,12 @@ class AlgorithmFactory:
     def create(self, algo_name, algo_params, **kwargs):
         """Creates the algorithm with the specified name and parameters.
 
+        This function raises a KeyError when the name of the algorithm
+        is not registered for this algorithm factory.
+
         Args:
             algo_name(str): name of the algorithm.
-            algo_params(dict): parameters of the algorithm.
+            algo_params(dict): parameters of the algorithm as name-value pairs.
 
         Keyword Args:
             num_threads(int): the max number of threads the algorithm can use.
@@ -69,6 +72,23 @@ class AlgorithmFactory:
         """
         return self.__api_name
 
+    def get_algorithm_params(self, algo_name):
+        """Gets the parameters for the specified algorithm name.
+
+        This function raises a KeyError when the name of the algorithm
+        is not registered for this algorithm factory.
+
+        Args:
+            algo_name(str): name of the algorithm.
+
+        Returns:
+            algo_params(AlgorithmParameters): the parameters of the algorithm.
+        """
+        if algo_name not in self.__factory:
+            raise KeyError('Algorithm does not exist: ' + algo_name)
+
+        return self.__factory[algo_name][FUNC_GET_ALGORITHM_PARAMS]()
+
     def get_available(self):
         """Gets the available algorithms in the factory.
 
@@ -85,6 +105,19 @@ class AlgorithmFactory:
             })
 
         return algo_list
+
+    def get_available_algorithm_names(self):
+        """Gets the names of the available algorithms in the factory.
+
+        Returns:
+            algorithm_names(array like): list algorithm names.
+        """
+        algorithm_names = []
+
+        for algo_name, _ in self.__factory.items():
+            algorithm_names.append(algo_name)
+
+        return algorithm_names
 
     def get_entries(self):
         """Gets the algorithm entries of the factory.

@@ -4,87 +4,77 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ..params import PARAM_KEY_OPTIONS
-from ..params import PARAM_KEY_VALUES
-from ..params import create_option_param
-from ..params import create_param_bool
-from ..params import create_param_seed
-from ..params import create_value_param
+from ..params import AlgorithmParameters
 
 
 def get_lenskit_params_biased_mf():
-    """Gets the parameters of the BiasedMF algorithm.
+    """Gets the params of the BiasedMF algorithm.
 
     Returns:
-        (dict) containing array like values and options.
+        params(AlgorithmParameters) the params of the algorithm.
     """
     methods = [
         'cd',
         'lu'
     ]
 
-    return {
-        PARAM_KEY_VALUES: [
-            _create_param_features(0),
-            _create_param_iterations(),
-            _create_param_reg('user_reg'),
-            _create_param_reg('item_reg'),
-            create_value_param('damping', 0.0, 1000.0, 5.0),
-            create_param_seed('random_seed')
-        ],
-        PARAM_KEY_OPTIONS: [
-            create_option_param('method', methods, methods[0])
-        ]
-    }
+    params = AlgorithmParameters()
+
+    params.add_value('features', int, 10, 1, 50)
+    params.add_value('iterations', int, 20, 1, 50)
+    params.add_value('user_reg', float, 0.1, 0.0001, 1.0)
+    params.add_value('item_reg', float, 0.1, 0.0001, 1.0)
+    params.add_value('damping', float, 5.0, 0.0, 1000.0)
+    params.add_random_seed('random_seed')
+    params.add_option('method', str, methods[0], methods)
+
+    return params
 
 
 def get_lenskit_params_implicit_mf():
-    """Gets the parameters of the ImplicitMF algorithm.
+    """Gets the params of the ImplicitMF algorithm.
 
     Returns:
-        (dict) containing array like values and options.
+        params(AlgorithmParameters) the params of the algorithm.
     """
     methods = [
         'cg',
         'lu'
     ]
 
-    return {
-        PARAM_KEY_VALUES: [
-            _create_param_features(3),
-            _create_param_iterations(),
-            _create_param_reg('reg'),
-            create_value_param('weight', 1.0, 10000.0, 40.0),
-            create_param_seed('random_seed')
-        ],
-        PARAM_KEY_OPTIONS: [
-            create_option_param('method', methods, methods[0]),
-            create_param_bool('use_ratings', False)
-        ]
-    }
+    params = AlgorithmParameters()
+
+    params.add_value('features', int, 3, 1, 50)
+    params.add_value('iterations', int, 20, 1, 50)
+    params.add_value('reg', float, 0.1, 0.0001, 1.0)
+    params.add_value('weight', float, 40.0, 1.0, 10000.0)
+    params.add_random_seed('random_seed')
+    params.add_option('method', str, methods[0], methods)
+    params.add_bool('use_ratings', False)
+
+    return params
 
 
 def get_lenskit_params_item_item():
-    """Gets the parameters of the ItemItem algorithm.
+    """Gets the params of the ItemItem algorithm.
 
     Returns:
-        (dict) containing array like values and options.
+        params(AlgorithmParameters) the params of the algorithm.
     """
-    return {
-        PARAM_KEY_VALUES: [
-            _create_param_max_nnbrs(),
-            _create_param_min_nnbrs(),
-            _create_param_min_sim(1e-06)
-        ],
-        PARAM_KEY_OPTIONS: []
-    }
+    params = AlgorithmParameters()
+
+    params.add_value('max_nnbrs', int, 10, 1, 50)
+    params.add_value('min_nbrs', int, 1, 1, 50)
+    params.add_value('min_sim', float, 1e-06, 0.0, 10.0)
+
+    return params
 
 
 def get_lenskit_params_pop_score():
-    """Gets the parameters of the PopScore algorithm.
+    """Gets the params of the PopScore algorithm.
 
     Returns:
-        (dict) containing array like values and options.
+        params(AlgorithmParameters) the params of the algorithm.
     """
     options = [
         'quantile',
@@ -92,63 +82,36 @@ def get_lenskit_params_pop_score():
         'count'
     ]
 
-    return {
-        PARAM_KEY_VALUES: [],
-        PARAM_KEY_OPTIONS: [
-            create_option_param('score_method', options, options[0])
-        ]
-    }
+    params = AlgorithmParameters()
+
+    params.add_option('score_method', str, options[0], options)
+
+    return params
 
 
 def get_lenskit_params_random():
-    """Gets the parameters of the Random algorithm.
+    """Gets the params of the Random algorithm.
 
     Returns:
-        (dict) containing array like values and options.
+        params(AlgorithmParameters) the params of the algorithm.
     """
-    return {
-        PARAM_KEY_VALUES: [
-            create_param_seed('random_seed')
-        ],
-        PARAM_KEY_OPTIONS: []
-    }
+    params = AlgorithmParameters()
+
+    params.add_random_seed('random_seed')
+
+    return params
 
 
 def get_lenskit_params_user_user():
-    """Gets the parameters of the UserUser algorithm.
+    """Gets the params of the UserUser algorithm.
 
     Returns:
-        (dict) containing array like values and options.
+        params(AlgorithmParameters) the params of the algorithm.
     """
-    return {
-        PARAM_KEY_VALUES: [
-            _create_param_max_nnbrs(),
-            _create_param_min_nnbrs(),
-            _create_param_min_sim(0.0)
-        ],
-        PARAM_KEY_OPTIONS: []
-    }
+    params = AlgorithmParameters()
 
+    params.add_value('max_nnbrs', int, 10, 1, 50)
+    params.add_value('min_nbrs', int, 1, 1, 50)
+    params.add_value('min_sim', float, 0.0, 0.0, 10.0)
 
-def _create_param_features(min_features):
-    return create_value_param('features', min_features, 50, 10)
-
-
-def _create_param_iterations():
-    return create_value_param('iterations', 1, 50, 20)
-
-
-def _create_param_max_nnbrs():
-    return create_value_param('max_nnbrs', 1, 50, 10)
-
-
-def _create_param_min_nnbrs():
-    return create_value_param('min_nbrs', 1, 50, 1)
-
-
-def _create_param_min_sim(min_sim):
-    return create_value_param('min_sim', 0.0, 10.0, min_sim)
-
-
-def _create_param_reg(name):
-    return create_value_param(name, 0.0001, 1.0, 0.1)
+    return params

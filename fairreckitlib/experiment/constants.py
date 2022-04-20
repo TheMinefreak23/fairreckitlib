@@ -4,7 +4,8 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from fairreckitlib.algorithms.constants import ALGORITHM_NAME, ALGORITHM_PARAMS
+from fairreckitlib.algorithms.constants import ALGORITHM_NAME
+from fairreckitlib.algorithms.constants import ALGORITHM_PARAMS
 
 EXP_KEY_NAME = 'name'
 
@@ -27,5 +28,3 @@ EXP_KEY_MODEL_NAME = ALGORITHM_NAME
 EXP_KEY_MODEL_PARAMS = ALGORITHM_PARAMS
 
 EXP_KEY_EVALUATION = 'evaluation'
-EXP_KEY_METRIC_NAME = 'name'
-EXP_KEY_METRIC_PARAMS = 'params'

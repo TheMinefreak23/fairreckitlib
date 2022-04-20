@@ -4,19 +4,29 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from fairreckitlib.experiment.common import EXP_KEY_DATASET_NAME
 from .pipeline import DataPipeline
 
 
 def run_data_pipeline(output_dir, data_registry, split_factory,
                       datasets_config, event_dispatcher):
-    """TODO"""
+    """Runs the Data Pipeline for multiple dataset configurations.
+
+    Args:
+        output_dir(str): the path of the directory to store the output.
+        data_registry(DataRegistry): the registry of available datasets.
+        split_factory(dict): dictionary of available splits.
+        datasets_config(array like): list of DatasetConfig objects.
+        event_dispatcher(EventDispatcher): used to dispatch data/IO events
+            when running the pipeline.
+
+    Returns:
+        data_result(array like): list of DataTransition's.
+    """
     data_result = []
 
     data_pipeline = DataPipeline(split_factory, event_dispatcher)
-    for data_config in datasets_config:
-        dataset_name = data_config[EXP_KEY_DATASET_NAME]
-        dataset = data_registry.get_set(dataset_name)
+    for _, data_config in enumerate(datasets_config):
+        dataset = data_registry.get_set(data_config.name)
 
         data_result.append(data_pipeline.run(
             output_dir,

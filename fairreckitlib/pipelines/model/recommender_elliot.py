@@ -7,8 +7,6 @@ Utrecht University within the Software Project course.
 import os
 import yaml
 
-from elliot.run import run_experiment
-
 from fairreckitlib.events import io_event
 from .pipeline import RATING_OUTPUT_FILE
 from .recommender import RecommenderPipeline
@@ -58,6 +56,8 @@ class RecommenderPipelineElliot(RecommenderPipeline):
         with open(yml_path, 'w', encoding='utf-8') as file:
             yaml.dump(data, file)
 
+        # stops the logo from being spammed to the console
+        from elliot.run import run_experiment
         run_experiment(yml_path)
 
         self.__clear_temp_dir(temp_dir)
@@ -123,6 +123,10 @@ class RecommenderPipelineElliot(RecommenderPipeline):
         used_epoch = 'it=' + str(num_epochs)
         for file in os.listdir(model_dir):
             file_name = os.fsdecode(file)
+            # skip model settings json
+            if 'settings.json' in file_name:
+                continue
+
             file_path = os.path.join(model_dir, file_name)
 
             if used_epoch not in file_name:
@@ -140,6 +144,10 @@ class RecommenderPipelineElliot(RecommenderPipeline):
         """
         for file in os.listdir(model_dir):
             file_name = os.fsdecode(file)
+            # skip the model settings json
+            if '.tsv' not in file_name:
+                continue
+
             src_path = os.path.join(model_dir, file_name)
             dst_path = os.path.join(model_dir, RATING_OUTPUT_FILE)
 
