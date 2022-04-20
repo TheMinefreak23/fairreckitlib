@@ -94,7 +94,7 @@ class dataloader_360k(dataloader_base):
     """
     In order to load 360k 
     """
-    
+
     def __init__(self, config_path: str = "") -> None:
         super(dataloader_360k, self).__init__(config_path)
         self._dataset_name = "LFM-360K"
@@ -108,11 +108,11 @@ class dataloader_360k(dataloader_base):
         params = dict(delimiter=self.configs.get("common", "DELIMITER", fallback=","),
                       names=self.configs.get(self._dataset_name, "headers").split(","),
                       engine='python', usecols=[0, 2, 3])
-        self.data_frames = pd.read_csv(self.get_file_path(self.configs.get(self._dataset_name, 'file_path'),
+        self.data_frame = pd.read_csv(self.get_file_path(self.configs.get(self._dataset_name, 'file_path'),
                                                           self.configs.get(self._dataset_name, 'file_name')),
-                                       **params)
+                                      **params)
 
-    def filter_df(self, filters: Dict[str, Any]) -> None:
+    def filter_df(self, filters: Dict[str, Any]) -> pd.DataFrame:
         """
         filters: a dictionary whose keys are the name of the column on which the filtering is being applied;
                  In case of age, the value must be a tuple, like (min_age, max_age)
@@ -121,55 +121,56 @@ class dataloader_360k(dataloader_base):
         fields_map = {"gender": 1, "age": 2, "country": 3}
         use_cols = [0]
         use_cols.extend([fields_map[key] for key in filters])
-        headers = ["user-sha1"]
-        headers.extend([key for key in filters])
+        headers = ["user", "gender", "age", "country"]
+        headers = [headers[i] for i in sorted(use_cols)]
         params = dict(delimiter=self.configs.get("common", "DELIMITER", fallback=","),
                       names=headers, engine='python', usecols=use_cols)
         df = pd.read_csv(self.get_file_path(self.configs.get(self._dataset_name, 'file_path'),
                                             file_name),
                          **params)
-        df_filters = [str(df[k]).lower() == str(v).lower() if k != 'age'
-                      else df[k].astype(int).between(int(filters[k][0]), int(filters[k][1]), inclusive = True)
+        values = {"gender": "", "age": -1, "Country": ""}
+        df.fillna(value=values, inplace=True)
+        df_filters = [df[k].map(lambda x: str(x).lower()) == str(v).lower() if k != 'age'
+                      else df[k].astype(int).between(int(filters[k][0]), int(filters[k][1]), inclusive = "both")
                       for k, v in filters.items()]
-        df = df[ft.reduce(lambda x,y: x and y, df_filters)]["user-sha1"]
-        self.data_frame = pd.merge(self.data_frame, df, on=["user-sha1"], how="left")
+        df = df[ft.reduce(lambda x, y: (x) & (y), df_filters)]["user"]
+        return pd.merge(self.data_frame, df, on=["user"], how="left")
     
-    def get_user_item_matrix(self, filters: Dict[str, Any] = {}) -> None:
+    def get_user_item_matrix(self, filters: Dict[str, Any] = {}) -> pd.DataFrame:
         """
         Void function to make sparse user-item matrix
         """
         if not self.data_frame:
             self.load_data()
+            df = self.data_frame.copy()
 
         if filters:
-            self.filter_df(filters)
+            df = self.filter_df(filters)
 
-        self.data_frame['user_id'] = (self.data_frame['user-sha1']
-                                      .map(lambda x: zlib.adler32(str(x).encode('utf-8', errors='ignore'))))
-        self.data_frame['artist_id'] = (self.data_frame['artist-name']
-                                        .map(lambda x: zlib.adler32(str(x).encode('utf-8', errors='ignore'))))
+        df["user_id"] = (df['user'].map(lambda x: zlib.adler32(str(x).encode('utf-8', errors='ignore'))))
+        df["item_id"] = (df["item"].map(lambda x: zlib.adler32(str(x).encode('utf-8', errors='ignore'))))
         
-        users = self.data_frame["user_id"].unique()
-        items = self.data_frame["artist_id"].unique()
+        users = df["user_id"].unique()
+        items = df["item_id"].unique()
         shape = (len(users), len(items))
 
         # Create indices for users and items
         self._user_cat = CategoricalDtype(categories=sorted(users), ordered=True)
         self._item_cat = CategoricalDtype(categories=sorted(items), ordered=True)
-        user_index = self.data_frame["user_id"].astype(self._user_cat).cat.codes
-        item_index = self.data_frame["artist_id"].astype(self._item_cat).cat.codes
+        user_index = df["user_id"].astype(self._user_cat).cat.codes
+        item_index = df["item_id"].astype(self._item_cat).cat.codes
 
         # Conversion via COO matrix
-        coo = sparse.coo_matrix((self.data_frame["plays"].astype(np.float32), (user_index, item_index)), shape=shape)
-        self.data_frame = pd.DataFrame.sparse.from_spmatrix(coo.tocsr())
-        self.data_frame.columns = ['user', 'item', 'rating']
+        csr = sparse.coo_matrix((df["rating"].astype(np.float32), (user_index, item_index)), shape=shape).tocsr()
+        df = pd.DataFrame.sparse.from_spmatrix(csr)
+        return df
 
 
 def get_dataloader(dataset_name: str, config_path: str = "") -> dataloader_base:
     """
     this function takes the name of the dataset and returns its dataloader. the config_path is optional
     """
-    if dataset_name == "LFM-360K":
+    if dataset_name.upper() == "LFM-360K":
         return dataloader_360k(config_path)
 
 
