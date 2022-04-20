@@ -46,7 +46,7 @@ class EvaluatorRexmex(Evaluator):
         # TODO refactor self.metrics to metric?
         (metric, k) = self.metrics[0]
         eval_func = EvaluatorRexmex.metricDict[metric]
-        print(eval_func)
+        print('Debug |', eval_func)
         # TODO refactor
         if metric == Metric.ndcg:
             # TODO needs a specific (multiclass-multi..) format
