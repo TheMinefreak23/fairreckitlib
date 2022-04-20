@@ -50,3 +50,4 @@ pydevd*.log
 nodeLanguageServer/**
 nodeLanguageServer.*/**
 dist/**
+config_files/lan.yml

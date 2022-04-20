@@ -15,8 +15,8 @@ def filter(df, filters):
     for filter in filters:
         name = filter['name']
         value = filter['value']
-        print(filter)
-        print(filter['type'])
+        #print(filter)
+        #print(filter['type'])
         if filter['type'] == Filter.Equals.value:
             # Rows that are equal to the
             condition = df[name] == value
