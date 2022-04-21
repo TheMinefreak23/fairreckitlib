@@ -3,10 +3,12 @@ This program has been developed by students from the bachelor Computer Science a
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
+
 import os.path
 from dataclasses import dataclass
 
 from ..data.registry import DataRegistry
+from ..data.split.factory import SplitFactory
 from ..events.data_event import get_data_events
 from ..events.io_event import get_io_events
 from ..events.model_event import get_model_events
@@ -23,7 +25,7 @@ class ExperimentFactories:
     """Experiment Factories wrapper."""
 
     data_registry: DataRegistry
-    split_factory: {}
+    split_factory: SplitFactory
     model_factory: ModelFactory
 
 
