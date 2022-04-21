@@ -4,39 +4,20 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-import os
-import time
-
-from ..common import *
 from .pipeline import ModelPipeline
 
 
 class RecommenderPipeline(ModelPipeline):
+    """Recommender Pipeline that computes item recommendations.
 
-    def test_model(self, model, model_folder, callback, **kwargs):
-        callback.on_begin_test_model(model, self.test_set)
-        start = time.time()
+    The topK item recommendations will be computed for each user that is present in the test set.
+    """
 
-        file_path = os.path.join(model_folder, self.stringify_model(model) + '.tsv')
+    def test_model_ratings(self, model, output_path, batch_size, **kwargs):
         test_users = self.test_set.user.unique()
-
-        batch_size = 10000
         start_index = 0
         while start_index < len(test_users):
-            user_batch = test_users[start_index: start_index + batch_size]
-            recs = model.recommend_batch(user_batch, num_items=kwargs['num_items'])
-            recs.to_csv(file_path, mode='a', sep='\t', header=False, index=False)
+            user_batch = test_users[start_index : start_index + batch_size]
+            recommendations = model.recommend_batch(user_batch, num_items=kwargs['num_items'])
+            recommendations.to_csv(output_path, mode='a', sep='\t', header=False, index=False)
             start_index += batch_size
-
-        end = time.time()
-        callback.on_end_test_model(model, self.test_set, end - start)
-
-
-def create_recommender_pipeline_implicit():
-    api, factory = get_implicit_recommender_factory()
-    return RecommenderPipeline(api, factory)
-
-
-def create_recommender_pipeline_lenskit():
-    api, factory = get_lenskit_recommender_factory()
-    return RecommenderPipeline(api, factory)

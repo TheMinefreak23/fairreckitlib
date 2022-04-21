@@ -1,0 +1,29 @@
+datasets:
+- name: ML-100K
+  splitting:
+    test_ratio: 0.2
+    type: random
+models:
+  Elliot:
+  - name: FunkSVD
+  - name: ItemKNN
+  - name: MostPop
+  - name: MultiVAE
+  - name: PureSVD
+  - name: Random
+  - name: SVDpp
+  - name: UserKNN
+  Implicit:
+  - name: AlternatingLeastSquares
+  - name: BayesianPersonalizedRanking
+  - name: LogisticMatrixFactorization
+  LensKit:
+  - name: BiasedMF
+  - name: ImplicitMF
+  - name: ItemItem
+  - name: PopScore
+  - name: Random
+  - name: UserUser
+name: Recommenders_All
+top_K: 10
+type: recommendation

@@ -6,16 +6,31 @@ Utrecht University within the Software Project course.
 
 import time
 
-from lenskit.algorithms.als import BiasedMF, ImplicitMF
-from lenskit.algorithms.basic import PopScore, Random
-from lenskit.algorithms.bias import Bias
-from lenskit.algorithms.funksvd import FunkSVD
+from lenskit.algorithms.als import BiasedMF
+from lenskit.algorithms.als import ImplicitMF
+from lenskit.algorithms.basic import PopScore
+from lenskit.algorithms.basic import Random
 from lenskit.algorithms.item_knn import ItemItem
 from lenskit.algorithms.user_knn import UserUser
 from seedbank import numpy_rng
 
 
 def create_biased_mf(params):
+    """Creates the BiasedMF algorithm.
+
+    Args:
+        params(dict): with the entries:
+            features,
+            iterations,
+            user_reg,
+            item_reg,
+            damping,
+            method,
+            random_seed
+
+    Returns:
+        (lenskit.BiasedMF) algorithm.
+    """
     if params['random_seed'] is None:
         params['random_seed'] = int(time.time())
 
@@ -33,12 +48,27 @@ def create_biased_mf(params):
 
 
 def create_implicit_mf(params):
+    """Creates the ImplicitMF algorithm.
+
+    Args:
+        params(dict): with the entries:
+            features,
+            iterations,
+            reg,
+            weight,
+            use_ratings,
+            method,
+            random_seed
+
+    Returns:
+        (lenskit.ImplicitMF) algorithm.
+    """
     if params['random_seed'] is None:
         params['random_seed'] = int(time.time())
 
     return ImplicitMF(
         params['features'],
-        iterations=params['features'],
+        iterations=params['iterations'],
         reg=params['reg'],
         weight=params['weight'],
         use_ratings=params['use_ratings'],
@@ -49,13 +79,55 @@ def create_implicit_mf(params):
     )
 
 
+def create_item_item(params, feedback):
+    """Creates the ItemItem algorithm.
+
+    Args:
+        params(dict): with the entries:
+            max_nnbrs,
+            min_nbrs,
+            min_sim
+        feedback(str): one of:
+            explicit,
+            implicit
+
+    Returns:
+        (lenskit.ItemItem) algorithm.
+    """
+    return ItemItem(
+        params['max_nnbrs'],
+        min_nbrs=params['min_nbrs'],
+        min_sim=params['min_sim'],
+        save_nbrs=None,
+        feedback=feedback
+    )
+
+
 def create_pop_score(params):
+    """Creates the PopScore algorithm.
+
+    Args:
+        params(dict): with the entries:
+            score_method
+
+    Returns:
+        (lenskit.PopScore) algorithm.
+    """
     return PopScore(
         score_method=params['score_method']
     )
 
 
 def create_random(params):
+    """Creates the Random algorithm.
+
+    Args:
+        params(dict): with the entries:
+            random_seed
+
+    Returns:
+        (lenskit.Random) algorithm.
+    """
     if params['random_seed'] is None:
         params['random_seed'] = int(time.time())
 
@@ -65,41 +137,24 @@ def create_random(params):
     )
 
 
-def create_bias(params):
-    return Bias(
-        items=params['items'],
-        users=params['users'],
-        damping=params['damping'],
-    )
+def create_user_user(params, feedback):
+    """Creates the UserUser algorithm.
 
+    Args:
+        params(dict): with the entries:
+            max_nnbrs,
+            min_nbrs,
+            min_sim
+        feedback(str): one of:
+            explicit,
+            implicit
 
-def create_funk_svd(params):
-    return FunkSVD(
-        params['features'],
-        iterations=params['iterations'],
-        lrate=params['lrate'],
-        reg=params['reg'],
-        damping=params['damping'],
-        range=params['range'],
-        bias=params['bias'],
-        random_state=None
-    )
-
-
-def create_item_item(params):
-    return ItemItem(
-        params['max_nnbrs'],
-        min_nbrs=params['min_nbrs'],
-        min_sim=params['min_sim'],
-        save_nbrs=params['save_nbrs'],
-        feedback=params['feedback']
-    )
-
-
-def create_user_user(params):
+    Returns:
+        (lenskit.UserUser) algorithm.
+    """
     return UserUser(
         params['max_nnbrs'],
         min_nbrs=params['min_nbrs'],
         min_sim=params['min_sim'],
-        feedback=params['feedback']
+        feedback=feedback
     )

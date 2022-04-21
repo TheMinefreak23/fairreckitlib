@@ -4,24 +4,37 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-import os
 
-from .factory import get_recommender_pipeline_factory
+def run_model_pipelines(output_dir, data_transition, model_factory,
+                        models_config, event_dispatcher, **kwargs):
+    """Runs several ModelPipeline's for the specified model configurations.
 
+    Args:
+        output_dir(str): the path of the directory to store the output.
+        data_transition(DataTransition): data input.
+        model_factory(ModelFactory): the model factory with available algorithms.
+        models_config(dict): containing list of ModelConfig's keyed by API name.
+        event_dispatcher(EventDispatcher): used to dispatch model/IO events
+            when running the model pipelines.
 
-def run_recommender_model_pipelines(dataset, output_dir, train_path, test_path, models_config, top_k, callback):
+    Keyword Args:
+        num_threads(int): the max number of threads a model can use.
+        num_items(int): the number of item recommendations to produce, only
+            needed when running recommender pipelines.
+
+    Returns:
+        model_dirs(array like): list of directories where the computed model
+            ratings are stored.
+    """
     model_dirs = []
 
-    for api_name in models_config:
-        mp = get_recommender_pipeline_factory()[api_name]()
-        model_dirs += mp.run(
-            dataset.name,
-            train_path,
-            test_path,
+    for api_name, models in models_config.items():
+        model_pipeline = model_factory.create_pipeline(api_name, event_dispatcher)
+        model_dirs += model_pipeline.run(
             output_dir,
-            models_config[api_name],
-            callback,
-            num_items=top_k
+            data_transition,
+            models,
+            **kwargs
         )
 
     return model_dirs

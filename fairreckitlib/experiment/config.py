@@ -4,53 +4,46 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from fairreckitlib.algorithms.common import FUNC_GET_ALGORITHM_PARAMS
-from fairreckitlib.algorithms.elliot_alg.factory import get_elliot_recommender_factory
-from fairreckitlib.algorithms.implicit_alg.factory import get_implicit_recommender_factory
-from fairreckitlib.algorithms.lenskit_alg.factory import get_lenskit_recommender_factory
-from fairreckitlib.algorithms.params import get_param_defaults
-from .common import *
+from dataclasses import dataclass
+
+import yaml
+
+from ..pipelines.data.pipeline import DatasetConfig
+from ..pipelines.model.pipeline import ModelConfig
+from .constants import EXP_TYPE_PREDICTION
+from .constants import EXP_TYPE_RECOMMENDATION
+
+VALID_EXPERIMENT_TYPES = [EXP_TYPE_PREDICTION, EXP_TYPE_RECOMMENDATION]
 
 
-def create_config_dataset(dataset_name, test_ratio, split_type):
-    return {
-        EXP_KEY_DATASET_NAME: dataset_name,
-        EXP_KEY_DATASET_PREFILTERS: [],
-        EXP_KEY_DATASET_RATING_MODIFIER: None,
-        EXP_KEY_DATASET_SPLIT: {
-            EXP_KEY_DATASET_SPLIT_TEST_RATIO: test_ratio,
-            EXP_KEY_DATASET_SPLIT_TYPE: split_type,
-            EXP_KEY_DATASET_SPLIT_PARAMS: {}
-        }
-    }
+@dataclass
+class ExperimentConfig:
+    """Base Experiment Configuration."""
+
+    datasets: [DatasetConfig]
+    models: {str: [ModelConfig]}
+    evaluation: {}
+    name: str
+    type: str
 
 
-def create_config_api_models(func_get_api_factory):
-    api_name, api_factory = func_get_api_factory()
-
-    models = []
-    for model_name in api_factory:
-        entry = api_factory[model_name]
-        params = entry[FUNC_GET_ALGORITHM_PARAMS]()
-        models.append({
-            EXP_KEY_MODEL_NAME: model_name,
-            EXP_KEY_MODEL_PARAMS: get_param_defaults(params)
-        })
-
-    return api_name, models
+@dataclass
+class PredictorExperimentConfig(ExperimentConfig):
+    """Prediction Experiment Configuration."""
 
 
-def create_config_all_models(elliot=True, implicit=True, lenskit=True):
-    models = {}
+@dataclass
+class RecommenderExperimentConfig(ExperimentConfig):
+    """Recommender Experiment Configuration."""
 
-    if elliot:
-        elliot_api, elliot_models = create_config_api_models(get_elliot_recommender_factory)
-        models[elliot_api] = elliot_models
-    if implicit:
-        implicit_api, implicit_models = create_config_api_models(get_implicit_recommender_factory)
-        models[implicit_api] = implicit_models
-    if lenskit:
-        lenskit_api, lenskit_models = create_config_api_models(get_lenskit_recommender_factory)
-        models[lenskit_api] = lenskit_models
+    top_k: int
 
-    return models
+
+def load_config_from_yml(file_path):
+    """Loads a configuration from a yml file.
+
+    Args:
+        file_path(str): path to the yml file without extension.
+    """
+    with open(file_path + '.yml', 'r', encoding='utf-8') as yml_file:
+        return yaml.safe_load(yml_file)

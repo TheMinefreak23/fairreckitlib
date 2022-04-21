@@ -29,27 +29,38 @@ class Dataset:
             self.num_items = 292385
             self.num_pairs = 17535606
             self.ratings = DATASET_RATINGS_IMPLICIT
+            self.min_rating = 0.0
+            self.max_rating = 419157.0
             self.timestamp = False
         elif name == 'LFM-1B':
             self.num_users = 120175
             self.num_items = 585095
             self.num_pairs = 61534450
             self.ratings = DATASET_RATINGS_IMPLICIT
+            self.min_rating = 1.0
+            self.max_rating = 247612.0
             self.timestamp = False
         elif name == 'ML-100K':
             self.num_users = 943
             self.num_items = 1647
             self.num_pairs = 100000
             self.ratings = DATASET_RATINGS_EXPLICIT
+            self.min_rating = 1.0
+            self.max_rating = 5.0
             self.timestamp = False
         elif name == 'ML-25M':
             self.num_users = 162541
             self.num_items = 56623
             self.num_pairs = 25000095
             self.ratings = DATASET_RATINGS_EXPLICIT
+            self.min_rating = 0.5
+            self.max_rating = 5.0
             self.timestamp = True
         else:
             raise NotImplementedError()
+
+    def get_file_path(self):
+        return os.path.join(self.dir, self.name + '.tsv')
 
     def get_info(self):
         return {
@@ -57,6 +68,8 @@ class Dataset:
             'num_items': self.num_items,
             'num_pairs': self.num_pairs,
             'ratings': self.ratings,
+            'min_rating': self.min_rating,
+            'max_rating': self.max_rating,
             'timestamp': self.timestamp
         }
 
@@ -65,5 +78,4 @@ class Dataset:
         if self.timestamp:
             names.append('timestamp')
 
-        file_path = os.path.join(self.dir, self.name + '.tsv')
-        return pd.read_csv(file_path, sep='\t', header=None, names=names)
+        return pd.read_csv(self.get_file_path(), sep='\t', header=None, names=names)

@@ -1,4 +1,7 @@
 results/
+fairreckitlib/run_dev_helper.py
+run_dev_helper.py
+
 **/*.egg-info/**
 .vscode/
 
@@ -47,3 +50,4 @@ pydevd*.log
 nodeLanguageServer/**
 nodeLanguageServer.*/**
 dist/**
+config_files/lan.yml
