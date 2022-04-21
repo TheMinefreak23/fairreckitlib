@@ -6,7 +6,7 @@ Utrecht University within the Software Project course.
 
 import lenskit.crossfold as xf
 
-from .base import DataSplitter
+from .splitter import DataSplitter
 
 
 class RandomSplitter(DataSplitter):
