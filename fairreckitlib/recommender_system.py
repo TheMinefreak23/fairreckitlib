@@ -140,9 +140,9 @@ class RecommenderSystem:
 
         formatted_results = map(lambda result: {
                 'name': result['dataset'] + '_' + result['model'],
-                'evaluation_path': result['dir'] + '\\evaluation.tsv',
+                'evaluation_path': result['dir'] + '\\evaluations.json',
                 'ratings_path': result['dir'] + '\\ratings.tsv',
-                'ratings_settings_path': result['dir'] + '\\settings.tsv'
+                'ratings_settings_path': result['dir'] + '\\settings.json'
             }, results)
 
         with open(run_0_dir+'/overview.json', 'w') as file:

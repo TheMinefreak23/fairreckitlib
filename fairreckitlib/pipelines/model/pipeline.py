@@ -35,6 +35,7 @@ class ModelPipeline(metaclass=ABCMeta):
         event_dispatcher(EventDispatcher): used to dispatch model/IO events
             when running the pipeline.
     """
+
     def __init__(self, api_name, algo_factory, event_dispatcher):
         self.api_name = api_name
         self.algo_factory = algo_factory
@@ -282,7 +283,7 @@ class ModelPipeline(metaclass=ABCMeta):
 
         # TODO callback
 
-        with open(settings_dir+'/settings.json', 'w') as file:
+        with open(settings_dir + '/settings.json', 'w') as file:
             json.dump(model_params, file, indent=4)
 
     def test_model(self, model, model_dir, **kwargs):
