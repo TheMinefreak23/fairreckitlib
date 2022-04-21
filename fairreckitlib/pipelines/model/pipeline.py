@@ -8,6 +8,7 @@ from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
 import os
 import time
+from typing import Any
 
 import pandas as pd
 
@@ -23,7 +24,7 @@ class ModelConfig:
     """Model Configuration."""
 
     name: str
-    params: dict
+    params: {str: Any}
 
 
 class ModelPipeline(metaclass=ABCMeta):

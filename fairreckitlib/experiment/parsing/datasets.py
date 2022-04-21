@@ -5,7 +5,6 @@ Utrecht University within the Software Project course.
 """
 
 from fairreckitlib.data.split.factory import SPLIT_RANDOM
-from fairreckitlib.data.split.factory import SPLIT_TEMPORAL
 from fairreckitlib.events import config_event
 from fairreckitlib.experiment.parsing import assertion
 from fairreckitlib.pipelines.data.pipeline import DatasetConfig
@@ -268,7 +267,7 @@ def parse_data_split_type(split_config, dataset_name, split_factory, event_dispa
     Returns:
         split_type(str): the parsed type or SPLIT_RANDOM on failure.
     """
-    available_splits = [SPLIT_RANDOM, SPLIT_TEMPORAL] # TODO get this from 'split_factory'
+    available_splits = split_factory.get_available_split_names()
 
     # assert dataset splitting type is present
     if not assertion.is_key_in_dict(

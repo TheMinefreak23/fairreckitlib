@@ -10,13 +10,13 @@ from .splitter import DataSplitter
 
 
 class TemporalSplitter(DataSplitter):
+    """Temporal Splitter.
 
-    def run(self, df, test_ratio, params):
-        # Note: for this function to work, it needs a 'user' and 'timestamp' header.
-        for train_set, test_set in xf.partition_users(df, 1 / test_ratio, xf.LastFrac(test_ratio)):
+    Splits the dataframe into a train and test set based on time.
+    """
+
+    def run(self, dataframe, test_ratio):
+        # Note: for this function to work, it needs a 'user' and 'timestamp' column.
+        frac = xf.LastFrac(test_ratio, col='timestamp')
+        for train_set, test_set in xf.partition_users(dataframe, 1, frac):
             return train_set, test_set
-
-
-
-def create_temporal_splitter():
-    return TemporalSplitter()

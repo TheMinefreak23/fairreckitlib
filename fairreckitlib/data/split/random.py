@@ -10,11 +10,12 @@ from .splitter import DataSplitter
 
 
 class RandomSplitter(DataSplitter):
+    """Random Splitter.
 
-    def run(self, df, test_ratio, params):
-        for train_set, test_set in xf.partition_users(df, 1, xf.SampleFrac(test_ratio)):
+    Splits the dataframe into a train and test set randomly.
+    """
+
+    def run(self, dataframe, test_ratio):
+        frac = xf.SampleFrac(test_ratio)
+        for train_set, test_set in xf.partition_users(dataframe, 1, frac):
             return train_set, test_set
-
-
-def create_random_splitter():
-    return RandomSplitter()

@@ -7,7 +7,7 @@ Utrecht University within the Software Project course.
 import os
 
 from .data.registry import DataRegistry
-from .data.split.factory import get_split_factory
+from .data.split.factory import create_split_factory
 from .events import config_event
 from .events import io_event
 from .events.dispatcher import EventDispatcher
@@ -28,7 +28,7 @@ class RecommenderSystem:
 
     def __init__(self, data_dir, result_dir, verbose=True):
         self.data_registry = DataRegistry(data_dir)
-        self.split_factory = get_split_factory()
+        self.split_factory = create_split_factory()
         self.predictor_factory = create_predictor_model_factory()
         self.recommender_factory = create_recommender_model_factory()
 
@@ -183,7 +183,7 @@ class RecommenderSystem:
 
     def get_available_splitters(self):
         """Gets the available splitters of the recommender system."""
-        raise NotImplementedError()
+        return self.split_factory.get_available_split_names()
 
     def __get_model_factory(self, experiment_type):
         if experiment_type == EXP_TYPE_PREDICTION:
