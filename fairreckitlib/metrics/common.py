@@ -8,6 +8,9 @@ import enum
 
 
 class Test:
+    """
+    DEV ONLY
+    """
     def __init__(self, name, recs_path, test_path, train_path, rec_type):
         self.name = name
         self.recs_path = recs_path
@@ -17,59 +20,80 @@ class Test:
 
 
 class RecType(enum.Enum):
-    Prediction = 'prediction'
-    Recommendation = 'recommendation'
+    """
+    Type of recommendation
+    """
+    PREDICTION = 'prediction'
+    RECOMMENDATION = 'recommendation'
 
 
 class MetricLibrary(enum.Enum):
-    Lenskit = 'Lenskit'
-    Rexmex = 'Rexmex'
+    """
+    API/Library used for computing metric
+    """
+    LENSKIT = 'Lenskit'
+    REXMEX = 'Rexmex'
 
 
 class MetricCategory(enum.Enum):
-    Accuracy = 'Accuracy'
-    Rating = 'Rating'
-    Coverage = 'Coverage'
-    Diversity = 'Diversity'
-    Novelty = 'Novelty'
+    """
+    Metric category of evaluation
+    """
+    ACCURACY = 'Accuracy'
+    RATING = 'Rating'
+    COVERAGE = 'Coverage'
+    DIVERSITY = 'Diversity'
+    NOVELTY = 'Novelty'
 
 
 # Metrics
 class Metric(enum.Enum):
+    """
+    Known metrics (names)
+    """
     # Accuracy
-    ndcg = 'NDCG@K'
-    precision = 'P@K'
-    recall = 'R@K'
-    mrr = 'MRR'
+    NDCG = 'NDCG@K'
+    PRECISION = 'P@K'
+    RECALL = 'R@K'
+    MRR = 'MRR'
 
     # Rating
-    rmse = 'RMSE'
-    mae = 'MAE'
+    RMSE = 'RMSE'
+    MAE = 'MAE'
 
     # Coverage
-    item_coverage = 'Item Coverage'
-    user_coverage = 'User Coverage'
+    ITEM_COVERAGE = 'Item Coverage'
+    USER_COVERAGE = 'User Coverage'
 
     # Diversity
-    gini = 'Gini Index'
-    intra_list_similarity = 'Intra-List Similarity'
-    similarity_cos = 'Similarity Cosine'
-    similarity_euclid = 'Similarity Euclidean'
+    GINI = 'Gini Index'
+    INTRA_LIST_SIMILARITY = 'Intra-List Similarity'
+    SIMILARITY_COS = 'Similarity Cosine'
+    SIMILARITY_EUCLID = 'Similarity Euclidean'
 
     # Novelty
-    novelty = 'Novelty'
+    NOVELTY = 'Novelty'
 
     # ??
-    dir = 'DIR'
-    pairwise_fairness = 'Pairwise Fairness'
+    DIR = 'DIR'
+    PAIRWISE_FAIRNESS = 'Pairwise Fairness'
 
 
-def metric_matches_type(metric, type):
+def metric_matches_type(metric, rec_type):
+    """
+    Check whether the metric can be used on the recommendation result type
+
+    :param metric: the metric to use for analysis
+    :param rec_type: the type of the recommenaation result
+    :return: a Boolean which specifies whether the metric can be used for the result
+    """
     metrics_by_type = {
-        RecType.Recommendation: [Metric.ndcg, Metric.precision, Metric.recall, Metric.mrr],
-        RecType.Prediction: [Metric.rmse, Metric.mae]
+        RecType.RECOMMENDATION: [Metric.NDCG, Metric.PRECISION, Metric.RECALL, Metric.MRR],
+        RecType.PREDICTION: [Metric.RMSE, Metric.MAE]
     }
 
     # If it's in neither list, it means it can be used for both types
-    generic = not (metric in metrics_by_type[RecType.Prediction] or metric in metrics_by_type[RecType.Recommendation])
-    return generic or metric in metrics_by_type[type]
+    is_predictor = metric in metrics_by_type[RecType.PREDICTION]
+    is_recommender = metric in metrics_by_type[RecType.RECOMMENDATION]
+    generic = not is_predictor or is_recommender
+    return generic or metric in metrics_by_type[rec_type]

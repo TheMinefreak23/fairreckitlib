@@ -46,7 +46,7 @@ class EvaluationPipeline:
             )
             filter_start = time.time()
 
-            from filter import filter
+            from filter import filter_data
 
             suffix = 'filtered'
 
@@ -58,7 +58,7 @@ class EvaluationPipeline:
                                           names=['user', 'gender', 'age', 'country', 'date'])
                     merged = df.merge(df, profile, on=['user'])
                     print(merged.head())
-                    df = filter(merged, filter_passes)['user', 'item', 'rating']
+                    df = filter_data(merged, filter_passes)['user', 'item', 'rating']
                     print(df.head())
                     pd.write_csv(df, path + suffix, header=None, sep='\t')
 

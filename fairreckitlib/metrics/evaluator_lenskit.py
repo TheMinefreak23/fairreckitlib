@@ -6,52 +6,53 @@ Utrecht University within the Software Project course.
 
 import pandas as pd
 
+from lenskit import topn
+from lenskit.metrics import predict
 from fairreckitlib.metrics.evaluator import Evaluator
 from fairreckitlib.metrics.common import Metric
 
 
 class EvaluatorLenskit(Evaluator):
-    from lenskit import topn
-    from lenskit.metrics import predict
+    """
+    Evaluates results using LensKit library metrics
+    """
 
     metricDict = {
-        Metric.ndcg: topn.ndcg,
-        Metric.precision: topn.precision,
-        Metric.recall: topn.recall,
-        Metric.mrr: topn.recip_rank,
+        Metric.NDCG: topn.ndcg,
+        Metric.PRECISION: topn.precision,
+        Metric.RECALL: topn.recall,
+        Metric.MRR: topn.recip_rank,
 
-        Metric.rmse: predict.rmse,
-        Metric.mae: predict.mae,
+        Metric.RMSE: predict.rmse,
+        Metric.MAE: predict.mae,
     }
 
     # TODO refactor
     groupDict = {
-        Metric.ndcg: 'ndcg',
-        Metric.precision: 'precision',
-        Metric.recall: 'recall',
-        Metric.mrr: 'recip_rank',
+        Metric.NDCG: 'ndcg',
+        Metric.PRECISION: 'precision',
+        Metric.RECALL: 'recall',
+        Metric.MRR: 'recip_rank',
 
-        Metric.rmse: 'rmse',
-        Metric.mae: 'mae'
+        Metric.RMSE: 'rmse',
+        Metric.MAE: 'mae'
     }
 
-    topn_metrics = [Metric.ndcg, Metric.precision, Metric.recall, Metric.mrr]
+    topn_metrics = [Metric.NDCG, Metric.PRECISION, Metric.RECALL, Metric.MRR]
 
     def load_test(self, test_path):
-        self.test = pd.read_csv(test_path, header=None, sep='\t', names=['user', 'item', 'rating'])
+        return pd.read_csv(test_path, header=None, sep='\t', names=['user', 'item', 'rating'])
 
     def load_train(self, train_path):
-        self.train = pd.read_csv(train_path, header=None, sep='\t', names=['user', 'item', 'rating'])
+        return pd.read_csv(train_path, header=None, sep='\t', names=['user', 'item', 'rating'])
 
     def load_recs(self, recs_path):
         recs = pd.read_csv(recs_path, header=None, sep='\t', names=['user', 'item', 'score'])
         recs['rank'] = recs.groupby('user')['score'].rank()
         recs['Algorithm'] = 'APPROACHNAME'
-        self.recs = recs
+        return recs
 
     def evaluate(self):
-        from lenskit import topn, metrics
-
         # evaluations = []
         # for metric in self.metrics:
         # TODO refactor self.metrics to metric?
@@ -66,16 +67,14 @@ class EvaluatorLenskit(Evaluator):
             group_name = EvaluatorLenskit.groupDict[metric]
             evaluation = results.groupby('Algorithm')[group_name].mean()[0]
         else:
-            from lenskit.metrics.predict import user_metric
-
             # TODO USER VS GLOBAL
             # TODO handle predictions without truth (missing)? Lenskit has 'ignore' or 'error'
-            if metric in [Metric.rmse, Metric.mae]:
+            if metric in [Metric.RMSE, Metric.MAE]:
                 # Merge on user ID
                 scores = pd.merge(self.test, self.recs, how='left', on=['user','item'])
                 scores.rename(columns={'score': 'prediction'}, inplace=True)
                 print(scores)
-                evaluation = user_metric(scores, metric=eval_func)
+                evaluation = predict.user_metric(scores, metric=eval_func)
             else:
                 raise Exception # Apparently there is another prediction metric that isn't handled
 
