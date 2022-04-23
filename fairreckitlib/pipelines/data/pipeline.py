@@ -51,7 +51,7 @@ class DataPipeline(metaclass=ABCMeta):
     splitting it into train/test set, and saving these in the designated directory.
 
     Args:
-        split_factory(dict): dictionary of available splits.
+        split_factory(SplitFactory): factory of available splitters.
         event_dispatcher(EventDispatcher): used to dispatch data/IO events
             when running the pipeline.
     """
@@ -252,8 +252,8 @@ class DataPipeline(metaclass=ABCMeta):
         )
 
         start = time.time()
-        splitter = self.split_factory[split_config.type]()
-        train_set, test_set = splitter.run(dataframe, split_config.test_ratio, {})
+        splitter = self.split_factory.create(split_config.type)
+        train_set, test_set = splitter.run(dataframe, split_config.test_ratio)
         end = time.time()
 
         self.event_dispatcher.dispatch(
