@@ -160,11 +160,11 @@ class Dataloader360k(DataloaderBase):
         """
         if not self.ui_data_frame:
             self.load_data()
-            data_frame = self.ui_data_frame.copy()
 
         if filters:
-            data_frame = self.filter_df(filters)
+            self.filter_df(filters)
 
+        data_frame = self.ui_data_frame
         data_frame["user_id"] = (data_frame['user']
                                  .map(lambda x: zlib.adler32(str(x).encode('utf-8',
                                                                            errors='ignore'))))
@@ -195,7 +195,7 @@ class Dataloader360k(DataloaderBase):
         headers = ["user", "gender", "age", "country"]
         common_elements = np.intersect1d(columns, headers)
         if not common_elements:
-            return None
+            return
         file_name = "usersha1-profile.tsv"
         fields_map = {"gender": 1, "age": 2, "country": 3}
         use_cols = [0]
@@ -216,10 +216,10 @@ class Dataloader360k(DataloaderBase):
         headers = self.ui_data_frame.columns
         common_elements = np.intersect1d(columns, headers)
         if not common_elements:
-            return None
+            return
         self.ui_data_frame.drop(columns, inplace=True)
-    
-    def df_formatter(self, columns_add: List[str] = [], columns_remove: List[str] = []) -> None:
+
+    def df_formatter(self, columns_add: List[str] = None, columns_remove: List[str] = None) -> None:
         """
         __summary__
         """
