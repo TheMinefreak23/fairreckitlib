@@ -217,7 +217,7 @@ class Dataloader360k(DataloaderBase):
         common_elements = np.intersect1d(columns, headers)
         if not common_elements:
             return
-        self.ui_data_frame.drop(columns, inplace=True)
+        self.ui_data_frame.drop(columns=columns, inplace=True)
 
     def df_formatter(self, columns_add: List[str] = None, columns_remove: List[str] = None) -> None:
         """
