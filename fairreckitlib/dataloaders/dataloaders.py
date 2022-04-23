@@ -6,7 +6,7 @@ Utrecht University within the Software Project course.
 
 """
 from abc import ABC, abstractmethod
-from typing import Dict, Any
+from typing import Dict, Any, List
 import os
 import zlib
 import functools as ft
@@ -28,7 +28,7 @@ class DataloaderBase(ABC):
         self.ui_data_frame = None
         self._user_cat = None
         self._item_cat = None
-        self._filters = []
+        self._filter_options = []
 
     @abstractmethod
     def load_data(self) -> None:
@@ -112,7 +112,7 @@ class Dataloader360k(DataloaderBase):
     def __init__(self, config_path: str = "") -> None:
         super().__init__(config_path)
         self._dataset_name = "LFM-360K"
-        self._filters = ["gender", "age", "country"]
+        self._filter_options = ["gender", "age", "country"]
 
     def load_data(self) -> None:
         """
@@ -127,7 +127,7 @@ class Dataloader360k(DataloaderBase):
                                self.configs.get(self._dataset_name, 'file_name')),
             **params)
 
-    def filter_df(self, filters: Dict[str, Any]) -> pd.DataFrame:
+    def filter_df(self, filters: Dict[str, Any]) -> None:
         """
         filters: a dictionary whose keys are the name of the column on which
         the filtering is being applied;
@@ -148,10 +148,11 @@ class Dataloader360k(DataloaderBase):
         data_frame.fillna(value=values, inplace=True)
         df_filters = [data_frame[k].map(lambda x: str(x).lower()) == str(v).lower() if k != 'age'
                       else data_frame[k].astype(int).between(int(filters[k][0]), int(filters[k][1]),
-                                                     inclusive = "both")
+                                                             inclusive = "both")
                       for k, v in filters.items()]
         data_frame = data_frame[ft.reduce(lambda x, y: (x) & (y), df_filters)]["user"]
-        return pd.merge(self.ui_data_frame, data_frame, on=["user"], how="left")
+        data_frame =  pd.merge(self.ui_data_frame, data_frame, on=["user"], how="left")
+        self.ui_data_frame = data_frame
 
     def get_user_item_matrix(self, filters: Dict[str, Any] = None) -> pd.DataFrame:
         """
@@ -186,6 +187,46 @@ class Dataloader360k(DataloaderBase):
                                 shape=shape).tocsr()
         data_frame = pd.DataFrame.sparse.from_spmatrix(csr)
         return data_frame
+
+    def df_add_column(self, columns: List[str]) -> None:
+        """
+        __summary__
+        """
+        headers = ["user", "gender", "age", "country"]
+        common_elements = np.intersect1d(columns, headers)
+        if not common_elements:
+            return None
+        file_name = "usersha1-profile.tsv"
+        fields_map = {"gender": 1, "age": 2, "country": 3}
+        use_cols = [0]
+        use_cols.extend([fields_map[col_name] for col_name in columns])
+        headers = [headers[i] for i in sorted(use_cols)]
+        params = dict(delimiter=self.configs.get("common", "DELIMITER", fallback=","),
+                      names=headers, engine='python', usecols=use_cols)
+        data_frame = pd.read_csv(
+            self.get_file_path(self.configs.get(self._dataset_name, 'file_path'),
+                               file_name), **params)
+        data_frame =  pd.merge(self.ui_data_frame, data_frame, on=["user"], how="left")
+        self.ui_data_frame = data_frame
+
+    def df_remove_column(self, columns: List[str]) -> None:
+        """
+        __summary__
+        """
+        headers = self.ui_data_frame.columns
+        common_elements = np.intersect1d(columns, headers)
+        if not common_elements:
+            return None
+        self.ui_data_frame.drop(columns, inplace=True)
+    
+    def df_formatter(self, columns_add: List[str] = [], columns_remove: List[str] = []) -> None:
+        """
+        __summary__
+        """
+        if columns_add:
+            self.df_add_column(columns_add)
+        if columns_remove:
+            self.df_remove_column(columns_remove)
 
 
 def get_dataloader(dataset_name: str, config_path: str = "") -> DataloaderBase:
