@@ -33,7 +33,7 @@ def run_evaluation_pipelines(dataset, train_path, test_path, model_dirs, eval_co
 
         # Create a test instance TODO refactor
         test = Test(name=dir_name, train_path=train_path, test_path=test_path,
-                    recs_path=model_dir+'/ratings.tsv', rec_type=RecType.Recommendation)
+                    recs_path=model_dir+'/ratings.tsv', rec_type=RecType.RECOMMENDATION)
 
         pipeline = EvaluationPipeline(test, '', eval_config['metrics'], kwargs['num_items'], eval_config['filters'],
                                       event_dispatcher)

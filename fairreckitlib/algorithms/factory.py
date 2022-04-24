@@ -101,7 +101,7 @@ class AlgorithmFactory:
             algo_params = entry[FUNC_GET_ALGORITHM_PARAMS]()
             algo_list.append({
                 ALGORITHM_NAME: algo_name,
-                ALGORITHM_PARAMS: algo_params
+                ALGORITHM_PARAMS: algo_params.to_dict()
             })
 
         return algo_list
