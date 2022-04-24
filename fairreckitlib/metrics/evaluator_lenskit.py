@@ -14,7 +14,7 @@ class EvaluatorLenskit(Evaluator):
     from lenskit import topn
     from lenskit.metrics import predict
 
-    metricDict = {
+    metric_dict = {
         Metric.ndcg: topn.ndcg,
         Metric.precision: topn.precision,
         Metric.recall: topn.recall,
@@ -25,7 +25,7 @@ class EvaluatorLenskit(Evaluator):
     }
 
     # TODO refactor
-    groupDict = {
+    group_dict = {
         Metric.ndcg: 'ndcg',
         Metric.precision: 'precision',
         Metric.recall: 'recall',
@@ -56,14 +56,14 @@ class EvaluatorLenskit(Evaluator):
         # for metric in self.metrics:
         # TODO refactor self.metrics to metric?
         (metric, k) = self.metrics[0]
-        eval_func = EvaluatorLenskit.metricDict[metric]
+        eval_func = EvaluatorLenskit.metric_dict[metric]
         print(eval_func)
         if metric in EvaluatorLenskit.topn_metrics:
             analysis = topn.RecListAnalysis()
             analysis.add_metric(eval_func, k=k)
             results = analysis.compute(self.recs, self.test).head()
 
-            group_name = EvaluatorLenskit.groupDict[metric]
+            group_name = EvaluatorLenskit.group_dict[metric]
             evaluation = results.groupby('Algorithm')[group_name].mean()[0]
         else:
             from lenskit.metrics.predict import user_metric

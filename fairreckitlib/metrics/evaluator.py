@@ -97,3 +97,4 @@ class Evaluator(ABC):
     def evaluate(self):
         """Run analysis based on metric"""
         raise NotImplementedError()
+

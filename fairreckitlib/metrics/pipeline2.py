@@ -101,14 +101,14 @@ class EvaluationPipeline:
             if not metric_matches_type(metric,self.rec_type):
                 print('Debug | WARNING: Type of metric ' + metric.value + ' doesn\'t match type of data, skipping..')
                 continue
-            if self.test_use_lenskit and metric in EvaluatorLenskit.metricDict.keys():
+            if self.test_use_lenskit and metric in EvaluatorLenskit.metric_dict.keys():
                 print('Debug | Lenskit:') # TODO CALLBACK
                 evaluator = EvaluatorLenskit(train_path=train_path,
                                              test_path=test_path,
                                              recs_path=recs_path,
                                              metrics=[(metric, self.k)],
                                              event_dispatcher=self.event_dispatcher)
-            elif metric in EvaluatorRexmex.metricDict.keys():
+            elif metric in EvaluatorRexmex.metric_dict.keys():
                 print('Debug | Rexmex:') # TODO CALLBACK
                 evaluator = EvaluatorRexmex(train_path=train_path,
                                             test_path=test_path,

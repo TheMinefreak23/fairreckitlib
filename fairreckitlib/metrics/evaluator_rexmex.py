@@ -17,7 +17,7 @@ class EvaluatorRexmex(Evaluator):
     from rexmex.metrics.coverage import item_coverage, user_coverage
     from rexmex.metrics import intra_list_similarity, novelty
 
-    metricDict = {
+    metric_dict = {
         Metric.ndcg: normalized_discounted_cumulative_gain,
         Metric.precision: average_precision_at_k,
         Metric.recall: average_recall_at_k,
@@ -45,7 +45,7 @@ class EvaluatorRexmex(Evaluator):
         # for metric in self.metrics:
         # TODO refactor self.metrics to metric?
         (metric, k) = self.metrics[0]
-        eval_func = EvaluatorRexmex.metricDict[metric]
+        eval_func = EvaluatorRexmex.metric_dict[metric]
         print('Debug |', eval_func)
         # TODO refactor
         if metric == Metric.ndcg:

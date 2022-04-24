@@ -34,7 +34,7 @@ class MetricCategory(enum.Enum):
     Novelty = 'Novelty'
 
 
-# Metrics
+# Known metrics (some not supported)
 class Metric(enum.Enum):
     # Accuracy
     ndcg = 'NDCG@K'
@@ -62,6 +62,17 @@ class Metric(enum.Enum):
     # ??
     dir = 'DIR'
     pairwise_fairness = 'Pairwise Fairness'
+
+
+# TODO metric classes
+metric_category_dict = {
+    MetricCategory.Accuracy: [Metric.ndcg, Metric.precision, Metric.recall, Metric.mrr],
+    MetricCategory.Rating: [Metric.rmse, Metric.mae],
+    MetricCategory.Coverage: [Metric.item_coverage, Metric.user_coverage],
+    MetricCategory.Diversity: [Metric.gini, Metric.intra_list_similarity, Metric.similarity_cos,
+                               Metric.similarity_euclid],
+    MetricCategory.Novelty: [Metric.novelty]
+}
 
 
 def metric_matches_type(metric, type):
