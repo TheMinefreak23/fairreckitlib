@@ -38,7 +38,7 @@ class DataloaderBase(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def filter_df(self, filters: Dict[str, Any]) -> pd.DataFrame:
+    def filter_df(self, filters: Dict[str, Any]) -> None:
         """
         _summary_
         """
@@ -48,6 +48,13 @@ class DataloaderBase(ABC):
     def get_user_item_matrix(self, filters: Dict[str, Any] = None) -> pd.DataFrame:
         """
         _summary_
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def df_formatter(self, columns_add: List[str] = None, columns_remove: List[str] = None) -> None:
+        """
+        __summary__
         """
         raise NotImplementedError()
 
@@ -206,18 +213,17 @@ class Dataloader360k(DataloaderBase):
         data_frame = pd.read_csv(
             self.get_file_path(self.configs.get(self._dataset_name, 'file_path'),
                                file_name), **params)
-        data_frame =  pd.merge(self.ui_data_frame, data_frame, on=["user"], how="left")
-        self.ui_data_frame = data_frame
+        self.ui_data_frame = pd.merge(self.ui_data_frame, data_frame, on=["user"], how="left")
 
-    def df_remove_column(self, columns: List[str]) -> None:
+    def df_remove_column(self, column_list: List[str]) -> None:
         """
         __summary__
         """
         headers = self.ui_data_frame.columns
-        common_elements = np.intersect1d(columns, headers)
+        common_elements = np.intersect1d(column_list, headers)
         if not common_elements:
             return
-        self.ui_data_frame.drop(columns=columns, inplace=True)
+        self.ui_data_frame.drop(columns=column_list, inplace=True)
 
     def df_formatter(self, columns_add: List[str] = None, columns_remove: List[str] = None) -> None:
         """
