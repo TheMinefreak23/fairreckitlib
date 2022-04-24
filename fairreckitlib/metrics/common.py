@@ -81,12 +81,12 @@ class Metric(enum.Enum):
 
 # TODO metric classes
 metric_category_dict = {
-    MetricCategory.Accuracy: [Metric.ndcg, Metric.precision, Metric.recall, Metric.mrr],
-    MetricCategory.Rating: [Metric.rmse, Metric.mae],
-    MetricCategory.Coverage: [Metric.item_coverage, Metric.user_coverage],
-    MetricCategory.Diversity: [Metric.gini, Metric.intra_list_similarity, Metric.similarity_cos,
-                               Metric.similarity_euclid],
-    MetricCategory.Novelty: [Metric.novelty]
+    MetricCategory.ACCURACY: [Metric.NDCG, Metric.PRECISION, Metric.RECALL, Metric.MRR],
+    MetricCategory.RATING: [Metric.RMSE, Metric.MAE],
+    MetricCategory.COVERAGE: [Metric.ITEM_COVERAGE, Metric.USER_COVERAGE],
+    MetricCategory.DIVERSITY: [Metric.GINI, Metric.INTRA_LIST_SIMILARITY, Metric.SIMILARITY_COS,
+                               Metric.SIMILARITY_EUCLID],
+    MetricCategory.NOVELTY: [Metric.NOVELTY]
 }
 
 

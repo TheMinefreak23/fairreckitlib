@@ -154,12 +154,12 @@ class RecommenderSystem:
 
     def get_available_metrics(self):
         # TODO refactor
-        from metrics.evaluator_lenskit import EvaluatorLenskit
-        from metrics.evaluator_rexmex import EvaluatorRexmex
+        from .metrics.evaluator_lenskit import EvaluatorLenskit
+        from .metrics.evaluator_rexmex import EvaluatorRexmex
 
         metrics_dict = {}
-        all_metrics = list(EvaluatorLenskit.metricDict.keys()) + list(EvaluatorRexmex.metricDict.keys())
-        from fairreckitlib.metrics.common import metric_category_dict
+        all_metrics = list(EvaluatorLenskit.metric_dict.keys()) + list(EvaluatorRexmex.metric_dict.keys())
+        from .metrics.common import metric_category_dict
         for category in metric_category_dict:
             # Only return the metrics that are available in the used libraries
             intersection = [metric.value for metric in metric_category_dict[category] if metric in all_metrics]
