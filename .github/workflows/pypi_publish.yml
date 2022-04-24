@@ -1,11 +1,13 @@
-name: Upload method test
+name: Upload Python Package to PyPI
 
 on:
   workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
   build-n-publish:
-    name: Build and publish Python distribution toTestPyPI
+    name: Build and publish Python distribution to PyPI
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
