@@ -30,13 +30,13 @@ class ThreadExperiment(ThreadBase):
 
         experiment = Experiment(
             kwargs['factories'],
+            kwargs['config'],
             self.event_dispatcher
         )
 
         for run in range(start_run, start_run + num_runs):
             experiment.run(
                 os.path.join(output_dir, 'run_' + str(run)),
-                kwargs['config'],
                 kwargs['num_threads'],
                 self.is_running
             )

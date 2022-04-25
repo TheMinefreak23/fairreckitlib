@@ -33,20 +33,31 @@ class Experiment:
 
     Args:
         factories(ExperimentFactories): the factories used by the experiment.
+        config(ExperimentConfig): the configuration of the experiment.
         event_dispatcher(EventDispatcher): to dispatch the experiment events.
     """
-    def __init__(self, factories, event_dispatcher):
+    def __init__(self, factories, config, event_dispatcher):
         self.__factories = factories
+        self.__config = config
 
         self.event_dispatcher = event_dispatcher
 
-    def run(self, output_dir, config, num_threads, is_running):
+    def get_config(self):
+        """Gets the configuration of the experiment.
+
+        Returns:
+            (ExperimentConfig): the used configuration.
+        """
+        return self.__config
+
+    def run(self, output_dir, num_threads, is_running):
         """Runs an experiment with the specified configuration.
 
         Args:
             output_dir(str): the path of the directory to store the output.
-            config(ExperimentConfig): the configuration of the experiment.
             num_threads(int): the max number of threads the experiment can use.
+            is_running(func -> bool): function that returns whether the experiment
+                is still running. Stops early when False is returned.
         """
         os.mkdir(output_dir)
         self.event_dispatcher.dispatch(
@@ -60,14 +71,14 @@ class Experiment:
             output_dir,
             self.__factories.data_registry,
             self.__factories.split_factory,
-            config.datasets,
+            self.__config.datasets,
             self.event_dispatcher,
             is_running
         )
 
         kwargs = {'num_threads': num_threads}
-        if config.type == EXP_TYPE_RECOMMENDATION:
-            kwargs['num_items'] = config.top_k
+        if self.__config.type == EXP_TYPE_RECOMMENDATION:
+            kwargs['num_items'] = self.__config.top_k
 
         for data_transition in data_result:
             if not is_running():
@@ -77,7 +88,7 @@ class Experiment:
                 data_transition.output_dir,
                 data_transition,
                 self.__factories.model_factory,
-                config.models,
+                self.__config.models,
                 self.event_dispatcher,
                 is_running,
                 **kwargs
@@ -85,14 +96,13 @@ class Experiment:
             if not is_running():
                 return
 
-            # TODO temp workaround for empty evaluation config
             if len(config.evaluation) > 0:
                 run_evaluation_pipelines(
                     data_transition.dataset,
                     data_transition.train_set_path,
                     data_transition.test_set_path,
                     model_dirs,
-                    config.evaluation,
+                    self.__config.evaluation,
                     self.event_dispatcher,
                     **kwargs
                 )
