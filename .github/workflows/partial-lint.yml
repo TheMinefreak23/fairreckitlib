@@ -33,22 +33,24 @@ jobs:
         run: |
           echo "${{ steps.changed-files.outputs.any_changed }}"
       
-      - if: steps.changed-files.outputs.any_changed
-        name: Install dependencies
+      - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install pylint
-          pip install lenskit
-          pip install implicit
-          pip install Cython
-          pip install scikit-surprise
-          pip install pandas
-          pip install PyYAML
-          pip install rexmex
+          if ${{ steps.changed-files.outputs.any_changed }}
+            python -m pip install --upgrade pip
+            pip install pylint
+            pip install lenskit
+            pip install implicit
+            pip install Cython
+            pip install scikit-surprise
+            pip install pandas
+            pip install PyYAML
+            pip install rexmex
+          fi
           
-      - if: steps.changed-files.outputs.any_changed
-        name: Lint all changed files
+      - name: Lint all changed files
         run: |
-          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            pylint $file
-          done
+          if ${{ steps.changed-files.outputs.any_changed }}
+            for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+              pylint $file
+            done
+          fi
