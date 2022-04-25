@@ -21,6 +21,12 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pylint
+        pip install lenskit
+        pip install Cython
+        pip install scikit-surprise
+        pip install pandas
+        pip install PyYAML
+        pip install rexmex
     - name: Analysing the code with pylint
       run: |
         pylint $(git ls-files '*.py')
