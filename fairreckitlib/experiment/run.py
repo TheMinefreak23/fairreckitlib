@@ -96,7 +96,7 @@ class Experiment:
             if not is_running():
                 return
 
-            if len(config.evaluation) > 0:
+            if len(self.__config.evaluation) > 0:
                 run_evaluation_pipelines(
                     data_transition.dataset,
                     data_transition.train_set_path,
