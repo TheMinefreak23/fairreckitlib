@@ -4,7 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-ON_PARSE = 'on_parse'
+ON_PARSE = 'Config.on_parse'
 
 
 def on_parse(event_listener, **kwargs):

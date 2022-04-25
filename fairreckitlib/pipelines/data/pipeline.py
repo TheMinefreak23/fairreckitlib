@@ -60,7 +60,7 @@ class DataPipeline(metaclass=ABCMeta):
         self.split_factory = split_factory
         self.event_dispatcher = event_dispatcher
 
-    def run(self, output_dir, dataset, data_config):
+    def run(self, output_dir, dataset, data_config, is_running):
         """Runs the entire data pipeline from beginning to end.
 
         1) load the dataset into a dataframe.
@@ -73,6 +73,8 @@ class DataPipeline(metaclass=ABCMeta):
             output_dir(str): the path of the directory to store the output.
             dataset(Dataset): the dataset to run the pipeline on.
             data_config(DatasetConfig): the dataset configuration.
+            is_running(func -> bool): function that returns whether the pipeline
+                is still running. Stops early when False is returned.
 
         Returns:
             data_output(DataTransition): the output of the pipeline.
@@ -84,11 +86,28 @@ class DataPipeline(metaclass=ABCMeta):
 
         start = time.time()
 
+        # step 1
         data_dir = self.create_data_output_dir(output_dir, dataset)
         dataframe = self.load_from_dataset(dataset)
+        if not is_running():
+            return None
+
+        # step 2
         dataframe = self.filter_rows(dataframe, data_config.prefilters)
+        if not is_running():
+            return None
+
+        # step 3
         dataframe = self.convert_ratings(dataframe, data_config.rating_modifier)
+        if not is_running():
+            return None
+
+        # step 4
         train_set, test_set = self.split(dataframe, data_config.splitting)
+        if not is_running():
+            return None
+
+        # step 5
         train_set_path, test_set_path = self.save_sets(data_dir, train_set, test_set)
 
         end = time.time()

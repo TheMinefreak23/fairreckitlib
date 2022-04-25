@@ -4,25 +4,25 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-ON_BEGIN_DATA_PIPELINE = 'on_begin_data_pipeline'
-ON_BEGIN_FILTER_DATASET = 'on_begin_filter_dataset'
-ON_BEGIN_LOAD_DATASET = 'on_begin_load_dataset'
-ON_BEGIN_MODIFY_DATASET = 'on_begin_modify_dataset'
-ON_BEGIN_SAVE_SETS = 'on_begin_save_sets'
-ON_BEGIN_SPLIT_DATASET = 'on_begin_split_dataset'
-ON_END_DATA_PIPELINE = 'on_end_data_pipeline'
-ON_END_FILTER_DATASET = 'on_end_filter_dataset'
-ON_END_LOAD_DATASET = 'on_end_load_dataset'
-ON_END_MODIFY_DATASET = 'on_end_modify_dataset'
-ON_END_SAVE_SETS = 'on_end_save_sets'
-ON_END_SPLIT_DATASET = 'on_end_split_dataset'
+ON_BEGIN_DATA_PIPELINE = 'DataPipeline.on_begin'
+ON_BEGIN_FILTER_DATASET = 'DataPipeline.on_begin_filter_dataset'
+ON_BEGIN_LOAD_DATASET = 'DataPipeline.on_begin_load_dataset'
+ON_BEGIN_MODIFY_DATASET = 'DataPipeline.on_begin_modify_dataset'
+ON_BEGIN_SAVE_SETS = 'DataPipeline.on_begin_save_sets'
+ON_BEGIN_SPLIT_DATASET = 'DataPipeline.on_begin_split_dataset'
+ON_END_DATA_PIPELINE = 'DataPipeline.on_end'
+ON_END_FILTER_DATASET = 'DataPipeline.on_end_filter_dataset'
+ON_END_LOAD_DATASET = 'DataPipeline.on_end_load_dataset'
+ON_END_MODIFY_DATASET = 'DataPipeline.on_end_modify_dataset'
+ON_END_SAVE_SETS = 'DataPipeline.on_end_save_sets'
+ON_END_SPLIT_DATASET = 'DataPipeline.on_end_split_dataset'
 
 
 def get_data_events():
     """Gets all data pipeline events.
 
     The callback functions are specified below and serve as a default
-    implementation for the Experiment class including the keyword arguments
+    implementation for the RecommenderSystem class including the keyword arguments
     that are passed down by the data pipeline.
 
     Returns:
