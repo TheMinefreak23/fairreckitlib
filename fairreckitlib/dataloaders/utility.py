@@ -26,12 +26,14 @@ def get_args() -> ArgumentParser:
 
 def create_sample(file_name: str, line_numbers: int) -> None:
     """
-    This function takes the path of the text file and the number of lines to be copied to the sample file
+    This function takes the path of the text file and
+    the number of lines to be copied to the sample file
     """
     rows = []
-    with open(file_name, 'r', encoding='utf-8', errors='ignore') as f:
+    with open(file_name, 'r', encoding='utf-8', errors='ignore') as text_file:
         for line in range(line_numbers):
-            rows.append(f.readline())
-    with open(file_name + ".sample", 'w', newline="", encoding='utf-8', errors='ignore') as f:
+            rows.append(text_file.readline())
+    with open(file_name + ".sample", 'w', newline="", encoding='utf-8', errors='ignore'
+             ) as text_file:
         for line in rows:
-            f.write(line)
+            text_file.write(line)
