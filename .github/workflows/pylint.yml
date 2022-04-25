@@ -1,9 +1,9 @@
-name: Pylint
+name: Full Pylint
 
 on:
   workflow_dispatch:
-  pull_request:
-    branches: [stable, dev]
+  schedule:
+    - cron: 0 0 * * *
 
 jobs:
   build:
