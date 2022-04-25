@@ -59,7 +59,7 @@ class AlgorithmFactory:
             raise KeyError('Algorithm does not exist: ' + algo_name)
 
         func_create_algo = self.__factory[algo_name][FUNC_CREATE_ALGORITHM]
-        algo = func_create_algo(algo_params, **kwargs)
+        algo = func_create_algo(dict(algo_params), **kwargs)
         algo.name = algo_name
 
         return algo

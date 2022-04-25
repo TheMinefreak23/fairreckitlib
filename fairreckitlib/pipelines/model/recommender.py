@@ -13,10 +13,13 @@ class RecommenderPipeline(ModelPipeline):
     The topK item recommendations will be computed for each user that is present in the test set.
     """
 
-    def test_model_ratings(self, model, output_path, batch_size, **kwargs):
+    def test_model_ratings(self, model, output_path, batch_size, is_running, **kwargs):
         test_users = self.test_set.user.unique()
         start_index = 0
         while start_index < len(test_users):
+            if not is_running():
+                return
+
             user_batch = test_users[start_index : start_index + batch_size]
             recommendations = model.recommend_batch(user_batch, num_items=kwargs['num_items'])
             recommendations.to_csv(output_path, mode='a', sep='\t', header=False, index=False)

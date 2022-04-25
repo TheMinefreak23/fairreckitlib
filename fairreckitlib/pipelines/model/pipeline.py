@@ -10,6 +10,7 @@ import os
 import time
 from typing import Any
 
+import json
 import pandas as pd
 
 from fairreckitlib.events import io_event
@@ -47,7 +48,7 @@ class ModelPipeline(metaclass=ABCMeta):
 
         self.event_dispatcher = event_dispatcher
 
-    def run(self, output_dir, data_transition, models_config, **kwargs):
+    def run(self, output_dir, data_transition, models_config, is_running, **kwargs):
         """Runs the entire pipeline from beginning to end.
 
         Effectively running all computations of the specified models.
@@ -56,6 +57,8 @@ class ModelPipeline(metaclass=ABCMeta):
             output_dir(str): the path of the directory to store the output.
             data_transition(DataTransition): data input.
             models_config(array like): list of ModelConfig objects.
+            is_running(func -> bool): function that returns whether the pipeline
+                is still running. Stops early when False is returned.
 
         Keyword Args:
             num_threads(int): the max number of threads an algorithm can use.
@@ -78,6 +81,8 @@ class ModelPipeline(metaclass=ABCMeta):
             data_transition.train_set_path,
             data_transition.test_set_path
         )
+        if not is_running():
+            return None
 
         result_dirs = []
 
@@ -86,8 +91,11 @@ class ModelPipeline(metaclass=ABCMeta):
                 output_dir,
                 data_transition,
                 model,
+                is_running,
                 **kwargs
             ))
+            if not is_running():
+                return None
 
         end = time.time()
 
@@ -100,7 +108,7 @@ class ModelPipeline(metaclass=ABCMeta):
 
         return result_dirs
 
-    def run_model(self, output_dir, data_transition, model_config, **kwargs):
+    def run_model(self, output_dir, data_transition, model_config, is_running, **kwargs):
         """Runs the computation for the specified model configuration.
 
         Args:
@@ -124,7 +132,7 @@ class ModelPipeline(metaclass=ABCMeta):
             rating_type=data_transition.rating_type,
             num_threads=kwargs['num_threads']
         )
-        self.train_and_test_model(model, model_dir, **kwargs)
+        self.train_and_test_model(model, model_dir, is_running, **kwargs)
         self.end_model(model, start)
 
         return model_dir
@@ -169,7 +177,7 @@ class ModelPipeline(metaclass=ABCMeta):
             **kwargs
         )
 
-        self.write_settings_file(model_dir, model_params)
+        self.write_settings_file(model_dir, model.get_params())
 
         return model_dir, model, start
 
@@ -279,15 +287,24 @@ class ModelPipeline(metaclass=ABCMeta):
         self.load_test_set(test_set_path)
 
     def write_settings_file(self, settings_dir, model_params):
-        """Write model params in settings file in model results directory"""
-        import json
+        """Write model params in settings file in the model's result directory.
 
-        # TODO callback
+        Args:
+            settings_dir(str): directory in which to store the model parameter settings.
+            model_params(dict): dictionary containing the model parameter name-value pairs.
+        """
+        settings_path = os.path.join(settings_dir, 'settings.json')
 
-        with open(settings_dir + '/settings.json', 'w') as file:
+        with open(settings_path, 'w', encoding='utf-8') as file:
             json.dump(model_params, file, indent=4)
 
-    def test_model(self, model, model_dir, **kwargs):
+        self.event_dispatcher.dispatch(
+            model_event.ON_SAVE_MODEL_SETTINGS,
+            settings_path=settings_path,
+            model_params=model_params
+        )
+
+    def test_model(self, model, model_dir, is_running, **kwargs):
         """Tests the specified model using the test set.
 
         This function wraps the event dispatching and functionality
@@ -313,6 +330,7 @@ class ModelPipeline(metaclass=ABCMeta):
             model,
             os.path.join(model_dir, RATING_OUTPUT_FILE),
             MODEL_USER_BATCH_SIZE,
+            is_running,
             **kwargs
         )
 
@@ -326,13 +344,15 @@ class ModelPipeline(metaclass=ABCMeta):
         )
 
     @abstractmethod
-    def test_model_ratings(self, model, output_path, batch_size, **kwargs):
+    def test_model_ratings(self, model, output_path, batch_size, is_running, **kwargs):
         """Tests the specified model for rating predictions or recommendations.
 
         Args:
             model(Algorithm): the model that needs to be tested.
             output_path(str): path to the file where the ratings will be stored.
             batch_size(int): number of users to test ratings for in a batch.
+            is_running(func -> bool): function that returns whether the pipeline
+                is still running. Stops early when False is returned.
 
         Keyword Args:
             num_items(int): the number of item recommendations to produce, only
@@ -363,16 +383,21 @@ class ModelPipeline(metaclass=ABCMeta):
             elapsed_time=end - start
         )
 
-    def train_and_test_model(self, model, model_dir, **kwargs):
+    def train_and_test_model(self, model, model_dir, is_running, **kwargs):
         """Trains and test the specified model.
 
         Args:
             model(Algorithm): the model that needs to be trained.
             model_dir(str): the path of the directory where the computed ratings can be stored.
+            is_running(func -> bool): function that returns whether the pipeline
+                is still running. Stops early when False is returned.
 
         Keyword Args:
             num_items(int): the number of item recommendations to produce, only
                 needed when running the pipeline for recommender algorithms.
         """
         self.train_model(model)
-        self.test_model(model, model_dir, **kwargs)
+        if not is_running():
+            return
+
+        self.test_model(model, model_dir, is_running, **kwargs)

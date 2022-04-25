@@ -4,17 +4,18 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-ON_MAKE_DIR = 'on_make_dir'
-ON_REMOVE_DIR = 'on_remove_dir'
-ON_REMOVE_FILE = 'on_remove_file'
-ON_RENAME_FILE = 'on_rename_file'
+ON_MAKE_DIR = 'IO.on_make_dir'
+ON_REMOVE_DIR = 'IO.on_remove_dir'
+ON_REMOVE_FILE = 'IO.on_remove_file'
+ON_RENAME_FILE = 'IO.on_rename_file'
 
 
 def get_io_events():
     """Gets all IO events.
 
     The callback functions are specified below and serve as a default
-    implementation including the keyword arguments that are available.
+    implementation for the RecommenderSystem class including the keyword arguments
+    that are available.
 
     Returns:
         (array like) list of pairs in the format (event_id, func_on_event)

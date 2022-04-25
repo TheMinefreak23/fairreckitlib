@@ -25,7 +25,7 @@ class RecommenderPipelineElliot(RecommenderPipeline):
         self.train_set_path = os.path.join('..', '..', 'train_set.tsv')
         self.test_set_path = os.path.join('..', '..', 'test_set.tsv')
 
-    def train_and_test_model(self, model, model_dir, **kwargs):
+    def train_and_test_model(self, model, model_dir, is_running, **kwargs):
         params = model.get_params()
         params['meta'] = {'verbose': False, 'save_recs': True, 'save_weights': False}
 
