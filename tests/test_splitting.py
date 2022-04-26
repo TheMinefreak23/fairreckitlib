@@ -42,8 +42,8 @@ def test_temp_split():
         if 'timestamp' in df:
             for test_ratio in ratios:
                 (train, test) = temp_split.run(df, test_ratio)
-                assert len(train.index) != 0, 'Train set is empty: ' + df_name + str(ratio) 
-                assert len(test.index) != 0, 'Test set is empty:  ' + df_name + str(ratio)
+                assert len(train.index) != 0, 'Train set is empty: ' + df_name + str(test_ratio) 
+                assert len(test.index) != 0, 'Test set is empty: ' + df_name + str(test_ratio)
                 ratio = len(test.index) / (len(train.index) + len(test.index))
                 assert ratio < (test_ratio * 1.1) and ratio > (test_ratio * 0.9), 'Test set should be around ' + str(test_ratio) + ': ' + df_name
 
@@ -54,8 +54,8 @@ def test_random_split():
     for (df_name, df) in dfs:
         for test_ratio in ratios:
             (train, test) = random_split.run(df, test_ratio)
-            assert len(train.index) != 0, 'Train set is empty: ' + df_name + str(ratio) 
-            assert len(test.index) != 0, 'Test set is empty:  ' + df_name + str(ratio)
+            assert len(train.index) != 0, 'Train set is empty: ' + df_name + str(test_ratio) 
+            assert len(test.index) != 0, 'Test set is empty: ' + df_name + str(test_ratio)
             ratio = len(test.index) / (len(train.index) + len(test.index))
             assert ratio < (test_ratio * 1.1) and ratio > (test_ratio * 0.9), 'Test set should be around ' + str(test_ratio) + ': ' + df_name
 
