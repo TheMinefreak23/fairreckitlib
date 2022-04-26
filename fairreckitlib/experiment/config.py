@@ -9,6 +9,7 @@ from dataclasses import dataclass
 import yaml
 
 from ..pipelines.data.pipeline import DatasetConfig
+from ..pipelines.evaluation.pipeline import MetricConfig
 from ..pipelines.model.pipeline import ModelConfig
 from .constants import EXP_KEY_NAME
 from .constants import EXP_KEY_TYPE
@@ -26,6 +27,9 @@ from .constants import EXP_KEY_MODELS
 from .constants import EXP_KEY_MODEL_NAME
 from .constants import EXP_KEY_MODEL_PARAMS
 from .constants import EXP_KEY_EVALUATION
+from .constants import EXP_KEY_METRIC_NAME
+from .constants import EXP_KEY_METRIC_PARAMS
+from .constants import EXP_KEY_METRIC_PREFILTERS
 
 VALID_EXPERIMENT_TYPES = [EXP_TYPE_PREDICTION, EXP_TYPE_RECOMMENDATION]
 
@@ -36,7 +40,7 @@ class ExperimentConfig:
 
     datasets: [DatasetConfig]
     models: {str: [ModelConfig]}
-    evaluation: {}
+    evaluation: [MetricConfig]
     name: str
     type: str
 
@@ -92,7 +96,7 @@ def experiment_config_to_dict(experiment_config: ExperimentConfig):
         EXP_KEY_TYPE: experiment_config.type,
         EXP_KEY_DATASETS: [],
         EXP_KEY_MODELS: {},
-        EXP_KEY_EVALUATION: {}
+        EXP_KEY_EVALUATION: []
     }
 
     if isinstance(experiment_config, RecommenderExperimentConfig):
@@ -121,5 +125,12 @@ def experiment_config_to_dict(experiment_config: ExperimentConfig):
                 EXP_KEY_MODEL_NAME: model_config.name,
                 EXP_KEY_MODEL_PARAMS: param_config
             })
+
+    for _, metric_config in enumerate(experiment_config.evaluation):
+        config[EXP_KEY_EVALUATION].append({
+            EXP_KEY_METRIC_NAME: metric_config.name,
+            EXP_KEY_METRIC_PARAMS: metric_config.params,
+            EXP_KEY_METRIC_PREFILTERS: metric_config.prefilters
+        })
 
     return config
