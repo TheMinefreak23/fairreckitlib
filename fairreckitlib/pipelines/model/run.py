@@ -6,7 +6,7 @@ Utrecht University within the Software Project course.
 
 
 def run_model_pipelines(output_dir, data_transition, model_factory,
-                        models_config, event_dispatcher, **kwargs):
+                        models_config, event_dispatcher, is_running, **kwargs):
     """Runs several ModelPipeline's for the specified model configurations.
 
     Args:
@@ -16,6 +16,8 @@ def run_model_pipelines(output_dir, data_transition, model_factory,
         models_config(dict): containing list of ModelConfig's keyed by API name.
         event_dispatcher(EventDispatcher): used to dispatch model/IO events
             when running the model pipelines.
+        is_running(func -> bool): function that returns whether the pipelines
+            are still running. Stops early when False is returned.
 
     Keyword Args:
         num_threads(int): the max number of threads a model can use.
@@ -30,11 +32,16 @@ def run_model_pipelines(output_dir, data_transition, model_factory,
 
     for api_name, models in models_config.items():
         model_pipeline = model_factory.create_pipeline(api_name, event_dispatcher)
-        model_dirs += model_pipeline.run(
+        dirs = model_pipeline.run(
             output_dir,
             data_transition,
             models,
+            is_running,
             **kwargs
         )
+        if not is_running():
+            return None
+
+        model_dirs += dirs
 
     return model_dirs

@@ -46,7 +46,7 @@ class EvaluationPipeline:
             )
             filter_start = time.time()
 
-            from filter import filter
+            from filter import filter_data
 
             suffix = 'filtered'
 
@@ -58,7 +58,7 @@ class EvaluationPipeline:
                                           names=['user', 'gender', 'age', 'country', 'date'])
                     merged = df.merge(df, profile, on=['user'])
                     print(merged.head())
-                    df = filter(merged, filter_passes)['user', 'item', 'rating']
+                    df = filter_data(merged, filter_passes)['user', 'item', 'rating']
                     print(df.head())
                     pd.write_csv(df, path + suffix, header=None, sep='\t')
 
@@ -101,14 +101,14 @@ class EvaluationPipeline:
             if not metric_matches_type(metric,self.rec_type):
                 print('Debug | WARNING: Type of metric ' + metric.value + ' doesn\'t match type of data, skipping..')
                 continue
-            if self.test_use_lenskit and metric in EvaluatorLenskit.metricDict.keys():
+            if self.test_use_lenskit and metric in EvaluatorLenskit.metric_dict.keys():
                 print('Debug | Lenskit:') # TODO CALLBACK
                 evaluator = EvaluatorLenskit(train_path=train_path,
                                              test_path=test_path,
                                              recs_path=recs_path,
                                              metrics=[(metric, self.k)],
                                              event_dispatcher=self.event_dispatcher)
-            elif metric in EvaluatorRexmex.metricDict.keys():
+            elif metric in EvaluatorRexmex.metric_dict.keys():
                 print('Debug | Rexmex:') # TODO CALLBACK
                 evaluator = EvaluatorRexmex(train_path=train_path,
                                             test_path=test_path,

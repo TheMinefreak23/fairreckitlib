@@ -4,25 +4,26 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-ON_BEGIN_LOAD_TEST_SET = 'on_begin_load_test_set'
-ON_BEGIN_LOAD_TRAIN_SET = 'on_begin_load_train_set'
-ON_BEGIN_MODEL_PIPELINE = 'on_begin_model_pipeline'
-ON_BEGIN_TEST_MODEL = 'on_begin_model_test'
-ON_BEGIN_TRAIN_MODEL = 'on_begin_model_train'
-ON_BEGIN_MODEL = 'on_begin_model'
-ON_END_LOAD_TEST_SET = 'on_end_load_test_set'
-ON_END_LOAD_TRAIN_SET = 'on_end_load_train_set'
-ON_END_MODEL_PIPELINE = 'on_end_model_pipeline'
-ON_END_TEST_MODEL = 'on_end_test_model'
-ON_END_TRAIN_MODEL = 'on_end_train_model'
-ON_END_MODEL = 'on_end_model'
+ON_BEGIN_LOAD_TEST_SET = 'ModelPipeline.on_begin_load_test_set'
+ON_BEGIN_LOAD_TRAIN_SET = 'ModelPipeline.on_begin_load_train_set'
+ON_BEGIN_MODEL_PIPELINE = 'ModelPipeline.on_begin'
+ON_BEGIN_TEST_MODEL = 'ModelPipeline.on_begin_model_test'
+ON_BEGIN_TRAIN_MODEL = 'ModelPipeline.on_begin_model_train'
+ON_BEGIN_MODEL = 'ModelPipeline.on_begin_model'
+ON_END_LOAD_TEST_SET = 'ModelPipeline.on_end_load_test_set'
+ON_END_LOAD_TRAIN_SET = 'ModelPipeline.on_end_load_train_set'
+ON_END_MODEL_PIPELINE = 'ModelPipeline.on_end'
+ON_END_TEST_MODEL = 'ModelPipeline.on_end_test_model'
+ON_END_TRAIN_MODEL = 'ModelPipeline.on_end_train_model'
+ON_END_MODEL = 'ModelPipeline.on_end_model'
+ON_SAVE_MODEL_SETTINGS = 'ModelPipeline.on_save_model_settings'
 
 
 def get_model_events():
     """Gets all model pipeline events.
 
     The callback functions are specified below and serve as a default
-    implementation for the Experiment class including the keyword arguments
+    implementation for the RecommenderSystem class including the keyword arguments
     that are passed down by the model pipeline.
 
     Returns:
@@ -40,7 +41,8 @@ def get_model_events():
         (ON_END_MODEL_PIPELINE, on_end_model_pipeline),
         (ON_END_TEST_MODEL, on_end_test_model),
         (ON_END_TRAIN_MODEL, on_end_train_model),
-        (ON_END_MODEL, on_end_model)
+        (ON_END_MODEL, on_end_model),
+        (ON_SAVE_MODEL_SETTINGS, on_save_model_settings)
     ]
 
 
@@ -238,3 +240,18 @@ def on_end_train_model(event_listener, **kwargs):
     if event_listener.verbose:
         elapsed_time = kwargs['elapsed_time']
         print(f'Trained model in {elapsed_time:1.4f}s')
+
+
+def on_save_model_settings(event_listener, **kwargs):
+    """Callback function when a model's settings are saved.
+
+    Args:
+        event_listener(object): the listener that is registered
+            in the event dispatcher with this callback.
+
+    Keyword Args:
+        settings_path(str): the path where the model parameter settings are saved.
+        model_params(dict): dictionary containing the model parameter name-value pairs.
+    """
+    if event_listener.verbose:
+        print('Saved model settings to:', kwargs['settings_path'])

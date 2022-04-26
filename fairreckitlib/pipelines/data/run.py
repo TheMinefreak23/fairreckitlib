@@ -8,7 +8,7 @@ from .pipeline import DataPipeline
 
 
 def run_data_pipeline(output_dir, data_registry, split_factory,
-                      datasets_config, event_dispatcher):
+                      datasets_config, event_dispatcher, is_running):
     """Runs the Data Pipeline for multiple dataset configurations.
 
     Args:
@@ -18,6 +18,8 @@ def run_data_pipeline(output_dir, data_registry, split_factory,
         datasets_config(array like): list of DatasetConfig objects.
         event_dispatcher(EventDispatcher): used to dispatch data/IO events
             when running the pipeline.
+        is_running(func -> bool): function that returns whether the pipelines
+            are still running. Stops early when False is returned.
 
     Returns:
         data_result(array like): list of DataTransition's.
@@ -31,7 +33,10 @@ def run_data_pipeline(output_dir, data_registry, split_factory,
         data_result.append(data_pipeline.run(
             output_dir,
             dataset,
-            data_config
+            data_config,
+            is_running
         ))
+        if not is_running():
+            return None
 
     return data_result

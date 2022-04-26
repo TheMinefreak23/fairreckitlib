@@ -59,7 +59,7 @@ class AlgorithmFactory:
             raise KeyError('Algorithm does not exist: ' + algo_name)
 
         func_create_algo = self.__factory[algo_name][FUNC_CREATE_ALGORITHM]
-        algo = func_create_algo(algo_params, **kwargs)
+        algo = func_create_algo(dict(algo_params), **kwargs)
         algo.name = algo_name
 
         return algo
@@ -101,7 +101,7 @@ class AlgorithmFactory:
             algo_params = entry[FUNC_GET_ALGORITHM_PARAMS]()
             algo_list.append({
                 ALGORITHM_NAME: algo_name,
-                ALGORITHM_PARAMS: algo_params
+                ALGORITHM_PARAMS: algo_params.to_dict()
             })
 
         return algo_list

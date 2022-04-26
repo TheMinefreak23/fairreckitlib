@@ -7,24 +7,34 @@ import enum
 
 
 class Filter(enum.Enum):
-    Equals = 'equals' # Select equal rows (e.g. selecting a category lke males)
-    Clamp = 'clamp' # Select rows with values between a min and max
+    """
+    Data filter/selection
+    """
+    EQUALS = 'equals' # Select equal rows (e.g. selecting a category lke males)
+    CLAMP = 'clamp' # Select rows with values between a min and max
 
 
-def filter(df, filters):
-    for filter in filters:
-        name = filter['name']
-        value = filter['value']
-        #print(filter)
-        #print(filter['type'])
-        if filter['type'] == Filter.Equals.value:
+def filter_data(dataframe, filters):
+    """
+    Filter a dataset using the specified list of filter passes
+
+    :param dataframe: The dataset (Pandas dataframe) to be filtered
+    :param filters: The filters used
+    :return: The filtered dataframe
+    """
+    for filter_pass in filters:
+        name = filter_pass['name']
+        value = filter_pass['value']
+        #print(filter_pass)
+        #print(filter_pass['type'])
+        if filter_pass['type'] == Filter.EQUALS.value:
             # Rows that are equal to the
-            condition = df[name] == value
-        elif filter['type'] == Filter.Clamp.value:
+            condition = dataframe[name] == value
+        elif filter_pass['type'] == Filter.CLAMP.value:
             # Exclusive max
-            condition = value['min'] <= df[name] < value['max']
+            condition = value['min'] <= dataframe[name] < value['max']
         else:
-            raise Exception # Type of filter not found
+            raise Exception # Type of filter_pass not found
 
-        df = df[condition]
-    return df
+        dataframe = dataframe[condition]
+    return dataframe

@@ -4,16 +4,16 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-import os.path
 from dataclasses import dataclass
+import os
+
+import json
 
 from ..data.registry import DataRegistry
 from ..data.split.factory import SplitFactory
-from ..events.data_event import get_data_events
-from ..events.io_event import get_io_events
-from ..events.model_event import get_model_events
-from ..events.evaluation_event import get_evaluation_events
+from ..events import io_event
 from ..pipelines.data.run import run_data_pipeline
+from ..metrics.factory import MetricFactory
 from ..pipelines.evaluation.run import run_evaluation_pipelines
 from ..pipelines.model.factory import ModelFactory
 from ..pipelines.model.run import run_model_pipelines
@@ -27,6 +27,7 @@ class ExperimentFactories:
     data_registry: DataRegistry
     split_factory: SplitFactory
     model_factory: ModelFactory
+    metric_factory: MetricFactory
 
 
 class Experiment:
@@ -34,24 +35,37 @@ class Experiment:
 
     Args:
         factories(ExperimentFactories): the factories used by the experiment.
+        config(ExperimentConfig): the configuration of the experiment.
         event_dispatcher(EventDispatcher): to dispatch the experiment events.
-        verbose(bool): whether to display extended information in the console.
     """
-    def __init__(self, factories, event_dispatcher, verbose=True):
+    def __init__(self, factories, config, event_dispatcher):
         self.__factories = factories
+        self.__config = config
 
-        self.verbose = verbose
         self.event_dispatcher = event_dispatcher
 
-    def run(self, output_dir, config, num_threads):
+    def get_config(self):
+        """Gets the configuration of the experiment.
+
+        Returns:
+            (ExperimentConfig): the used configuration.
+        """
+        return self.__config
+
+    def run(self, output_dir, num_threads, is_running):
         """Runs an experiment with the specified configuration.
 
         Args:
             output_dir(str): the path of the directory to store the output.
-            config(ExperimentConfig): the configuration of the experiment.
-            num_threads(int): the max number of threads the model pipeline can use.
+            num_threads(int): the max number of threads the experiment can use.
+            is_running(func -> bool): function that returns whether the experiment
+                is still running. Stops early when False is returned.
         """
-        self.__attach_event_listeners()
+        os.mkdir(output_dir)
+        self.event_dispatcher.dispatch(
+            io_event.ON_MAKE_DIR,
+            dir=output_dir
+        )
 
         results = []
 
@@ -59,67 +73,45 @@ class Experiment:
             output_dir,
             self.__factories.data_registry,
             self.__factories.split_factory,
-            config.datasets,
-            self.event_dispatcher
+            self.__config.datasets,
+            self.event_dispatcher,
+            is_running
         )
 
-        for data_transition in data_result:
+        kwargs = {'num_threads': num_threads}
+        if self.__config.type == EXP_TYPE_RECOMMENDATION:
+            kwargs['num_items'] = self.__config.top_k
 
-            kwargs = {'num_threads': num_threads}
-            if config.type == EXP_TYPE_RECOMMENDATION:
-                kwargs['num_items'] = config.top_k
+        for data_transition in data_result:
+            if not is_running():
+                return
 
             model_dirs = run_model_pipelines(
                 data_transition.output_dir,
                 data_transition,
                 self.__factories.model_factory,
-                config.models,
+                self.__config.models,
                 self.event_dispatcher,
+                is_running,
                 **kwargs
             )
+            if not is_running():
+                return
 
-            # TODO temp workaround for empty evaluation config
-            if len(config.evaluation) > 0:
+            if len(self.__config.evaluation) > 0:
                 run_evaluation_pipelines(
-                    data_transition.dataset,
-                    data_transition.train_set_path,
-                    data_transition.test_set_path,
                     model_dirs,
-                    config.evaluation,
+                    data_transition,
+                    self.__factories.metric_factory,
+                    self.__config.evaluation,
                     self.event_dispatcher,
+                    is_running,
                     **kwargs
                 )
 
             results = add_result_to_overview(results, model_dirs)
 
-        self.__detach_event_listeners()
-
-        return results
-
-    def __attach_event_listeners(self):
-        event_listeners = Experiment.get_events()
-        for _, (event_id, func_on_event) in enumerate(event_listeners):
-            self.event_dispatcher.add_listener(event_id, self, func_on_event)
-
-    def __detach_event_listeners(self):
-        event_listeners = Experiment.get_events()
-        for _, (event_id, func_on_event) in enumerate(event_listeners):
-            self.event_dispatcher.remove_listener(event_id, self, func_on_event)
-
-    @staticmethod
-    def get_events():
-        """Gets all experiment events.
-
-        Returns:
-            (array like) list of pairs in the format (event_id, func_on_event)
-        """
-        events = get_io_events()
-
-        events += get_data_events()
-        events += get_model_events()
-        events += get_evaluation_events()
-
-        return events
+        write_storage_file(output_dir, results)
 
 
 def add_result_to_overview(results, model_dirs):
@@ -136,26 +128,42 @@ def add_result_to_overview(results, model_dirs):
 
     return results
 
-def run_experiment(output_dir, experiment_factories, experiment_config,
-                   event_dispatcher, num_threads=0, verbose=True):
-    """Runs an experiment with the specified configuration.
+
+def write_storage_file(output_dir, results):
+    """Write a JSON file with overview of the results file paths"""
+
+    formatted_results = map(lambda result: {
+        'name': result['dataset'] + '_' + result['model'],
+        'evaluation_path': result['dir'] + '\\evaluations.json',
+        'ratings_path': result['dir'] + '\\ratings.tsv',
+        'ratings_settings_path': result['dir'] + '\\settings.json'
+    }, results)
+    output_path = os.path.join(output_dir, 'overview.json')
+    with open(output_path, 'w', encoding='utf-8') as file:
+        json.dump({'overview': list(formatted_results)}, file, indent=4)
+
+
+def resolve_experiment_start_run(result_dir):
+    """Resolves which run will be next in the specified result directory.
 
     Args:
-        output_dir(str): the path of the directory to store the output.
-        experiment_factories(ExperimentFactories): the factories used by the experiment.
-        experiment_config(ExperimentConfig): the configuration of the experiment.
-        event_dispatcher(EventDispatcher): to dispatch the experiment events.
-        num_threads(int): the max number of threads the model pipeline can use.
-        verbose(bool): whether to display extended information in the console.
-    """
-    experiment = Experiment(
-        experiment_factories,
-        event_dispatcher,
-        verbose=verbose
-    )
+        result_dir(str): path to the result directory to look into.
 
-    return experiment.run(
-        output_dir,
-        experiment_config,
-        num_threads
-    )
+    Returns:
+        start_run(int): the next run index for this result directory.
+    """
+    start_run = 0
+
+    for file in os.listdir(result_dir):
+        file_name = os.fsdecode(file)
+        run_dir = os.path.join(result_dir, file_name)
+        if not os.path.isdir(run_dir):
+            continue
+
+        run_split = file_name.split('_')
+        if len(run_split) != 2:
+            continue
+
+        start_run = max(start_run, int(run_split[1]))
+
+    return start_run + 1
