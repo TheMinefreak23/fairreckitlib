@@ -231,7 +231,7 @@ def parse_experiment_datasets(experiment_config, data_registry, split_factory, e
 
 def parse_experiment_evaluation(experiment_config, event_dispatcher):
     # TODO parse experiment evaluation config
-    return {}
+    return []
 
 
 def parse_experiment_models(experiment_config, model_factory, event_dispatcher):

@@ -24,6 +24,7 @@ from .experiment.parsing.run import parse_experiment_config_from_yml
 from .experiment.parsing.run import parse_experiment_config
 from .experiment.run import ExperimentFactories
 from .experiment.run import resolve_experiment_start_run
+from .metrics.factory import create_metric_factory
 from .pipelines.model.factory import create_predictor_model_factory
 from .pipelines.model.factory import create_recommender_model_factory
 from .threading.thread_experiment import ThreadExperiment
@@ -38,6 +39,7 @@ class RecommenderSystem:
     def __init__(self, data_dir, result_dir, verbose=True):
         self.data_registry = DataRegistry(data_dir)
         self.split_factory = create_split_factory()
+        self.metric_factory = create_metric_factory()
         self.predictor_factory = create_predictor_model_factory()
         self.recommender_factory = create_recommender_model_factory()
 
@@ -110,7 +112,8 @@ class RecommenderSystem:
             factories=ExperimentFactories(
                 self.data_registry,
                 self.split_factory,
-                self.__get_model_factory(config.type)
+                self.__get_model_factory(config.type),
+                self.metric_factory
             ),
             output_dir=result_dir,
             config=config,
@@ -162,7 +165,8 @@ class RecommenderSystem:
             factories=ExperimentFactories(
                 self.data_registry,
                 self.split_factory,
-                self.__get_model_factory(config.type)
+                self.__get_model_factory(config.type),
+                self.metric_factory
             ),
             output_dir=result_dir,
             config=config,

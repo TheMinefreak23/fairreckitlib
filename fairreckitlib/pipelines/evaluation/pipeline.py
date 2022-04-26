@@ -1,7 +1,24 @@
+"""
+This program has been developed by students from the bachelor Computer Science at
+Utrecht University within the Software Project course.
+© Copyright Utrecht University (Department of Information and Computing Sciences)
+"""
+
 from abc import abstractmethod
+from dataclasses import dataclass
+from typing import Any
 
 
-class EvaluationPipeline():
+@dataclass
+class MetricConfig:
+    """Metric Configuration."""
+
+    name: str
+    params: {str: Any}
+    prefilters: []
+
+
+class EvaluationPipeline:
     def __init__(self, api_name, factory):
         self._api_name = api_name
         self._factory = factory
