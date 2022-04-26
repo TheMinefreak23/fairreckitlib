@@ -10,6 +10,7 @@ from typing import Dict, Any, List
 import os
 import zlib
 import functools as ft
+import h5py
 import pandas as pd
 import numpy as np
 from pandas.api.types import CategoricalDtype
@@ -45,18 +46,60 @@ class DataloaderBase(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def get_user_item_matrix(self, filters: Dict[str, Any] = None) -> pd.DataFrame:
-        """
-        _summary_
-        """
-        raise NotImplementedError()
-
-    @abstractmethod
-    def df_formatter(self, columns_add: List[str] = None, columns_remove: List[str] = None) -> None:
+    def df_add_column(self, columns: List[str]) -> None:
         """
         __summary__
         """
         raise NotImplementedError()
+
+    def df_remove_column(self, column_list: List[str]) -> None:
+        """
+        __summary__
+        """
+        headers = self.ui_data_frame.columns
+        common_elements = np.intersect1d(column_list, headers)
+        if not common_elements:
+            return
+        self.ui_data_frame.drop(columns=common_elements, inplace=True)
+
+    def df_formatter(self, columns_add: List[str] = None, columns_remove: List[str] = None) -> None:
+        """
+        __summary__
+        """
+        if columns_add:
+            self.df_add_column(columns_add)
+        if columns_remove:
+            self.df_remove_column(columns_remove)
+
+    def get_user_item_matrix(self) -> sparse.csr:
+        """
+        Void function to make sparse user-item matrix
+        """
+        if not self.ui_data_frame:
+            self.load_data()
+
+        data_frame = self.ui_data_frame
+        data_frame["user_id"] = (data_frame['user']
+                                 .map(lambda x: zlib.adler32(str(x).encode('utf-8',
+                                                                           errors='ignore'))))
+        data_frame["item_id"] = (data_frame["item"]
+                                 .map(lambda x: zlib.adler32(str(x).encode('utf-8',
+                                                                            errors='ignore'))))
+
+        users = data_frame["user_id"].unique()
+        items = data_frame["item_id"].unique()
+        shape = (len(users), len(items))
+
+        # Create indices for users and items
+        self._user_cat = CategoricalDtype(categories=sorted(users), ordered=True)
+        self._item_cat = CategoricalDtype(categories=sorted(items), ordered=True)
+        user_index = data_frame["user_id"].astype(self._user_cat).cat.codes
+        item_index = data_frame["item_id"].astype(self._item_cat).cat.codes
+
+        # Conversion via COO matrix
+        csr = sparse.coo_matrix((data_frame["rating"].astype(np.float32), (user_index, item_index)),
+                                shape=shape).tocsr()
+        return csr
 
     @classmethod
     def get_file_path(cls, file_path: str, file_name: str) -> str:
@@ -111,7 +154,7 @@ class DataloaderBase(ABC):
         return item_ids[0]
 
 
-class Dataloader360k(DataloaderBase):
+class Dataloader360K(DataloaderBase):
     """
     In order to load 360k
     """
@@ -133,6 +176,7 @@ class Dataloader360k(DataloaderBase):
             self.get_file_path(self.configs.get(self._dataset_name, 'file_path'),
                                self.configs.get(self._dataset_name, 'file_name')),
             **params)
+        self.ui_data_frame.columns.fillna(value={"rating": -1}, inplace=True)
 
     def filter_df(self, filters: Dict[str, Any]) -> None:
         """
@@ -140,60 +184,18 @@ class Dataloader360k(DataloaderBase):
         the filtering is being applied;
         In case of age, the value must be a tuple, like (min_age, max_age)
         """
-        file_name = "usersha1-profile.tsv"
-        fields_map = {"gender": 1, "age": 2, "country": 3}
-        use_cols = [0]
-        use_cols.extend([fields_map[key] for key in filters])
-        headers = ["user", "gender", "age", "country"]
-        headers = [headers[i] for i in sorted(use_cols)]
-        params = dict(delimiter=self.configs.get("common", "DELIMITER", fallback=","),
-                      names=headers, engine='python', usecols=use_cols)
-        data_frame = pd.read_csv(
-            self.get_file_path(self.configs.get(self._dataset_name, 'file_path'),
-                               file_name), **params)
-        values = {"gender": "", "age": -1, "Country": ""}
-        data_frame.fillna(value=values, inplace=True)
-        df_filters = [data_frame[k].map(lambda x: str(x).lower()) == str(v).lower() if k != 'age'
-                      else data_frame[k].astype(int).between(int(filters[k][0]), int(filters[k][1]),
-                                                             inclusive = "both")
-                      for k, v in filters.items()]
-        data_frame = data_frame[ft.reduce(lambda x, y: (x) & (y), df_filters)]["user"]
-        data_frame =  pd.merge(self.ui_data_frame, data_frame, on=["user"], how="left")
-        self.ui_data_frame = data_frame
-
-    def get_user_item_matrix(self, filters: Dict[str, Any] = None) -> pd.DataFrame:
-        """
-        Void function to make sparse user-item matrix
-        """
-        if not self.ui_data_frame:
-            self.load_data()
-
-        if filters:
-            self.filter_df(filters)
-
-        data_frame = self.ui_data_frame
-        data_frame["user_id"] = (data_frame['user']
-                                 .map(lambda x: zlib.adler32(str(x).encode('utf-8',
-                                                                           errors='ignore'))))
-        data_frame["item_id"] = (data_frame["item"]
-                                 .map(lambda x: zlib.adler32(str(x).encode('utf-8',
-                                                                            errors='ignore'))))
-
-        users = data_frame["user_id"].unique()
-        items = data_frame["item_id"].unique()
-        shape = (len(users), len(items))
-
-        # Create indices for users and items
-        self._user_cat = CategoricalDtype(categories=sorted(users), ordered=True)
-        self._item_cat = CategoricalDtype(categories=sorted(items), ordered=True)
-        user_index = data_frame["user_id"].astype(self._user_cat).cat.codes
-        item_index = data_frame["item_id"].astype(self._item_cat).cat.codes
-
-        # Conversion via COO matrix
-        csr = sparse.coo_matrix((data_frame["rating"].astype(np.float32), (user_index, item_index)),
-                                shape=shape).tocsr()
-        data_frame = pd.DataFrame.sparse.from_spmatrix(csr)
-        return data_frame
+        headers = self.ui_data_frame.columns
+        common_elements = np.intersect1d(filters.keys(), headers)
+        if not common_elements:
+            return
+        df_filters = [(self.ui_data_frame[key].map(lambda x: str(x).lower()) ==
+                       str(filters[key]).lower())
+                      if key not in ['rating', 'age']
+                      else (self.ui_data_frame[key].astype(int)
+                            .between(int(filters[key][0]), int(filters[key][1]),
+                                     inclusive = "both"))
+                      for key in common_elements]
+        self.ui_data_frame = self.ui_data_frame[ft.reduce(lambda x, y: (x) & (y), df_filters)]
 
     def df_add_column(self, columns: List[str]) -> None:
         """
@@ -213,26 +215,55 @@ class Dataloader360k(DataloaderBase):
         data_frame = pd.read_csv(
             self.get_file_path(self.configs.get(self._dataset_name, 'file_path'),
                                file_name), **params)
+        values = {"gender": "", "age": -1, "Country": ""}
+        data_frame.columns.fillna(value=values, inplace=True)
         self.ui_data_frame = pd.merge(self.ui_data_frame, data_frame, on=["user"], how="left")
 
-    def df_remove_column(self, column_list: List[str]) -> None:
-        """
-        __summary__
-        """
-        headers = self.ui_data_frame.columns
-        common_elements = np.intersect1d(column_list, headers)
-        if not common_elements:
-            return
-        self.ui_data_frame.drop(columns=column_list, inplace=True)
 
-    def df_formatter(self, columns_add: List[str] = None, columns_remove: List[str] = None) -> None:
+class Dataloader1B(DataloaderBase):
+    """
+    In order to load 1B
+    """
+
+    def __init__(self, config_path: str = "") -> None:
+        super().__init__(config_path)
+        self._dataset_name = "LFM-1B"
+        self._filter_options = ["gender", "age", "country"]
+
+    def load_data(self) -> None:
+        """
+        This function reads all the files of the dataset that its name is given,
+        and loads the content of the files in dataframes based on the read config file.
+        """
+        mat_file = self.get_file_path(self.configs.get(self._dataset_name, 'file_path'),
+                                      self.configs.get(self._dataset_name, 'file_name'))
+        mat_data = h5py.File(mat_file, 'r')
+        user_ids = [item[0] for item in np.array(mat_data.get('idx_users')).astype(np.int64)]
+        artist_ids = np.array(mat_data.get('idx_artists')).astype(np.int64)
+        ua_matrix = sparse.csr_matrix((mat_data['/LEs/']["data"],
+                                       mat_data['/LEs/']["ir"],
+                                       mat_data['/LEs/']["jc"])).transpose()
+        for i, user_i in enumerate(user_ids):
+            pc_i = ua_matrix.getrow(i).toarray()[0]
+            idx_nz = np.nonzero(pc_i)
+            ratings_i = pc_i[idx_nz]     # get playcount vector for user i
+            artist_ids_i = [item[0] for item in artist_ids[idx_nz]]
+            data_frame = list(zip([user_i] * len(artist_ids_i), artist_ids_i, ratings_i))
+            data_frame = pd.DataFrame(data_frame, columns=['user', 'item', 'rating'])
+            if not self.ui_data_frame:
+                self.ui_data_frame = data_frame.copy()
+            else:
+                self.ui_data_frame = pd.concat([self.ui_data_frame, data_frame], ignore_index=True)
+
+    def df_add_column(self, columns: List[str]) -> None:
         """
         __summary__
         """
-        if columns_add:
-            self.df_add_column(columns_add)
-        if columns_remove:
-            self.df_remove_column(columns_remove)
+
+    def filter_df(self, filters: Dict[str, Any]) -> None:
+        """
+        _summary_
+        """
 
 
 def get_dataloader(dataset_name: str, config_path: str = "") -> DataloaderBase:
@@ -241,7 +272,9 @@ def get_dataloader(dataset_name: str, config_path: str = "") -> DataloaderBase:
     the config_path is optional
     """
     if dataset_name.upper() == "LFM-360K":
-        return Dataloader360k(config_path)
+        return Dataloader360K(config_path)
+    if dataset_name.upper() == "LFM-1B":
+        return Dataloader1B(config_path)
     return None
 
 
