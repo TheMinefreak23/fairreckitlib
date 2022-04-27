@@ -8,6 +8,7 @@ from abc import ABCMeta
 from dataclasses import dataclass
 import os
 import time
+from typing import Any
 
 from fairreckitlib.data.set import Dataset
 from fairreckitlib.events import data_event
@@ -20,6 +21,7 @@ class SplitConfig:
 
     test_ratio: float
     type: str
+    params: {str: Any}
 
 
 @dataclass
@@ -271,7 +273,7 @@ class DataPipeline(metaclass=ABCMeta):
         )
 
         start = time.time()
-        splitter = self.split_factory.create(split_config.type)
+        splitter = self.split_factory.create(split_config.type, split_config.params)
         train_set, test_set = splitter.run(dataframe, split_config.test_ratio)
         end = time.time()
 

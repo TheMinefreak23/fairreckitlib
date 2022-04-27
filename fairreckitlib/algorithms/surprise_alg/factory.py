@@ -14,8 +14,8 @@ from surprise.prediction_algorithms import SlopeOne
 from surprise.prediction_algorithms import SVD
 from surprise.prediction_algorithms import SVDpp
 
+from fairreckitlib.experiment.params import get_empty_parameters
 from ..factory import create_algorithm_factory_from_list
-from ..params import get_empty_parameters
 from .params import get_surprise_params_baseline_only_als
 from .params import get_surprise_params_baseline_only_sgd
 from .params import get_surprise_params_co_clustering

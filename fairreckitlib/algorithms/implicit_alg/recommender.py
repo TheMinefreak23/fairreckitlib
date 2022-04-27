@@ -20,6 +20,8 @@ class ImplicitRecommender(Recommender):
 
     Keyword Args:
         num_threads(int): the max number of threads the algorithm can use.
+        rated_items_filter(bool): whether to filter already rated items when
+            producing item recommendations.
     """
     def __init__(self, recommender, params, **kwargs):
         Recommender.__init__(self, **kwargs)
@@ -42,7 +44,7 @@ class ImplicitRecommender(Recommender):
             user,
             self.__train_user_items[user],
             N=num_items,
-            filter_already_liked_items=True
+            filter_already_liked_items=self.rated_items_filter
         )
 
         return pd.DataFrame({ 'item': items, 'score': scores })

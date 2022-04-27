@@ -20,11 +20,17 @@ class LensKitRecommender(Recommender):
 
     Keyword Args:
         num_threads(int): the max number of threads the algorithm can use.
+        rated_items_filter(bool): whether to filter already rated items when
+            producing item recommendations.
     """
     def __init__(self, predictor, params, **kwargs):
         Recommender.__init__(self, **kwargs)
         self.__recommender = algorithms.Recommender.adapt(predictor)
         self.__params = params
+
+        if not self.rated_items_filter:
+            # TODO lenskit candidate selectors
+            raise NotImplementedError()
 
     def get_params(self):
         return dict(self.__params)

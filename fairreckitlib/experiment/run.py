@@ -81,6 +81,7 @@ class Experiment:
         kwargs = {'num_threads': num_threads}
         if self.__config.type == EXP_TYPE_RECOMMENDATION:
             kwargs['num_items'] = self.__config.top_k
+            kwargs['rated_items_filter'] = self.__config.rated_items_filter
 
         for data_transition in data_result:
             if not is_running():

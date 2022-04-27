@@ -4,7 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ..params import AlgorithmParameters
+from fairreckitlib.experiment.params import ConfigParameters
 
 _implementations = [
     'aiolli',
@@ -26,9 +26,9 @@ def get_elliot_params_funk_svd():
     """Gets the parameters of the FunkSVD algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('epochs', int, 10, 1, 50)
     params.add_value('batch_size', int, 512, 100, 10000)
@@ -45,9 +45,9 @@ def get_elliot_params_item_knn():
     """Gets the parameters of the ItemKNN algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('neighbours', int, 40, 1, 50)
     params.add_option('similarity', str, _similarities[0], _similarities)
@@ -60,9 +60,9 @@ def get_elliot_params_multi_vae():
     """Gets the parameters of the MultiVAE algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('epochs', int, 10, 1, 50)
     params.add_value('batch_size', int, 512, 100, 10000)
@@ -80,9 +80,9 @@ def get_elliot_params_pure_svd():
     """Gets the parameters of the PureSVD algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('factors', int, 10, 1, 100)
     params.add_random_seed('seed')
@@ -94,9 +94,9 @@ def get_elliot_params_random():
     """Gets the parameters of the Random algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_random_seed('random_seed')
 
@@ -107,9 +107,9 @@ def get_elliot_params_svd_pp():
     """Gets the parameters of the SVDpp algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('epochs', int, 10, 1, 50)
     params.add_value('batch_size', int, 512, 100, 10000)
@@ -126,9 +126,9 @@ def get_elliot_params_user_knn():
     """Gets the parameters of the UserKNN algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('neighbours', int, 40, 1, 50)
     params.add_option('similarity', str, _similarities[0], _similarities)
