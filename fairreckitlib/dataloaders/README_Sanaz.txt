@@ -1,7 +1,7 @@
 README_Sanaz
 
 #load and flitering
->>> import dataloaders.dataloaders as dl
+>>> import fairreckitlib.dataloaders.dataloaders as dl
 >>> loader = dl.get_dataloader("LFM-360K")
 >>> loader.load_data()
 >>> loader.filter_df({'gender':'m','age':(10,40)})
