@@ -6,8 +6,8 @@ Utrecht University within the Software Project course.
 
 import time
 
+from fairreckitlib.experiment.params import get_empty_parameters
 from ..factory import create_algorithm_factory_from_list
-from ..params import get_empty_parameters
 from .params import get_elliot_params_funk_svd
 from .params import get_elliot_params_item_knn
 from .params import get_elliot_params_multi_vae

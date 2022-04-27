@@ -23,6 +23,8 @@ def run_model_pipelines(output_dir, data_transition, model_factory,
         num_threads(int): the max number of threads a model can use.
         num_items(int): the number of item recommendations to produce, only
             needed when running recommender pipelines.
+        rated_items_filter(bool): whether to filter already rated items when
+            producing item recommendations.
 
     Returns:
         model_dirs(array like): list of directories where the computed model

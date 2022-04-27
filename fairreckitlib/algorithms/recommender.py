@@ -14,7 +14,15 @@ class Recommender(Algorithm, metaclass=ABCMeta):
 
     A recommender is used for recommender experiments. It can compute a number of
     item recommendations for any user that it was trained on.
+
+    Keyword Args:
+        num_threads(int): the max number of threads the algorithm can use.
+        rated_items_filter(bool): whether to filter already rated items when
+            producing item recommendations.
     """
+    def __init__(self, **kwargs):
+        Algorithm.__init__(self, **kwargs)
+        self.rated_items_filter = kwargs['rated_items_filter']
 
     @abstractmethod
     def recommend(self, user, num_items=10):

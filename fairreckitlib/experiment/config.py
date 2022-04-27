@@ -16,11 +16,13 @@ from .constants import EXP_KEY_TYPE
 from .constants import EXP_TYPE_PREDICTION
 from .constants import EXP_TYPE_RECOMMENDATION
 from .constants import EXP_KEY_TOP_K
+from .constants import EXP_KEY_RATED_ITEMS_FILTER
 from .constants import EXP_KEY_DATASETS
 from .constants import EXP_KEY_DATASET_NAME
 from .constants import EXP_KEY_DATASET_PREFILTERS
 from .constants import EXP_KEY_DATASET_RATING_MODIFIER
 from .constants import EXP_KEY_DATASET_SPLIT
+from .constants import EXP_KEY_DATASET_SPLIT_PARAMS
 from .constants import EXP_KEY_DATASET_SPLIT_TEST_RATIO
 from .constants import EXP_KEY_DATASET_SPLIT_TYPE
 from .constants import EXP_KEY_MODELS
@@ -55,6 +57,7 @@ class RecommenderExperimentConfig(ExperimentConfig):
     """Recommender Experiment Configuration."""
 
     top_k: int
+    rated_items_filter: bool
 
 
 def load_config_from_yml(file_path):
@@ -95,23 +98,30 @@ def experiment_config_to_dict(experiment_config: ExperimentConfig):
         EXP_KEY_NAME: experiment_config.name,
         EXP_KEY_TYPE: experiment_config.type,
         EXP_KEY_DATASETS: [],
-        EXP_KEY_MODELS: {},
-        EXP_KEY_EVALUATION: []
+        EXP_KEY_MODELS: {}
     }
 
     if isinstance(experiment_config, RecommenderExperimentConfig):
         config[EXP_KEY_TOP_K] = experiment_config.top_k
+        config[EXP_KEY_RATED_ITEMS_FILTER] = experiment_config.rated_items_filter
 
     for _, dataset_config in enumerate(experiment_config.datasets):
-        config[EXP_KEY_DATASETS].append({
+        dataset = {
             EXP_KEY_DATASET_NAME: dataset_config.name,
-            EXP_KEY_DATASET_PREFILTERS: dataset_config.prefilters,
-            EXP_KEY_DATASET_RATING_MODIFIER: dataset_config.rating_modifier,
-            EXP_KEY_DATASET_SPLIT: {
-                EXP_KEY_DATASET_SPLIT_TEST_RATIO: dataset_config.splitting.test_ratio,
-                EXP_KEY_DATASET_SPLIT_TYPE: dataset_config.splitting.type
-            }
-        })
+            EXP_KEY_DATASET_SPLIT: split_config_to_dict(dataset_config.splitting)
+        }
+
+        # only include prefilters if it has entries
+        if len(dataset_config.prefilters) > 0:
+            # TODO
+            dataset[EXP_KEY_DATASET_PREFILTERS] = []
+
+        # only include rating modifier if it is present
+        if dataset_config.rating_modifier:
+            # TODO
+            dataset[EXP_KEY_DATASET_RATING_MODIFIER] = dataset_config.rating_modifier
+
+        config[EXP_KEY_DATASETS].append(dataset)
 
     for api_name, models in experiment_config.models.items():
         config[EXP_KEY_MODELS][api_name] = []
@@ -121,16 +131,51 @@ def experiment_config_to_dict(experiment_config: ExperimentConfig):
             for param_name, param_value in model_config.params.items():
                 param_config[param_name] = param_value
 
-            config[EXP_KEY_MODELS][api_name].append({
-                EXP_KEY_MODEL_NAME: model_config.name,
-                EXP_KEY_MODEL_PARAMS: param_config
-            })
+            model = {EXP_KEY_MODEL_NAME: model_config.name}
 
-    for _, metric_config in enumerate(experiment_config.evaluation):
-        config[EXP_KEY_EVALUATION].append({
-            EXP_KEY_METRIC_NAME: metric_config.name,
-            EXP_KEY_METRIC_PARAMS: metric_config.params,
-            EXP_KEY_METRIC_PREFILTERS: metric_config.prefilters
-        })
+            # only include model params if it has entries
+            if len(param_config) > 0:
+                model[EXP_KEY_MODEL_PARAMS] = param_config
+
+            config[EXP_KEY_MODELS][api_name].append(model)
+
+    # only include evaluation if it is present
+    if len(experiment_config.evaluation) > 0:
+        config[EXP_KEY_EVALUATION] = []
+
+        for _, metric_config in enumerate(experiment_config.evaluation):
+            metric = {EXP_KEY_METRIC_NAME: metric_config.name}
+
+            # only include metric params if it has entries
+            if len(metric_config.params) > 0:
+                metric[EXP_KEY_METRIC_PARAMS] = metric_config.params
+
+            # only include prefilters if it has entries
+            if len(metric_config.prefilters) > 0:
+                # TODO
+                metric[EXP_KEY_METRIC_PREFILTERS] = metric_config.prefilters
+
+            config[EXP_KEY_EVALUATION].append(metric)
 
     return config
+
+
+def split_config_to_dict(split_config):
+    """Converts a splitting configuration to a dictionary.
+
+    Args:
+        split_config(SplitConfig): the configuration to convert to dictionary.
+
+    Returns:
+        (dict): containing the splitting configuration.
+    """
+    splitting = {
+        EXP_KEY_DATASET_SPLIT_TEST_RATIO: split_config.test_ratio,
+        EXP_KEY_DATASET_SPLIT_TYPE: split_config.type
+    }
+
+    # only include splitting params if it has entries
+    if len(split_config.params) > 0:
+        splitting[EXP_KEY_DATASET_SPLIT_PARAMS] = split_config.params
+
+    return splitting

@@ -64,6 +64,8 @@ class ModelPipeline(metaclass=ABCMeta):
             num_threads(int): the max number of threads an algorithm can use.
             num_items(int): the number of item recommendations to produce, only
                 needed when running the pipeline for recommender algorithms.
+            rated_items_filter(bool): whether to filter already rated items when
+                producing item recommendations.
 
         Returns:
             result_dirs(array like): list of model directories
@@ -115,11 +117,15 @@ class ModelPipeline(metaclass=ABCMeta):
             output_dir(str): the path of the directory to store the output.
             data_transition(DataTransition): data input.
             model_config(ModelConfig): the algorithm model configuration.
+            is_running(func -> bool): function that returns whether the pipeline
+                is still running. Stops early when False is returned.
 
         Keyword Args:
             num_threads(int): the max number of threads an algorithm can use.
             num_items(int): the number of item recommendations to produce, only
                 needed when running the pipeline for recommender algorithms.
+            rated_items_filter(bool): whether to filter already rated items when
+                producing item recommendations.
 
         Returns:
             model_dir(str): the directory where computed ratings are stored.
@@ -130,6 +136,7 @@ class ModelPipeline(metaclass=ABCMeta):
             output_dir,
             rating_scale=data_transition.rating_scale,
             rating_type=data_transition.rating_type,
+            rated_items_filter=kwargs.get('rated_items_filter'),
             num_threads=kwargs['num_threads']
         )
         self.train_and_test_model(model, model_dir, is_running, **kwargs)
@@ -150,6 +157,8 @@ class ModelPipeline(metaclass=ABCMeta):
 
         Keyword Args:
             num_threads(int): the max number of threads an algorithm can use.
+            rated_items_filter(bool): whether to filter already rated items when
+                producing item recommendations.
 
         Returns:
             model_dir(str): the path of the directory where the computed ratings can be stored.
