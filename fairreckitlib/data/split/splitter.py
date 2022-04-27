@@ -12,8 +12,16 @@ class DataSplitter(metaclass=ABCMeta):
 
     A splitter is used to split a dataframe into a train and test set.
     """
-    def __init__(self):
-        pass
+    def __init__(self, params):
+        self.__params = params
+
+    def get_params(self):
+        """Get the parameters of the splitter.
+
+        Returns:
+            dict with the splitter parameters.
+        """
+        return dict(self.__params)
 
     @abstractmethod
     def run(self, dataframe, test_ratio):

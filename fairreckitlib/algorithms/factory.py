@@ -54,6 +54,8 @@ class AlgorithmFactory:
 
         Keyword Args:
             num_threads(int): the max number of threads the algorithm can use.
+            rated_items_filter(bool): whether to filter already rated items when
+                producing item recommendations.
         """
         if self.__factory.get(algo_name) is None:
             raise KeyError('Algorithm does not exist: ' + algo_name)
@@ -82,7 +84,7 @@ class AlgorithmFactory:
             algo_name(str): name of the algorithm.
 
         Returns:
-            algo_params(AlgorithmParameters): the parameters of the algorithm.
+            algo_params(ConfigParameters): the parameters of the algorithm.
         """
         if algo_name not in self.__factory:
             raise KeyError('Algorithm does not exist: ' + algo_name)

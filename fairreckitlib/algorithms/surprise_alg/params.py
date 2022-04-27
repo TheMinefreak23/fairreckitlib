@@ -4,16 +4,16 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ..params import AlgorithmParameters
+from fairreckitlib.experiment.params import ConfigParameters
 
 
 def get_surprise_params_baseline_only_als():
     """Gets the parameters of the BaselineOnly ALS algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('epochs', int, 10, 1, 50)
     params.add_value('reg_i', int, 10, 1, 100)
@@ -26,9 +26,9 @@ def get_surprise_params_baseline_only_sgd():
     """Gets the parameters of the BaselineOnly SGD algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('epochs', int, 20, 1, 50)
     params.add_value('regularization', float, 0.02, 0.00001, 1.0)
@@ -41,9 +41,9 @@ def get_surprise_params_co_clustering():
     """Gets the parameters of the CoClustering algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('epochs', int, 20, 1, 50)
     params.add_value('user_clusters', int, 3, 0, 30)
@@ -56,9 +56,9 @@ def get_surprise_params_nmf():
     """Gets the parameters of the NMF algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('factors', int, 15, 1, 100)
     params.add_value('epochs', int, 50, 1, 50)
@@ -80,9 +80,9 @@ def get_surprise_params_svd():
     """Gets the parameters of the SVD algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('factors', int, 100, 1, 100)
     params.add_value('epochs', int, 20, 1, 50)
@@ -100,9 +100,9 @@ def get_surprise_params_svd_pp():
     """Gets the parameters of the SVDpp algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('factors', int, 20, 1, 100)
     params.add_value('epochs', int, 20, 1, 50)

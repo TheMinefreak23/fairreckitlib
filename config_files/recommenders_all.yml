@@ -1,8 +1,10 @@
 datasets:
 - name: ML-100K
-  splitting:
-    test_ratio: 0.2
-    type: random
+evaluation:
+- name: NDCG@K
+- name: P@K
+- name: R@K
+- name: MRR
 models:
   Elliot:
   - name: FunkSVD
@@ -25,5 +27,6 @@ models:
   - name: Random
   - name: UserUser
 name: Recommenders_All
+rated_items_filter: true
 top_K: 10
 type: recommendation

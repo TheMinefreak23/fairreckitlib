@@ -15,10 +15,14 @@ class ElliotRecommender(Recommender):
 
     Keyword Args:
         num_threads(int): the max number of threads the algorithm can use.
+        rated_items_filter(bool): whether to filter already rated items when
+            producing item recommendations.
     """
     def __init__(self, params, **kwargs):
         Recommender.__init__(self, **kwargs)
         self.__params = params
+        if not self.rated_items_filter:
+            raise RuntimeError('Elliot: not supported.')
 
     def get_params(self):
         return dict(self.__params)

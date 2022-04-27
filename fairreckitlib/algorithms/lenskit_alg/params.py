@@ -4,21 +4,21 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ..params import AlgorithmParameters
+from fairreckitlib.experiment.params import ConfigParameters
 
 
 def get_lenskit_params_biased_mf():
     """Gets the params of the BiasedMF algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
     methods = [
         'cd',
         'lu'
     ]
 
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('features', int, 10, 1, 50)
     params.add_value('iterations', int, 20, 1, 50)
@@ -35,14 +35,14 @@ def get_lenskit_params_implicit_mf():
     """Gets the params of the ImplicitMF algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
     methods = [
         'cg',
         'lu'
     ]
 
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('features', int, 3, 1, 50)
     params.add_value('iterations', int, 20, 1, 50)
@@ -59,9 +59,9 @@ def get_lenskit_params_item_item():
     """Gets the params of the ItemItem algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('max_nnbrs', int, 10, 1, 50)
     params.add_value('min_nbrs', int, 1, 1, 50)
@@ -74,7 +74,7 @@ def get_lenskit_params_pop_score():
     """Gets the params of the PopScore algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
     options = [
         'quantile',
@@ -82,7 +82,7 @@ def get_lenskit_params_pop_score():
         'count'
     ]
 
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_option('score_method', str, options[0], options)
 
@@ -93,9 +93,9 @@ def get_lenskit_params_random():
     """Gets the params of the Random algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_random_seed('random_seed')
 
@@ -106,9 +106,9 @@ def get_lenskit_params_user_user():
     """Gets the params of the UserUser algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('max_nnbrs', int, 10, 1, 50)
     params.add_value('min_nbrs', int, 1, 1, 50)
