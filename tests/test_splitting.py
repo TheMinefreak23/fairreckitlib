@@ -44,7 +44,9 @@ def test_split_classes():
     assert type(temp_split) is temporal.TemporalSplitter
 
 # tests if the temporal split returns a tuple with the test set being
-# the size of the ratio, with a 10% margin
+# the size of the ratio, with a 75% margin
+# larger margin because it is split on user timestamps, which differs slightly
+# compared to the overall timestamps in the dataset
 def test_temp_split():
     for (df_name, df) in dfs:
         if 'timestamp' in df: # this can be hcanged to 'assert', if you want it to fail instead of skip timestamp-less dataframes
