@@ -26,8 +26,8 @@ dfs =  [('df_lfm360k', df_lfm360k_sample),
 
 # creating the factories to run splitting with
 split_factory = factory.create_split_factory()
-random_split = split_factory.create('random')
-temp_split = split_factory.create('temporal')
+random_split = split_factory.create('random', dict())
+temp_split = split_factory.create('temporal', dict())
 
 
 # the list of test ratios to test splitting with
@@ -39,9 +39,9 @@ ratios = [0.2, 0.3, 0.8]
 
 def test_split_classes():
     """tests if the created variables are in fact of that class"""
-    assert isinstance(split_factory) is factory.SplitFactory
-    assert isinstance(random_split) is random.RandomSplitter
-    assert isinstance(temp_split) is temporal.TemporalSplitter
+    assert isinstance(split_factory, factory.SplitFactory)
+    assert isinstance(random_split, random.RandomSplitter)
+    assert isinstance(temp_split, temporal.TemporalSplitter)
 
 
 def test_temp_split():
