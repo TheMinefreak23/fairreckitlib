@@ -10,6 +10,7 @@ from fairreckitlib.pipelines.model.pipeline import ModelConfig
 from ..constants import EXP_KEY_MODELS
 from ..constants import EXP_KEY_MODEL_NAME
 from ..constants import EXP_KEY_MODEL_PARAMS
+from .params import parse_config_parameters
 
 
 def parse_models_config(experiment_config, model_factory, event_dispatcher):
@@ -174,13 +175,25 @@ def parse_model(model_config, algo_factory, event_dispatcher):
         ' model unknown name: \'' + str(model_name) + '\''
     ): return None, model_name
 
-    # parse the model parameters
-    model_params = parse_model_params(
+    algo_params = algo_factory.get_algorithm_params(model_name)
+    model_params = algo_params.get_defaults()
+
+    # assert EXP_KEY_MODEL_PARAMS is present
+    # skip when the model has no parameters at all
+    if len(model_params) > 0 and assertion.is_key_in_dict(
+        EXP_KEY_MODEL_PARAMS,
         model_config,
-        model_name,
-        algo_factory,
-        event_dispatcher
-    )
+        event_dispatcher,
+        'PARSE WARNING: model ' + model_name + ' missing key \'' + EXP_KEY_MODEL_PARAMS + '\'',
+        default=model_params
+    ):
+        # parse the model parameters
+        model_params = parse_config_parameters(
+            model_config[EXP_KEY_MODEL_PARAMS],
+            model_name,
+            algo_params,
+            event_dispatcher
+        )
 
     parsed_config = ModelConfig(
         model_name,
@@ -188,149 +201,3 @@ def parse_model(model_config, algo_factory, event_dispatcher):
     )
 
     return parsed_config, model_name
-
-
-def parse_model_params(model_config, model_name, algo_factory, event_dispatcher):
-    """Parses the model parameters' configuration.
-
-    Args:
-        model_config(dict): dictionary with the model's configuration.
-        model_name(str): the model name related to the model's configuration.
-        algo_factory(AlgorithmFactory): the algorithm factory related to the model config.
-        event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
-
-    Returns:
-        parsed_params(dict): the parsed params configuration as key-value pairs.
-    """
-    algo_params = algo_factory.get_algorithm_params(model_name)
-    # start with parameter defaults
-    parsed_params = algo_params.get_defaults()
-
-    # assert EXP_KEY_MODEL_PARAMS is present
-    if not assertion.is_key_in_dict(
-        EXP_KEY_MODEL_PARAMS,
-        model_config,
-        event_dispatcher,
-        'PARSE WARNING: model ' + model_name + ' missing key \'' + EXP_KEY_MODEL_PARAMS + '\'',
-        default=parsed_params
-    ): return parsed_params
-
-    params_config = model_config[EXP_KEY_MODEL_PARAMS]
-
-    # assert params_config is a dict
-    if not assertion.is_type(
-        params_config,
-        dict,
-        event_dispatcher,
-        'PARSE WARNING: model ' + model_name + ' invalid params value',
-        default=parsed_params
-    ): return parsed_params
-
-    # remove unnecessary parameters from configuration
-    params_config = trim_algo_params(
-        params_config,
-        model_name,
-        algo_params,
-        event_dispatcher
-    )
-
-    # assert params_config has entries left after trimming
-    if not assertion.is_container_not_empty(
-        params_config,
-        event_dispatcher,
-        'PARSE WARNING: model ' + model_name + ' params is empty',
-        default=parsed_params
-    ): return parsed_params
-
-    # parse params_config entries
-    for param_name, _ in parsed_params.items():
-        success, value = parse_model_param(
-            params_config,
-            param_name,
-            model_name,
-            algo_params,
-            event_dispatcher
-        )
-
-        # replace defaults on success
-        if success:
-            parsed_params[param_name] = value
-
-    return parsed_params
-
-
-def parse_model_param(params_config, param_name, model_name, algo_params, event_dispatcher):
-    """Parses a model parameter from the specified configuration.
-
-    Args:
-        params_config(dict): dictionary with the model parameters' configuration.
-        param_name(str): name of the parameter to parse.
-        model_name(str): name of the model related to the parameters' configuration.
-        algo_params(AlgorithmParameters): the algorithm parameters for this model.
-        event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
-
-    Returns:
-        success(bool): whether the parsing succeeded.
-        value: the parsed and validated value.
-    """
-    param_default = algo_params.get_param(param_name).default_value
-
-    # assert param_name is present in the configuration
-    if not assertion.is_key_in_dict(
-        param_name,
-        params_config,
-        event_dispatcher,
-        'PARSE WARNING: model ' + model_name + ' missing param for \'' + param_name + '\'',
-        default=param_default
-    ): return False, param_default
-
-    config_value = params_config[param_name]
-    # validate the configuration value
-    success, value, error_msg = algo_params.get_param(param_name).validate_value(config_value)
-
-    if not success:
-        event_dispatcher.dispatch(
-            config_event.ON_PARSE,
-            msg='PARSE WARNING: model ' + model_name + ' invalid param \'' + param_name + '\'' +
-                '\n\t' + error_msg,
-            actual=config_value,
-            default=value
-        )
-    # validation succeeded but extra info is available
-    elif len(error_msg) > 0:
-        event_dispatcher.dispatch(
-            config_event.ON_PARSE,
-            msg='PARSE WARNING: model ' + model_name + ' modified param \'' + param_name + '\'' +
-                '\n\t' + error_msg,
-            actual=config_value
-        )
-
-    return success, value
-
-
-def trim_algo_params(params_config, model_name, algo_params, event_dispatcher):
-    """Trims model parameters from the specified configuration.
-
-    Removes unnecessary parameters that are not present in the model's
-    original algorithm parameter list.
-
-    Args:
-        params_config(dict): dictionary with the model parameters' configuration.
-        model_name(str): name of the model related to the parameters' configuration.
-        algo_params(AlgorithmParameters): the algorithm parameters for this model.
-        event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
-
-    Returns:
-        trimmed_config(dict): dictionary with the trimmed parameters.
-    """
-    trimmed_config = {}
-
-    for param_name, param_value in params_config.items():
-        if assertion.is_one_of_list(
-            param_name,
-            algo_params.get_param_names(),
-            event_dispatcher,
-            'PARSE WARNING: model ' + model_name + ' unknown parameter \'' + param_name + '\''
-        ): trimmed_config[param_name] = param_value
-
-    return trimmed_config

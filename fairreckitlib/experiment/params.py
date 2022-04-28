@@ -7,7 +7,6 @@ Utrecht University within the Software Project course.
 from abc import ABCMeta, abstractmethod
 import sys
 
-PARAM_KEY = 'key'
 PARAM_KEY_NAME = 'name'
 PARAM_KEY_DEFAULT = 'default'
 PARAM_KEY_MIN = 'min'
@@ -16,8 +15,8 @@ PARAM_KEY_OPTIONS = 'options'
 PARAM_KEY_VALUES = 'values'
 
 
-class AlgorithParam(metaclass=ABCMeta):
-    """Algorithm Param base class.
+class ConfigParam(metaclass=ABCMeta):
+    """Config Param base class.
 
     Args:
         name(str): name of the parameter.
@@ -53,8 +52,8 @@ class AlgorithParam(metaclass=ABCMeta):
         raise NotImplementedError()
 
 
-class AlgorithmOptionParam(AlgorithParam):
-    """Algorithm Option Parameter.
+class ConfigOptionParam(ConfigParam):
+    """Config Option Parameter.
 
     The default value and all the options are expected
     to be of the same value_type.
@@ -66,7 +65,7 @@ class AlgorithmOptionParam(AlgorithParam):
         options(array like): list of available options for the parameter.
     """
     def __init__(self, name, value_type, default_value, options):
-        AlgorithParam.__init__(self, name, value_type, default_value)
+        ConfigParam.__init__(self, name, value_type, default_value)
         self.options = options
 
     def to_dict(self):
@@ -82,7 +81,7 @@ class AlgorithmOptionParam(AlgorithParam):
                    'no value specified, expected one of: ' + str(self.options)
 
         # type check
-        if type(value) != self.value_type:
+        if not isinstance(value, self.value_type):
             return False, self.default_value, \
                    'expected ' + str(self.value_type) + ' got '+ str(type(value))
 
@@ -93,8 +92,8 @@ class AlgorithmOptionParam(AlgorithParam):
         return False, self.default_value, 'expected one of: ' + str(self.options)
 
 
-class AlgorithmValueParam(AlgorithParam):
-    """Algorithm Value Parameter.
+class ConfigValueParam(ConfigParam):
+    """Config Value Parameter.
 
     The default, min, and max value are all expected to be of the same value_type.
     The value_type is either an integer or floating-point. Conversions between the
@@ -108,7 +107,7 @@ class AlgorithmValueParam(AlgorithParam):
         max_value(int/float): maximum value of the parameter.
     """
     def __init__(self, name, value_type, default_value, min_value, max_value):
-        AlgorithParam.__init__(self, name, value_type, default_value)
+        ConfigParam.__init__(self, name, value_type, default_value)
         self.min_value = min_value
         self.max_value = max_value
 
@@ -134,7 +133,7 @@ class AlgorithmValueParam(AlgorithParam):
         elif isinstance(value, int) and self.value_type == float:
             value = self.value_type(value)
             error = '(value cast to float) '
-        elif type(value) != self.value_type:
+        elif not isinstance(value, self.value_type):
             return False, self.default_value, \
                    'expected ' + str(self.value_type) + ' got '+ str(type(value))
 
@@ -149,30 +148,30 @@ class AlgorithmValueParam(AlgorithParam):
         return True, value, error
 
 
-class AlgorithmRandomParam(AlgorithmValueParam):
-    """Algorithm Random Parameter.
+class ConfigRandomParam(ConfigValueParam):
+    """Config Random Parameter.
 
-    Derived from an integer AlgorithmValueParam, and in addition
+    Derived from an integer ConfigValueParam, and in addition
     allows the default_value to be None.
 
     Args:
         name(str): name of the random seed parameter.
     """
     def __init__(self, name):
-        AlgorithmValueParam.__init__(self, name, int, None, 0, sys.maxsize)
+        ConfigValueParam.__init__(self, name, int, None, 0, sys.maxsize)
 
     def validate_value(self, value):
-        # skips the 'None' error from AlgorithmValueParam
+        # skips the 'None' error from ConfigValueParam
         if value is None:
             return True, value, ''
 
-        return AlgorithmValueParam.validate_value(self, value)
+        return ConfigValueParam.validate_value(self, value)
 
 
-class AlgorithmParameters:
-    """Algorithm Parameters.
+class ConfigParameters:
+    """Config Parameters.
 
-    Container with varying algorithm parameters using a dictionary.
+    Container with varying Config parameters using a dictionary.
     Moreover, he added option/value parameters are stored separately.
     """
     def __init__(self):
@@ -207,7 +206,7 @@ class AlgorithmParameters:
             default_option(object): default option of the parameter.
             options(array like): list of available options for the parameter.
         """
-        param = AlgorithmOptionParam(
+        param = ConfigOptionParam(
             name,
             value_type,
             default_option,
@@ -227,7 +226,7 @@ class AlgorithmParameters:
         Args:
             name(str): name of the random seed parameter.
         """
-        param = AlgorithmRandomParam(name)
+        param = ConfigRandomParam(name)
 
         self.__add_param(param)
         self.values.append(param)
@@ -248,7 +247,7 @@ class AlgorithmParameters:
             min_value(int/float): minimum value of the parameter.
             max_value(int/float): maximum value of the parameter.
         """
-        param = AlgorithmValueParam(
+        param = ConfigValueParam(
             name,
             value_type,
             default_value,
@@ -272,11 +271,19 @@ class AlgorithmParameters:
 
         return defaults
 
+    def get_num_params(self):
+        """Gets the number of parameters.
+
+        Returns:
+            (int): the parameter count.
+        """
+        return len(self.params)
+
     def get_param(self, param_name):
         """Gets the parameter with the specified name.
 
         Returns:
-            param(AlgorithmParam): the parameter on success or None on failure.
+            param(ConfigParam): the parameter on success or None on failure.
         """
         return self.params.get(param_name)
 
@@ -322,14 +329,14 @@ class AlgorithmParameters:
         Raises a KeyError when the name of the parameter is already present.
 
         Args:
-            param(AlgorithParam): the parameter to add.
+            param(ConfigParam): the parameter to add.
         """
         if param.name in self.params:
-            raise KeyError('Algorithm parameter already exists: ', + param.name)
+            raise KeyError('Config parameter already exists: ', + param.name)
 
         self.params[param.name] = param
 
 
 def get_empty_parameters():
-    """Gets the algorithm parameters with no entries."""
-    return AlgorithmParameters()
+    """Gets the Config parameters with no entries."""
+    return ConfigParameters()

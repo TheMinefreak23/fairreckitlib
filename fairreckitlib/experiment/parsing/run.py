@@ -17,8 +17,15 @@ from ..constants import EXP_KEY_TYPE
 from ..constants import EXP_TYPE_PREDICTION
 from ..constants import EXP_TYPE_RECOMMENDATION
 from ..constants import EXP_KEY_TOP_K
+from ..constants import EXP_KEY_RATED_ITEMS_FILTER
+from ..constants import EXP_DEFAULT_TOP_K
+from ..constants import EXP_DEFAULT_RATED_ITEMS_FILTER
+from ..params import ConfigOptionParam
+from ..params import ConfigValueParam
 from .datasets import parse_data_config
+from .evaluation import parse_evaluation_config
 from .models import parse_models_config
+from .params import parse_config_param
 
 
 def parse_experiment_config(experiment_config, recommender_system):
@@ -39,6 +46,7 @@ def parse_experiment_config(experiment_config, recommender_system):
             recommender_system.data_registry,
             recommender_system.split_factory,
             recommender_system.predictor_factory,
+            recommender_system.metric_factory,
             recommender_system.event_dispatcher
         )
     if experiment_type == EXP_TYPE_RECOMMENDATION:
@@ -47,6 +55,7 @@ def parse_experiment_config(experiment_config, recommender_system):
             recommender_system.data_registry,
             recommender_system.split_factory,
             recommender_system.recommender_factory,
+            recommender_system.metric_factory,
             recommender_system.event_dispatcher
         )
 
@@ -69,7 +78,7 @@ def parse_experiment_config_from_yml(file_path, recommender_system):
 
 
 def parse_prediction_experiment_config(experiment_config, data_registry, split_factory,
-                                       predictor_factory, event_dispatcher):
+                                       predictor_factory, metric_factory, event_dispatcher):
     """Parses a prediction experiment configuration.
 
     Args:
@@ -77,6 +86,7 @@ def parse_prediction_experiment_config(experiment_config, data_registry, split_f
         data_registry(DataRegistry): the data registry containing the available datasets.
         split_factory(dict): the split factory containing available splitters.
         predictor_factory(ModelFactory): the model factory containing the available predictors.
+        metric_factory(MetricFactory): the metric factory containing available metrics.
         event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
 
     Returns:
@@ -107,6 +117,7 @@ def parse_prediction_experiment_config(experiment_config, data_registry, split_f
 
     experiment_evaluation = parse_experiment_evaluation(
         experiment_config,
+        metric_factory,
         event_dispatcher
     )
 
@@ -122,7 +133,7 @@ def parse_prediction_experiment_config(experiment_config, data_registry, split_f
 
 
 def parse_recommender_experiment_config(experiment_config, data_registry, split_factory,
-                                        recommender_factory, event_dispatcher):
+                                        recommender_factory, metric_factory, event_dispatcher):
     """Parses a recommender experiment configuration.
 
     Args:
@@ -130,6 +141,7 @@ def parse_recommender_experiment_config(experiment_config, data_registry, split_
         data_registry(DataRegistry): the data registry containing the available datasets.
         split_factory(dict): the split factory containing available splitters.
         recommender_factory(ModelFactory): the model factory containing the available recommenders.
+        metric_factory(MetricFactory): the metric factory containing available metrics.
         event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
 
     Returns:
@@ -140,7 +152,6 @@ def parse_recommender_experiment_config(experiment_config, data_registry, split_
 
     experiment_name = experiment_config[EXP_KEY_NAME]
     experiment_type = experiment_config[EXP_KEY_TYPE]
-    experiment_top_k = parse_experiment_top_k(experiment_config, 10, event_dispatcher)
 
     experiment_datasets = parse_experiment_datasets(
         experiment_config,
@@ -161,6 +172,32 @@ def parse_recommender_experiment_config(experiment_config, data_registry, split_
 
     experiment_evaluation = parse_experiment_evaluation(
         experiment_config,
+        metric_factory,
+        event_dispatcher
+    )
+
+    _, experiment_top_k = parse_config_param(
+        experiment_config,
+        'recommender experiment',
+        ConfigValueParam(
+            EXP_KEY_TOP_K,
+            int,
+            EXP_DEFAULT_TOP_K,
+            1,
+            100
+        ),
+        event_dispatcher
+    )
+
+    _, experiment_rated_items_filter = parse_config_param(
+        experiment_config,
+        'recommender experiment',
+        ConfigOptionParam(
+            EXP_KEY_RATED_ITEMS_FILTER,
+            bool,
+            EXP_DEFAULT_RATED_ITEMS_FILTER,
+            [True, False]
+        ),
         event_dispatcher
     )
 
@@ -170,7 +207,8 @@ def parse_recommender_experiment_config(experiment_config, data_registry, split_
         experiment_evaluation,
         experiment_name,
         experiment_type,
-        experiment_top_k
+        experiment_top_k,
+        experiment_rated_items_filter
     )
 
 
@@ -229,9 +267,24 @@ def parse_experiment_datasets(experiment_config, data_registry, split_factory, e
     return experiment_datasets
 
 
-def parse_experiment_evaluation(experiment_config, event_dispatcher):
-    # TODO parse experiment evaluation config
-    return {}
+def parse_experiment_evaluation(experiment_config, metric_factory, event_dispatcher):
+    """Parses the evaluation of the experiment.
+
+    Args:
+        experiment_config(dict): the experiment's total configuration.
+        metric_factory(MetricFactory): the metric factory containing available metrics.
+        event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
+
+    Returns:
+        experiment_evaluation(array like): list of parsed MetricConfig's or None on failure.
+    """
+    experiment_evaluation = parse_evaluation_config(
+        experiment_config,
+        metric_factory,
+        event_dispatcher
+    )
+
+    return experiment_evaluation
 
 
 def parse_experiment_models(experiment_config, model_factory, event_dispatcher):
@@ -261,18 +314,17 @@ def parse_experiment_models(experiment_config, model_factory, event_dispatcher):
     return experiment_models
 
 
-def parse_experiment_top_k(recommender_experiment_config, default_top_k, event_dispatcher):
+def parse_experiment_top_k(recommender_experiment_config, event_dispatcher):
     """Parses the top K of the recommender experiment.
 
     Args:
         recommender_experiment_config(dict): the experiment's total configuration.
-        default_top_k(int): the default top K to return on parse failure.
         event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
 
     Returns:
         top_k(int): the topK of the experiment or default_top_k on failure.
     """
-    top_k = default_top_k
+    top_k = EXP_DEFAULT_TOP_K
 
     if recommender_experiment_config.get(EXP_KEY_TOP_K) is None:
         event_dispatcher.dispatch(

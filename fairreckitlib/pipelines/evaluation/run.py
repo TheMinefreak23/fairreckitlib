@@ -2,25 +2,32 @@
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
-
-
-For each selected dataset in an experiment this function is called once
-    
-    dataset:        pointer to the original dataset class
-    train_path:     path where the used train set is stored
-    test_path:      path where the used test set is stored
-    model_dirs:     a list of all dirs for each calculated model, each dir contains a single file with the rating results
-    eval_config:    the total config for evaluation: metrics and filters
-    callback:       mostly consistency with other pipelines (maybe we should switch to a generic logger/callback class?)
-    **kwargs:       whether they are for recommender experiments contains top_K in kwargs[num_items]
-    
-Could store the performance results in their respective model_dirs
 """
+
 from fairreckitlib.metrics.common import Test
 from fairreckitlib.metrics.pipeline2 import EvaluationPipeline
 
 
-def run_evaluation_pipelines(dataset, train_path, test_path, model_dirs, eval_config, event_dispatcher, **kwargs):
+def run_evaluation_pipelines(model_dirs, data_transition, metric_factory,
+                             eval_config, event_dispatcher, is_running, **kwargs):
+    """Runs several ModelPipeline's for the specified model configurations.
+
+    Args:
+        model_dirs(array like): list of directories where the computed model
+            ratings are stored.
+        data_transition(DataTransition): data input.
+        metric_factory(ModelFactory): the metric factory with available metrics.
+        eval_config(array like): containing list of MetricConfig's.
+        event_dispatcher(EventDispatcher): used to dispatch evaluation/IO events
+            when running the evaluation pipelines.
+        is_running(func -> bool): function that returns whether the pipelines
+            are still running. Stops early when False is returned.
+
+    Keyword Args:
+        num_threads(int): the max number of threads the evaluation can use.
+        num_items(int): the number of item recommendations to produce, only
+            needed when running recommender pipelines.
+    """
     print('model_dirs:')
     print(model_dirs)
 
@@ -32,11 +39,9 @@ def run_evaluation_pipelines(dataset, train_path, test_path, model_dirs, eval_co
         from fairreckitlib.metrics.common import RecType
 
         # Create a test instance TODO refactor
-        test = Test(name=dir_name, train_path=train_path, test_path=test_path,
+        test = Test(name=dir_name, train_path=data_transition.train_set_path, test_path=data_transition.test_set_path,
                     recs_path=model_dir+'/ratings.tsv', rec_type=RecType.RECOMMENDATION)
 
         pipeline = EvaluationPipeline(test, '', eval_config['metrics'], kwargs['num_items'], eval_config['filters'],
                                       event_dispatcher)
         pipeline.run()
-
-    pass

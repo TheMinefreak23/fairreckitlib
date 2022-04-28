@@ -13,6 +13,7 @@ from ..data.registry import DataRegistry
 from ..data.split.factory import SplitFactory
 from ..events import io_event
 from ..pipelines.data.run import run_data_pipeline
+from ..metrics.factory import MetricFactory
 from ..pipelines.evaluation.run import run_evaluation_pipelines
 from ..pipelines.model.factory import ModelFactory
 from ..pipelines.model.run import run_model_pipelines
@@ -26,6 +27,7 @@ class ExperimentFactories:
     data_registry: DataRegistry
     split_factory: SplitFactory
     model_factory: ModelFactory
+    metric_factory: MetricFactory
 
 
 class Experiment:
@@ -79,6 +81,7 @@ class Experiment:
         kwargs = {'num_threads': num_threads}
         if self.__config.type == EXP_TYPE_RECOMMENDATION:
             kwargs['num_items'] = self.__config.top_k
+            kwargs['rated_items_filter'] = self.__config.rated_items_filter
 
         for data_transition in data_result:
             if not is_running():
@@ -98,12 +101,12 @@ class Experiment:
 
             if len(self.__config.evaluation) > 0:
                 run_evaluation_pipelines(
-                    data_transition.dataset,
-                    data_transition.train_set_path,
-                    data_transition.test_set_path,
                     model_dirs,
+                    data_transition,
+                    self.__factories.metric_factory,
                     self.__config.evaluation,
                     self.event_dispatcher,
+                    is_running,
                     **kwargs
                 )
 

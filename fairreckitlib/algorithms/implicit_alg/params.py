@@ -4,16 +4,16 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ..params import AlgorithmParameters
+from fairreckitlib.experiment.params import ConfigParameters
 
 
 def get_implicit_params_alternating_least_squares():
     """Gets the parameters of the AlternatingLeastSquares algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('factors', int, 100, 1, 100)
     params.add_value('iterations', int, 15, 1, 50)
@@ -30,9 +30,9 @@ def get_implicit_params_bayesian_personalized_ranking():
     """Gets the parameters of the BayesianPersonalizedRanking algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('factors', int, 100, 1, 100)
     params.add_value('iterations', int, 100, 1, 1000)
@@ -48,9 +48,9 @@ def get_implicit_params_logistic_matrix_factorization():
     """Gets the parameters of the LogisticMatrixFactorization algorithm.
 
     Returns:
-        params(AlgorithmParameters) the params of the algorithm.
+        params(ConfigParameters) the params of the algorithm.
     """
-    params = AlgorithmParameters()
+    params = ConfigParameters()
 
     params.add_value('factors', int, 30, 1, 100)
     params.add_value('iterations', int, 30, 1, 100)

@@ -1,8 +1,8 @@
 datasets:
 - name: ML-100K
-  splitting:
-    test_ratio: 0.2
-    type: random
+evaluation:
+- name: MAE
+- name: RMSE
 models:
   LensKit:
   - name: BiasedMF
