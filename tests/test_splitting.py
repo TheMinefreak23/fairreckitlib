@@ -26,8 +26,8 @@ dfs =  [('df_lfm360k', df_lfm360k_sample),
 
 # creating the factories to run splitting with
 split_factory = factory.create_split_factory()
-random_split = split_factory.create('random', dict())
-temp_split = split_factory.create('temporal', dict())
+random_split = split_factory.create('random', {})
+temp_split = split_factory.create('temporal', {})
 
 
 # the list of test ratios to test splitting with
