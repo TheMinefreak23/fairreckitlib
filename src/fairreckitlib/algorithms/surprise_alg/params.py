@@ -15,9 +15,9 @@ def get_surprise_params_baseline_only_als():
     """
     params = ConfigParameters()
 
-    params.add_value('epochs', int, 10, 1, 50)
-    params.add_value('reg_i', int, 10, 1, 100)
-    params.add_value('reg_u', int, 15, 1, 100)
+    params.add_value('epochs', int, 10, (1, 50))
+    params.add_value('reg_i', int, 10, (1, 100))
+    params.add_value('reg_u', int, 15, (1, 100))
 
     return params
 
@@ -30,9 +30,9 @@ def get_surprise_params_baseline_only_sgd():
     """
     params = ConfigParameters()
 
-    params.add_value('epochs', int, 20, 1, 50)
-    params.add_value('regularization', float, 0.02, 0.00001, 1.0)
-    params.add_value('learning_rate', float, 0.005, 0.0001, 1.0)
+    params.add_value('epochs', int, 20, (1, 50))
+    params.add_value('regularization', float, 0.02, (0.00001, 1.0))
+    params.add_value('learning_rate', float, 0.005, (0.0001, 1.0))
 
     return params
 
@@ -45,9 +45,9 @@ def get_surprise_params_co_clustering():
     """
     params = ConfigParameters()
 
-    params.add_value('epochs', int, 20, 1, 50)
-    params.add_value('user_clusters', int, 3, 0, 30)
-    params.add_value('item_clusters', int, 3, 0, 30)
+    params.add_value('epochs', int, 20, (1, 50))
+    params.add_value('user_clusters', int, 3, (0, 30))
+    params.add_value('item_clusters', int, 3, (0, 30))
     params.add_random_seed('random_seed')
 
     return params
@@ -60,16 +60,16 @@ def get_surprise_params_nmf():
     """
     params = ConfigParameters()
 
-    params.add_value('factors', int, 15, 1, 100)
-    params.add_value('epochs', int, 50, 1, 50)
-    params.add_value('reg_pu', float, 0.06, 0.00001, 1.0)
-    params.add_value('reg_qi', float, 0.06, 0.00001, 1.0)
-    params.add_value('reg_bu', float, 0.02, 0.00001, 1.0)
-    params.add_value('reg_bi', float, 0.02, 0.00001, 1.0)
-    params.add_value('lr_bu', float, 0.005, 0.00001, 1.0)
-    params.add_value('lr_bi', float, 0.005, 0.00001, 1.0)
-    params.add_value('init_low', int, 0, 0, 100)
-    params.add_value('init_high', int, 1, 0, 100)
+    params.add_value('factors', int, 15, (1, 100))
+    params.add_value('epochs', int, 50, (1, 50))
+    params.add_value('reg_pu', float, 0.06, (0.00001, 1.0))
+    params.add_value('reg_qi', float, 0.06, (0.00001, 1.0))
+    params.add_value('reg_bu', float, 0.02, (0.00001, 1.0))
+    params.add_value('reg_bi', float, 0.02, (0.00001, 1.0))
+    params.add_value('lr_bu', float, 0.005, (0.00001, 1.0))
+    params.add_value('lr_bi', float, 0.005, (0.00001, 1.0))
+    params.add_value('init_low', int, 0, (0, 100))
+    params.add_value('init_high', int, 1, (0, 100))
     params.add_random_seed('random_seed')
     params.add_bool('biased', False)
 
@@ -84,12 +84,12 @@ def get_surprise_params_svd():
     """
     params = ConfigParameters()
 
-    params.add_value('factors', int, 100, 1, 100)
-    params.add_value('epochs', int, 20, 1, 50)
-    params.add_value('init_mean', int, 0, -1000, 1000)
-    params.add_value('init_std_dev', float, 0.1, 0.0, 1.0)
-    params.add_value('learning_rate', float, 0.005, 0.00001, 1.0)
-    params.add_value('regularization', float, 0.02, 0.00001, 1.0)
+    params.add_value('factors', int, 100, (1, 100))
+    params.add_value('epochs', int, 20, (1, 50))
+    params.add_value('init_mean', int, 0, (-1000, 1000))
+    params.add_value('init_std_dev', float, 0.1, (0.0, 1.0))
+    params.add_value('learning_rate', float, 0.005, (0.00001, 1.0))
+    params.add_value('regularization', float, 0.02, (0.00001, 1.0))
     params.add_random_seed('random_seed')
     params.add_bool('biased', True)
 
@@ -104,12 +104,12 @@ def get_surprise_params_svd_pp():
     """
     params = ConfigParameters()
 
-    params.add_value('factors', int, 20, 1, 100)
-    params.add_value('epochs', int, 20, 1, 50)
-    params.add_value('init_mean', int, 0, -1000, 1000)
-    params.add_value('init_std_dev', float, 0.1, 0.0, 1.0)
-    params.add_value('learning_rate', float, 0.007, 0.00001, 1.0)
-    params.add_value('regularization', float, 0.02, 0.00001, 1.0)
+    params.add_value('factors', int, 20, (1, 100))
+    params.add_value('epochs', int, 20, (1, 50))
+    params.add_value('init_mean', int, 0, (-1000, 1000))
+    params.add_value('init_std_dev', float, 0.1, (0.0, 1.0))
+    params.add_value('learning_rate', float, 0.007, (0.00001, 1.0))
+    params.add_value('regularization', float, 0.02, (0.00001, 1.0))
     params.add_random_seed('random_seed')
 
     return params

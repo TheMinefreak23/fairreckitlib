@@ -183,8 +183,7 @@ def parse_recommender_experiment_config(experiment_config, data_registry, split_
             EXP_KEY_TOP_K,
             int,
             EXP_DEFAULT_TOP_K,
-            1,
-            100
+            (1, 100)
         ),
         event_dispatcher
     )

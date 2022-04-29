@@ -20,11 +20,11 @@ def get_lenskit_params_biased_mf():
 
     params = ConfigParameters()
 
-    params.add_value('features', int, 10, 1, 50)
-    params.add_value('iterations', int, 20, 1, 50)
-    params.add_value('user_reg', float, 0.1, 0.0001, 1.0)
-    params.add_value('item_reg', float, 0.1, 0.0001, 1.0)
-    params.add_value('damping', float, 5.0, 0.0, 1000.0)
+    params.add_value('features', int, 10, (1, 50))
+    params.add_value('iterations', int, 20, (1, 50))
+    params.add_value('user_reg', float, 0.1, (0.0001, 1.0))
+    params.add_value('item_reg', float, 0.1, (0.0001, 1.0))
+    params.add_value('damping', float, 5.0, (0.0, 1000.0))
     params.add_random_seed('random_seed')
     params.add_option('method', str, methods[0], methods)
 
@@ -44,10 +44,10 @@ def get_lenskit_params_implicit_mf():
 
     params = ConfigParameters()
 
-    params.add_value('features', int, 3, 1, 50)
-    params.add_value('iterations', int, 20, 1, 50)
-    params.add_value('reg', float, 0.1, 0.0001, 1.0)
-    params.add_value('weight', float, 40.0, 1.0, 10000.0)
+    params.add_value('features', int, 3, (1, 50))
+    params.add_value('iterations', int, 20, (1, 50))
+    params.add_value('reg', float, 0.1, (0.0001, 1.0))
+    params.add_value('weight', float, 40.0, (1.0, 10000.0))
     params.add_random_seed('random_seed')
     params.add_option('method', str, methods[0], methods)
     params.add_bool('use_ratings', False)
@@ -63,9 +63,9 @@ def get_lenskit_params_item_item():
     """
     params = ConfigParameters()
 
-    params.add_value('max_nnbrs', int, 10, 1, 50)
-    params.add_value('min_nbrs', int, 1, 1, 50)
-    params.add_value('min_sim', float, 1e-06, 0.0, 10.0)
+    params.add_value('max_nnbrs', int, 10, (1, 50))
+    params.add_value('min_nbrs', int, 1, (1, 50))
+    params.add_value('min_sim', float, 1e-06, (0.0, 10.0))
 
     return params
 
@@ -110,8 +110,8 @@ def get_lenskit_params_user_user():
     """
     params = ConfigParameters()
 
-    params.add_value('max_nnbrs', int, 10, 1, 50)
-    params.add_value('min_nbrs', int, 1, 1, 50)
-    params.add_value('min_sim', float, 0.0, 0.0, 10.0)
+    params.add_value('max_nnbrs', int, 10, (1, 50))
+    params.add_value('min_nbrs', int, 1, (1, 50))
+    params.add_value('min_sim', float, 0.0, (0.0, 10.0))
 
     return params
