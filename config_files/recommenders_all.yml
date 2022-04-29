@@ -1,0 +1,32 @@
+datasets:
+- name: ML-100K
+evaluation:
+- name: NDCG@K
+- name: P@K
+- name: R@K
+- name: MRR
+models:
+  Elliot:
+  - name: FunkSVD
+  - name: ItemKNN
+  - name: MostPop
+  - name: MultiVAE
+  - name: PureSVD
+  - name: Random
+  - name: SVDpp
+  - name: UserKNN
+  Implicit:
+  - name: AlternatingLeastSquares
+  - name: BayesianPersonalizedRanking
+  - name: LogisticMatrixFactorization
+  LensKit:
+  - name: BiasedMF
+  - name: ImplicitMF
+  - name: ItemItem
+  - name: PopScore
+  - name: Random
+  - name: UserUser
+name: Recommenders_All
+rated_items_filter: true
+top_K: 10
+type: recommendation
