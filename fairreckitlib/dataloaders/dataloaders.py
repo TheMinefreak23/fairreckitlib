@@ -226,6 +226,7 @@ class Dataloader1B(DataloaderBase):
     """
 
     # the list of headers of files LFM-1b_{f_name}.txt where f_name is the key of this dictionary
+    # http://www.cp.jku.at/people/schedl/Research/Publications/pdf/schedl_icmr_2016.pdf
     options = {"albums": ["album-id", "album-name", "artist-id"],
                "artists": ["artist-id", "artist-name"],
                "tracks": ["track-id", "track-name", "artist-id"],
@@ -233,17 +234,26 @@ class Dataloader1B(DataloaderBase):
                "users": ["user-id", "country", "age", "gender", "playcount",
                          "registered_timestamp"],
                "users_additional": ["user-id",
+                                    # novelty score, percentage of new artists listened to,
+                                    # averaged overtime windows of 1 month
                                     "novelty_artist_avg_month",
                                     "novelty_artist_avg_6months",
                                     "novelty_artist_avg_year",
+                                    # mainstreaminess score,
+                                    # overlap between the user’s listening history
                                     "mainstreaminess_avg_month",
                                     "mainstreaminess_avg_6months",
                                     "mainstreaminess_avg_year",
                                     "mainstreaminess_global",
+                                    # total number of the user’s listening events
+                                    # (playcounts) included in the dataset
                                     "cnt_listeningevents",
                                     "cnt_distinct_tracks",
                                     "cnt_distinct_artists",
                                     "cnt_listeningevents_per_week",
+                                    # fraction of listening events for each weekday
+                                    # (starting on Monday) among all weekly plays,
+                                    # averaged over the user’s entire listening history
                                     "relative_le_per_weekday1",
                                     "relative_le_per_weekday2",
                                     "relative_le_per_weekday3",
