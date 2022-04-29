@@ -225,6 +225,7 @@ class Dataloader1B(DataloaderBase):
     In order to load 1B
     """
 
+    # the list of headers of files LFM-1b_{f_name}.txt where f_name is the key of this dictionary
     options = {"albums": ["album-id", "album-name", "artist-id"],
                "artists": ["artist-id", "artist-name"],
                "tracks": ["track-id", "track-name", "artist-id"],
