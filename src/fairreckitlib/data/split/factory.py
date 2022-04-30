@@ -4,7 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from fairreckitlib.experiment.params import get_empty_parameters
+from src.fairreckitlib.experiment.params import get_empty_parameters
 from .constants import SPLIT_TYPE
 from .constants import SPLIT_PARAMS
 from .random import RandomSplitter
