@@ -118,12 +118,13 @@ def create_pop_score(params):
     )
 
 
-def create_random(params):
+def create_random(params, selector):
     """Creates the Random algorithm.
 
     Args:
         params(dict): with the entries:
             random_seed
+        selector(lenskit.CandidateSelector): selects candidate items for recommendations.
 
     Returns:
         (lenskit.Random) algorithm.
@@ -132,7 +133,7 @@ def create_random(params):
         params['random_seed'] = int(time.time())
 
     return Random(
-        selector=None,
+        selector=selector,
         rng_spec=numpy_rng(spec=params['random_seed'])
     )
 

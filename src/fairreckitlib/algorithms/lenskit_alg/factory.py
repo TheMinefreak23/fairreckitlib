@@ -4,6 +4,10 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from lenskit.algorithms.basic import AllItemsCandidateSelector
+from lenskit.algorithms.basic import UnratedItemCandidateSelector
+from lenskit.algorithms.ranking import TopN
+
 from ..factory import create_algorithm_factory_from_list
 from .algorithms import create_biased_mf
 from .algorithms import create_implicit_mf
@@ -196,6 +200,19 @@ def _create_predictor_user_user(params, **kwargs):
     return LensKitPredictor(create_user_user(params, kwargs['rating_type']), params, **kwargs)
 
 
+def _create_candidate_selector(rated_items_filter):
+    """Creates a candidate selector for the specified filter.
+
+    Args:
+        rated_items_filter(bool): whether to filter already rated items when
+            producing item recommendations.
+
+    Returns:
+        (lenskit.CandidateSelector): the corresponding selector.
+    """
+    return UnratedItemCandidateSelector() if rated_items_filter else AllItemsCandidateSelector()
+
+
 def _create_recommender_biased_mf(params, **kwargs):
     """Creates the BiasedMF recommender.
 
@@ -211,11 +228,18 @@ def _create_recommender_biased_mf(params, **kwargs):
 
     Keyword Args:
         num_threads(int): the max number of threads the algorithm can use.
+        rated_items_filter(bool): whether to filter already rated items when
+            producing item recommendations.
 
     Returns:
         (LensKitRecommender) wrapper of BiasedMF.
     """
-    return LensKitRecommender(create_biased_mf(params), params, **kwargs)
+    recommender = TopN(
+        create_biased_mf(params),
+        _create_candidate_selector(kwargs['rated_items_filter'])
+    )
+
+    return LensKitRecommender(recommender, params, **kwargs)
 
 
 def _create_recommender_implicit_mf(params, **kwargs):
@@ -233,11 +257,18 @@ def _create_recommender_implicit_mf(params, **kwargs):
 
     Keyword Args:
         num_threads(int): the max number of threads the algorithm can use.
+        rated_items_filter(bool): whether to filter already rated items when
+            producing item recommendations.
 
     Returns:
         (LensKitRecommender) wrapper of ImplicitMF.
     """
-    return LensKitRecommender(create_implicit_mf(params), params, **kwargs)
+    recommender = TopN(
+        create_implicit_mf(params),
+        _create_candidate_selector(kwargs['rated_items_filter'])
+    )
+
+    return LensKitRecommender(recommender, params, **kwargs)
 
 
 def _create_recommender_item_item(params, **kwargs):
@@ -251,6 +282,8 @@ def _create_recommender_item_item(params, **kwargs):
 
     Keyword Args:
         num_threads(int): the max number of threads the algorithm can use.
+        rated_items_filter(bool): whether to filter already rated items when
+            producing item recommendations.
         rating_type(str): one of:
             explicit,
             implicit
@@ -258,7 +291,12 @@ def _create_recommender_item_item(params, **kwargs):
     Returns:
         (LensKitRecommender) wrapper of ItemItem.
     """
-    return LensKitRecommender(create_item_item(params, kwargs['rating_type']), params, **kwargs)
+    recommender = TopN(
+        create_item_item(params, kwargs['rating_type']),
+        _create_candidate_selector(kwargs['rated_items_filter'])
+    )
+
+    return LensKitRecommender(recommender, params, **kwargs)
 
 
 def _create_recommender_pop_score(params, **kwargs):
@@ -270,11 +308,18 @@ def _create_recommender_pop_score(params, **kwargs):
 
     Keyword Args:
         num_threads(int): the max number of threads the algorithm can use.
+        rated_items_filter(bool): whether to filter already rated items when
+            producing item recommendations.
 
     Returns:
         (LensKitRecommender) wrapper of PopScore.
     """
-    return LensKitRecommender(create_pop_score(params), params, **kwargs)
+    recommender = TopN(
+        create_pop_score(params),
+        _create_candidate_selector(kwargs['rated_items_filter'])
+    )
+
+    return LensKitRecommender(recommender, params, **kwargs)
 
 
 def _create_recommender_random(params, **kwargs):
@@ -286,11 +331,18 @@ def _create_recommender_random(params, **kwargs):
 
     Keyword Args:
         num_threads(int): the max number of threads the algorithm can use.
+        rated_items_filter(bool): whether to filter already rated items when
+            producing item recommendations.
 
     Returns:
         (LensKitRecommender) wrapper of Random.
     """
-    return LensKitRecommender(create_random(params), params, **kwargs)
+    recommender = create_random(
+        params,
+        _create_candidate_selector(kwargs['rated_items_filter'])
+    )
+
+    return LensKitRecommender(recommender, params, **kwargs)
 
 
 def _create_recommender_user_user(params, **kwargs):
@@ -304,6 +356,8 @@ def _create_recommender_user_user(params, **kwargs):
 
     Keyword Args:
         num_threads(int): the max number of threads the algorithm can use.
+        rated_items_filter(bool): whether to filter already rated items when
+            producing item recommendations.
         rating_type(str): one of:
             explicit,
             implicit
@@ -311,4 +365,9 @@ def _create_recommender_user_user(params, **kwargs):
     Returns:
         (LensKitRecommender) wrapper of UserUser.
     """
-    return LensKitRecommender(create_user_user(params, kwargs['rating_type']), params, **kwargs)
+    recommender = TopN(
+        create_user_user(params, kwargs['rating_type']),
+        _create_candidate_selector(kwargs['rated_items_filter'])
+    )
+
+    return LensKitRecommender(recommender, params, **kwargs)
