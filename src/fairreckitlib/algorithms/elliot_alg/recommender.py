@@ -34,7 +34,3 @@ class ElliotRecommender(Recommender):
     def recommend(self, user, num_items=10):
         # not used, recommending is done by running the framework
         raise NotImplementedError()
-
-    def recommend_batch(self, users, num_items=10):
-        # not used, recommending is done by running the framework
-        raise NotImplementedError()

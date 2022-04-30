@@ -10,6 +10,7 @@ from fairreckitlib.algorithms.implicit_alg.factory import get_implicit_recommend
 from fairreckitlib.algorithms.lenskit_alg.factory import get_lenskit_predictor_factory
 from fairreckitlib.algorithms.lenskit_alg.factory import get_lenskit_recommender_factory
 from fairreckitlib.algorithms.surprise_alg.factory import get_surprise_predictor_factory
+from fairreckitlib.algorithms.surprise_alg.factory import get_surprise_recommender_factory
 from .predictor import PredictorPipeline
 from .recommender import RecommenderPipeline
 from .recommender_elliot import RecommenderPipelineElliot
@@ -156,6 +157,7 @@ def create_recommender_model_factory():
         1) Elliot recommender algorithms.
         2) LensKit recommender algorithms.
         3) Implicit recommender algorithms.
+        4) Surprise recommender algorithms.
 
     Returns:
         (ModelFactory) with all recommenders.
@@ -163,5 +165,6 @@ def create_recommender_model_factory():
     return create_model_factory_from_api_tuples([
         (get_elliot_recommender_factory, RecommenderPipelineElliot),
         (get_lenskit_recommender_factory, RecommenderPipeline),
-        (get_implicit_recommender_factory, RecommenderPipeline)
+        (get_implicit_recommender_factory, RecommenderPipeline),
+        (get_surprise_recommender_factory, RecommenderPipeline)
     ])

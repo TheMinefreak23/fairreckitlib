@@ -6,6 +6,9 @@ Utrecht University within the Software Project course.
 
 from abc import ABCMeta, abstractmethod
 
+import numpy as np
+import pandas as pd
+
 from .algorithm import Algorithm
 
 
@@ -37,7 +40,6 @@ class Recommender(Algorithm, metaclass=ABCMeta):
         """
         raise NotImplementedError()
 
-    @abstractmethod
     def recommend_batch(self, users, num_items=10):
         """Computes the items recommendations for each of the specified users.
 
@@ -48,4 +50,12 @@ class Recommender(Algorithm, metaclass=ABCMeta):
         Returns:
             pandas.DataFrame: with the columns 'user', 'item', 'score'.
         """
-        raise NotImplementedError()
+        result = pd.DataFrame()
+
+        for _, user in enumerate(users):
+            item_scores = self.recommend(user, num_items)
+            item_scores['user'] = np.full(num_items, user)
+
+            result = result.append(item_scores[['user', 'item', 'score']], ignore_index=True)
+
+        return result

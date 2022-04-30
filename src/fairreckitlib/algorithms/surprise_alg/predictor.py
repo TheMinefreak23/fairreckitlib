@@ -42,14 +42,3 @@ class SurprisePredictor(Predictor):
     def predict(self, user, item):
         prediction = self.__algo.predict(user, item, clip=False)
         return prediction.est
-
-    def predict_batch(self, user_item_pairs):
-        pairs = user_item_pairs[['user', 'item']]
-        pairs['prediction'] = np.zeros(len(pairs))
-        for i, row in pairs.iterrows():
-            pairs.at[i, 'prediction'] = self.predict(
-                row['user'],
-                row['item']
-            )
-
-        return pairs

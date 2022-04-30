@@ -16,6 +16,7 @@ from surprise.prediction_algorithms import SVDpp
 
 from fairreckitlib.experiment.params import get_empty_parameters
 from ..factory import create_algorithm_factory_from_list
+from ..top_k import TopK
 from .params import get_surprise_params_baseline_only_als
 from .params import get_surprise_params_baseline_only_sgd
 from .params import get_surprise_params_co_clustering
@@ -78,6 +79,48 @@ def get_surprise_predictor_factory():
     ])
 
 
+def get_surprise_recommender_factory():
+    """Gets the algorithm factory with Surprise recommenders.
+
+    Returns:
+        (AlgorithmFactory) with available recommenders.
+    """
+    return create_algorithm_factory_from_list(SURPRISE_API, [
+        (SURPRISE_BASELINE_ONLY_ALS,
+         _create_recommender_baseline_only_als,
+         get_surprise_params_baseline_only_als
+         ),
+        (SURPRISE_BASELINE_ONLY_SGD,
+         _create_recommender_baseline_only_sgd,
+         get_surprise_params_baseline_only_sgd
+         ),
+        (SURPRISE_CO_CLUSTERING,
+         _create_recommender_co_clustering,
+         get_surprise_params_co_clustering
+         ),
+        (SURPRISE_NMF,
+         _create_recommender_nmf,
+         get_surprise_params_nmf
+         ),
+        (SURPRISE_NORMAL_PREDICTOR,
+         _create_recommender_normal_predictor,
+         get_empty_parameters
+         ),
+        (SURPRISE_SLOPE_ONE,
+         _create_recommender_slope_one,
+         get_empty_parameters
+         ),
+        (SURPRISE_SVD,
+         _create_recommender_svd,
+         get_surprise_params_svd
+         ),
+        (SURPRISE_SVD_PP,
+         _create_recommender_svd_pp,
+         get_surprise_params_svd_pp
+         )
+    ])
+
+
 def _create_predictor_baseline_only_als(params, **kwargs):
     """Creates the BaselineOnly ALS predictor.
 
@@ -101,6 +144,10 @@ def _create_predictor_baseline_only_als(params, **kwargs):
         bsl_options=bsl_options,
         verbose=False
     ), params, **kwargs)
+
+
+def _create_recommender_baseline_only_als(params, **kwargs):
+    return TopK(_create_predictor_baseline_only_als(params, **kwargs), **kwargs)
 
 
 def _create_predictor_baseline_only_sgd(params, **kwargs):
@@ -128,6 +175,10 @@ def _create_predictor_baseline_only_sgd(params, **kwargs):
     ), params, **kwargs)
 
 
+def _create_recommender_baseline_only_sgd(params, **kwargs):
+    return TopK(_create_predictor_baseline_only_sgd(params, **kwargs), **kwargs)
+
+
 def _create_predictor_co_clustering(params, **kwargs):
     """Creates the CoClustering predictor.
 
@@ -151,6 +202,10 @@ def _create_predictor_co_clustering(params, **kwargs):
         random_state=params['random_seed'],
         verbose=False
     ), params, **kwargs)
+
+
+def _create_recommender_co_clustering(params, **kwargs):
+    return TopK(_create_predictor_co_clustering(params, **kwargs), **kwargs)
 
 
 def _create_predictor_nmf(params, **kwargs):
@@ -192,6 +247,10 @@ def _create_predictor_nmf(params, **kwargs):
     ), params, **kwargs)
 
 
+def _create_recommender_nmf(params, **kwargs):
+    return TopK(_create_predictor_nmf(params, **kwargs), **kwargs)
+
+
 def _create_predictor_normal_predictor(params, **kwargs):
     """Creates the NormalPredictor.
 
@@ -201,6 +260,10 @@ def _create_predictor_normal_predictor(params, **kwargs):
     return SurprisePredictor(NormalPredictor(), params, **kwargs)
 
 
+def _create_recommender_normal_predictor(params, **kwargs):
+    return TopK(_create_predictor_normal_predictor(params, **kwargs), **kwargs)
+
+
 def _create_predictor_slope_one(params, **kwargs):
     """Creates the SlopeOne predictor.
 
@@ -208,6 +271,10 @@ def _create_predictor_slope_one(params, **kwargs):
         (SurprisePredictor) wrapper of SlopeOne.
     """
     return SurprisePredictor(SlopeOne(), params, **kwargs)
+
+
+def _create_recommender_slope_one(params, **kwargs):
+    return TopK(_create_predictor_slope_one(params, **kwargs), **kwargs)
 
 
 def _create_predictor_svd(params, **kwargs):
@@ -245,6 +312,10 @@ def _create_predictor_svd(params, **kwargs):
     ), params, **kwargs)
 
 
+def _create_recommender_svd(params, **kwargs):
+    return TopK(_create_predictor_svd(params, **kwargs), **kwargs)
+
+
 def _create_predictor_svd_pp(params, **kwargs):
     """Creates the SVDpp predictor.
 
@@ -276,3 +347,7 @@ def _create_predictor_svd_pp(params, **kwargs):
         random_state=params['random_seed'],
         verbose=False
     ), params, **kwargs)
+
+
+def _create_recommender_svd_pp(params, **kwargs):
+    return TopK(_create_predictor_svd_pp(params, **kwargs), **kwargs)

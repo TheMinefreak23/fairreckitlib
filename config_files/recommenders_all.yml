@@ -26,6 +26,15 @@ models:
   - name: PopScore
   - name: Random
   - name: UserUser
+  Surprise:
+  - name: BaselineOnlyALS
+  - name: BaselineOnlySGD
+  - name: CoClustering
+  - name: NMF
+  - name: NormalPredictor
+  - name: SlopeOne
+  - name: SVD
+  - name: SVDpp
 name: Recommenders_All
 rated_items_filter: true
 top_K: 10
