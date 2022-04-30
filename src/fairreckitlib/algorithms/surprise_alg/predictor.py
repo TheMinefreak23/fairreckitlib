@@ -4,7 +4,6 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-import numpy as np
 from surprise.dataset import Dataset
 from surprise.reader import Reader
 

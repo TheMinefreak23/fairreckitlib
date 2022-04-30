@@ -4,9 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-import numpy as np
 import pandas as pd
-from scipy import sparse
 
 from .recommender import Recommender
 
