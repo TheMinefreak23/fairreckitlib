@@ -6,6 +6,8 @@ Utrecht University within the Software Project course.
 
 from abc import ABCMeta, abstractmethod
 
+import numpy as np
+
 from .algorithm import Algorithm
 
 
@@ -29,7 +31,6 @@ class Predictor(Algorithm, metaclass=ABCMeta):
         """
         raise NotImplementedError
 
-    @abstractmethod
     def predict_batch(self, user_item_pairs):
         """Computes the predictions for each of the specified user and item pairs.
 
@@ -40,4 +41,12 @@ class Predictor(Algorithm, metaclass=ABCMeta):
         Returns:
             pandas.DataFrame with the columns 'user', 'item', 'prediction'.
         """
-        raise NotImplementedError()
+        pairs = user_item_pairs[['user', 'item']]
+        pairs['prediction'] = np.zeros(len(pairs))
+        for i, row in pairs.iterrows():
+            pairs.at[i, 'prediction'] = self.predict(
+                row['user'],
+                row['item']
+            )
+
+        return pairs

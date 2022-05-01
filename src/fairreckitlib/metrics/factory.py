@@ -21,7 +21,7 @@ class MetricFactory:
             return get_empty_parameters()
 
         params = ConfigParameters()
-        params.add_value(EXP_KEY_METRIC_PARAM_K, int, None, 1, None)
+        params.add_value(EXP_KEY_METRIC_PARAM_K, int, None, (1, None))
         return params
 
     def get_available_prediction_metric_names(self):

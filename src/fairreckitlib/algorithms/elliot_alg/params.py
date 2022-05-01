@@ -30,12 +30,12 @@ def get_elliot_params_funk_svd():
     """
     params = ConfigParameters()
 
-    params.add_value('epochs', int, 10, 1, 50)
-    params.add_value('batch_size', int, 512, 100, 10000)
-    params.add_value('factors', int, 10, 1, 100)
-    params.add_value('lr', float, 0.001, 0.0001, 1.0)
-    params.add_value('reg_w', float, 0.1, 0.0001, 1.0)
-    params.add_value('reg_b', float, 0.001, 0.0001, 1.0)
+    params.add_value('epochs', int, 10, (1, 50))
+    params.add_value('batch_size', int, 512, (100, 10000))
+    params.add_value('factors', int, 10, (1, 100))
+    params.add_value('lr', float, 0.001, (0.0001, 1.0))
+    params.add_value('reg_w', float, 0.1, (0.0001, 1.0))
+    params.add_value('reg_b', float, 0.001, (0.0001, 1.0))
     params.add_random_seed('seed')
 
     return params
@@ -49,7 +49,7 @@ def get_elliot_params_item_knn():
     """
     params = ConfigParameters()
 
-    params.add_value('neighbours', int, 40, 1, 50)
+    params.add_value('neighbours', int, 40, (1, 50))
     params.add_option('similarity', str, _similarities[0], _similarities)
     params.add_option('implementation', str, _implementations[0], _implementations)
 
@@ -64,13 +64,13 @@ def get_elliot_params_multi_vae():
     """
     params = ConfigParameters()
 
-    params.add_value('epochs', int, 10, 1, 50)
-    params.add_value('batch_size', int, 512, 100, 10000)
-    params.add_value('lr', float, 0.001, 0.0001, 1.0)
-    params.add_value('reg_lambda', float, 0.01, 0.0001, 1.0)
-    params.add_value('intermediate_dim', int, 100, 1000, 600)
-    params.add_value('latent_dim', int, 200, 100, 500)
-    params.add_value('dropout_keep', float, 1.0, 0.0, 1.0)
+    params.add_value('epochs', int, 10, (1, 50))
+    params.add_value('batch_size', int, 512, (100, 10000))
+    params.add_value('lr', float, 0.001, (0.0001, 1.0))
+    params.add_value('reg_lambda', float, 0.01, (0.0001, 1.0))
+    params.add_value('intermediate_dim', int, 100, (1000, 600))
+    params.add_value('latent_dim', int, 200, (100, 500))
+    params.add_value('dropout_keep', float, 1.0, (0.0, 1.0))
     params.add_random_seed('seed')
 
     return params
@@ -84,7 +84,7 @@ def get_elliot_params_pure_svd():
     """
     params = ConfigParameters()
 
-    params.add_value('factors', int, 10, 1, 100)
+    params.add_value('factors', int, 10, (1, 100))
     params.add_random_seed('seed')
 
     return params
@@ -111,12 +111,12 @@ def get_elliot_params_svd_pp():
     """
     params = ConfigParameters()
 
-    params.add_value('epochs', int, 10, 1, 50)
-    params.add_value('batch_size', int, 512, 100, 10000)
-    params.add_value('factors', int, 50, 1, 100)
-    params.add_value('lr', float, 0.001, 0.0001, 1.0)
-    params.add_value('reg_w', float, 0.1, 0.0001, 1.0)
-    params.add_value('reg_b', float, 0.001, 0.0001, 1.0)
+    params.add_value('epochs', int, 10, (1, 50))
+    params.add_value('batch_size', int, 512, (100, 10000))
+    params.add_value('factors', int, 50, (1, 100))
+    params.add_value('lr', float, 0.001, (0.0001, 1.0))
+    params.add_value('reg_w', float, 0.1, (0.0001, 1.0))
+    params.add_value('reg_b', float, 0.001, (0.0001, 1.0))
     params.add_random_seed('seed')
 
     return params
@@ -130,7 +130,7 @@ def get_elliot_params_user_knn():
     """
     params = ConfigParameters()
 
-    params.add_value('neighbours', int, 40, 1, 50)
+    params.add_value('neighbours', int, 40, (1, 50))
     params.add_option('similarity', str, _similarities[0], _similarities)
     params.add_option('implementation', str, _implementations[0], _implementations)
 
