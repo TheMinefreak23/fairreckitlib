@@ -4,7 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 
 """
-#we want to define our general modules here
+#we want to define our general tools(functions) here
 from configparser import ConfigParser
 from argparse import ArgumentParser
 
