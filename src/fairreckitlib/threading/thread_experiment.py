@@ -5,9 +5,11 @@ Utrecht University within the Software Project course.
 """
 
 import os
+import time
 
 from fairreckitlib.experiment.run import Experiment
 from .thread_base import ThreadBase
+from ..events import experiment_event
 
 
 class ThreadExperiment(ThreadBase):
@@ -23,10 +25,20 @@ class ThreadExperiment(ThreadBase):
             factories(ExperimentFactories): the factories used by the experiment.
             config(ExperimentConfig): the configuration of the experiment.
             num_threads(int): the max number of threads the experiment can use.
+            on_end_experiment(function): function to execute at the end of the thread experiment.
         """
+
         output_dir = kwargs['output_dir']
         start_run = kwargs['start_run']
         num_runs = kwargs['num_runs']
+        on_end_experiment = kwargs['on_end_experiment']
+
+        start_time = time.time()
+        self.event_dispatcher.dispatch(
+            experiment_event.ON_BEGIN_EXP,
+            num_runs=num_runs,
+            experiment_name=kwargs['config'].name
+        )
 
         experiment = Experiment(
             kwargs['factories'],
@@ -40,3 +52,11 @@ class ThreadExperiment(ThreadBase):
                 kwargs['num_threads'],
                 self.is_running
             )
+
+        self.event_dispatcher.dispatch(
+            experiment_event.ON_END_EXP,
+            num_runs=num_runs,
+            experiment_name=kwargs['config'].name,
+            elapsed_time=time.time()-start_time,
+            on_end_experiment=on_end_experiment
+        )

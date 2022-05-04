@@ -13,6 +13,7 @@ from .events import io_event
 from .events.data_event import get_data_events
 from .events.dispatcher import EventDispatcher
 from .events.evaluation_event import get_evaluation_events
+from .events.experiment_event import get_experiment_events
 from .events.io_event import get_io_events
 from .events.model_event import get_model_events
 from .experiment.constants import EXP_TYPE_PREDICTION
@@ -36,7 +37,7 @@ class RecommenderSystem:
     Top level API intended for use by applications
     """
 
-    def __init__(self, data_dir, result_dir, verbose=True):
+    def __init__(self, data_dir, result_dir, on_end_experiment, verbose=True):
         self.data_registry = DataRegistry(data_dir)
         self.split_factory = create_split_factory()
         self.metric_factory = create_metric_factory()
@@ -47,6 +48,7 @@ class RecommenderSystem:
         self.event_dispatcher = EventDispatcher()
         for _, (event_id, func_on_event) in enumerate(RecommenderSystem.get_events()):
             self.event_dispatcher.add_listener(event_id, self, func_on_event)
+        self.on_end_experiment = on_end_experiment
 
         self.thread_processor = ThreadProcessor()
 
@@ -118,7 +120,8 @@ class RecommenderSystem:
             output_dir=result_dir,
             config=config,
             start_run=0, num_runs=1,
-            num_threads=num_threads
+            num_threads=num_threads,
+            on_end_experiment=self.on_end_experiment
         ))
 
     def run_experiment_from_yml(self, file_path, num_threads=0):
@@ -141,6 +144,7 @@ class RecommenderSystem:
         """Validates an experiment for an additional number of runs.
 
         Args:
+            on_end_experiment(function) function to execute at the end of the thread experiment
             result_dir(str): path to an existing experiment result directory.
             num_runs(int): the number of runs to validate the experiment.
             num_threads(int): the max number of threads the experiment can use.
@@ -171,7 +175,8 @@ class RecommenderSystem:
             output_dir=result_dir,
             config=config,
             start_run=start_run, num_runs=num_runs,
-            num_threads=num_threads
+            num_threads=num_threads,
+            on_end_experiment=self.on_end_experiment
         ))
 
     def get_available_datasets(self):
@@ -227,6 +232,7 @@ class RecommenderSystem:
         """
         events = [(config_event.ON_PARSE, config_event.on_parse)]
 
+        events += get_experiment_events()
         events += get_io_events()
         events += get_data_events()
         events += get_model_events()
