@@ -13,7 +13,7 @@ from src.fairreckitlib.data.split import factory, random, temporal
 # this already has headers and indices
 # [user, artistid, artistname, plays]
 df_lfm360k_sample = pd.read_csv(
-    '/tests/datasets/sample/lfm-360k-sample.tsv', delimiter='\t')
+    './tests/datasets/sample/lfm-360k-sample.tsv', delimiter='\t')
 
 # sample of the first 1000 entries of the ml-100k dataset
 # this already has headers and indices
