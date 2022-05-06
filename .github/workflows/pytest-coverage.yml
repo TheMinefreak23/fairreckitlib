@@ -29,5 +29,3 @@ jobs:
           pip install h5py
       - name: Run tests and coverage
         uses: lpenz/ghaction-pytest-cov@v1
-        with:
-          working-directory: /home/runner/work/fairreckitlib
