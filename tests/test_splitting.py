@@ -13,13 +13,13 @@ from src.fairreckitlib.data.split import factory, random, temporal
 # this already has headers and indices
 # [user, artistid, artistname, plays]
 df_lfm360k_sample = pd.read_csv(
-    '..\\tests\\datasets\\sample\\lfm-360k-sample.tsv', delimiter='\t')
+    'datasets\\sample\\lfm-360k-sample.tsv', delimiter='\t')
 
 # sample of the first 1000 entries of the ml-100k dataset
 # this already has headers and indices
 # [user, item, rating, timestamp]
 df_ml100k_sample = pd.read_csv(
-    '..\\tests\\datasets\\sample\\ml-100k-sample.tsv', delimiter='\t')
+    'datasets\\sample\\ml-100k-sample.tsv', delimiter='\t')
 
 # the list of dataframes to test splitting with
 dfs =  [('df_lfm360k', df_lfm360k_sample),
