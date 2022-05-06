@@ -6,6 +6,7 @@ Utrecht University within the Software Project course.
 
 """
 from abc import ABC, abstractmethod
+from email import header
 from typing import Dict, Any, List
 import os
 import zlib
@@ -76,7 +77,7 @@ class DataloaderBase(ABC):
         """
         Void function to make sparse user-item matrix
         """
-        if not self.ui_data_frame:
+        if not self.ui_data_frame.empty:
             self.load_data()
 
         data_frame = self.ui_data_frame
@@ -421,6 +422,7 @@ class Dataloader1B(DataloaderBase):
         common_elements = list(np.intersect1d(list(filters.keys()), headers))
         if not common_elements:
             return
+        #all available range_features from the datasets' files
         range_features = ['rating', 'age', 'playcount', 'timestamp', 'registered_timestamp']
         range_features.extend(self.options['users_additional'][1:])
         df_filters = [(self.ui_data_frame[key].map(lambda x: str(x).lower()) ==
@@ -433,6 +435,100 @@ class Dataloader1B(DataloaderBase):
         self.ui_data_frame = self.ui_data_frame[ft.reduce(lambda x, y: (x) & (y), df_filters)]
 
 
+class Dataloader2B(DataloaderBase):
+    """
+    In order to load 2B
+    the original dataframe is user-item-rating which is user_id, track_id, counts in 2B Dataset
+    """
+    options = {"albums.tsv": ["album_id", "album_name", "artist_name"],
+               "artists.tsv": ["artist_id", "artist_name"],
+               "tracks.tsv": ["track_id", "track_name", "artist_name"],
+               "listening-events.tsv": ["user_id", "track_id", "album_id", "timestamp"],
+               "users.tsv": ["user_id", "country", "age", "gender", "creation_time"]}
+    
+    def __init__(self, config_path: str = "") -> None:
+        super().__init__(config_path)
+        self._dataset_name = "LFM-2B"
+        # we need to union the sets in order to get rid of duplicates 
+        self._filter_options = ft.reduce(lambda x, y: set(x) | set(y), self.options.values())
+
+    def load_data(self) -> None:
+        """
+        This function reads all the files of the dataset that its name is given,
+        and loads the content of the files in dataframes based on the read config file.
+        """
+        params = dict(delimiter=self.configs.get("common", "DELIMITER", fallback=","),
+                      names=self.configs.get("common", "HEADERS").split(","),
+                      engine='python', header=0)
+        self.ui_data_frame = pd.read_csv(
+            self.get_file_path(self.configs.get(self._dataset_name, 'file_path'),
+                               self.configs.get(self._dataset_name, 'file_name')),
+            **params)
+        self.ui_data_frame.fillna(value={"rating": -1}, inplace=True)
+        
+    
+    def df_add_column(self, add_columns: List[str]) -> None:
+        self.ui_data_frame.rename(columns = {'user': 'user_id', 'item': 'track_id'},
+                                  inplace = True)
+        common_elements = list(np.intersect1d(add_columns, self.options['tracks.tsv']))
+        if common_elements:
+            if "track_id" not in common_elements:
+                common_elements.insert(0, "track_id")
+            df_tracks = self.read_file("tracks.tsv", self.options['tracks.tsv'])
+            self.ui_data_frame = pd.merge(self.ui_data_frame, df_tracks,
+                                          on=["track_id"],
+                                          how="left")
+            _ = common_elements.pop(0)
+            if track_name in add_columns:
+                self.ui_data_frame.fillna(value={"track_name": ""}, inplace=True)
+            if artist_name in add_columns:
+                 self.ui_data_frame.fillna(value={"artist_name": ""}, inplace=True)   
+        common_elements = list(np.intersect1d(add_columns, self.options['users.tsv']))
+        if common_elements:
+            if "user_id" not in common_elements:
+                common_elements.insert(0, "user_id")
+        df_users = self.read_file("users.tsv", common_elements)
+        self.ui_data_frame = pd.merge(self.ui_data_frame, df_users,
+                                        on=["user_id"],
+                                        how="left")
+        _ = common_elements.pop(0)
+        self.ui_data_frame.fillna(value={add_columns: ""}, inplace=True)
+        if "album-name" in add_columns:
+            df_base = self.read_file("listening-event.tsv", ["user_id", "album_id"])
+            df_album = self.read_file("albums.tsv", ['album_id', 'album_name'])
+            data_frame = pd.merge(df_base, df_album, on=["user_id", "album_id"], how="left")
+            data_frame = data_frame[["user_id", "track_id", "album_name"]]
+            self.ui_data_frame = pd.merge(self.ui_data_frame, data_frame,
+                                          on=["user_id"],
+                                          how="left")
+            self.ui_data_frame.fillna(value={"album-name": ""}, inplace=True)
+    
+         
+    def filter_df(self, filters: Dict[str, Any]) -> None:
+        """
+        this function takes a dictionary of string of any type(could be int, tuple,..) 
+        and returns the updated data frame
+        """
+        headers = self.ui_data_frame.columns
+        common_elements = list(np.intersect1d(list(filters.keys()), headers))
+        if not common_elements:
+            return
+        #we need to find out which features are among range_features
+        range_features = ['rating', 'age', 'timestamp', 'creation_time']
+        #list comprehension following: [expression for item in iterable if condition == True]
+        #so for keys in common_elements if key didn't exist in range_features use the equality
+        #otherwise use the between
+        df_filters = [(self.ui_data_frame[key].map(lambda x: str(x).lower()) ==
+                       str(filters[key]).lower())
+                      if key not in range_features
+                      else (self.ui_data_frame[key].astype(int)
+                            .between(int(filters[key][0]), int(filters[key][1]),
+                                     inclusive = "both"))
+                      for key in common_elements]
+        #take columns 2 by 2 and the result with the 3rd and so on.((item1 & item2)& item3)& item4 
+        self.ui_data_frame = self.ui_data_frame[ft.reduce(lambda x, y: (x) & (y), df_filters)]
+
+    
 def get_dataloader(dataset_name: str, config_path: str = "") -> DataloaderBase:
     """
     this function takes the name of the dataset and returns its dataloader.
@@ -442,6 +538,8 @@ def get_dataloader(dataset_name: str, config_path: str = "") -> DataloaderBase:
         return Dataloader360K(config_path)
     if dataset_name.upper() == "LFM-1B":
         return Dataloader1B(config_path)
+    if dataset_name.upper() == "LFM-2B":
+        return Dataloader2B(config_path)
     return None
 
 
