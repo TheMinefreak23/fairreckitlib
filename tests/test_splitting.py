@@ -19,7 +19,7 @@ df_lfm360k_sample = pd.read_csv(
 # this already has headers and indices
 # [user, item, rating, timestamp]
 df_ml100k_sample = pd.read_csv(
-    '\\home\\runner\\work\\fairreckitlib\\tests\\datasets\\sample\\ml-100k-sample.tsv', delimiter='\t')
+    './tests/datasets/sample/ml-100k-sample.tsv', delimiter='\t')
 
 # the list of dataframes to test splitting with
 dfs =  [('df_lfm360k', df_lfm360k_sample),
