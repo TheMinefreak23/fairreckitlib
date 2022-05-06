@@ -45,12 +45,13 @@ jobs:
             pip install pandas
             pip install PyYAML
             pip install rexmex
+            pip install h5py
           fi
           
       - name: Lint all changed files
         run: |
           if ${{ steps.changed-files.outputs.any_changed }}; then
             for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-              pylint --disable=R0913,C0103,R0903,W0611,W0105,C0321,W0511,R0902,C0301,W0613 $file
+              pylint --disable=R0913,C0103,R0903,W0611,W0105,C0321,W0511,R0902,C0301,W0613 --exit-zero $file
             done
           fi
