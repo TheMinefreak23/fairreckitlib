@@ -1,5 +1,5 @@
 # Lints only in modified files
-name: Partial Lint
+name: Partial Pylint
 
 on:
   pull_request:
