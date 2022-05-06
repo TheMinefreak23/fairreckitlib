@@ -422,7 +422,7 @@ class Dataloader1B(DataloaderBase):
         common_elements = list(np.intersect1d(list(filters.keys()), headers))
         if not common_elements:
             return
-        #all available range_features from the datasets' files
+        # all available range_features from the datasets' files
         range_features = ['rating', 'age', 'playcount', 'timestamp', 'registered_timestamp']
         range_features.extend(self.options['users_additional'][1:])
         df_filters = [(self.ui_data_frame[key].map(lambda x: str(x).lower()) ==
@@ -513,7 +513,7 @@ class Dataloader2B(DataloaderBase):
         common_elements = list(np.intersect1d(list(filters.keys()), headers))
         if not common_elements:
             return
-        #we need to find out which features are among range_features
+        # we need to find out which features are among range_features
         range_features = ['rating', 'age', 'timestamp', 'creation_time']
         #list comprehension following: [expression for item in iterable if condition == True]
         #so for keys in common_elements if key didn't exist in range_features use the equality
@@ -525,7 +525,7 @@ class Dataloader2B(DataloaderBase):
                             .between(int(filters[key][0]), int(filters[key][1]),
                                      inclusive = "both"))
                       for key in common_elements]
-        #take columns 2 by 2 and the result with the 3rd and so on.((item1 & item2)& item3)& item4 
+        # take columns 2 by 2 and the result with the 3rd and so on.((item1 & item2)& item3)& item4 
         self.ui_data_frame = self.ui_data_frame[ft.reduce(lambda x, y: (x) & (y), df_filters)]
 
     
