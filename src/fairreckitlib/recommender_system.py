@@ -83,7 +83,7 @@ class RecommenderSystem:
             raise TypeError('Invalid experiment configuration type.')
 
         if validate_config:
-            parser = Parser(RecommenderSystem.get_events(), verbose)
+            parser = Parser(verbose)
             config = parser.parse_experiment_config(experiment_config_to_dict(config),
                                                     self.data_registry,
                                                     self.split_factory,
@@ -103,7 +103,7 @@ class RecommenderSystem:
             num_threads(int): the max number of threads the experiment can use.
         """
         try:
-            parser = Parser(RecommenderSystem.get_events(), verbose)
+            parser = Parser(verbose)
             config = parser.parse_experiment_config_from_yml(file_path,
                                                              self.data_registry,
                                                              self.split_factory,
@@ -133,7 +133,7 @@ class RecommenderSystem:
         config_path = os.path.join(result_dir, 'config')
         try:
             events = {event_id: func_on_event for (event_id, func_on_event) in RecommenderSystem.get_events()}
-            parser = Parser(events, verbose)
+            parser = Parser(verbose)
             config = parser.parse_experiment_config_from_yml(config_path,
                                                              self.data_registry,
                                                              self.split_factory,
@@ -232,8 +232,7 @@ class RecommenderSystem:
         Returns:
             (array like) list of pairs in the format (event_id, func_on_event)
         """
-        events = [(config_event.ON_PARSE, config_event.on_parse)]
-
+        events = []
         events += get_experiment_events()
         events += get_io_events()
         events += get_data_events()

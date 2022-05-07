@@ -30,11 +30,10 @@ from ...events.dispatcher import EventDispatcher
 
 
 class Parser:
-    def __init__(self, events, verbose):
+    def __init__(self, verbose):
         self.verbose = verbose
         self.event_dispatcher = EventDispatcher()
-        for (event_id, func_on_event) in events:
-            self.event_dispatcher.add_listener(event_id, self, (func_on_event,None))
+        self.event_dispatcher.add_listener(config_event.ON_PARSE, self, (config_event.on_parse, None))
 
     def parse_experiment_config(self, experiment_config, data_registry, split_factory,
                                            predictor_factory, recommender_factory, metric_factory):
