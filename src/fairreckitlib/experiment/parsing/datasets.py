@@ -194,8 +194,8 @@ def parse_data_split_config(dataset_config, dataset_name, split_factory, event_d
             EXP_KEY_DATASET_SPLIT_TEST_RATIO,
             float,
             EXP_DEFAULT_SPLIT_TEST_RATIO,
-            0.01,
-            0.99
+            (0.01,
+            0.99)
         ),
         event_dispatcher
     )
