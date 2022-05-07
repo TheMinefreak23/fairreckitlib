@@ -9,7 +9,8 @@ import time
 
 from fairreckitlib.experiment.run import Experiment
 from .thread_base import ThreadBase
-from ..events import experiment_event
+from ..events import experiment_event, io_event
+from ..experiment.config import save_config_to_yml
 
 
 class ThreadExperiment(ThreadBase):
@@ -31,6 +32,16 @@ class ThreadExperiment(ThreadBase):
         output_dir = kwargs['output_dir']
         start_run = kwargs['start_run']
         num_runs = kwargs['num_runs']
+
+        # Create result output directory
+        if not os.path.isdir(output_dir):
+            os.mkdir(output_dir)
+            self.event_dispatcher.dispatch(
+                io_event.ON_MAKE_DIR,
+                dir=output_dir
+            )
+
+        save_config_to_yml(os.path.join(output_dir, 'config'), kwargs['config'])
 
         start_time = time.time()
         self.event_dispatcher.dispatch(
