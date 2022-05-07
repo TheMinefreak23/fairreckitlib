@@ -52,7 +52,6 @@ def on_end_experiment(event_listener, **kwargs):
     if event_listener.verbose:
         if 'num_runs' in kwargs:
             print('Finished', kwargs['num_runs'], 'experiment(s) with name', kwargs['experiment_name'])
-            kwargs['on_end_experiment']()
         else:
             elapsed_time = kwargs['elapsed_time']
             print('Finished experiment', kwargs['experiment_name'], f'in {elapsed_time:1.4f}s')

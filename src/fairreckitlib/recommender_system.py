@@ -37,7 +37,7 @@ class RecommenderSystem:
     Top level API intended for use by applications
     """
 
-    def __init__(self, data_dir, result_dir, on_end_experiment, verbose=True):
+    def __init__(self, data_dir, result_dir, verbose=True):
         self.data_registry = DataRegistry(data_dir)
         self.split_factory = create_split_factory()
         self.metric_factory = create_metric_factory()
@@ -48,7 +48,6 @@ class RecommenderSystem:
         self.event_dispatcher = EventDispatcher()
         for _, (event_id, func_on_event) in enumerate(RecommenderSystem.get_events()):
             self.event_dispatcher.add_listener(event_id, self, func_on_event)
-        self.on_end_experiment = on_end_experiment
 
         self.thread_processor = ThreadProcessor()
 
@@ -121,7 +120,6 @@ class RecommenderSystem:
             config=config,
             start_run=0, num_runs=1,
             num_threads=num_threads,
-            on_end_experiment=self.on_end_experiment
         ))
 
     def run_experiment_from_yml(self, file_path, num_threads=0):
@@ -176,7 +174,6 @@ class RecommenderSystem:
             config=config,
             start_run=start_run, num_runs=num_runs,
             num_threads=num_threads,
-            on_end_experiment=self.on_end_experiment
         ))
 
     def get_available_datasets(self):

@@ -3,7 +3,6 @@ This program has been developed by students from the bachelor Computer Science a
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
-
 from .constants import ALGORITHM_NAME
 from .constants import ALGORITHM_PARAMS
 

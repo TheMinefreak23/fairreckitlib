@@ -31,7 +31,6 @@ class ThreadExperiment(ThreadBase):
         output_dir = kwargs['output_dir']
         start_run = kwargs['start_run']
         num_runs = kwargs['num_runs']
-        on_end_experiment = kwargs['on_end_experiment']
 
         start_time = time.time()
         self.event_dispatcher.dispatch(
@@ -58,5 +57,4 @@ class ThreadExperiment(ThreadBase):
             num_runs=num_runs,
             experiment_name=kwargs['config'].name,
             elapsed_time=time.time()-start_time,
-            on_end_experiment=on_end_experiment
         )
