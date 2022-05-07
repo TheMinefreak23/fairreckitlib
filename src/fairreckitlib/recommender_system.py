@@ -47,7 +47,7 @@ class RecommenderSystem:
         self.verbose = verbose
         self.event_dispatcher = EventDispatcher()
         for _, (event_id, func_on_event) in enumerate(RecommenderSystem.get_events()):
-            self.event_dispatcher.add_listener(event_id, self, func_on_event)
+            self.event_dispatcher.add_listener(event_id, self, (func_on_event, None))
 
         self.thread_processor = ThreadProcessor()
 
@@ -58,6 +58,7 @@ class RecommenderSystem:
                 io_event.ON_MAKE_DIR,
                 dir=self.result_dir
             )
+
 
     def abort_computation(self, computation_name):
         """Attempts to abort a running computation thread.
@@ -79,10 +80,11 @@ class RecommenderSystem:
         # TODO evaluate additional metrics
         raise NotImplementedError()
 
-    def run_experiment(self, config, num_threads=0, validate_config=True):
+    def run_experiment(self, events, config, num_threads=0, validate_config=True):
         """Runs an experiment with the specified configuration.
 
         Args:
+            events(list(tuple)): the external events to dispatch during the experiment.
             config(ExperimentConfig): the configuration of the experiment.
             num_threads(int): the max number of threads the experiment can use.
             validate_config(bool): whether to validate the configuration beforehand.
@@ -107,20 +109,7 @@ class RecommenderSystem:
 
         save_config_to_yml(os.path.join(result_dir, 'config'), config)
 
-        self.thread_processor.start(ThreadExperiment(
-            config.name,
-            self.event_dispatcher,
-            factories=ExperimentFactories(
-                self.data_registry,
-                self.split_factory,
-                self.__get_model_factory(config.type),
-                self.metric_factory
-            ),
-            output_dir=result_dir,
-            config=config,
-            start_run=0, num_runs=1,
-            num_threads=num_threads,
-        ))
+        self.start_thread_experiment(events, result_dir, config, num_threads)
 
     def run_experiment_from_yml(self, file_path, num_threads=0):
         """Runs an experiment from a yml file.
@@ -138,11 +127,11 @@ class RecommenderSystem:
 
         self.run_experiment(config, num_threads=num_threads, validate_config=False)
 
-    def validate_experiment(self, result_dir, num_runs, num_threads=0):
+    def validate_experiment(self, events, result_dir, num_runs, num_threads=0):
         """Validates an experiment for an additional number of runs.
 
         Args:
-            on_end_experiment(function) function to execute at the end of the thread experiment
+            events(list(tuple)):the external events to dispatch during the experiment.
             result_dir(str): path to an existing experiment result directory.
             num_runs(int): the number of runs to validate the experiment.
             num_threads(int): the max number of threads the experiment can use.
@@ -160,10 +149,21 @@ class RecommenderSystem:
             return
 
         start_run = resolve_experiment_start_run(result_dir)
+        self.start_thread_experiment(events, result_dir, config, num_threads, start_run, num_runs)
 
+    def start_thread_experiment(self, events, result_dir, config, num_threads, start_run=0, num_runs=1):
+        # Add external events.
+        for (event_id, func_on_event) in RecommenderSystem.get_events():
+            external_func = None
+            if event_id in events:
+                external_func = events[event_id]
+            events[event_id] = (func_on_event, external_func)
+
+        # Start thread with thread experiment.
         self.thread_processor.start(ThreadExperiment(
             config.name,
-            self.event_dispatcher,
+            events,
+            verbose=self.verbose,
             factories=ExperimentFactories(
                 self.data_registry,
                 self.split_factory,
@@ -220,6 +220,15 @@ class RecommenderSystem:
         """Gets the available splitters of the recommender system."""
         return self.split_factory.get_available_split_names()
 
+    def __get_model_factory(self, experiment_type):
+        if experiment_type == EXP_TYPE_PREDICTION:
+            return self.predictor_factory
+        if experiment_type == EXP_TYPE_RECOMMENDATION:
+            return self.recommender_factory
+
+        return None
+
+
     @staticmethod
     def get_events():
         """Gets all recommender system events.
@@ -236,11 +245,3 @@ class RecommenderSystem:
         events += get_evaluation_events()
 
         return events
-
-    def __get_model_factory(self, experiment_type):
-        if experiment_type == EXP_TYPE_PREDICTION:
-            return self.predictor_factory
-        if experiment_type == EXP_TYPE_RECOMMENDATION:
-            return self.recommender_factory
-
-        return None
