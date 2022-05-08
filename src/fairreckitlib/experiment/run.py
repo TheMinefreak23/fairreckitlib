@@ -3,7 +3,7 @@ This program has been developed by students from the bachelor Computer Science a
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
-
+import time
 from dataclasses import dataclass
 import os
 
@@ -11,13 +11,13 @@ import json
 
 from ..data.registry import DataRegistry
 from ..data.split.factory import SplitFactory
-from ..events import io_event
+from ..events import io_event, experiment_event
 from ..pipelines.data.run import run_data_pipeline
 from ..metrics.factory import MetricFactory
 from ..pipelines.evaluation.run import run_evaluation_pipelines
 from ..pipelines.model.factory import ModelFactory
 from ..pipelines.model.run import run_model_pipelines
-from .constants import EXP_TYPE_RECOMMENDATION
+from .constants import EXP_TYPE_RECOMMENDATION, EXP_KEY_NAME
 
 
 @dataclass
@@ -61,13 +61,8 @@ class Experiment:
             is_running(func -> bool): function that returns whether the experiment
                 is still running. Stops early when False is returned.
         """
-        os.mkdir(output_dir)
-        self.event_dispatcher.dispatch(
-            io_event.ON_MAKE_DIR,
-            dir=output_dir
-        )
 
-        results = []
+        results, start_time = self.start_run(output_dir)
 
         data_result = run_data_pipeline(
             output_dir,
@@ -112,7 +107,49 @@ class Experiment:
 
             results = add_result_to_overview(results, model_dirs)
 
+        self.end_run(start_time, output_dir, results)
+
+    def start_run(self, output_dir):
+        """Start the run, making the output dir and initialising the results storage list.
+
+        Args:
+            output_dir(str): directory in which to store the run storage output
+
+        Returns:
+            results(list): the initial results list
+            start_time(float): the time the experiment started
+        """
+        start_time = time.time()
+        self.event_dispatcher.dispatch(
+            experiment_event.ON_BEGIN_EXP,
+            experiment_name=self.__config.name
+        )
+
+        os.mkdir(output_dir)
+        self.event_dispatcher.dispatch(
+            io_event.ON_MAKE_DIR,
+            dir=output_dir
+        )
+
+        return [], start_time
+
+    def end_run(self, start_time, output_dir, results):
+        """End the run, writing the storage file and storing the results.
+
+        Args:
+            start_time(float): time the experiment started
+            output_dir(str): directory in which to store the run storage output
+            results(list): the results list
+
+        Returns:
+        """
         write_storage_file(output_dir, results)
+
+        self.event_dispatcher.dispatch(
+            experiment_event.ON_END_EXP,
+            experiment_name=self.__config.name,
+            elapsed_time=time.time()-start_time
+        )
 
 
 def add_result_to_overview(results, model_dirs):
@@ -168,3 +205,4 @@ def resolve_experiment_start_run(result_dir):
         start_run = max(start_run, int(run_split[1]))
 
     return start_run + 1
+

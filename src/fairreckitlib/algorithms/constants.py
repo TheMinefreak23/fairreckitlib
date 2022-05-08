@@ -7,3 +7,5 @@ Utrecht University within the Software Project course.
 ALGORITHM_FACTORY = 'factory'
 ALGORITHM_NAME = 'name'
 ALGORITHM_PARAMS = 'params'
+
+

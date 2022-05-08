@@ -1,5 +1,5 @@
 datasets:
-- name: ML-100K
+- name: LFM-2B
   splitting:
     test_ratio: 0.2
     type: random
