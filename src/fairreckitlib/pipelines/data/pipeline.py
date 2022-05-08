@@ -126,7 +126,7 @@ class DataPipeline(metaclass=ABCMeta):
             train_set_path,
             test_set_path,
             (dataframe['rating'].min(), dataframe['rating'].max()),
-            dataset.ratings # TODO this needs to be dynamically retrieved after modifying ratings
+            dataset.get_matrix_info('rating_type') # TODO this needs to be dynamically retrieved after modifying ratings
         )
 
         return data_output

@@ -83,7 +83,7 @@ def on_begin_load_dataset(event_listener, **kwargs):
         dataset(Dataset): the dataset that is being loaded.
     """
     if event_listener.verbose:
-        print('Loading dataset from', kwargs['dataset'].get_file_path())
+        print('Loading dataset from', kwargs['dataset'].get_matrix_file_path())
 
 
 def on_begin_modify_dataset(event_listener, **kwargs):
