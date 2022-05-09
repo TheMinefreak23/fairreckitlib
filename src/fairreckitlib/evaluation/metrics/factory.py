@@ -4,9 +4,9 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from src.fairreckitlib.experiment.constants import EXP_KEY_METRIC_PARAM_K
-from src.fairreckitlib.core.params import ConfigParameters
-from src.fairreckitlib.core.params import get_empty_parameters
+from ...core.params import ConfigParameters
+from ...core.params import get_empty_parameters
+from ...experiment.constants import EXP_KEY_METRIC_PARAM_K
 from .common import Metric
 
 

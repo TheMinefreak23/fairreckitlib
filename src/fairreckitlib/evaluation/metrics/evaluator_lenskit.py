@@ -8,6 +8,7 @@ import pandas as pd
 
 from lenskit import topn
 from lenskit.metrics import predict
+
 from .evaluator import Evaluator
 from .common import Metric
 

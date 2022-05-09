@@ -6,13 +6,16 @@ Utrecht University within the Software Project course.
 
 import pandas as pd
 
-from rexmex.metrics.ranking \
-    import normalized_discounted_cumulative_gain, \
-    average_precision_at_k, \
-    average_recall_at_k, mean_reciprocal_rank
-from rexmex.metrics.rating import root_mean_squared_error, mean_absolute_error
-from rexmex.metrics.coverage import item_coverage, user_coverage
+from rexmex.metrics.ranking import normalized_discounted_cumulative_gain
+from rexmex.metrics.ranking import average_precision_at_k
+from rexmex.metrics.ranking import average_recall_at_k
+from rexmex.metrics.ranking import mean_reciprocal_rank
+from rexmex.metrics.rating import root_mean_squared_error
+from rexmex.metrics.rating import mean_absolute_error
+from rexmex.metrics.coverage import item_coverage
+from rexmex.metrics.coverage import user_coverage
 from rexmex.metrics import intra_list_similarity, novelty
+
 from .evaluator import Evaluator
 from .common import Metric
 
