@@ -120,7 +120,7 @@ def parse_dataset_config(dataset_config, data_registry, split_factory, event_dis
     # assert dataset name is available in the data registry
     if not assertion.is_one_of_list(
         dataset_name,
-        data_registry.get_available(),
+        data_registry.get_available_sets(),
         event_dispatcher,
         'PARSE ERROR: unknown dataset name \'' + str(dataset_name) + '\''
     ): return None, dataset_name
@@ -194,8 +194,7 @@ def parse_data_split_config(dataset_config, dataset_name, split_factory, event_d
             EXP_KEY_DATASET_SPLIT_TEST_RATIO,
             float,
             EXP_DEFAULT_SPLIT_TEST_RATIO,
-            (0.01,
-            0.99)
+            (0.01, 0.99)
         ),
         event_dispatcher
     )
