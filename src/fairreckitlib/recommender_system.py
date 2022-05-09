@@ -6,8 +6,8 @@ Utrecht University within the Software Project course.
 
 import os
 
-from .data.registry import DataRegistry
-from .data.split.factory import create_split_factory
+from .data.set.dataset_registry import DataRegistry
+from .data.split.split_factory import create_split_factory
 from .events.data_event import get_data_events
 from .events.evaluation_event import get_evaluation_events
 from .events.experiment_event import get_experiment_events
@@ -18,8 +18,8 @@ from .experiment.config import experiment_config_to_dict
 from .experiment.parsing.run import Parser
 from .experiment.run import ExperimentFactories
 from .experiment.run import resolve_experiment_start_run
-from .metrics.factory import create_metric_factory
-from .pipelines.model.factory import create_model_factory
+from src.fairreckitlib.evaluation.metrics.factory import create_metric_factory
+from .model.model_factory import create_model_factory
 from .threading.thread_experiment import ThreadExperiment
 from .threading.thread_processor import ThreadProcessor
 
@@ -172,12 +172,12 @@ class RecommenderSystem:
 
     def get_available_metrics(self):
         # TODO refactor
-        from .metrics.evaluator_lenskit import EvaluatorLenskit
-        from .metrics.evaluator_rexmex import EvaluatorRexmex
+        from src.fairreckitlib.evaluation.metrics.evaluator_lenskit import EvaluatorLenskit
+        from src.fairreckitlib.evaluation.metrics.evaluator_rexmex import EvaluatorRexmex
 
         metrics_dict = {}
         all_metrics = list(EvaluatorLenskit.metric_dict.keys()) + list(EvaluatorRexmex.metric_dict.keys())
-        from .metrics.common import metric_category_dict
+        from src.fairreckitlib.evaluation.metrics.common import metric_category_dict
         for category in metric_category_dict:
             # Only return the metrics that are available in the used libraries
             intersection = [metric.value for metric in metric_category_dict[category] if metric in all_metrics]

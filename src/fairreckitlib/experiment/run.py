@@ -9,12 +9,12 @@ import os
 
 import json
 
-from ..data.registry import DataRegistry
+from src.fairreckitlib.data.set.dataset_registry import DataRegistry
 from ..events import io_event, experiment_event
-from ..pipelines.data.run import run_data_pipeline
-from ..metrics.factory import MetricFactory
-from ..pipelines.evaluation.run import run_evaluation_pipelines
-from ..pipelines.model.run import run_model_pipelines
+from src.fairreckitlib.data.pipeline.data_run import run_data_pipeline
+from src.fairreckitlib.evaluation.metrics.factory import MetricFactory
+from src.fairreckitlib.evaluation.pipeline.evaluation_run import run_evaluation_pipelines
+from src.fairreckitlib.model.pipeline.model_run import run_model_pipelines
 from .constants import EXP_TYPE_RECOMMENDATION
 from src.fairreckitlib.core.factory import Factory
 from src.fairreckitlib.core.factory import GroupFactory

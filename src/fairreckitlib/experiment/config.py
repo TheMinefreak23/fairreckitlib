@@ -5,15 +5,15 @@ Utrecht University within the Software Project course.
 """
 
 from dataclasses import dataclass
+from typing import Any
 
+from ..data.split.split_factory import SPLITTING_KEY
+from ..data.ratings.rating_modifier_factory import RATING_MODIFIER_KEY
 from ..data.utility import save_yml
-from ..pipelines.data.pipeline import DatasetConfig
-from ..pipelines.evaluation.pipeline import MetricConfig
-from ..pipelines.model.pipeline import ModelConfig
+from src.fairreckitlib.data.pipeline.data_pipeline import DatasetConfig
+from src.fairreckitlib.model.pipeline.model_pipeline import ModelConfig
 from .constants import EXP_KEY_DATA_PREFILTERS
 from .constants import EXP_KEY_DATASETS
-from .constants import EXP_KEY_DATASET_RATING_MODIFIER
-from .constants import EXP_KEY_DATASET_SPLITTING
 from .constants import EXP_KEY_DATASET_SPLIT_TEST_RATIO
 from .constants import EXP_KEY_EVALUATION
 from .constants import EXP_KEY_MODELS
@@ -26,6 +26,15 @@ from .constants import EXP_TYPE_PREDICTION
 from .constants import EXP_TYPE_RECOMMENDATION
 
 VALID_EXPERIMENT_TYPES = [EXP_TYPE_PREDICTION, EXP_TYPE_RECOMMENDATION]
+
+
+@dataclass
+class MetricConfig:
+    """Metric Configuration."""
+
+    name: str
+    params: {str: Any}
+    prefilters: []
 
 
 @dataclass
@@ -88,7 +97,7 @@ def experiment_config_to_dict(experiment_config: ExperimentConfig):
     for _, dataset_config in enumerate(experiment_config.datasets):
         dataset = {
             EXP_KEY_OBJ_NAME: dataset_config.name,
-            EXP_KEY_DATASET_SPLITTING: split_config_to_dict(dataset_config.splitting)
+            SPLITTING_KEY: split_config_to_dict(dataset_config.splitting)
         }
 
         # only include prefilters if it has entries
@@ -99,7 +108,7 @@ def experiment_config_to_dict(experiment_config: ExperimentConfig):
         # only include rating modifier if it is present
         if dataset_config.rating_modifier:
             # TODO
-            dataset[EXP_KEY_DATASET_RATING_MODIFIER] = dataset_config.rating_modifier
+            dataset[RATING_MODIFIER_KEY] = dataset_config.rating_modifier
 
         config[EXP_KEY_DATASETS].append(dataset)
 

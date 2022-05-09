@@ -16,8 +16,6 @@ EXP_KEY_OBJ_PARAMS = 'params'
 
 EXP_KEY_DATA_PREFILTERS = 'prefilters'
 EXP_KEY_DATASETS = 'datasets'
-EXP_KEY_DATASET_RATING_MODIFIER = 'rating_modifier'
-EXP_KEY_DATASET_SPLITTING = 'splitting'
 EXP_KEY_DATASET_SPLIT_TEST_RATIO = 'test_ratio'
 EXP_KEY_MODELS = 'models'
 EXP_KEY_EVALUATION = 'evaluation'

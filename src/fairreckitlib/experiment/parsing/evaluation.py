@@ -6,7 +6,7 @@ Utrecht University within the Software Project course.
 
 from src.fairreckitlib.events import config_event
 from src.fairreckitlib.experiment.parsing import assertion
-from src.fairreckitlib.pipelines.evaluation.pipeline import MetricConfig
+from ..config import MetricConfig
 from ..constants import EXP_KEY_EVALUATION
 from ..constants import EXP_KEY_METRIC_PARAM_K
 from ..constants import EXP_KEY_OBJ_NAME

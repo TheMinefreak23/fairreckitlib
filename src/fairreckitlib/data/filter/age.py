@@ -4,8 +4,8 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-import pandas
 from .base import DataFilter
+
 
 class AgeFilter(DataFilter):
     """Filters the dataframe on user age, if such a column exists."""

@@ -4,14 +4,14 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ...data.split.factory import SPLIT_RANDOM
+from ...data.split.split_factory import SPLIT_RANDOM
+from ...data.split.split_factory import SPLITTING_KEY
 from src.fairreckitlib.events import config_event
 from src.fairreckitlib.experiment.parsing import assertion
-from src.fairreckitlib.pipelines.data.pipeline import DatasetConfig
-from src.fairreckitlib.pipelines.data.pipeline import SplitConfig
+from src.fairreckitlib.data.pipeline.data_pipeline import DatasetConfig
+from src.fairreckitlib.data.pipeline.data_pipeline import SplitConfig
 from ..constants import EXP_DEFAULT_SPLIT_TEST_RATIO
 from ..constants import EXP_KEY_DATASETS
-from ..constants import EXP_KEY_DATASET_SPLITTING
 from ..constants import EXP_KEY_DATASET_SPLIT_TEST_RATIO
 from ..constants import EXP_KEY_OBJ_NAME
 from ..constants import EXP_KEY_OBJ_PARAMS
@@ -165,16 +165,16 @@ def parse_data_split_config(dataset_config, dataset_name, split_factory, event_d
     )
 
     # dataset splitting is optional
-    if EXP_KEY_DATASET_SPLITTING not in dataset_config:
+    if SPLITTING_KEY not in dataset_config:
         event_dispatcher.dispatch(
             config_event.ON_PARSE,
             msg='PARSE WARNING: dataset ' + dataset_name + ' missing key \'' +
-                EXP_KEY_DATASET_SPLITTING + '\'',
+                SPLITTING_KEY + '\'',
             default=parsed_config
         )
         return parsed_config
 
-    split_config = dataset_config[EXP_KEY_DATASET_SPLITTING]
+    split_config = dataset_config[SPLITTING_KEY]
 
     # assert split_config is a dict
     if not assertion.is_type(

@@ -6,7 +6,7 @@ Utrecht University within the Software Project course.
 
 from src.fairreckitlib.events import config_event
 from src.fairreckitlib.experiment.parsing import assertion
-from src.fairreckitlib.pipelines.model.pipeline import ModelConfig
+from src.fairreckitlib.model.pipeline.model_pipeline import ModelConfig
 from ..constants import EXP_KEY_MODELS
 from ..constants import EXP_KEY_OBJ_NAME
 from ..constants import EXP_KEY_OBJ_PARAMS
