@@ -4,8 +4,11 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from src.fairreckitlib.events import config_event
-from src.fairreckitlib.experiment.parsing import assertion
+from .parse_assert import assert_is_container_not_empty
+from .parse_assert import assert_is_key_in_dict
+from .parse_assert import assert_is_one_of_list
+from .parse_assert import assert_is_type
+from .parse_event import ON_PARSE
 
 
 def parse_config_parameters(params_config, parent_name, parameters, event_dispatcher):
@@ -24,7 +27,7 @@ def parse_config_parameters(params_config, parent_name, parameters, event_dispat
     parsed_params = parameters.get_defaults()
 
     # assert params_config is a dict
-    if not assertion.is_type(
+    if not assert_is_type(
         params_config,
         dict,
         event_dispatcher,
@@ -41,7 +44,7 @@ def parse_config_parameters(params_config, parent_name, parameters, event_dispat
     )
 
     # assert params_config has entries left after trimming
-    if not assertion.is_container_not_empty(
+    if not assert_is_container_not_empty(
         params_config,
         event_dispatcher,
         'PARSE WARNING: ' + parent_name + ' params is empty',
@@ -80,7 +83,7 @@ def parse_config_param(params_config, parent_name, param, event_dispatcher):
     param_default = param.default_value
 
     # assert param_name is present in the configuration
-    if not assertion.is_key_in_dict(
+    if not assert_is_key_in_dict(
         param.name,
         params_config,
         event_dispatcher,
@@ -94,7 +97,7 @@ def parse_config_param(params_config, parent_name, param, event_dispatcher):
 
     if not success:
         event_dispatcher.dispatch(
-            config_event.ON_PARSE,
+            ON_PARSE,
             msg='PARSE WARNING: ' + parent_name + ' invalid param \'' + param.name + '\'' +
                 '\n\t' + error_msg,
             actual=config_value,
@@ -103,7 +106,7 @@ def parse_config_param(params_config, parent_name, param, event_dispatcher):
     # validation succeeded but extra info is available
     elif len(error_msg) > 0:
         event_dispatcher.dispatch(
-            config_event.ON_PARSE,
+            ON_PARSE,
             msg='PARSE WARNING: ' + parent_name + ' modified param \'' + param.name + '\'' +
                 '\n\t' + error_msg,
             actual=config_value
@@ -130,7 +133,7 @@ def trim_config_params(params_config, parent_name, parameters, event_dispatcher)
     trimmed_config = {}
 
     for param_name, param_value in params_config.items():
-        if assertion.is_one_of_list(
+        if assert_is_one_of_list(
             param_name,
             parameters.get_param_names(),
             event_dispatcher,

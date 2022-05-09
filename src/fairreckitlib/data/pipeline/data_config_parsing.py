@@ -4,21 +4,24 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ...data.split.split_factory import SPLIT_RANDOM
-from ...data.split.split_factory import SPLITTING_KEY
-from src.fairreckitlib.events import config_event
-from src.fairreckitlib.experiment.parsing import assertion
-from src.fairreckitlib.data.pipeline.data_pipeline import DatasetConfig
-from src.fairreckitlib.data.pipeline.data_pipeline import SplitConfig
-from ..constants import EXP_DEFAULT_SPLIT_TEST_RATIO
-from ..constants import EXP_KEY_DATASETS
-from ..constants import EXP_KEY_DATASET_SPLIT_TEST_RATIO
-from ..constants import EXP_KEY_OBJ_NAME
-from ..constants import EXP_KEY_OBJ_PARAMS
-from src.fairreckitlib.core.params import ConfigOptionParam
-from src.fairreckitlib.core.params import ConfigValueParam
-from ..parsing.params import parse_config_param
-from ..parsing.params import parse_config_parameters
+from ...core.params import ConfigOptionParam
+from ...core.params import ConfigValueParam
+from ...core.parsing.parse_assert import assert_is_container_not_empty
+from ...core.parsing.parse_assert import assert_is_key_in_dict
+from ...core.parsing.parse_assert import assert_is_one_of_list
+from ...core.parsing.parse_assert import assert_is_type
+from ...core.parsing.parse_event import ON_PARSE
+from ...core.parsing.parse_params import parse_config_param
+from ...core.parsing.parse_params import parse_config_parameters
+from ...experiment.constants import EXP_DEFAULT_SPLIT_TEST_RATIO
+from ...experiment.constants import EXP_KEY_DATASETS
+from ...experiment.constants import EXP_KEY_DATASET_SPLIT_TEST_RATIO
+from ...experiment.constants import EXP_KEY_OBJ_NAME
+from ...experiment.constants import EXP_KEY_OBJ_PARAMS
+from ..split.split_factory import SPLIT_RANDOM
+from ..split.split_factory import SPLITTING_KEY
+from .data_pipeline import DatasetConfig
+from .data_pipeline import SplitConfig
 
 
 def parse_data_config(experiment_config, data_registry, split_factory, event_dispatcher):
@@ -36,7 +39,7 @@ def parse_data_config(experiment_config, data_registry, split_factory, event_dis
     parsed_config = []
 
     # assert EXP_KEY_DATASETS is present
-    if not assertion.is_key_in_dict(
+    if not assert_is_key_in_dict(
         EXP_KEY_DATASETS,
         experiment_config,
         event_dispatcher,
@@ -47,7 +50,7 @@ def parse_data_config(experiment_config, data_registry, split_factory, event_dis
     datasets_config = experiment_config[EXP_KEY_DATASETS]
 
     # assert datasets_config is a list
-    if not assertion.is_type(
+    if not assert_is_type(
         datasets_config,
         list,
         event_dispatcher,
@@ -56,7 +59,7 @@ def parse_data_config(experiment_config, data_registry, split_factory, event_dis
     ): return parsed_config
 
     # assert datasets_config has list entries
-    if not assertion.is_container_not_empty(
+    if not assert_is_container_not_empty(
         datasets_config,
         event_dispatcher,
         'PARSE ERROR: experiment \'' + EXP_KEY_DATASETS + '\' is empty',
@@ -74,7 +77,7 @@ def parse_data_config(experiment_config, data_registry, split_factory, event_dis
         # skip on failure
         if dataset is None:
             event_dispatcher.dispatch(
-                config_event.ON_PARSE,
+                ON_PARSE,
                 msg='PARSE WARNING: failed to parse dataset \'' +
                 str(dataset_name) + '\', skipping...'
             )
@@ -99,7 +102,7 @@ def parse_dataset_config(dataset_config, data_registry, split_factory, event_dis
         dataset_name(str): the name of the parsed dataset or None on failure.
     """
     # assert dataset_config is a dict
-    if not assertion.is_type(
+    if not assert_is_type(
         dataset_config,
         dict,
         event_dispatcher,
@@ -107,7 +110,7 @@ def parse_dataset_config(dataset_config, data_registry, split_factory, event_dis
     ): return None, None
 
     # assert dataset name is present
-    if not assertion.is_key_in_dict(
+    if not assert_is_key_in_dict(
         EXP_KEY_OBJ_NAME,
         dataset_config,
         event_dispatcher,
@@ -117,7 +120,7 @@ def parse_dataset_config(dataset_config, data_registry, split_factory, event_dis
     dataset_name = dataset_config[EXP_KEY_OBJ_NAME]
 
     # assert dataset name is available in the data registry
-    if not assertion.is_one_of_list(
+    if not assert_is_one_of_list(
         dataset_name,
         data_registry.get_available_sets(),
         event_dispatcher,
@@ -167,7 +170,7 @@ def parse_data_split_config(dataset_config, dataset_name, split_factory, event_d
     # dataset splitting is optional
     if SPLITTING_KEY not in dataset_config:
         event_dispatcher.dispatch(
-            config_event.ON_PARSE,
+            ON_PARSE,
             msg='PARSE WARNING: dataset ' + dataset_name + ' missing key \'' +
                 SPLITTING_KEY + '\'',
             default=parsed_config
@@ -177,7 +180,7 @@ def parse_data_split_config(dataset_config, dataset_name, split_factory, event_d
     split_config = dataset_config[SPLITTING_KEY]
 
     # assert split_config is a dict
-    if not assertion.is_type(
+    if not assert_is_type(
         split_config,
         dict,
         event_dispatcher,
@@ -220,7 +223,7 @@ def parse_data_split_config(dataset_config, dataset_name, split_factory, event_d
 
     # assert EXP_KEY_OBJ_PARAMS is present
     # skip when the splitter has no parameters at all
-    if split_params.get_num_params() > 0 and assertion.is_key_in_dict(
+    if split_params.get_num_params() > 0 and assert_is_key_in_dict(
         EXP_KEY_OBJ_PARAMS,
         split_config,
         event_dispatcher,

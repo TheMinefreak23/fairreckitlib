@@ -4,15 +4,18 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from src.fairreckitlib.events import config_event
-from src.fairreckitlib.experiment.parsing import assertion
-from ..config import MetricConfig
-from ..constants import EXP_KEY_EVALUATION
-from ..constants import EXP_KEY_METRIC_PARAM_K
-from ..constants import EXP_KEY_OBJ_NAME
-from ..constants import EXP_KEY_OBJ_PARAMS
-from ..constants import EXP_KEY_TOP_K
-from .params import parse_config_parameters
+from ...core.parsing.parse_assert import assert_is_container_not_empty
+from ...core.parsing.parse_assert import assert_is_key_in_dict
+from ...core.parsing.parse_assert import assert_is_one_of_list
+from ...core.parsing.parse_assert import assert_is_type
+from ...core.parsing.parse_event import ON_PARSE
+from ...core.parsing.parse_params import parse_config_parameters
+from ...experiment.constants import EXP_KEY_EVALUATION
+from ...experiment.constants import EXP_KEY_METRIC_PARAM_K
+from ...experiment.constants import EXP_KEY_OBJ_NAME
+from ...experiment.constants import EXP_KEY_OBJ_PARAMS
+from ...experiment.constants import EXP_KEY_TOP_K
+from .evaluation_pipeline import MetricConfig
 
 
 def parse_evaluation_config(experiment_config, metric_factory, event_dispatcher):
@@ -35,7 +38,7 @@ def parse_evaluation_config(experiment_config, metric_factory, event_dispatcher)
     eval_config = experiment_config[EXP_KEY_EVALUATION]
 
     # assert eval_config is a list
-    if not assertion.is_type(
+    if not assert_is_type(
         eval_config,
         list,
         event_dispatcher,
@@ -44,7 +47,7 @@ def parse_evaluation_config(experiment_config, metric_factory, event_dispatcher)
     ): return parsed_config
 
     # assert eval_config has list entries
-    if not assertion.is_container_not_empty(
+    if not assert_is_container_not_empty(
         eval_config,
         event_dispatcher,
         'PARSE ERROR: experiment \'' + EXP_KEY_EVALUATION + '\' is empty',
@@ -62,7 +65,7 @@ def parse_evaluation_config(experiment_config, metric_factory, event_dispatcher)
         # skip on failure
         if metric is None:
             event_dispatcher.dispatch(
-                config_event.ON_PARSE,
+                ON_PARSE,
                 msg='PARSE WARNING: failed to parse metric \'' +
                 str(metric_name) + '\', skipping...'
             )
@@ -86,7 +89,7 @@ def parse_metric_config(metric_config, metric_factory, top_k, event_dispatcher):
         metric_name(str): the name of the parsed metric or None on failure.
     """
     # assert dataset_config is a dict
-    if not assertion.is_type(
+    if not assert_is_type(
         metric_config,
         dict,
         event_dispatcher,
@@ -94,7 +97,7 @@ def parse_metric_config(metric_config, metric_factory, top_k, event_dispatcher):
     ): return None, None
 
     # assert metric name is present
-    if not assertion.is_key_in_dict(
+    if not assert_is_key_in_dict(
         EXP_KEY_OBJ_NAME,
         metric_config,
         event_dispatcher,
@@ -109,7 +112,7 @@ def parse_metric_config(metric_config, metric_factory, top_k, event_dispatcher):
         available_metrics = metric_factory.get_available_recommendation_metric_names()
 
     # assert metric name is available in the metric factory
-    if not assertion.is_one_of_list(
+    if not assert_is_one_of_list(
         metric_name,
         available_metrics,
         event_dispatcher,
@@ -128,7 +131,7 @@ def parse_metric_config(metric_config, metric_factory, top_k, event_dispatcher):
 
     # assert EXP_KEY_METRIC_PARAMS is present
     # skip when the metric has no parameters at all
-    if params.get_num_params() > 0 and assertion.is_key_in_dict(
+    if params.get_num_params() > 0 and assert_is_key_in_dict(
         EXP_KEY_OBJ_PARAMS,
         metric_config,
         event_dispatcher,

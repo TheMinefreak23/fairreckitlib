@@ -3,21 +3,23 @@ This program has been developed by students from the bachelor Computer Science a
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
+
 import time
 from dataclasses import dataclass
 import os
 
 import json
 
-from src.fairreckitlib.data.set.dataset_registry import DataRegistry
+from ..core.factory import Factory
+from ..core.factory import GroupFactory
+from ..data.pipeline.data_run import run_data_pipeline
+from ..data.set.dataset_registry import DataRegistry
 from ..events import io_event, experiment_event
-from src.fairreckitlib.data.pipeline.data_run import run_data_pipeline
-from src.fairreckitlib.evaluation.metrics.factory import MetricFactory
-from src.fairreckitlib.evaluation.pipeline.evaluation_run import run_evaluation_pipelines
-from src.fairreckitlib.model.pipeline.model_run import run_model_pipelines
+from ..evaluation.metrics.factory import MetricFactory
+from ..evaluation.pipeline.evaluation_run import run_evaluation_pipelines
+from ..model.pipeline.model_run import run_model_pipelines
 from .constants import EXP_TYPE_RECOMMENDATION
-from src.fairreckitlib.core.factory import Factory
-from src.fairreckitlib.core.factory import GroupFactory
+
 
 @dataclass
 class ExperimentFactories:

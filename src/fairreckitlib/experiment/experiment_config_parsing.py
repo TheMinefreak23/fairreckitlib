@@ -4,36 +4,39 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from src.fairreckitlib.data.utility import load_yml
-from src.fairreckitlib.events import config_event
-from src.fairreckitlib.experiment.parsing import assertion
-from ..config import VALID_EXPERIMENT_TYPES
-from ..config import PredictorExperimentConfig
-from ..config import RecommenderExperimentConfig
-from ..constants import EXP_DEFAULT_RATED_ITEMS_FILTER
-from ..constants import EXP_DEFAULT_TOP_K
-from ..constants import EXP_KEY_DATASETS
-from ..constants import EXP_KEY_MODELS
-from ..constants import EXP_KEY_OBJ_NAME
-from ..constants import EXP_KEY_RATED_ITEMS_FILTER
-from ..constants import EXP_KEY_TOP_K
-from ..constants import EXP_KEY_TYPE
-from ..constants import EXP_TYPE_PREDICTION
-from ..constants import EXP_TYPE_RECOMMENDATION
-from src.fairreckitlib.core.params import ConfigOptionParam
-from src.fairreckitlib.core.params import ConfigValueParam
-from .datasets import parse_data_config
-from .evaluation import parse_evaluation_config
-from .models import parse_models_config
-from .params import parse_config_param
-from ...events.dispatcher import EventDispatcher
+from ..core.params import ConfigOptionParam
+from ..core.params import ConfigValueParam
+from ..core.parsing.parse_assert import assert_is_container_not_empty
+from ..core.parsing.parse_assert import assert_is_key_in_dict
+from ..core.parsing.parse_assert import assert_is_one_of_list
+from ..core.parsing.parse_assert import assert_is_type
+from ..core.parsing.parse_event import ON_PARSE, on_parse
+from ..core.parsing.parse_params import parse_config_param
+from ..data.utility import load_yml
+from ..data.pipeline.data_config_parsing import parse_data_config
+from ..evaluation.pipeline.evaluation_config_parsing import parse_evaluation_config
+from ..events.dispatcher import EventDispatcher
+from ..model.pipeline.model_config_parsing import parse_models_config
+from .config import VALID_EXPERIMENT_TYPES
+from .config import PredictorExperimentConfig
+from .config import RecommenderExperimentConfig
+from .constants import EXP_DEFAULT_RATED_ITEMS_FILTER
+from .constants import EXP_DEFAULT_TOP_K
+from .constants import EXP_KEY_DATASETS
+from .constants import EXP_KEY_MODELS
+from .constants import EXP_KEY_OBJ_NAME
+from .constants import EXP_KEY_RATED_ITEMS_FILTER
+from .constants import EXP_KEY_TOP_K
+from .constants import EXP_KEY_TYPE
+from .constants import EXP_TYPE_PREDICTION
+from .constants import EXP_TYPE_RECOMMENDATION
 
 
 class Parser:
     def __init__(self, verbose):
         self.verbose = verbose
         self.event_dispatcher = EventDispatcher()
-        self.event_dispatcher.add_listener(config_event.ON_PARSE, self, (config_event.on_parse, None))
+        self.event_dispatcher.add_listener(ON_PARSE, self, (on_parse, None))
 
     def parse_experiment_config(self, experiment_config, data_registry, split_factory,
                                            model_factory, metric_factory):
@@ -222,14 +225,14 @@ class Parser:
         Returns:
             success(bool): whether the name is available in the configuration.
         """
-        if not assertion.is_key_in_dict(
+        if not assert_is_key_in_dict(
                 EXP_KEY_OBJ_NAME,
                 experiment_config,
                 self.event_dispatcher,
                 'PARSE ERROR: missing experiment key \'' + EXP_KEY_OBJ_NAME + '\' (required)'
         ): return False
 
-        if not assertion.is_type(
+        if not assert_is_type(
                 experiment_config[EXP_KEY_OBJ_NAME],
                 str,
                 self.event_dispatcher,
@@ -256,7 +259,7 @@ class Parser:
             self.event_dispatcher
         )
 
-        if not assertion.is_container_not_empty(
+        if not assert_is_container_not_empty(
                 experiment_datasets,
                 self.event_dispatcher,
                 'PARSE ERROR: no experiment ' + EXP_KEY_DATASETS + ' specified'
@@ -299,7 +302,7 @@ class Parser:
             self.event_dispatcher
         )
 
-        if not assertion.is_container_not_empty(
+        if not assert_is_container_not_empty(
                 experiment_models,
                 self.event_dispatcher,
                 'PARSE ERROR: no experiment ' + EXP_KEY_MODELS + ' specified'
@@ -320,7 +323,7 @@ class Parser:
 
         if recommender_experiment_config.get(EXP_KEY_TOP_K) is None:
             self.event_dispatcher.dispatch(
-                config_event.ON_PARSE,
+                ON_PARSE,
                 msg='PARSE WARNING: missing experiment key \'' + EXP_KEY_TOP_K + '\'',
                 default=top_k
             )
@@ -339,7 +342,7 @@ class Parser:
             experiment_type(str): the type of the experiment or None on failure.
         """
         # assert experiment_config is a dict
-        if not assertion.is_type(
+        if not assert_is_type(
                 experiment_config,
                 dict,
                 self.event_dispatcher,
@@ -347,7 +350,7 @@ class Parser:
         ): return None
 
         # assert EXP_KEY_TYPE is present
-        if not assertion.is_key_in_dict(
+        if not assert_is_key_in_dict(
                 EXP_KEY_TYPE,
                 experiment_config,
                 self.event_dispatcher,
@@ -358,7 +361,7 @@ class Parser:
         experiment_type = experiment_config[EXP_KEY_TYPE]
 
         # assert experiment_type is valid
-        if not assertion.is_one_of_list(
+        if not assert_is_one_of_list(
                 experiment_type,
                 VALID_EXPERIMENT_TYPES,
                 self.event_dispatcher,

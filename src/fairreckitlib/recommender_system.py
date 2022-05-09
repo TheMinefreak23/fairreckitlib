@@ -8,6 +8,7 @@ import os
 
 from .data.set.dataset_registry import DataRegistry
 from .data.split.split_factory import create_split_factory
+from .evaluation.metrics.factory import create_metric_factory
 from .events.data_event import get_data_events
 from .events.evaluation_event import get_evaluation_events
 from .events.experiment_event import get_experiment_events
@@ -15,10 +16,9 @@ from .events.io_event import get_io_events
 from .events.model_event import get_model_events
 from .experiment.config import ExperimentConfig
 from .experiment.config import experiment_config_to_dict
-from .experiment.parsing.run import Parser
+from .experiment.experiment_config_parsing import Parser
 from .experiment.run import ExperimentFactories
 from .experiment.run import resolve_experiment_start_run
-from src.fairreckitlib.evaluation.metrics.factory import create_metric_factory
 from .model.model_factory import create_model_factory
 from .threading.thread_experiment import ThreadExperiment
 from .threading.thread_processor import ThreadProcessor

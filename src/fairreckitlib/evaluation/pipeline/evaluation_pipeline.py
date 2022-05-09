@@ -4,9 +4,11 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from dataclasses import dataclass
 from datetime import datetime
 import os
 import time
+from typing import Any
 
 import json
 import pandas as pd
@@ -17,6 +19,14 @@ from ..metrics.evaluator_lenskit import EvaluatorLenskit
 from ..metrics.evaluator_rexmex import EvaluatorRexmex
 from ..metrics.filter import filter_data
 
+
+@dataclass
+class MetricConfig:
+    """Metric Configuration."""
+
+    name: str
+    params: {str: Any}
+    prefilters: []
 
 
 class EvaluationPipeline:

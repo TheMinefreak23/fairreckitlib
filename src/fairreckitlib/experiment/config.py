@@ -5,13 +5,13 @@ Utrecht University within the Software Project course.
 """
 
 from dataclasses import dataclass
-from typing import Any
 
 from ..data.split.split_factory import SPLITTING_KEY
 from ..data.ratings.rating_modifier_factory import RATING_MODIFIER_KEY
 from ..data.utility import save_yml
-from src.fairreckitlib.data.pipeline.data_pipeline import DatasetConfig
-from src.fairreckitlib.model.pipeline.model_pipeline import ModelConfig
+from ..data.pipeline.data_pipeline import DatasetConfig
+from ..evaluation.pipeline.evaluation_pipeline import MetricConfig
+from ..model.pipeline.model_pipeline import ModelConfig
 from .constants import EXP_KEY_DATA_PREFILTERS
 from .constants import EXP_KEY_DATASETS
 from .constants import EXP_KEY_DATASET_SPLIT_TEST_RATIO
@@ -26,15 +26,6 @@ from .constants import EXP_TYPE_PREDICTION
 from .constants import EXP_TYPE_RECOMMENDATION
 
 VALID_EXPERIMENT_TYPES = [EXP_TYPE_PREDICTION, EXP_TYPE_RECOMMENDATION]
-
-
-@dataclass
-class MetricConfig:
-    """Metric Configuration."""
-
-    name: str
-    params: {str: Any}
-    prefilters: []
 
 
 @dataclass

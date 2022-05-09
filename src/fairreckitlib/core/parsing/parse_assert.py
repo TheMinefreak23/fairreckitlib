@@ -4,10 +4,12 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from src.fairreckitlib.events import config_event
+from typing import Any
+
+from .parse_event import ON_PARSE
 
 
-def is_container_not_empty(src_container, event_dispatcher, error_msg, **kwargs):
+def assert_is_container_not_empty(src_container, event_dispatcher, error_msg, **kwargs):
     """Asserts whether the specified container is not empty.
 
     Args:
@@ -26,7 +28,7 @@ def is_container_not_empty(src_container, event_dispatcher, error_msg, **kwargs)
     """
     if len(src_container) == 0:
         event_dispatcher.dispatch(
-            config_event.ON_PARSE,
+            ON_PARSE,
             msg=error_msg,
             **kwargs
         )
@@ -35,7 +37,7 @@ def is_container_not_empty(src_container, event_dispatcher, error_msg, **kwargs)
     return True
 
 
-def is_key_in_dict(src_key, src_dict, event_dispatcher, error_msg, **kwargs):
+def assert_is_key_in_dict(src_key, src_dict, event_dispatcher, error_msg, **kwargs):
     """Asserts whether the specified key is present in the specified dictionary.
 
     Args:
@@ -55,7 +57,7 @@ def is_key_in_dict(src_key, src_dict, event_dispatcher, error_msg, **kwargs):
     """
     if not src_key in src_dict:
         event_dispatcher.dispatch(
-            config_event.ON_PARSE,
+            ON_PARSE,
             msg=error_msg,
             **kwargs
         )
@@ -64,7 +66,7 @@ def is_key_in_dict(src_key, src_dict, event_dispatcher, error_msg, **kwargs):
     return True
 
 
-def is_one_of_list(src_value, src_list, event_dispatcher, error_msg, **kwargs):
+def assert_is_one_of_list(src_value, src_list, event_dispatcher, error_msg, **kwargs):
     """Asserts whether the specified value is present in the specified list.
 
     Args:
@@ -83,7 +85,7 @@ def is_one_of_list(src_value, src_list, event_dispatcher, error_msg, **kwargs):
     """
     if not src_value in src_list:
         event_dispatcher.dispatch(
-            config_event.ON_PARSE,
+            ON_PARSE,
             msg=error_msg,
             one_of_list=src_list,
             **kwargs
@@ -93,12 +95,12 @@ def is_one_of_list(src_value, src_list, event_dispatcher, error_msg, **kwargs):
     return True
 
 
-def is_type(value, expected_type, event_dispatcher, error_msg, **kwargs):
+def assert_is_type(value, expected_type: Any, event_dispatcher, error_msg, **kwargs):
     """Asserts whether the specified value is of the expected type.
 
     Args:
         value(object): the value to assert.
-        expected_type(dict): the type that is expected.
+        expected_type(Any): the type that is expected.
         event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
         error_msg(str): the error message describing the assertion failure.
 
@@ -111,7 +113,7 @@ def is_type(value, expected_type, event_dispatcher, error_msg, **kwargs):
     """
     if not isinstance(value, expected_type):
         event_dispatcher.dispatch(
-            config_event.ON_PARSE,
+            ON_PARSE,
             msg=error_msg,
             expect=expected_type,
             actual=type(value),

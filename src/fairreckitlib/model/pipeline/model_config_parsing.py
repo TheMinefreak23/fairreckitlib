@@ -4,13 +4,16 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from src.fairreckitlib.events import config_event
-from src.fairreckitlib.experiment.parsing import assertion
-from src.fairreckitlib.model.pipeline.model_pipeline import ModelConfig
-from ..constants import EXP_KEY_MODELS
-from ..constants import EXP_KEY_OBJ_NAME
-from ..constants import EXP_KEY_OBJ_PARAMS
-from .params import parse_config_parameters
+from ...core.parsing.parse_assert import assert_is_container_not_empty
+from ...core.parsing.parse_assert import assert_is_key_in_dict
+from ...core.parsing.parse_assert import assert_is_one_of_list
+from ...core.parsing.parse_assert import assert_is_type
+from ...core.parsing.parse_event import ON_PARSE
+from ...experiment.constants import EXP_KEY_MODELS
+from ...experiment.constants import EXP_KEY_OBJ_NAME
+from ...experiment.constants import EXP_KEY_OBJ_PARAMS
+from ...core.parsing.parse_params import parse_config_parameters
+from .model_pipeline import ModelConfig
 
 
 def parse_models_config(experiment_config, model_factory, event_dispatcher):
@@ -27,7 +30,7 @@ def parse_models_config(experiment_config, model_factory, event_dispatcher):
     parsed_config = {}
 
     # assert EXP_KEY_MODELS is present
-    if not assertion.is_key_in_dict(
+    if not assert_is_key_in_dict(
         EXP_KEY_MODELS,
         experiment_config,
         event_dispatcher,
@@ -38,7 +41,7 @@ def parse_models_config(experiment_config, model_factory, event_dispatcher):
     models_config = experiment_config[EXP_KEY_MODELS]
 
     # assert models_config is a dict
-    if not assertion.is_type(
+    if not assert_is_type(
         models_config,
         dict,
         event_dispatcher,
@@ -47,7 +50,7 @@ def parse_models_config(experiment_config, model_factory, event_dispatcher):
     ): return parsed_config
 
     # assert models_config has entries
-    if not assertion.is_container_not_empty(
+    if not assert_is_container_not_empty(
         models_config,
         event_dispatcher,
         'PARSE ERROR: experiment \'' + EXP_KEY_MODELS + '\' is empty',
@@ -65,7 +68,7 @@ def parse_models_config(experiment_config, model_factory, event_dispatcher):
         )
 
         # skip when no configurations are actually parsed
-        if not assertion.is_container_not_empty(
+        if not assert_is_container_not_empty(
             api_config,
             event_dispatcher,
             'PARSE WARNING: skipping models for API: ' + api_name
@@ -91,7 +94,7 @@ def parse_api_models(api_name, model_configs, model_factory, event_dispatcher):
     parsed_models = []
 
     # assert API is available in the model factory
-    if not assertion.is_one_of_list(
+    if not assert_is_one_of_list(
         api_name,
         model_factory.get_available_names(),
         event_dispatcher,
@@ -99,7 +102,7 @@ def parse_api_models(api_name, model_configs, model_factory, event_dispatcher):
     ): return parsed_models
 
     # assert models is a list
-    if not assertion.is_type(
+    if not assert_is_type(
         model_configs,
         list,
         event_dispatcher,
@@ -108,7 +111,7 @@ def parse_api_models(api_name, model_configs, model_factory, event_dispatcher):
     ): return parsed_models
 
     # assert models has list entries
-    if not assertion.is_container_not_empty(
+    if not assert_is_container_not_empty(
         model_configs,
         event_dispatcher,
         'PARSE WARNING: models for API \'' + api_name + '\' is empty'
@@ -124,7 +127,7 @@ def parse_api_models(api_name, model_configs, model_factory, event_dispatcher):
         # skip on failure
         if model is None:
             event_dispatcher.dispatch(
-                config_event.ON_PARSE,
+                ON_PARSE,
                 msg='PARSE WARNING: failed to parse model \'' + str(model_name) + '\', skipping...'
             )
             continue
@@ -147,7 +150,7 @@ def parse_model(model_config, algo_factory, event_dispatcher):
         model_name(str): the name of the parsed model or None on failure.
     """
     # assert model_config is a dict
-    if not assertion.is_type(
+    if not assert_is_type(
         model_config,
         dict,
         event_dispatcher,
@@ -156,7 +159,7 @@ def parse_model(model_config, algo_factory, event_dispatcher):
     ): return None, None
 
     # assert model name is present
-    if not assertion.is_key_in_dict(
+    if not assert_is_key_in_dict(
         EXP_KEY_OBJ_NAME,
         model_config,
         event_dispatcher,
@@ -167,7 +170,7 @@ def parse_model(model_config, algo_factory, event_dispatcher):
     model_name = model_config[EXP_KEY_OBJ_NAME]
 
     # assert model name is available in the algorithm factory
-    if not assertion.is_one_of_list(
+    if not assert_is_one_of_list(
         model_name,
         algo_factory.get_available_names(),
         event_dispatcher,
@@ -180,7 +183,7 @@ def parse_model(model_config, algo_factory, event_dispatcher):
 
     # assert EXP_KEY_OBJ_PARAMS is present
     # skip when the model has no parameters at all
-    if len(model_params) > 0 and assertion.is_key_in_dict(
+    if len(model_params) > 0 and assert_is_key_in_dict(
         EXP_KEY_OBJ_PARAMS,
         model_config,
         event_dispatcher,
