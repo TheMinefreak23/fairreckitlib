@@ -6,7 +6,6 @@ Utrecht University within the Software Project course.
 
 """
 from abc import ABC, abstractmethod
-from email import header
 from typing import Dict, Any, List
 import os
 import zlib
@@ -82,11 +81,11 @@ class DataloaderBase(ABC):
 
         data_frame = self.ui_data_frame
         data_frame["user_id"] = (data_frame['user']
-                                     .map(lambda x: zlib.adler32(str(x).encode('utf-8',
-                                                                               errors='ignore'))))
+                                 .map(lambda x: zlib.adler32(str(x).encode('utf-8',
+                                                                           errors='ignore'))))
         data_frame["item_id"] = (data_frame["item"]
-                                     .map(lambda x: zlib.adler32(str(x).encode('utf-8',
-                                                                               errors='ignore'))))
+                                 .map(lambda x: zlib.adler32(str(x).encode('utf-8',
+                                                                           errors='ignore'))))
 
         users = data_frame["user_id"].unique()
         items = data_frame["item_id"].unique()
@@ -208,7 +207,7 @@ class Dataloader360K(DataloaderBase):
         common_elements = np.intersect1d(add_columns, headers)
         if not common_elements:
             return
-        # in profile.tsv there is more user-related info that is why we use this file 
+        # in profile.tsv there is more user-related info that is why we use this file
         file_name = "usersha1-profile.tsv"
         fields_map = {"gender": 1, "age": 2, "country": 3}
         use_cols = [0]
@@ -294,7 +293,7 @@ class Dataloader1B(DataloaderBase):
     def __init__(self, config_path: str = "") -> None:
         super().__init__(config_path)
         self._dataset_name = "LFM-1B"
-        # we need to union the sets in order to get rid of duplicates 
+        # we need to union the sets in order to get rid of duplicates
         self._filter_options = ft.reduce(lambda x, y: set(x) | set(y), self.options.values())
 
     def load_data(self) -> None:
@@ -320,7 +319,7 @@ class Dataloader1B(DataloaderBase):
             artist_ids_i = [item[0] for item in artist_ids[idx_nz]]
             data_frame = list(zip([user_i] * len(artist_ids_i), artist_ids_i, ratings_i))
             data_frame = pd.DataFrame(data_frame, columns=['user', 'item', 'rating'])
-            # if this is the first time 
+            # if this is the first time
             if self.ui_data_frame.empty:
                 self.ui_data_frame = data_frame.copy()
             else:
@@ -331,38 +330,47 @@ class Dataloader1B(DataloaderBase):
         this function adds list of columns to our data frame
         """
         # our dataframe's headers are user-item-rating
-        # renaming columns to be able to join the data frames 
+        # renaming columns to be able to join the data frames
         self.ui_data_frame.rename(columns = {'user': 'user-id', 'item': 'artist-id'},
                                   inplace = True)
         # if album-name should be added we need LES and albums tables
-        # to merge on user-id and artist-id (in general item related columns) 
-        # and later be added to the dataframe 
+        # to merge on user-id and artist-id (in general item related columns)
+        # and later be added to the dataframe
         if "album-name" in add_columns:
             df_base = self.read_file("LEs", ["user-id", "artist-id", "album-id"])
             df_album = self.read_file("albums", self.options["albums"])
             data_frame = pd.merge(df_base, df_album, on=["artist-id", "album-id"], how="left")
+            del df_base
+            del df_album
             data_frame = data_frame[["user-id", "artist-id", "album-name"]]
             self.ui_data_frame = pd.merge(self.ui_data_frame, data_frame,
                                           on=["user-id", "artist-id"],
                                           how="left")
+            del data_frame
             self.ui_data_frame.fillna(value={"album-name": ""}, inplace=True)
         if "track-name" in add_columns:
             df_base = self.read_file("LEs", ["user-id", "artist-id", "track-id"])
             df_track = self.read_file("tracks", self.options["tracks"])
             data_frame = pd.merge(df_base, df_track, on=["artist-id", "track-id"], how="left")
+            del df_base
+            del df_track
             data_frame = data_frame[["user-id", "artist-id", "track-name"]]
             self.ui_data_frame = pd.merge(self.ui_data_frame, data_frame,
                                           on=["user-id", "artist-id"],
                                           how="left")
+            del data_frame
             self.ui_data_frame.fillna(value={"track-name": ""}, inplace=True)
         if "artist-name" in add_columns:
             df_base = self.read_file("LEs", ["user-id", "artist-id"])
             df_artist = self.read_file("artists", self.options["artists"])
             data_frame = pd.merge(df_base, df_artist, on=["artist-id"], how="left")
+            del df_base
+            del df_artist
             data_frame = data_frame[["user-id", "artist-id", "artist-name"]]
             self.ui_data_frame = pd.merge(self.ui_data_frame, data_frame,
                                           on=["user-id", "artist-id"],
                                           how="left")
+            del data_frame
             self.ui_data_frame.fillna(value={"artist-name": ""}, inplace=True)
         common_elements = list(np.intersect1d(add_columns, self.options['LEs']))
         if common_elements:
@@ -372,6 +380,7 @@ class Dataloader1B(DataloaderBase):
             data_frame = self.read_file("LEs", common_elements)
             self.ui_data_frame = pd.merge(self.ui_data_frame, data_frame, on=["user-id"],
                                           how="left")
+            del data_frame
         common_elements = list(np.intersect1d(add_columns, self.options['users']))
         if common_elements:
             if "user-id" not in common_elements:
@@ -379,6 +388,7 @@ class Dataloader1B(DataloaderBase):
             data_frame = self.read_file("users", common_elements)
             self.ui_data_frame = pd.merge(self.ui_data_frame, data_frame, on=["user-id"],
                                           how="left")
+            del data_frame
             self.ui_data_frame.fillna(value={"country": "", "age": -1, "gender": "",
                                              "playcount": -1,
                                              "registered_timestamp": "01-01-1900"},
@@ -386,13 +396,15 @@ class Dataloader1B(DataloaderBase):
         common_elements = list(np.intersect1d(add_columns, self.options['users_additional']))
         if common_elements:
             if "user-id" not in common_elements:
-                # user-id needs to be there to perform the join. if it is not among add_columns, I need to 
-                # add it artificially and then omit the column because in the end I don't need user-id column
+                # user-id needs to be there to perform the join. if it is not among add_columns,
+                # I need to add it artificially and then omit the column because in the end,
+                # I don't need user-id column
                 common_elements.insert(0, "user-id")
             data_frame = self.read_file("users_additional", common_elements)
             self.ui_data_frame = pd.merge(self.ui_data_frame, data_frame, on=["user-id"],
                                           how="left")
-            _ = common_elements.pop(0) #_wild card: we don't need the user-id anymore
+            del data_frame
+            _ = common_elements.pop(common_elements.index("user-id"))
             # we make a dictionary to mark the na_values as -1 to feed it to our data frame
             na_values = dict(zip(common_elements, [-1.0] * len(common_elements)))
             self.ui_data_frame.fillna(value=na_values, inplace=True)
@@ -415,7 +427,7 @@ class Dataloader1B(DataloaderBase):
 
     def filter_df(self, filters: Dict[str, Any]) -> None:
         """
-        this function takes a dictionary of string of any type(could be int, tuple,..) 
+        this function takes a dictionary of string of any type(could be int, tuple,..)
         and returns the updated data frame
         """
         headers = self.ui_data_frame.columns
@@ -440,16 +452,16 @@ class Dataloader2B(DataloaderBase):
     In order to load 2B
     the original dataframe is user-item-rating which is user_id, track_id, counts in 2B Dataset
     """
-    options = {"albums.tsv": ["album_id", "album_name", "artist_name"],
-               "artists.tsv": ["artist_id", "artist_name"],
-               "tracks.tsv": ["track_id", "track_name", "artist_name"],
-               "listening-events.tsv": ["user_id", "track_id", "album_id", "timestamp"],
-               "users.tsv": ["user_id", "country", "age", "gender", "creation_time"]}
-    
+    options = {"albums": ["album_id", "album_name", "artist_name"],
+               "artists": ["artist_id", "artist_name"],
+               "tracks": ["track_id", "track_name", "artist_name"],
+               "listening-events": ["user_id", "track_id", "album_id", "timestamp"],
+               "users": ["user_id", "country", "age", "gender", "creation_time"]}
+
     def __init__(self, config_path: str = "") -> None:
         super().__init__(config_path)
         self._dataset_name = "LFM-2B"
-        # we need to union the sets in order to get rid of duplicates 
+        # we need to union the sets in order to get rid of duplicates
         self._filter_options = ft.reduce(lambda x, y: set(x) | set(y), self.options.values())
 
     def load_data(self) -> None:
@@ -465,48 +477,94 @@ class Dataloader2B(DataloaderBase):
                                self.configs.get(self._dataset_name, 'file_name')),
             **params)
         self.ui_data_frame.fillna(value={"rating": -1}, inplace=True)
-        
-    
+
+    def read_file(self, f_name: str, r_columns: List[str]) -> pd.DataFrame:
+        """
+        this function takes the file name and list of columns to be read and returns the data frame
+        example: users.tsv
+        """
+        file_name = f"{f_name}.tsv"
+        params = dict(delimiter=self.configs.get("common", "DELIMITER", fallback=","),
+                      header=0, engine='python', usecols=r_columns)
+        data_frame = pd.read_csv(
+            self.get_file_path(self.configs.get(self._dataset_name, 'file_path'),
+                               file_name), **params)
+        return data_frame
+
     def df_add_column(self, add_columns: List[str]) -> None:
         self.ui_data_frame.rename(columns = {'user': 'user_id', 'item': 'track_id'},
                                   inplace = True)
-        common_elements = list(np.intersect1d(add_columns, self.options['tracks.tsv']))
+        common_elements = list(np.intersect1d(add_columns, self.options['tracks']))
         if common_elements:
             if "track_id" not in common_elements:
                 common_elements.insert(0, "track_id")
-            df_tracks = self.read_file("tracks.tsv", self.options['tracks.tsv'])
-            self.ui_data_frame = pd.merge(self.ui_data_frame, df_tracks,
+            data_frame = self.read_file("tracks", common_elements)
+            self.ui_data_frame = pd.merge(self.ui_data_frame, data_frame,
                                           on=["track_id"],
                                           how="left")
-            _ = common_elements.pop(0)
-            if track_name in add_columns:
+            del data_frame
+            # _ = common_elements.pop(common_elements.index("track_id"))
+            # self.ui_data_frame.fillna(value=dict(zip(common_elements,
+            #                                          [""] * len(common_elements))),
+            #                           inplace=True)
+            if "track_name" in common_elements:
                 self.ui_data_frame.fillna(value={"track_name": ""}, inplace=True)
-            if artist_name in add_columns:
-                 self.ui_data_frame.fillna(value={"artist_name": ""}, inplace=True)   
-        common_elements = list(np.intersect1d(add_columns, self.options['users.tsv']))
+            if "artist_name" in common_elements:
+                self.ui_data_frame.fillna(value={"artist_name": ""}, inplace=True)
+        common_elements = list(np.intersect1d(add_columns, self.options['users']))
         if common_elements:
             if "user_id" not in common_elements:
                 common_elements.insert(0, "user_id")
-        df_users = self.read_file("users.tsv", common_elements)
-        self.ui_data_frame = pd.merge(self.ui_data_frame, df_users,
-                                        on=["user_id"],
-                                        how="left")
-        _ = common_elements.pop(0)
-        self.ui_data_frame.fillna(value={add_columns: ""}, inplace=True)
-        if "album-name" in add_columns:
-            df_base = self.read_file("listening-event.tsv", ["user_id", "album_id"])
-            df_album = self.read_file("albums.tsv", ['album_id', 'album_name'])
-            data_frame = pd.merge(df_base, df_album, on=["user_id", "album_id"], how="left")
-            data_frame = data_frame[["user_id", "track_id", "album_name"]]
+            data_frame = self.read_file("users", common_elements)
             self.ui_data_frame = pd.merge(self.ui_data_frame, data_frame,
                                           on=["user_id"],
                                           how="left")
+            del data_frame
+            _ = common_elements.pop(common_elements.index("user_id"))
+            if "age" in common_elements:
+                self.ui_data_frame.fillna(value={"age": -1}, inplace=True)
+                _ = common_elements.pop(common_elements.index("age"))
+            self.ui_data_frame.fillna(value=dict(zip(common_elements,
+                                                     [""] * len(common_elements))),
+                                      inplace=True)
+        if "album-name" in add_columns:
+            df_base = self.read_file("listening-event", ["user_id", "track_id", "album_id"])
+            df_album = self.read_file("albums", ['album_id', 'album_name'])
+            data_frame = pd.merge(df_base, df_album, on=["album_id"], how="left")
+            del df_base
+            del df_album
+            data_frame = data_frame[["user_id", "track_id", "album_name"]]
+            self.ui_data_frame = pd.merge(self.ui_data_frame, data_frame,
+                                          on=["user_id", "track_id"],
+                                          how="left")
+            del data_frame
             self.ui_data_frame.fillna(value={"album-name": ""}, inplace=True)
-    
-         
+        common_elements = list(np.intersect1d(add_columns, ["album_id", "timestamp"]))
+        if common_elements:
+            common_elements.extend(["user_id", "track_id"])
+            data_frame = self.read_file("listening-event", common_elements)
+            self.ui_data_frame = pd.merge(self.ui_data_frame, data_frame,
+                                          on=["user_id", "track_id"],
+                                          how="left")
+            del data_frame
+        del common_elements
+        if "artist_id" in add_columns:
+            df_base = self.read_file("artists", self.options['artists'])
+            df_artists = self.read_file("tracks", ['track_id', 'artist_name'])
+            data_frame = pd.merge(df_base, df_artists, on=["artist_name"], how="left")
+            del df_base
+            del df_artists
+            data_frame = data_frame[["track_id", "artist_id"]]
+            self.ui_data_frame = pd.merge(self.ui_data_frame, data_frame,
+                                          on=["track_id"],
+                                          how="left")
+            del data_frame
+        self.ui_data_frame.rename(columns = {'user_id': 'user', 'track_id': 'item'},
+                                  inplace = True)
+
     def filter_df(self, filters: Dict[str, Any]) -> None:
         """
-        this function takes a dictionary of string of any type(could be int, tuple,..) 
+        this function takes a dictionary of string of any type(could be int, tuple,..)
         and returns the updated data frame
         """
         headers = self.ui_data_frame.columns
@@ -525,10 +583,10 @@ class Dataloader2B(DataloaderBase):
                             .between(int(filters[key][0]), int(filters[key][1]),
                                      inclusive = "both"))
                       for key in common_elements]
-        # take columns 2 by 2 and the result with the 3rd and so on.((item1 & item2)& item3)& item4 
+        # take columns 2 by 2 and the result with the 3rd and so on.((item1 & item2)& item3)& item4
         self.ui_data_frame = self.ui_data_frame[ft.reduce(lambda x, y: (x) & (y), df_filters)]
 
-    
+
 def get_dataloader(dataset_name: str, config_path: str = "") -> DataloaderBase:
     """
     this function takes the name of the dataset and returns its dataloader.
