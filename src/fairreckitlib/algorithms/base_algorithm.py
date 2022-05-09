@@ -19,11 +19,18 @@ class Algorithm(metaclass=ABCMeta):
         self.num_threads = kwargs['num_threads']
 
     @abstractmethod
+    def get_name(self):
+        """Gets the name of the algorithm.
+
+        Returns:
+            (str) the algorithm name.
+        """
+    @abstractmethod
     def get_params(self):
         """Get the parameters of the algorithm.
 
         Returns:
-            dict with the algorithm parameters.
+            (dict) with the algorithm parameters.
         """
         raise NotImplementedError()
 

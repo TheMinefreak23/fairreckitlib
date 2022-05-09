@@ -10,9 +10,9 @@ import os
 import time
 from typing import Any
 
-from fairreckitlib.data.set import Dataset
-from fairreckitlib.events import data_event
-from fairreckitlib.events import io_event
+from src.fairreckitlib.data.set import Dataset
+from src.fairreckitlib.events import data_event
+from src.fairreckitlib.events import io_event
 
 
 @dataclass
@@ -53,7 +53,7 @@ class DataPipeline(metaclass=ABCMeta):
     splitting it into train/test set, and saving these in the designated directory.
 
     Args:
-        split_factory(SplitFactory): factory of available splitters.
+        split_factory(BaseFactory): factory of available splitters.
         event_dispatcher(EventDispatcher): used to dispatch data/IO events
             when running the pipeline.
     """

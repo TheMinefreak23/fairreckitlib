@@ -7,7 +7,7 @@ Utrecht University within the Software Project course.
 from surprise.dataset import Dataset
 from surprise.reader import Reader
 
-from ..predictor import Predictor
+from .base_predictor import Predictor
 
 
 class SurprisePredictor(Predictor):
@@ -15,6 +15,7 @@ class SurprisePredictor(Predictor):
 
     Args:
         algo(surprise.AlgoBase): the prediction algorithm.
+        name(str): the name of the algorithm.
         params(dict): the parameters of the algorithm.
 
     Keyword Args:
@@ -22,13 +23,17 @@ class SurprisePredictor(Predictor):
         rating_scale(tuple): consisting of (min_rating, max_rating) on
             which the algorithm will perform training.
     """
-    def __init__(self, algo, params, **kwargs):
+    def __init__(self, algo, name, params, **kwargs):
         Predictor.__init__(self, **kwargs)
 
         self.__algo = algo
+        self.__name = name
         self.__params = params
 
         self.rating_scale = kwargs['rating_scale']
+
+    def get_name(self):
+        return self.__name
 
     def get_params(self):
         return dict(self.__params)

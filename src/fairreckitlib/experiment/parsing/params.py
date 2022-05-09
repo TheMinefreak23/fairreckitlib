@@ -4,8 +4,8 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from fairreckitlib.events import config_event
-from fairreckitlib.experiment.parsing import assertion
+from src.fairreckitlib.events import config_event
+from src.fairreckitlib.experiment.parsing import assertion
 
 
 def parse_config_parameters(params_config, parent_name, parameters, event_dispatcher):

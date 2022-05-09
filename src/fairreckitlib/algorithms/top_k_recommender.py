@@ -6,7 +6,7 @@ Utrecht University within the Software Project course.
 
 import pandas as pd
 
-from .recommender import Recommender
+from .base_recommender import Recommender
 
 
 class TopK(Recommender):
@@ -24,6 +24,9 @@ class TopK(Recommender):
         Recommender.__init__(self, **kwargs)
         self.__predictor = predictor
         self.__train_set = None
+
+    def get_name(self):
+        return self.__predictor.get_name()
 
     def get_params(self):
         return self.__predictor.get_params()

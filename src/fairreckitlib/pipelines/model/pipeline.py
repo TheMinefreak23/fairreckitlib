@@ -13,8 +13,8 @@ from typing import Any
 import json
 import pandas as pd
 
-from fairreckitlib.events import io_event
-from fairreckitlib.events import model_event
+from src.fairreckitlib.events import io_event
+from src.fairreckitlib.events import model_event
 
 MODEL_USER_BATCH_SIZE = 10000
 RATING_OUTPUT_FILE = 'ratings.tsv'
@@ -32,14 +32,12 @@ class ModelPipeline(metaclass=ABCMeta):
     """Model Pipeline to run computations for algorithms from a specific API.
 
     Args:
-        api_name(str): name of the API associated with the algorithm factory.
-        algo_factory(AlgorithmFactory): factory of available algorithms for this API.
+        algo_factory(BaseFactory): factory of available algorithms for this API.
         event_dispatcher(EventDispatcher): used to dispatch model/IO events
             when running the pipeline.
     """
 
-    def __init__(self, api_name, algo_factory, event_dispatcher):
-        self.api_name = api_name
+    def __init__(self, algo_factory, event_dispatcher):
         self.algo_factory = algo_factory
         self.tested_models = {}
 
@@ -73,7 +71,7 @@ class ModelPipeline(metaclass=ABCMeta):
         """
         self.event_dispatcher.dispatch(
             model_event.ON_BEGIN_MODEL_PIPELINE,
-            api_name=self.api_name,
+            api_name=self.algo_factory.get_name(),
             num_models=len(models_config)
         )
 
@@ -103,7 +101,7 @@ class ModelPipeline(metaclass=ABCMeta):
 
         self.event_dispatcher.dispatch(
             model_event.ON_END_MODEL_PIPELINE,
-            api_name=self.api_name,
+            api_name=self.algo_factory.get_name(),
             num_models=len(models_config),
             elapsed_time=end - start
         )
@@ -201,7 +199,8 @@ class ModelPipeline(metaclass=ABCMeta):
             model_dir(str): the path of the directory where the computed ratings can be stored.
         """
         index = self.tested_models[model_name]
-        model_dir = os.path.join(output_dir, self.api_name + '_' + model_name + '_' + str(index))
+        model_dir = os.path.join(output_dir, self.algo_factory.get_name() +
+                                 '_' + model_name + '_' + str(index))
         if not os.path.isdir(model_dir):
             self.event_dispatcher.dispatch(
                 io_event.ON_MAKE_DIR,
@@ -221,7 +220,7 @@ class ModelPipeline(metaclass=ABCMeta):
             model(Algorithm): the model that finished.
             start(float): the time when the model computation started.
         """
-        self.tested_models[model.name] += 1
+        self.tested_models[model.get_name()] += 1
 
         end = time.time()
 

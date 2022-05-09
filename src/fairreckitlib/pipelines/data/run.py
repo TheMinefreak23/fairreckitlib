@@ -14,7 +14,7 @@ def run_data_pipeline(output_dir, data_registry, split_factory,
     Args:
         output_dir(str): the path of the directory to store the output.
         data_registry(DataRegistry): the registry of available datasets.
-        split_factory(SplitFactory): factory of available splitters.
+        split_factory(BaseFactory): factory of available splitters.
         datasets_config(array like): list of DatasetConfig objects.
         event_dispatcher(EventDispatcher): used to dispatch data/IO events
             when running the pipeline.

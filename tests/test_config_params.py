@@ -6,11 +6,11 @@ Utrecht University within the Software Project course.
 
 import pytest
 
-from src.fairreckitlib.experiment.params import ConfigOptionParam
-from src.fairreckitlib.experiment.params import ConfigRandomParam
-from src.fairreckitlib.experiment.params import ConfigValueParam
-from src.fairreckitlib.experiment.params import create_bool_param
-from src.fairreckitlib.experiment.params import get_empty_parameters
+from src.fairreckitlib.core.params import ConfigOptionParam
+from src.fairreckitlib.core.params import ConfigRandomParam
+from src.fairreckitlib.core.params import ConfigValueParam
+from src.fairreckitlib.core.params import create_bool_param
+from src.fairreckitlib.core.params import get_empty_parameters
 
 
 @pytest.mark.parametrize('value_type, valid, invalid', [

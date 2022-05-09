@@ -4,7 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from fairreckitlib.events import config_event
+from src.fairreckitlib.events import config_event
 
 
 def is_container_not_empty(src_container, event_dispatcher, error_msg, **kwargs):

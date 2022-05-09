@@ -9,7 +9,7 @@ from abc import ABCMeta, abstractmethod
 import numpy as np
 import pandas as pd
 
-from .algorithm import Algorithm
+from .base_algorithm import Algorithm
 
 
 class Recommender(Algorithm, metaclass=ABCMeta):

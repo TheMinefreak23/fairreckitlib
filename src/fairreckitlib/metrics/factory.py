@@ -5,8 +5,8 @@ Utrecht University within the Software Project course.
 """
 
 from ..experiment.constants import EXP_KEY_METRIC_PARAM_K
-from ..experiment.params import ConfigParameters
-from ..experiment.params import get_empty_parameters
+from src.fairreckitlib.core.params import ConfigParameters
+from src.fairreckitlib.core.params import get_empty_parameters
 from .common import Metric
 
 

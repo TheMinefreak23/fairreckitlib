@@ -8,24 +8,18 @@ import os
 
 from .data.registry import DataRegistry
 from .data.split.factory import create_split_factory
-from .events import config_event
-from .events import io_event
 from .events.data_event import get_data_events
-from .events.dispatcher import EventDispatcher
 from .events.evaluation_event import get_evaluation_events
 from .events.experiment_event import get_experiment_events
 from .events.io_event import get_io_events
 from .events.model_event import get_model_events
-from .experiment.constants import EXP_TYPE_PREDICTION
-from .experiment.constants import EXP_TYPE_RECOMMENDATION
 from .experiment.config import ExperimentConfig
 from .experiment.config import experiment_config_to_dict
 from .experiment.parsing.run import Parser
 from .experiment.run import ExperimentFactories
 from .experiment.run import resolve_experiment_start_run
 from .metrics.factory import create_metric_factory
-from .pipelines.model.factory import create_predictor_model_factory
-from .pipelines.model.factory import create_recommender_model_factory
+from .pipelines.model.factory import create_model_factory
 from .threading.thread_experiment import ThreadExperiment
 from .threading.thread_processor import ThreadProcessor
 
@@ -39,8 +33,7 @@ class RecommenderSystem:
         self.data_registry = DataRegistry(data_dir)
         self.split_factory = create_split_factory()
         self.metric_factory = create_metric_factory()
-        self.predictor_factory = create_predictor_model_factory()
-        self.recommender_factory = create_recommender_model_factory()
+        self.model_factory = create_model_factory()
 
         self.thread_processor = ThreadProcessor()
 
@@ -164,7 +157,7 @@ class RecommenderSystem:
             factories=ExperimentFactories(
                 self.data_registry,
                 self.split_factory,
-                self.__get_model_factory(config.type),
+                self.model_factory,
                 self.metric_factory
             ),
             output_dir=result_dir,
@@ -200,7 +193,7 @@ class RecommenderSystem:
                     key(str): name of the API,
                     value(array like): dict entries with predictor name and params.
         """
-        return self.predictor_factory.get_available_algorithms()
+        return self.model_factory.get_available_algorithms()
 
     def get_available_recommenders(self):
         """Gets the available recommenders of the recommender system.
@@ -211,19 +204,11 @@ class RecommenderSystem:
                     key(str): name of the API,
                     value(array like): dict entries with recommender name and params.
         """
-        return self.recommender_factory.get_available_algorithms()
+        return self.model_factory.get_available_algorithms()
 
     def get_available_splitters(self):
         """Gets the available splitters of the recommender system."""
         return self.split_factory.get_available_split_names()
-
-    def __get_model_factory(self, experiment_type):
-        if experiment_type == EXP_TYPE_PREDICTION:
-            return self.predictor_factory
-        if experiment_type == EXP_TYPE_RECOMMENDATION:
-            return self.recommender_factory
-
-        return None
 
     @staticmethod
     def get_events():

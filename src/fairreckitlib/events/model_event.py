@@ -116,7 +116,7 @@ def on_begin_test_model(event_listener, **kwargs):
         test_set(pandas.DataFrame): the test set that is used.
     """
     if event_listener.verbose:
-        print('Testing model:', kwargs['model'].name)
+        print('Testing model:', kwargs['model'].get_name())
 
 
 def on_begin_train_model(event_listener, **kwargs):
@@ -131,7 +131,7 @@ def on_begin_train_model(event_listener, **kwargs):
         train_set(pandas.DataFrame): the train set that is used.
     """
     if event_listener.verbose:
-        print('Training model:', kwargs['model'].name)
+        print('Training model:', kwargs['model'].get_name())
 
 
 def on_end_load_test_set(event_listener, **kwargs):
@@ -184,7 +184,7 @@ def on_end_model(event_listener, **kwargs):
     """
     if event_listener.verbose:
         elapsed_time = kwargs['elapsed_time']
-        print('Finished model:', kwargs['model'].name, f'in {elapsed_time:1.4f}s')
+        print('Finished model:', kwargs['model'].get_name(), f'in {elapsed_time:1.4f}s')
 
 
 def on_end_model_pipeline(event_listener, **kwargs):

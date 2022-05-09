@@ -16,6 +16,7 @@ class RandomSplitter(DataSplitter):
     """
 
     def run(self, dataframe, test_ratio):
+        # TODO set random seed as specified in params
         frac = xf.SampleFrac(test_ratio)
         for train_set, test_set in xf.partition_users(dataframe, 1, frac):
             return train_set, test_set

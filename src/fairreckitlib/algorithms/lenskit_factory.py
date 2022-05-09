@@ -8,21 +8,21 @@ from lenskit.algorithms.basic import AllItemsCandidateSelector
 from lenskit.algorithms.basic import UnratedItemCandidateSelector
 from lenskit.algorithms.ranking import TopN
 
-from ..factory import create_algorithm_factory_from_list
-from .algorithms import create_biased_mf
-from .algorithms import create_implicit_mf
-from .algorithms import create_item_item
-from .algorithms import create_pop_score
-from .algorithms import create_random
-from .algorithms import create_user_user
-from .params import get_lenskit_params_biased_mf
-from .params import get_lenskit_params_implicit_mf
-from .params import get_lenskit_params_item_item
-from .params import get_lenskit_params_pop_score
-from .params import get_lenskit_params_random
-from .params import get_lenskit_params_user_user
-from .predictor import LensKitPredictor
-from .recommender import LensKitRecommender
+from src.fairreckitlib.core.factory import create_factory_from_list
+from .lenskit_algorithms import create_biased_mf
+from .lenskit_algorithms import create_implicit_mf
+from .lenskit_algorithms import create_item_item
+from .lenskit_algorithms import create_pop_score
+from .lenskit_algorithms import create_random
+from .lenskit_algorithms import create_user_user
+from .lenskit_params import get_lenskit_params_biased_mf
+from .lenskit_params import get_lenskit_params_implicit_mf
+from .lenskit_params import get_lenskit_params_item_item
+from .lenskit_params import get_lenskit_params_pop_score
+from .lenskit_params import get_lenskit_params_random
+from .lenskit_params import get_lenskit_params_user_user
+from .lenskit_predictor import LensKitPredictor
+from .lenskit_recommender import LensKitRecommender
 
 LENSKIT_API = 'LensKit'
 
@@ -38,9 +38,9 @@ def get_lenskit_predictor_factory():
     """Gets the algorithm factory with LensKit predictors.
 
     Returns:
-        (AlgorithmFactory) with available predictors.
+        (BaseFactory) with available predictors.
     """
-    return create_algorithm_factory_from_list(LENSKIT_API, [
+    return create_factory_from_list(LENSKIT_API, [
         (LENSKIT_BIASED_MF,
          _create_predictor_biased_mf,
          get_lenskit_params_biased_mf
@@ -68,9 +68,9 @@ def get_lenskit_recommender_factory():
     """Gets the algorithm factory with LensKit recommenders.
 
     Returns:
-        (AlgorithmFactory) with available recommenders.
+        (BaseFactory) with available recommenders.
     """
-    return create_algorithm_factory_from_list(LENSKIT_API, [
+    return create_factory_from_list(LENSKIT_API, [
         (LENSKIT_BIASED_MF,
          _create_recommender_biased_mf,
          get_lenskit_params_biased_mf
@@ -98,10 +98,11 @@ def get_lenskit_recommender_factory():
     ])
 
 
-def _create_predictor_biased_mf(params, **kwargs):
+def _create_predictor_biased_mf(name, params, **kwargs):
     """Creates the BiasedMF predictor.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             features,
             iterations,
@@ -117,13 +118,16 @@ def _create_predictor_biased_mf(params, **kwargs):
     Returns:
         (LensKitPredictor) wrapper of BiasedMF.
     """
-    return LensKitPredictor(create_biased_mf(params), params, **kwargs)
+    algo = create_biased_mf(params)
+
+    return LensKitPredictor(algo, name, params, **kwargs)
 
 
-def _create_predictor_implicit_mf(params, **kwargs):
+def _create_predictor_implicit_mf(name, params, **kwargs):
     """Creates the ImplicitMF predictor.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             features,
             iterations,
@@ -139,13 +143,16 @@ def _create_predictor_implicit_mf(params, **kwargs):
     Returns:
         (LensKitPredictor) wrapper of BiasedMF.
     """
-    return LensKitPredictor(create_implicit_mf(params), params, **kwargs)
+    algo = create_implicit_mf(params)
+
+    return LensKitPredictor(algo, name, params, **kwargs)
 
 
-def _create_predictor_item_item(params, **kwargs):
+def _create_predictor_item_item(name, params, **kwargs):
     """Creates the ItemItem predictor.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             max_nnbrs,
             min_nbrs,
@@ -160,13 +167,16 @@ def _create_predictor_item_item(params, **kwargs):
     Returns:
         (LensKitPredictor) wrapper of BiasedMF.
     """
-    return LensKitPredictor(create_item_item(params, kwargs['rating_type']), params, **kwargs)
+    algo = create_item_item(params, kwargs['rating_type'])
+
+    return LensKitPredictor(algo, name, params, **kwargs)
 
 
-def _create_predictor_pop_score(params, **kwargs):
+def _create_predictor_pop_score(name, params, **kwargs):
     """Creates the PopScore predictor.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             score_method
 
@@ -176,13 +186,16 @@ def _create_predictor_pop_score(params, **kwargs):
     Returns:
         (LensKitPredictor) wrapper of PopScore.
     """
-    return LensKitPredictor(create_pop_score(params), params, **kwargs)
+    algo = create_pop_score(params)
+
+    return LensKitPredictor(algo, name, params, **kwargs)
 
 
-def _create_predictor_user_user(params, **kwargs):
+def _create_predictor_user_user(name, params, **kwargs):
     """Creates the UserUser predictor.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             max_nnbrs,
             min_nbrs,
@@ -197,7 +210,9 @@ def _create_predictor_user_user(params, **kwargs):
     Returns:
         (LensKitPredictor) wrapper of UserUser.
     """
-    return LensKitPredictor(create_user_user(params, kwargs['rating_type']), params, **kwargs)
+    algo = create_user_user(params, kwargs['rating_type'])
+
+    return LensKitPredictor(algo, name, params, **kwargs)
 
 
 def _create_candidate_selector(rated_items_filter):
@@ -213,10 +228,11 @@ def _create_candidate_selector(rated_items_filter):
     return UnratedItemCandidateSelector() if rated_items_filter else AllItemsCandidateSelector()
 
 
-def _create_recommender_biased_mf(params, **kwargs):
+def _create_recommender_biased_mf(name, params, **kwargs):
     """Creates the BiasedMF recommender.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             features,
             iterations,
@@ -234,18 +250,19 @@ def _create_recommender_biased_mf(params, **kwargs):
     Returns:
         (LensKitRecommender) wrapper of BiasedMF.
     """
-    recommender = TopN(
+    algo = TopN(
         create_biased_mf(params),
         _create_candidate_selector(kwargs['rated_items_filter'])
     )
 
-    return LensKitRecommender(recommender, params, **kwargs)
+    return LensKitRecommender(algo, name, params, **kwargs)
 
 
-def _create_recommender_implicit_mf(params, **kwargs):
+def _create_recommender_implicit_mf(name, params, **kwargs):
     """Creates the ImplicitMF recommender.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             features,
             iterations,
@@ -263,18 +280,19 @@ def _create_recommender_implicit_mf(params, **kwargs):
     Returns:
         (LensKitRecommender) wrapper of ImplicitMF.
     """
-    recommender = TopN(
+    algo = TopN(
         create_implicit_mf(params),
         _create_candidate_selector(kwargs['rated_items_filter'])
     )
 
-    return LensKitRecommender(recommender, params, **kwargs)
+    return LensKitRecommender(algo, name, params, **kwargs)
 
 
-def _create_recommender_item_item(params, **kwargs):
+def _create_recommender_item_item(name, params, **kwargs):
     """Creates the ItemItem recommender.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             max_nnbrs,
             min_nbrs,
@@ -291,18 +309,19 @@ def _create_recommender_item_item(params, **kwargs):
     Returns:
         (LensKitRecommender) wrapper of ItemItem.
     """
-    recommender = TopN(
+    algo = TopN(
         create_item_item(params, kwargs['rating_type']),
         _create_candidate_selector(kwargs['rated_items_filter'])
     )
 
-    return LensKitRecommender(recommender, params, **kwargs)
+    return LensKitRecommender(algo, name, params, **kwargs)
 
 
-def _create_recommender_pop_score(params, **kwargs):
+def _create_recommender_pop_score(name, params, **kwargs):
     """Creates the PopScore recommender.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             score_method
 
@@ -314,18 +333,19 @@ def _create_recommender_pop_score(params, **kwargs):
     Returns:
         (LensKitRecommender) wrapper of PopScore.
     """
-    recommender = TopN(
+    algo = TopN(
         create_pop_score(params),
         _create_candidate_selector(kwargs['rated_items_filter'])
     )
 
-    return LensKitRecommender(recommender, params, **kwargs)
+    return LensKitRecommender(algo, name, params, **kwargs)
 
 
-def _create_recommender_random(params, **kwargs):
+def _create_recommender_random(name, params, **kwargs):
     """Creates the Random recommender.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             random_seed
 
@@ -337,18 +357,19 @@ def _create_recommender_random(params, **kwargs):
     Returns:
         (LensKitRecommender) wrapper of Random.
     """
-    recommender = create_random(
+    algo = create_random(
         params,
         _create_candidate_selector(kwargs['rated_items_filter'])
     )
 
-    return LensKitRecommender(recommender, params, **kwargs)
+    return LensKitRecommender(algo, name, params, **kwargs)
 
 
-def _create_recommender_user_user(params, **kwargs):
+def _create_recommender_user_user(name, params, **kwargs):
     """Creates the UserUser recommender.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             max_nnbrs,
             min_nbrs,
@@ -365,9 +386,9 @@ def _create_recommender_user_user(params, **kwargs):
     Returns:
         (LensKitRecommender) wrapper of UserUser.
     """
-    recommender = TopN(
+    algo = TopN(
         create_user_user(params, kwargs['rating_type']),
         _create_candidate_selector(kwargs['rated_items_filter'])
     )
 
-    return LensKitRecommender(recommender, params, **kwargs)
+    return LensKitRecommender(algo, name, params, **kwargs)

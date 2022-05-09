@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from scipy import sparse
 
-from ..recommender import Recommender
+from .base_recommender import Recommender
 
 
 class ImplicitRecommender(Recommender):
@@ -16,6 +16,7 @@ class ImplicitRecommender(Recommender):
 
     Args:
         recommender(implicit.RecommenderBase): the recommender algorithm.
+        name(str): the name of the algorithm.
         params(dict): the parameters of the algorithm.
 
     Keyword Args:
@@ -23,11 +24,15 @@ class ImplicitRecommender(Recommender):
         rated_items_filter(bool): whether to filter already rated items when
             producing item recommendations.
     """
-    def __init__(self, recommender, params, **kwargs):
+    def __init__(self, recommender, name, params, **kwargs):
         Recommender.__init__(self, **kwargs)
         self.__recommender = recommender
+        self.__name = name
         self.__params = params
         self.__train_user_items = None
+
+    def get_name(self):
+        return self.__name
 
     def get_params(self):
         return dict(self.__params)

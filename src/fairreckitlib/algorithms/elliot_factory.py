@@ -6,16 +6,15 @@ Utrecht University within the Software Project course.
 
 import time
 
-from fairreckitlib.experiment.params import get_empty_parameters
-from ..factory import create_algorithm_factory_from_list
-from .params import get_elliot_params_funk_svd
-from .params import get_elliot_params_item_knn
-from .params import get_elliot_params_multi_vae
-from .params import get_elliot_params_pure_svd
-from .params import get_elliot_params_random
-from .params import get_elliot_params_svd_pp
-from .params import get_elliot_params_user_knn
-from .recommender import ElliotRecommender
+from ..core.factory import create_factory_from_list
+from .elliot_params import get_elliot_params_funk_svd
+from .elliot_params import get_elliot_params_item_knn
+from .elliot_params import get_elliot_params_multi_vae
+from .elliot_params import get_elliot_params_pure_svd
+from .elliot_params import get_elliot_params_random
+from .elliot_params import get_elliot_params_svd_pp
+from .elliot_params import get_elliot_params_user_knn
+from .elliot_recommender import ElliotRecommender
 
 ELLIOT_API = 'Elliot'
 
@@ -33,9 +32,9 @@ def get_elliot_recommender_factory():
     """Gets the algorithm factory with Elliot recommenders.
 
     Returns:
-        (AlgorithmFactory) with available recommenders.
+        (BaseFactory) with available recommenders.
     """
-    return create_algorithm_factory_from_list(ELLIOT_API, [
+    return create_factory_from_list(ELLIOT_API, [
         (ELLIOT_FUNK_SVD,
          _create_recommender_funk_svd,
          get_elliot_params_funk_svd
@@ -46,7 +45,7 @@ def get_elliot_recommender_factory():
          ),
         (ELLIOT_MOST_POP,
          _create_recommender_most_pop,
-         get_empty_parameters
+         None
          ),
         (ELLIOT_MULTI_VAE,
          _create_recommender_multi_vae,
@@ -71,10 +70,11 @@ def get_elliot_recommender_factory():
     ])
 
 
-def _create_recommender_funk_svd(params, **kwargs):
+def _create_recommender_funk_svd(name, params, **kwargs):
     """Creates the FunkSVD recommender.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             epochs,
             batch_size,
@@ -90,13 +90,14 @@ def _create_recommender_funk_svd(params, **kwargs):
     if params['seed'] is None:
         params['seed'] = int(time.time())
 
-    return ElliotRecommender(params, **kwargs)
+    return ElliotRecommender(name, params, **kwargs)
 
 
-def _create_recommender_item_knn(params, **kwargs):
+def _create_recommender_item_knn(name, params, **kwargs):
     """Creates the ItemKNN recommender.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             neighbours,
             similarity,
@@ -105,22 +106,26 @@ def _create_recommender_item_knn(params, **kwargs):
     Returns:
         (ElliotRecommender) wrapper of ItemKNN.
     """
-    return ElliotRecommender(params, **kwargs)
+    return ElliotRecommender(name, params, **kwargs)
 
 
-def _create_recommender_most_pop(params, **kwargs):
+def _create_recommender_most_pop(name, params, **kwargs):
     """Creates the MostPop recommender.
+
+    Args:
+        name(str): the name of the algorithm.
 
     Returns:
         (ElliotRecommender) wrapper of MostPop.
     """
-    return ElliotRecommender(params, **kwargs)
+    return ElliotRecommender(name, params, **kwargs)
 
 
-def _create_recommender_multi_vae(params, **kwargs):
+def _create_recommender_multi_vae(name, params, **kwargs):
     """Creates the MultiVAE recommender.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             batch_size,
             epochs,
@@ -137,13 +142,14 @@ def _create_recommender_multi_vae(params, **kwargs):
     if params['seed'] is None:
         params['seed'] = int(time.time())
 
-    return ElliotRecommender(params, **kwargs)
+    return ElliotRecommender(name, params, **kwargs)
 
 
-def _create_recommender_pure_svd(params, **kwargs):
+def _create_recommender_pure_svd(name, params, **kwargs):
     """Creates the PureSVD recommender.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             factors,
             seed
@@ -151,13 +157,14 @@ def _create_recommender_pure_svd(params, **kwargs):
     Returns:
         (ElliotRecommender) wrapper of PureSVD.
     """
-    return ElliotRecommender(params, **kwargs)
+    return ElliotRecommender(name, params, **kwargs)
 
 
-def _create_recommender_random(params, **kwargs):
+def _create_recommender_random(name, params, **kwargs):
     """Creates the Random recommender.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             random_seed
 
@@ -167,13 +174,14 @@ def _create_recommender_random(params, **kwargs):
     if params['random_seed'] is None:
         params['random_seed'] = int(time.time())
 
-    return ElliotRecommender(params, **kwargs)
+    return ElliotRecommender(name, params, **kwargs)
 
 
-def _create_recommender_svd_pp(params, **kwargs):
+def _create_recommender_svd_pp(name, params, **kwargs):
     """Creates the SVDpp recommender.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             epochs,
             batch_size,
@@ -189,13 +197,14 @@ def _create_recommender_svd_pp(params, **kwargs):
     if params['seed'] is None:
         params['seed'] = int(time.time())
 
-    return ElliotRecommender(params, **kwargs)
+    return ElliotRecommender(name, params, **kwargs)
 
 
-def _create_recommender_user_knn(params, **kwargs):
+def _create_recommender_user_knn(name, params, **kwargs):
     """Creates the UserKNN recommender.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             neighbours,
             similarity,
@@ -204,4 +213,4 @@ def _create_recommender_user_knn(params, **kwargs):
     Returns:
         (ElliotRecommender) wrapper of UserKNN.
     """
-    return ElliotRecommender(params, **kwargs)
+    return ElliotRecommender(name, params, **kwargs)

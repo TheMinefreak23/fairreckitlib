@@ -7,41 +7,38 @@ Utrecht University within the Software Project course.
 from abc import ABCMeta, abstractmethod
 
 
-class DataSplitter(metaclass=ABCMeta):
-    """Base class for FairRecKit data splitters.
+class DataModifier(metaclass=ABCMeta):
 
-    A splitter is used to split a dataframe into a train and test set.
-    """
     def __init__(self, name, params):
         self.__name = name
         self.__params = params
 
     def get_name(self):
-        """Gets the name of the splitter.
+        """Gets the name of the modifier.
 
         Returns:
-            (str) the splitter name.
+            (str) the modifier name.
         """
         return self.__name
 
     def get_params(self):
-        """Get the parameters of the splitter.
+        """Get the parameters of the modifier.
 
         Returns:
-            (dict) with the splitter parameters.
+            (dict) with the modifier parameters.
         """
         return dict(self.__params)
 
     @abstractmethod
-    def run(self, dataframe, test_ratio):
+    def run(self, dataframe, rating_type):
         """Runs the splitter on the specified dataframe.
 
         Args:
-            dataframe(pandas.DataFrame): with at least the 'user' column.
-            test_ratio(float): the fraction of users to use for testing.
+            dataframe(pandas.DataFrame): with at least the 'rating' column.
+            rating_type(str): the type of rating, either 'explicit' or 'implicit'.
 
         Returns:
-            train_set(pandas.DataFrame): the train set of the split.
-            test_set(pandas.DataFrame): the test set of the split.
+            dataframe(pandas.DataFrame): the modified dataframe.
+            rating_type(str): the modified type of rating, either 'explicit' or 'implicit'.
         """
         raise NotImplementedError()

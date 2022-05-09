@@ -14,16 +14,15 @@ from surprise.prediction_algorithms import SlopeOne
 from surprise.prediction_algorithms import SVD
 from surprise.prediction_algorithms import SVDpp
 
-from fairreckitlib.experiment.params import get_empty_parameters
-from ..factory import create_algorithm_factory_from_list
-from ..top_k import TopK
-from .params import get_surprise_params_baseline_only_als
-from .params import get_surprise_params_baseline_only_sgd
-from .params import get_surprise_params_co_clustering
-from .params import get_surprise_params_nmf
-from .params import get_surprise_params_svd
-from .params import get_surprise_params_svd_pp
-from .predictor import SurprisePredictor
+from ..core.factory import create_factory_from_list
+from .top_k_recommender import TopK
+from .surprise_params import get_surprise_params_baseline_only_als
+from .surprise_params import get_surprise_params_baseline_only_sgd
+from .surprise_params import get_surprise_params_co_clustering
+from .surprise_params import get_surprise_params_nmf
+from .surprise_params import get_surprise_params_svd
+from .surprise_params import get_surprise_params_svd_pp
+from .surprise_predictor import SurprisePredictor
 
 SURPRISE_API = 'Surprise'
 
@@ -41,9 +40,9 @@ def get_surprise_predictor_factory():
     """Gets the algorithm factory with Surprise predictors.
 
     Returns:
-        (AlgorithmFactory) with available predictors.
+        (BaseFactory) with available predictors.
     """
-    return create_algorithm_factory_from_list(SURPRISE_API, [
+    return create_factory_from_list(SURPRISE_API, [
         (SURPRISE_BASELINE_ONLY_ALS,
          _create_predictor_baseline_only_als,
          get_surprise_params_baseline_only_als
@@ -62,11 +61,11 @@ def get_surprise_predictor_factory():
          ),
         (SURPRISE_NORMAL_PREDICTOR,
          _create_predictor_normal_predictor,
-         get_empty_parameters
+         None
          ),
         (SURPRISE_SLOPE_ONE,
          _create_predictor_slope_one,
-         get_empty_parameters
+         None
          ),
         (SURPRISE_SVD,
          _create_predictor_svd,
@@ -83,9 +82,9 @@ def get_surprise_recommender_factory():
     """Gets the algorithm factory with Surprise recommenders.
 
     Returns:
-        (AlgorithmFactory) with available recommenders.
+        (BaseFactory) with available recommenders.
     """
-    return create_algorithm_factory_from_list(SURPRISE_API, [
+    return create_factory_from_list(SURPRISE_API, [
         (SURPRISE_BASELINE_ONLY_ALS,
          _create_recommender_baseline_only_als,
          get_surprise_params_baseline_only_als
@@ -104,11 +103,11 @@ def get_surprise_recommender_factory():
          ),
         (SURPRISE_NORMAL_PREDICTOR,
          _create_recommender_normal_predictor,
-         get_empty_parameters
+         None
          ),
         (SURPRISE_SLOPE_ONE,
          _create_recommender_slope_one,
-         get_empty_parameters
+         None
          ),
         (SURPRISE_SVD,
          _create_recommender_svd,
@@ -121,10 +120,11 @@ def get_surprise_recommender_factory():
     ])
 
 
-def _create_predictor_baseline_only_als(params, **kwargs):
+def _create_predictor_baseline_only_als(name, params, **kwargs):
     """Creates the BaselineOnly ALS predictor.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             reg_i,
             reg_u,
@@ -133,27 +133,29 @@ def _create_predictor_baseline_only_als(params, **kwargs):
     Returns:
         (SurprisePredictor) wrapper of BaselineOnly with method 'als'.
     """
-    bsl_options = {
-        'method': 'als',
-        'reg_i': params['reg_i'],
-        'reg_u': params['reg_u'],
-        'n_epochs': params['epochs']
-    }
-
-    return SurprisePredictor(BaselineOnly(
-        bsl_options=bsl_options,
+    algo = BaselineOnly(
+        bsl_options={
+            'method': 'als',
+            'reg_i': params['reg_i'],
+            'reg_u': params['reg_u'],
+            'n_epochs': params['epochs']
+        },
         verbose=False
-    ), params, **kwargs)
+    )
+
+    return SurprisePredictor(algo, name, params, **kwargs)
 
 
-def _create_recommender_baseline_only_als(params, **kwargs):
-    return TopK(_create_predictor_baseline_only_als(params, **kwargs), **kwargs)
+def _create_recommender_baseline_only_als(name, params, **kwargs):
+    predictor = _create_predictor_baseline_only_als(name, params, **kwargs)
+    return TopK(predictor, **kwargs)
 
 
-def _create_predictor_baseline_only_sgd(params, **kwargs):
+def _create_predictor_baseline_only_sgd(name, params, **kwargs):
     """Creates the BaselineOnly SGD predictor.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             regularization,
             learning_rate,
@@ -162,27 +164,29 @@ def _create_predictor_baseline_only_sgd(params, **kwargs):
     Returns:
         (SurprisePredictor) wrapper of BaselineOnly with method 'sgd'.
     """
-    bsl_options = {
-        'method': 'sgd',
-        'reg': params['regularization'],
-        'learning_rate': params['learning_rate'],
-        'n_epochs': params['epochs']
-     }
-
-    return SurprisePredictor(BaselineOnly(
-        bsl_options=bsl_options,
+    algo = BaselineOnly(
+        bsl_options={
+            'method': 'sgd',
+            'reg': params['regularization'],
+            'learning_rate': params['learning_rate'],
+            'n_epochs': params['epochs']
+         },
         verbose=False
-    ), params, **kwargs)
+    )
+
+    return SurprisePredictor(algo, name, params, **kwargs)
 
 
-def _create_recommender_baseline_only_sgd(params, **kwargs):
-    return TopK(_create_predictor_baseline_only_sgd(params, **kwargs), **kwargs)
+def _create_recommender_baseline_only_sgd(name, params, **kwargs):
+    predictor = _create_predictor_baseline_only_sgd(name, params, **kwargs)
+    return TopK(predictor, **kwargs)
 
 
-def _create_predictor_co_clustering(params, **kwargs):
+def _create_predictor_co_clustering(name, params, **kwargs):
     """Creates the CoClustering predictor.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             user_clusters,
             item_clusters,
@@ -195,23 +199,27 @@ def _create_predictor_co_clustering(params, **kwargs):
     if params['random_seed'] is None:
         params['random_seed'] = int(time.time())
 
-    return SurprisePredictor(CoClustering(
+    algo = CoClustering(
         n_cltr_u=params['user_clusters'],
         n_cltr_i=params['item_clusters'],
         n_epochs=params['epochs'],
         random_state=params['random_seed'],
         verbose=False
-    ), params, **kwargs)
+    )
+
+    return SurprisePredictor(algo, name, params, **kwargs)
 
 
-def _create_recommender_co_clustering(params, **kwargs):
-    return TopK(_create_predictor_co_clustering(params, **kwargs), **kwargs)
+def _create_recommender_co_clustering(name, params, **kwargs):
+    predictor = _create_predictor_co_clustering(name, params, **kwargs)
+    return TopK(predictor, **kwargs)
 
 
-def _create_predictor_nmf(params, **kwargs):
+def _create_predictor_nmf(name, params, **kwargs):
     """Creates the NMF predictor.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             factors,
             epochs,
@@ -230,7 +238,7 @@ def _create_predictor_nmf(params, **kwargs):
     if params['random_seed'] is None:
         params['random_seed'] = int(time.time())
 
-    return SurprisePredictor(NMF(
+    algo = NMF(
         n_factors=params['factors'],
         n_epochs=params['epochs'],
         biased=params['biased'],
@@ -244,43 +252,55 @@ def _create_predictor_nmf(params, **kwargs):
         init_high=params['init_high'],
         random_state=params['random_seed'],
         verbose=False
-    ), params, **kwargs)
+    )
+
+    return SurprisePredictor(algo, name, params, **kwargs)
 
 
-def _create_recommender_nmf(params, **kwargs):
-    return TopK(_create_predictor_nmf(params, **kwargs), **kwargs)
+def _create_recommender_nmf(name, params, **kwargs):
+    predictor = _create_predictor_nmf(name, params, **kwargs)
+    return TopK(predictor, **kwargs)
 
 
-def _create_predictor_normal_predictor(params, **kwargs):
+def _create_predictor_normal_predictor(name, params, **kwargs):
     """Creates the NormalPredictor.
+
+    Args:
+        name(str): the name of the algorithm.
 
     Returns:
         (SurprisePredictor) wrapper of NormalPredictor.
     """
-    return SurprisePredictor(NormalPredictor(), params, **kwargs)
+    return SurprisePredictor(NormalPredictor(), name, params, **kwargs)
 
 
-def _create_recommender_normal_predictor(params, **kwargs):
-    return TopK(_create_predictor_normal_predictor(params, **kwargs), **kwargs)
+def _create_recommender_normal_predictor(name, params, **kwargs):
+    predictor = _create_predictor_normal_predictor(name, params, **kwargs)
+    return TopK(predictor, **kwargs)
 
 
-def _create_predictor_slope_one(params, **kwargs):
+def _create_predictor_slope_one(name, params, **kwargs):
     """Creates the SlopeOne predictor.
+
+    Args:
+        name(str): the name of the algorithm.
 
     Returns:
         (SurprisePredictor) wrapper of SlopeOne.
     """
-    return SurprisePredictor(SlopeOne(), params, **kwargs)
+    return SurprisePredictor(SlopeOne(), name, params, **kwargs)
 
 
-def _create_recommender_slope_one(params, **kwargs):
-    return TopK(_create_predictor_slope_one(params, **kwargs), **kwargs)
+def _create_recommender_slope_one(name, params, **kwargs):
+    predictor = _create_predictor_slope_one(name, params, **kwargs)
+    return TopK(predictor, **kwargs)
 
 
-def _create_predictor_svd(params, **kwargs):
+def _create_predictor_svd(name, params, **kwargs):
     """Creates the SVD predictor.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             factors,
             epochs,
@@ -297,7 +317,7 @@ def _create_predictor_svd(params, **kwargs):
     if params['random_seed'] is None:
         params['random_seed'] = int(time.time())
 
-    return SurprisePredictor(SVD(
+    algo = SVD(
         n_factors=params['factors'],
         n_epochs=params['epochs'],
         biased=params['biased'],
@@ -309,17 +329,21 @@ def _create_predictor_svd(params, **kwargs):
         reg_bu=None, reg_bi=None, reg_pu=None, reg_qi=None,
         random_state=params['random_seed'],
         verbose=False
-    ), params, **kwargs)
+    )
+
+    return SurprisePredictor(algo, name, params, **kwargs)
 
 
-def _create_recommender_svd(params, **kwargs):
-    return TopK(_create_predictor_svd(params, **kwargs), **kwargs)
+def _create_recommender_svd(name, params, **kwargs):
+    predictor =_create_predictor_svd(name, params, **kwargs)
+    return TopK(predictor, **kwargs)
 
 
-def _create_predictor_svd_pp(params, **kwargs):
+def _create_predictor_svd_pp(name, params, **kwargs):
     """Creates the SVDpp predictor.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             factors,
             epochs,
@@ -335,7 +359,7 @@ def _create_predictor_svd_pp(params, **kwargs):
     if params['random_seed'] is None:
         params['random_seed'] = int(time.time())
 
-    return SurprisePredictor(SVDpp(
+    algo = SVDpp(
         n_factors=params['factors'],
         n_epochs=params['epochs'],
         init_mean=params['init_mean'],
@@ -346,8 +370,11 @@ def _create_predictor_svd_pp(params, **kwargs):
         reg_bu=None, reg_bi=None, reg_pu=None, reg_qi=None, reg_yj=None,
         random_state=params['random_seed'],
         verbose=False
-    ), params, **kwargs)
+    )
+
+    return SurprisePredictor(algo, name, params, **kwargs)
 
 
-def _create_recommender_svd_pp(params, **kwargs):
-    return TopK(_create_predictor_svd_pp(params, **kwargs), **kwargs)
+def _create_recommender_svd_pp(name, params, **kwargs):
+    predictor = _create_predictor_svd_pp(name, params, **kwargs)
+    return TopK(predictor, **kwargs)

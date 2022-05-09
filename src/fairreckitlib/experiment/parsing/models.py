@@ -4,12 +4,12 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from fairreckitlib.events import config_event
-from fairreckitlib.experiment.parsing import assertion
-from fairreckitlib.pipelines.model.pipeline import ModelConfig
+from src.fairreckitlib.events import config_event
+from src.fairreckitlib.experiment.parsing import assertion
+from src.fairreckitlib.pipelines.model.pipeline import ModelConfig
 from ..constants import EXP_KEY_MODELS
-from ..constants import EXP_KEY_MODEL_NAME
-from ..constants import EXP_KEY_MODEL_PARAMS
+from ..constants import EXP_KEY_OBJ_NAME
+from ..constants import EXP_KEY_OBJ_PARAMS
 from .params import parse_config_parameters
 
 
@@ -93,7 +93,7 @@ def parse_api_models(api_name, model_configs, model_factory, event_dispatcher):
     # assert API is available in the model factory
     if not assertion.is_one_of_list(
         api_name,
-        model_factory.get_available_api_names(),
+        model_factory.get_available_names(),
         event_dispatcher,
         'PARSE WARNING: unknown model API \'' + api_name + '\''
     ): return parsed_models
@@ -118,7 +118,7 @@ def parse_api_models(api_name, model_configs, model_factory, event_dispatcher):
     for _, algo_config in enumerate(model_configs):
         model, model_name = parse_model(
             algo_config,
-            model_factory.get_algorithm_factory(api_name),
+            model_factory.get_factory(api_name),
             event_dispatcher
         )
         # skip on failure
@@ -151,45 +151,45 @@ def parse_model(model_config, algo_factory, event_dispatcher):
         model_config,
         dict,
         event_dispatcher,
-        'PARSE ERROR: ' + algo_factory.get_api_name() +
+        'PARSE ERROR: ' + algo_factory.get_name() +
         ' model invalid value'
     ): return None, None
 
     # assert model name is present
     if not assertion.is_key_in_dict(
-        EXP_KEY_MODEL_NAME,
+        EXP_KEY_OBJ_NAME,
         model_config,
         event_dispatcher,
-        'PARSE ERROR: ' + algo_factory.get_api_name() +
-        ' model missing key \'' + EXP_KEY_MODEL_NAME + '\''
+        'PARSE ERROR: ' + algo_factory.get_name() +
+        ' model missing key \'' + EXP_KEY_OBJ_NAME + '\''
     ): return None, None
 
-    model_name = model_config[EXP_KEY_MODEL_NAME]
+    model_name = model_config[EXP_KEY_OBJ_NAME]
 
     # assert model name is available in the algorithm factory
     if not assertion.is_one_of_list(
         model_name,
-        algo_factory.get_available_algorithm_names(),
+        algo_factory.get_available_names(),
         event_dispatcher,
-        'PARSE ERROR: ' + algo_factory.get_api_name() +
+        'PARSE ERROR: ' + algo_factory.get_name() +
         ' model unknown name: \'' + str(model_name) + '\''
     ): return None, model_name
 
-    algo_params = algo_factory.get_algorithm_params(model_name)
+    algo_params = algo_factory.create_params(model_name)
     model_params = algo_params.get_defaults()
 
-    # assert EXP_KEY_MODEL_PARAMS is present
+    # assert EXP_KEY_OBJ_PARAMS is present
     # skip when the model has no parameters at all
     if len(model_params) > 0 and assertion.is_key_in_dict(
-        EXP_KEY_MODEL_PARAMS,
+        EXP_KEY_OBJ_PARAMS,
         model_config,
         event_dispatcher,
-        'PARSE WARNING: model ' + model_name + ' missing key \'' + EXP_KEY_MODEL_PARAMS + '\'',
+        'PARSE WARNING: model ' + model_name + ' missing key \'' + EXP_KEY_OBJ_PARAMS + '\'',
         default=model_params
     ):
         # parse the model parameters
         model_params = parse_config_parameters(
-            model_config[EXP_KEY_MODEL_PARAMS],
+            model_config[EXP_KEY_OBJ_PARAMS],
             model_name,
             algo_params,
             event_dispatcher

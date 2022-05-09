@@ -33,16 +33,26 @@ def run_model_pipelines(output_dir, data_transition, model_factory,
     model_dirs = []
 
     for api_name, models in models_config.items():
-        model_pipeline = model_factory.create_pipeline(api_name, event_dispatcher)
-        dirs = model_pipeline.run(
-            output_dir,
-            data_transition,
-            models,
-            is_running,
-            **kwargs
-        )
         if not is_running():
             return None
+
+        api_factory = model_factory.get_factory(api_name)
+        if api_factory is None:
+            # TODO log this
+            continue
+
+        try:
+            model_pipeline = api_factory.func_create_pipeline(api_factory, event_dispatcher)
+            dirs = model_pipeline.run(
+                output_dir,
+                data_transition,
+                models,
+                is_running,
+                **kwargs
+            )
+        except MemoryError:
+            # TODO log this
+            continue
 
         model_dirs += dirs
 

@@ -7,7 +7,7 @@ Utrecht University within the Software Project course.
 import os
 import time
 
-from fairreckitlib.experiment.run import Experiment
+from src.fairreckitlib.experiment.run import Experiment
 from .thread_base import ThreadBase
 from ..events import experiment_event, io_event
 from ..experiment.config import save_config_to_yml

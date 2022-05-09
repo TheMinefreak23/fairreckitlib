@@ -4,20 +4,23 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from fairreckitlib.events.model_event import *
+from .model_event import on_begin_load_test_set
+from .model_event import on_end_load_test_set
+from .model_event import on_begin_load_train_set
+from .model_event import on_end_load_train_set
 
-ON_BEGIN_LOAD_TEST_SET = 'on_begin_load_test_set'
-ON_END_LOAD_TEST_SET = 'on_end_load_test_set'
-ON_BEGIN_LOAD_TRAIN_SET = 'on_begin_load_train_set'
-ON_END_LOAD_TRAIN_SET = 'on_end_load_train_set'
-ON_BEGIN_LOAD_RECS_SET = 'on_begin_load_recs_set'
-ON_END_LOAD_RECS_SET = 'on_end_load_recs_set'
-ON_BEGIN_EVAL_PIPELINE = 'on_begin_eval_pipeline'
-ON_END_EVAL_PIPELINE = 'on_end_eval_pipeline'
-ON_BEGIN_EVAL = 'on_begin_eval'
-ON_END_EVAL = 'on_end_eval'
-ON_BEGIN_FILTER = 'on_begin_filter'
-ON_END_FILTER = 'on_end_filter'
+ON_BEGIN_LOAD_TEST_SET = 'EvaluationPipeline.on_begin_load_test_set'
+ON_END_LOAD_TEST_SET = 'EvaluationPipeline.on_end_load_test_set'
+ON_BEGIN_LOAD_TRAIN_SET = 'EvaluationPipeline.on_begin_load_train_set'
+ON_END_LOAD_TRAIN_SET = 'EvaluationPipeline.on_end_load_train_set'
+ON_BEGIN_LOAD_RECS_SET = 'EvaluationPipeline.on_begin_load_recs_set'
+ON_END_LOAD_RECS_SET = 'EvaluationPipeline.on_end_load_recs_set'
+ON_BEGIN_EVAL_PIPELINE = 'EvaluationPipeline.on_begin_eval_pipeline'
+ON_END_EVAL_PIPELINE = 'EvaluationPipeline.on_end_eval_pipeline'
+ON_BEGIN_EVAL = 'EvaluationPipeline.on_begin_eval'
+ON_END_EVAL = 'EvaluationPipeline.on_end_eval'
+ON_BEGIN_FILTER = 'EvaluationPipeline.on_begin_filter'
+ON_END_FILTER = 'EvaluationPipeline.on_end_filter'
 
 
 def get_evaluation_events():

@@ -8,7 +8,7 @@ from abc import ABCMeta, abstractmethod
 
 import numpy as np
 
-from .algorithm import Algorithm
+from .base_algorithm import Algorithm
 
 
 class Predictor(Algorithm, metaclass=ABCMeta):

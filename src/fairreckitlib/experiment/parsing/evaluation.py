@@ -4,13 +4,13 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from fairreckitlib.events import config_event
-from fairreckitlib.experiment.parsing import assertion
-from fairreckitlib.pipelines.evaluation.pipeline import MetricConfig
+from src.fairreckitlib.events import config_event
+from src.fairreckitlib.experiment.parsing import assertion
+from src.fairreckitlib.pipelines.evaluation.pipeline import MetricConfig
 from ..constants import EXP_KEY_EVALUATION
-from ..constants import EXP_KEY_METRIC_NAME
-from ..constants import EXP_KEY_METRIC_PARAMS
 from ..constants import EXP_KEY_METRIC_PARAM_K
+from ..constants import EXP_KEY_OBJ_NAME
+from ..constants import EXP_KEY_OBJ_PARAMS
 from ..constants import EXP_KEY_TOP_K
 from .params import parse_config_parameters
 
@@ -95,13 +95,13 @@ def parse_metric_config(metric_config, metric_factory, top_k, event_dispatcher):
 
     # assert metric name is present
     if not assertion.is_key_in_dict(
-        EXP_KEY_METRIC_NAME,
+        EXP_KEY_OBJ_NAME,
         metric_config,
         event_dispatcher,
-        'PARSE ERROR: missing metric key \'' + EXP_KEY_METRIC_NAME + '\' (required)'
+        'PARSE ERROR: missing metric key \'' + EXP_KEY_OBJ_NAME + '\' (required)'
     ): return None, None
 
-    metric_name = metric_config[EXP_KEY_METRIC_NAME]
+    metric_name = metric_config[EXP_KEY_OBJ_NAME]
 
     if top_k is None:
         available_metrics = metric_factory.get_available_prediction_metric_names()
@@ -129,15 +129,15 @@ def parse_metric_config(metric_config, metric_factory, top_k, event_dispatcher):
     # assert EXP_KEY_METRIC_PARAMS is present
     # skip when the metric has no parameters at all
     if params.get_num_params() > 0 and assertion.is_key_in_dict(
-        EXP_KEY_METRIC_PARAMS,
+        EXP_KEY_OBJ_PARAMS,
         metric_config,
         event_dispatcher,
-        'PARSE WARNING: ' + metric_name + ' missing key \'' + EXP_KEY_METRIC_PARAMS + '\'',
+        'PARSE WARNING: ' + metric_name + ' missing key \'' + EXP_KEY_OBJ_PARAMS + '\'',
         default=metric_params
     ):
         # parse the metric parameters
         metric_params = parse_config_parameters(
-            metric_config[EXP_KEY_METRIC_PARAMS],
+            metric_config[EXP_KEY_OBJ_PARAMS],
             metric_name,
             params,
             event_dispatcher

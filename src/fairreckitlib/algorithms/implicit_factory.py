@@ -11,11 +11,11 @@ from implicit.als import AlternatingLeastSquares
 from implicit.bpr import BayesianPersonalizedRanking
 from implicit.lmf import LogisticMatrixFactorization
 
-from ..factory import create_algorithm_factory_from_list
-from .params import get_implicit_params_alternating_least_squares
-from .params import get_implicit_params_bayesian_personalized_ranking
-from .params import get_implicit_params_logistic_matrix_factorization
-from .recommender import ImplicitRecommender
+from ..core.factory import create_factory_from_list
+from .implicit_params import get_implicit_params_alternating_least_squares
+from .implicit_params import get_implicit_params_bayesian_personalized_ranking
+from .implicit_params import get_implicit_params_logistic_matrix_factorization
+from .implicit_recommender import ImplicitRecommender
 
 IMPLICIT_API = 'Implicit'
 
@@ -28,9 +28,9 @@ def get_implicit_recommender_factory():
     """Gets the algorithm factory with Implicit recommenders.
 
     Returns:
-        (AlgorithmFactory) with available recommenders.
+        (BaseFactory) with available recommenders.
     """
-    return create_algorithm_factory_from_list(IMPLICIT_API, [
+    return create_factory_from_list(IMPLICIT_API, [
         (IMPLICIT_ALS,
          _create_recommender_alternating_least_squares,
          get_implicit_params_alternating_least_squares
@@ -46,10 +46,11 @@ def get_implicit_recommender_factory():
     ])
 
 
-def _create_recommender_alternating_least_squares(params, **kwargs):
+def _create_recommender_alternating_least_squares(name, params, **kwargs):
     """Creates the AlternatingLeastSquares recommender.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             factors,
             regularization,
@@ -68,7 +69,7 @@ def _create_recommender_alternating_least_squares(params, **kwargs):
     if params['random_seed'] is None:
         params['random_seed'] = int(time.time())
 
-    return ImplicitRecommender(AlternatingLeastSquares(
+    algo = AlternatingLeastSquares(
         factors=params['factors'],
         regularization=params['regularization'],
         dtype=np.float32,
@@ -78,13 +79,16 @@ def _create_recommender_alternating_least_squares(params, **kwargs):
         calculate_training_loss=params['calculate_training_loss'],
         num_threads=kwargs['num_threads'],
         random_state=params['random_seed']
-    ), params, **kwargs)
+    )
+
+    return ImplicitRecommender(algo, name, params, **kwargs)
 
 
-def _create_recommender_bayesian_personalized_ranking(params, **kwargs):
+def _create_recommender_bayesian_personalized_ranking(name, params, **kwargs):
     """Creates the BayesianPersonalizedRanking recommender.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             factors,
             learning_rate,
@@ -102,7 +106,7 @@ def _create_recommender_bayesian_personalized_ranking(params, **kwargs):
     if params['random_seed'] is None:
         params['random_seed'] = int(time.time())
 
-    return ImplicitRecommender(BayesianPersonalizedRanking(
+    algo = BayesianPersonalizedRanking(
         factors=params['factors'],
         learning_rate=params['learning_rate'],
         regularization=params['regularization'],
@@ -111,13 +115,16 @@ def _create_recommender_bayesian_personalized_ranking(params, **kwargs):
         num_threads=kwargs['num_threads'],
         verify_negative_samples=params['verify_negative_samples'],
         random_state=params['random_seed']
-    ), params, **kwargs)
+    )
+
+    return ImplicitRecommender(algo, name, params, **kwargs)
 
 
-def _create_recommender_logistic_matrix_factorization(params, **kwargs):
+def _create_recommender_logistic_matrix_factorization(name, params, **kwargs):
     """Creates the LogisticMatrixFactorization recommender.
 
     Args:
+        name(str): the name of the algorithm.
         params(dict): with the entries:
             factors,
             learning_rate,
@@ -135,7 +142,7 @@ def _create_recommender_logistic_matrix_factorization(params, **kwargs):
     if params['random_seed'] is None:
         params['random_seed'] = int(time.time())
 
-    return ImplicitRecommender(LogisticMatrixFactorization(
+    algo = LogisticMatrixFactorization(
         factors=params['factors'],
         learning_rate=params['learning_rate'],
         regularization=params['regularization'],
@@ -144,4 +151,6 @@ def _create_recommender_logistic_matrix_factorization(params, **kwargs):
         neg_prop=params['neg_prop'],
         num_threads=kwargs['num_threads'],
         random_state=params['random_seed']
-    ), params, **kwargs)
+    )
+
+    return ImplicitRecommender(algo, name, params, **kwargs)

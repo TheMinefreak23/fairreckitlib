@@ -6,7 +6,7 @@ Utrecht University within the Software Project course.
 
 from lenskit import batch
 
-from ..predictor import Predictor
+from .base_predictor import Predictor
 
 
 class LensKitPredictor(Predictor):
@@ -14,15 +14,20 @@ class LensKitPredictor(Predictor):
 
     Args:
         predictor(lenskit.Predictor): the prediction algorithm.
+        name(str): the name of the algorithm.
         params(dict): the parameters of the algorithm.
 
     Keyword Args:
         num_threads(int): the max number of threads the algorithm can use.
     """
-    def __init__(self, predictor, params, **kwargs):
+    def __init__(self, predictor, name, params, **kwargs):
         Predictor.__init__(self, **kwargs)
         self.__predictor = predictor
+        self.__name = name
         self.__params = params
+
+    def get_name(self):
+        return self.__name
 
     def get_params(self):
         return dict(self.__params)

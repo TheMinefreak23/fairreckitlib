@@ -5,17 +5,17 @@ Utrecht University within the Software Project course.
 """
 
 import os
-import yaml
 
-from fairreckitlib.events import io_event
+from src.fairreckitlib.data.utility import save_yml
+from src.fairreckitlib.events import io_event
 from .pipeline import RATING_OUTPUT_FILE
 from .recommender import RecommenderPipeline
 
 
 class RecommenderPipelineElliot(RecommenderPipeline):
     """Recommender Pipeline implementation for the Elliot framework."""
-    def __init__(self, api_name, factory, event_dispatcher):
-        RecommenderPipeline.__init__(self, api_name, factory, event_dispatcher)
+    def __init__(self, factory, event_dispatcher):
+        RecommenderPipeline.__init__(self, factory, event_dispatcher)
         self.train_set_path = None
         self.test_set_path = None
 
@@ -42,7 +42,7 @@ class RecommenderPipelineElliot(RecommenderPipeline):
                 },
                 'top_k': kwargs['num_items'],
                 'models': {
-                    model.name: params
+                    model.get_name(): params
                 },
                 'evaluation': {
                     'simple_metrics': ['Precision']
@@ -53,8 +53,7 @@ class RecommenderPipelineElliot(RecommenderPipeline):
             }
         }
 
-        with open(yml_path, 'w', encoding='utf-8') as file:
-            yaml.dump(data, file)
+        save_yml(yml_path, data)
 
         # stops the logo from being spammed to the console
         from elliot.run import run_experiment

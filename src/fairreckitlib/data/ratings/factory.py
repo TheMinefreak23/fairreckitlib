@@ -4,25 +4,21 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-import time
-
-from src.fairreckitlib.experiment.config import EXP_KEY_DATASET_SPLITTING
-from ...core.factory import create_factory_from_list
-from ...core.params import ConfigParameters
-from .random import RandomSplitter
-from .temporal import TemporalSplitter
+from fairreckitlib.experiment.config import EXP_KEY_DATASET_RATING_MODIFIER
+from src.fairreckitlib.core.factory import create_factory_from_list
+from src.fairreckitlib.core.params import ConfigParameters
 
 SPLIT_RANDOM = 'random'
 SPLIT_TEMPORAL = 'temporal'
 
 
-def create_split_factory():
-    """Creates a Factory with all data splitters.
+def create_rating_modifier_factory():
+    """Creates a Factory with all data modifiers.
 
     Returns:
-        (Factory) with all splitters.
+        (Factory) with all rating modifiers.
     """
-    return create_factory_from_list(EXP_KEY_DATASET_SPLITTING, [
+    return create_factory_from_list(EXP_KEY_DATASET_RATING_MODIFIER, [
         (SPLIT_RANDOM,
          _create_random_splitter,
          _create_random_splitter_params

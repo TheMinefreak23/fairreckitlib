@@ -10,23 +10,22 @@ import os
 import json
 
 from ..data.registry import DataRegistry
-from ..data.split.factory import SplitFactory
 from ..events import io_event, experiment_event
 from ..pipelines.data.run import run_data_pipeline
 from ..metrics.factory import MetricFactory
 from ..pipelines.evaluation.run import run_evaluation_pipelines
-from ..pipelines.model.factory import ModelFactory
 from ..pipelines.model.run import run_model_pipelines
-from .constants import EXP_TYPE_RECOMMENDATION, EXP_KEY_NAME
-
+from .constants import EXP_TYPE_RECOMMENDATION
+from src.fairreckitlib.core.factory import Factory
+from src.fairreckitlib.core.factory import GroupFactory
 
 @dataclass
 class ExperimentFactories:
     """Experiment Factories wrapper."""
 
     data_registry: DataRegistry
-    split_factory: SplitFactory
-    model_factory: ModelFactory
+    split_factory: Factory
+    model_factory: GroupFactory
     metric_factory: MetricFactory
 
 
@@ -85,7 +84,7 @@ class Experiment:
             model_dirs = run_model_pipelines(
                 data_transition.output_dir,
                 data_transition,
-                self.__factories.model_factory,
+                self.__factories.model_factory.get_factory(self.__config.type),
                 self.__config.models,
                 self.event_dispatcher,
                 is_running,

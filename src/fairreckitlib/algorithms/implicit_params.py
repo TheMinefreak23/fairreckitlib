@@ -4,7 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from fairreckitlib.experiment.params import ConfigParameters
+from ..core.params import ConfigParameters
 
 
 def get_implicit_params_alternating_least_squares():

@@ -4,24 +4,24 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from fairreckitlib.events import config_event
-from fairreckitlib.experiment.parsing import assertion
+from src.fairreckitlib.data.utility import load_yml
+from src.fairreckitlib.events import config_event
+from src.fairreckitlib.experiment.parsing import assertion
 from ..config import VALID_EXPERIMENT_TYPES
 from ..config import PredictorExperimentConfig
 from ..config import RecommenderExperimentConfig
-from ..config import load_config_from_yml
+from ..constants import EXP_DEFAULT_RATED_ITEMS_FILTER
+from ..constants import EXP_DEFAULT_TOP_K
 from ..constants import EXP_KEY_DATASETS
 from ..constants import EXP_KEY_MODELS
-from ..constants import EXP_KEY_NAME
+from ..constants import EXP_KEY_OBJ_NAME
+from ..constants import EXP_KEY_RATED_ITEMS_FILTER
+from ..constants import EXP_KEY_TOP_K
 from ..constants import EXP_KEY_TYPE
 from ..constants import EXP_TYPE_PREDICTION
 from ..constants import EXP_TYPE_RECOMMENDATION
-from ..constants import EXP_KEY_TOP_K
-from ..constants import EXP_KEY_RATED_ITEMS_FILTER
-from ..constants import EXP_DEFAULT_TOP_K
-from ..constants import EXP_DEFAULT_RATED_ITEMS_FILTER
-from ..params import ConfigOptionParam
-from ..params import ConfigValueParam
+from src.fairreckitlib.core.params import ConfigOptionParam
+from src.fairreckitlib.core.params import ConfigValueParam
 from .datasets import parse_data_config
 from .evaluation import parse_evaluation_config
 from .models import parse_models_config
@@ -36,11 +36,15 @@ class Parser:
         self.event_dispatcher.add_listener(config_event.ON_PARSE, self, (config_event.on_parse, None))
 
     def parse_experiment_config(self, experiment_config, data_registry, split_factory,
-                                           predictor_factory, recommender_factory, metric_factory):
+                                           model_factory, metric_factory):
         """Parses an experiment configuration.
 
         Args:
             experiment_config(dict): the experiment's total configuration.
+            data_registry(DataRegistry): the data registry containing the available datasets.
+            split_factory(BaseFactory): the split factory containing available splitters.
+            model_factory(GroupFactory): the model factory containing the available predictors/recommenders.
+            metric_factory(MetricFactory): the metric factory containing available metrics.
 
         Returns:
             parsed_config(ExperimentConfig): the parsed configuration or None on failure.
@@ -52,7 +56,7 @@ class Parser:
                 experiment_config,
                 data_registry,
                 split_factory,
-                predictor_factory,
+                model_factory.get_factory(experiment_type),
                 metric_factory
             )
         if experiment_type == EXP_TYPE_RECOMMENDATION:
@@ -60,27 +64,30 @@ class Parser:
                 experiment_config,
                 data_registry,
                 split_factory,
-                recommender_factory,
+                model_factory.get_factory(experiment_type),
                 metric_factory
             )
 
         return None
 
     def parse_experiment_config_from_yml(self, file_path, data_registry, split_factory,
-                                           predictor_factory, recommender_factory, metric_factory):
+                                           model_factory, metric_factory):
         """Parses an experiment configuration from a yml file.
 
         Args:
             file_path(str): path to the yml file without extension.
-            recommender_system(RecommenderSystem): the system to use for parsing.
+            data_registry(DataRegistry): the data registry containing the available datasets.
+            split_factory(BaseFactory): the split factory containing available splitters.
+            model_factory(GroupFactory): the model factory containing the available predictors/recommenders.
+            metric_factory(MetricFactory): the metric factory containing available metrics.
 
         Returns:
             parsed_config(ExperimentConfig): the parsed configuration or None on failure.
         """
-        experiment_config = load_config_from_yml(file_path)
+        experiment_config = load_yml(file_path + '.yml')
 
         return self.parse_experiment_config(experiment_config, data_registry, split_factory,
-                                           predictor_factory, recommender_factory, metric_factory)
+                                           model_factory, metric_factory)
 
     def parse_prediction_experiment_config(self, experiment_config, data_registry, split_factory,
                                            predictor_factory, metric_factory):
@@ -89,17 +96,17 @@ class Parser:
         Args:
             experiment_config(dict): the experiment's total configuration.
             data_registry(DataRegistry): the data registry containing the available datasets.
-            split_factory(dict): the split factory containing available splitters.
+            split_factory(BaseFactory): the split factory containing available splitters.
             predictor_factory(ModelFactory): the model factory containing the available predictors.
             metric_factory(MetricFactory): the metric factory containing available metrics.
 
         Returns:
             parsed_config(PredictorExperimentConfig): the parsed configuration or None on failure.
         """
-        if not self.parse_experiment_name(self, experiment_config):
+        if not self.parse_experiment_name(experiment_config):
             return None
 
-        experiment_name = experiment_config[EXP_KEY_NAME]
+        experiment_name = experiment_config[EXP_KEY_OBJ_NAME]
         experiment_type = experiment_config[EXP_KEY_TYPE]
 
         experiment_datasets = self.parse_experiment_datasets(
@@ -139,7 +146,7 @@ class Parser:
         Args:
             experiment_config(dict): the experiment's total configuration.
             data_registry(DataRegistry): the data registry containing the available datasets.
-            split_factory(dict): the split factory containing available splitters.
+            split_factory(BaseFactory): the split factory containing available splitters.
             recommender_factory(ModelFactory): the model factory containing the available recommenders.
             metric_factory(MetricFactory): the metric factory containing available metrics.
 
@@ -149,7 +156,7 @@ class Parser:
         if not self.parse_experiment_name(experiment_config):
             return None
 
-        experiment_name = experiment_config[EXP_KEY_NAME]
+        experiment_name = experiment_config[EXP_KEY_OBJ_NAME]
         experiment_type = experiment_config[EXP_KEY_TYPE]
 
         experiment_datasets = self.parse_experiment_datasets(
@@ -216,17 +223,17 @@ class Parser:
             success(bool): whether the name is available in the configuration.
         """
         if not assertion.is_key_in_dict(
-                EXP_KEY_NAME,
+                EXP_KEY_OBJ_NAME,
                 experiment_config,
                 self.event_dispatcher,
-                'PARSE ERROR: missing experiment key \'' + EXP_KEY_NAME + '\' (required)'
+                'PARSE ERROR: missing experiment key \'' + EXP_KEY_OBJ_NAME + '\' (required)'
         ): return False
 
         if not assertion.is_type(
-                experiment_config[EXP_KEY_NAME],
+                experiment_config[EXP_KEY_OBJ_NAME],
                 str,
                 self.event_dispatcher,
-                'PARSE ERROR: invalid value for experiment key \'' + EXP_KEY_NAME + '\''
+                'PARSE ERROR: invalid value for experiment key \'' + EXP_KEY_OBJ_NAME + '\''
         ): return False
 
         return True
