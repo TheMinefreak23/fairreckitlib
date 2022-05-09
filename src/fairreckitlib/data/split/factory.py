@@ -4,11 +4,11 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from src.fairreckitlib.experiment.params import get_empty_parameters
 from .constants import SPLIT_TYPE
 from .constants import SPLIT_PARAMS
 from .random import RandomSplitter
 from .temporal import TemporalSplitter
+from ...experiment.params import get_empty_parameters
 
 SPLIT_RANDOM = 'random'
 SPLIT_TEMPORAL = 'temporal'
