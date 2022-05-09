@@ -6,7 +6,7 @@ Utrecht University within the Software Project course.
 
 from lenskit import batch
 
-from .base_predictor import Predictor
+from ..base_predictor import Predictor
 
 
 class LensKitPredictor(Predictor):

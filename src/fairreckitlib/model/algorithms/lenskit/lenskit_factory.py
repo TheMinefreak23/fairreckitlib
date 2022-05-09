@@ -8,8 +8,8 @@ from lenskit.algorithms.basic import AllItemsCandidateSelector
 from lenskit.algorithms.basic import UnratedItemCandidateSelector
 from lenskit.algorithms.ranking import TopN
 
-from ...core.apis import LENSKIT_API
-from ...core.factory import create_factory_from_list
+from ....core.apis import LENSKIT_API
+from ....core.factory import create_factory_from_list
 from .lenskit_algorithms import create_biased_mf
 from .lenskit_algorithms import create_implicit_mf
 from .lenskit_algorithms import create_item_item

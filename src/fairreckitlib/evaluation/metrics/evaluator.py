@@ -71,7 +71,6 @@ class Evaluator(ABC):
         return recs
 
     def evaluate_process(self):
-        import time
         self.event_dispatcher.dispatch(
             evaluation_event.ON_BEGIN_EVAL,
             metric=self.metrics[0][0]

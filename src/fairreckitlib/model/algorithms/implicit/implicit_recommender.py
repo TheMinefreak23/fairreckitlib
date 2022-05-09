@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from scipy import sparse
 
-from .base_recommender import Recommender
+from ..base_recommender import Recommender
 
 
 class ImplicitRecommender(Recommender):

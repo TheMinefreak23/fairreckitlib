@@ -6,8 +6,8 @@ Utrecht University within the Software Project course.
 
 import time
 
-from ...core.apis import ELLIOT_API
-from ...core.factory import create_factory_from_list
+from ....core.apis import ELLIOT_API
+from ....core.factory import create_factory_from_list
 from .elliot_params import get_elliot_params_funk_svd
 from .elliot_params import get_elliot_params_item_knn
 from .elliot_params import get_elliot_params_multi_vae

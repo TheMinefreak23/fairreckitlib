@@ -11,8 +11,8 @@ from implicit.als import AlternatingLeastSquares
 from implicit.bpr import BayesianPersonalizedRanking
 from implicit.lmf import LogisticMatrixFactorization
 
-from ...core.apis import IMPLICIT_API
-from ...core.factory import create_factory_from_list
+from ....core.apis import IMPLICIT_API
+from ....core.factory import create_factory_from_list
 from .implicit_params import get_implicit_params_alternating_least_squares
 from .implicit_params import get_implicit_params_bayesian_personalized_ranking
 from .implicit_params import get_implicit_params_logistic_matrix_factorization

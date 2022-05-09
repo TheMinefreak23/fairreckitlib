@@ -7,7 +7,7 @@ Utrecht University within the Software Project course.
 import numpy as np
 from lenskit import batch
 
-from .base_recommender import Recommender
+from ..base_recommender import Recommender
 
 
 class LensKitRecommender(Recommender):

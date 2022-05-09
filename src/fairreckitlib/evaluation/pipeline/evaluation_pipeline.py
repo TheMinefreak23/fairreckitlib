@@ -12,9 +12,11 @@ import json
 import pandas as pd
 
 from ...events import evaluation_event, io_event
+from ..metrics.common import metric_matches_type
 from ..metrics.evaluator_lenskit import EvaluatorLenskit
 from ..metrics.evaluator_rexmex import EvaluatorRexmex
-from ..metrics.common import metric_matches_type
+from ..metrics.filter import filter_data
+
 
 
 class EvaluationPipeline:
@@ -51,8 +53,6 @@ class EvaluationPipeline:
             )
             filter_start = time.time()
 
-            from filter import filter_data
-
             suffix = 'filtered'
 
             for filter_passes in self.filters:
@@ -75,7 +75,6 @@ class EvaluationPipeline:
                 self.evaluate_all(self.train_path, self.test_path, self.recs_path)
 
                 for path in [self.train_path, self.test_path, self.recs_path]:
-                    import os
                     os.remove(path)
 
                     self.event_dispatcher.dispatch(

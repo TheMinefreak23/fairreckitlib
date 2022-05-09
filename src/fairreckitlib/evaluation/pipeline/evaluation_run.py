@@ -4,6 +4,9 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+import os
+
+from ..metrics.common import RecType
 from ..metrics.common import Test
 from .evaluation_pipeline import EvaluationPipeline
 
@@ -32,11 +35,9 @@ def run_evaluation_pipelines(model_dirs, data_transition, metric_factory,
     print(model_dirs)
 
     for model_dir in model_dirs:
-        import os
         print('model_dir:')
         print(model_dir)
         dir_name = os.path.dirname(model_dir)
-        from fairreckitlib.metrics.common import RecType
 
         # Create a test instance TODO refactor
         test = Test(name=dir_name, train_path=data_transition.train_set_path, test_path=data_transition.test_set_path,

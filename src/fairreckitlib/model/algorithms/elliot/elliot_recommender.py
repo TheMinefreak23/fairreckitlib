@@ -4,7 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from .base_recommender import Recommender
+from ..base_recommender import Recommender
 
 
 class ElliotRecommender(Recommender):

@@ -4,16 +4,16 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from src.fairreckitlib.experiment.constants import EXP_TYPE_PREDICTION
-from src.fairreckitlib.experiment.constants import EXP_TYPE_RECOMMENDATION
-from src.fairreckitlib.experiment.constants import EXP_KEY_MODELS
+from ..experiment.constants import EXP_TYPE_PREDICTION
+from ..experiment.constants import EXP_TYPE_RECOMMENDATION
+from ..experiment.constants import EXP_KEY_MODELS
 from ..core.factory import GroupFactory
-from .algorithms.elliot_factory import get_elliot_recommender_factory
-from .algorithms.implicit_factory import get_implicit_recommender_factory
-from .algorithms.lenskit_factory import get_lenskit_predictor_factory
-from .algorithms.lenskit_factory import get_lenskit_recommender_factory
-from .algorithms.surprise_factory import get_surprise_predictor_factory
-from .algorithms.surprise_factory import get_surprise_recommender_factory
+from .algorithms.elliot.elliot_factory import get_elliot_recommender_factory
+from .algorithms.implicit.implicit_factory import get_implicit_recommender_factory
+from .algorithms.lenskit.lenskit_factory import get_lenskit_predictor_factory
+from .algorithms.lenskit.lenskit_factory import get_lenskit_recommender_factory
+from .algorithms.surprise.surprise_factory import get_surprise_predictor_factory
+from .algorithms.surprise.surprise_factory import get_surprise_recommender_factory
 from .pipeline.predictor_pipeline import PredictorPipeline
 from .pipeline.recommender_pipeline import RecommenderPipeline
 from .pipeline.recommender_pipeline_elliot import RecommenderPipelineElliot

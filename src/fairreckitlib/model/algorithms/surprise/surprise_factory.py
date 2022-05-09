@@ -14,9 +14,9 @@ from surprise.prediction_algorithms import SlopeOne
 from surprise.prediction_algorithms import SVD
 from surprise.prediction_algorithms import SVDpp
 
-from ...core.apis import SURPRISE_API
-from ...core.factory import create_factory_from_list
-from .top_k_recommender import TopK
+from ....core.apis import SURPRISE_API
+from ....core.factory import create_factory_from_list
+from ..top_k_recommender import TopK
 from .surprise_params import get_surprise_params_baseline_only_als
 from .surprise_params import get_surprise_params_baseline_only_sgd
 from .surprise_params import get_surprise_params_co_clustering

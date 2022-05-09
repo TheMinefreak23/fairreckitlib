@@ -7,7 +7,7 @@ Utrecht University within the Software Project course.
 from surprise.dataset import Dataset
 from surprise.reader import Reader
 
-from .base_predictor import Predictor
+from ..base_predictor import Predictor
 
 
 class SurprisePredictor(Predictor):
