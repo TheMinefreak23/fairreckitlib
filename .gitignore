@@ -1,6 +1,6 @@
 results/
 fairreckitlib/run_dev_helper.py
-run_dev_helper.py
+src/run_dev_helper.py
 
 **/*.egg-info/**
 .vscode/

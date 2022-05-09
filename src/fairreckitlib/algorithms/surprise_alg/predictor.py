@@ -4,7 +4,6 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-import numpy as np
 from surprise.dataset import Dataset
 from surprise.reader import Reader
 
@@ -42,14 +41,3 @@ class SurprisePredictor(Predictor):
     def predict(self, user, item):
         prediction = self.__algo.predict(user, item, clip=False)
         return prediction.est
-
-    def predict_batch(self, user_item_pairs):
-        pairs = user_item_pairs[['user', 'item']]
-        pairs['prediction'] = np.zeros(len(pairs))
-        for i, row in pairs.iterrows():
-            pairs.at[i, 'prediction'] = self.predict(
-                row['user'],
-                row['item']
-            )
-
-        return pairs

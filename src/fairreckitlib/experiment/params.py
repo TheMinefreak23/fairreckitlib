@@ -103,13 +103,12 @@ class ConfigValueParam(ConfigParam):
         name(str): name of the parameter.
         value_type(int/float): type of the parameter.
         default_value(int/float): default value of the parameter.
-        min_value(int/float): minimum value of the parameter.
-        max_value(int/float): maximum value of the parameter.
+        min_max_value(int/float): tuple with the minimum and maximum value of the parameter.
     """
-    def __init__(self, name, value_type, default_value, min_value, max_value):
+    def __init__(self, name, value_type, default_value, min_max_value):
         ConfigParam.__init__(self, name, value_type, default_value)
-        self.min_value = min_value
-        self.max_value = max_value
+        self.min_value = min_max_value[0]
+        self.max_value = min_max_value[1]
 
     def to_dict(self):
         return {
@@ -130,10 +129,10 @@ class ConfigValueParam(ConfigParam):
         if isinstance(value, float) and self.value_type == int:
             value = self.value_type(value)
             error = '(value cast to int) '
-        elif isinstance(value, int) and self.value_type == float:
+        elif isinstance(value, int) and not isinstance(value, bool) and self.value_type == float:
             value = self.value_type(value)
             error = '(value cast to float) '
-        elif not isinstance(value, self.value_type):
+        elif not isinstance(value, self.value_type) or isinstance(value, bool):
             return False, self.default_value, \
                    'expected ' + str(self.value_type) + ' got '+ str(type(value))
 
@@ -158,7 +157,7 @@ class ConfigRandomParam(ConfigValueParam):
         name(str): name of the random seed parameter.
     """
     def __init__(self, name):
-        ConfigValueParam.__init__(self, name, int, None, 0, sys.maxsize)
+        ConfigValueParam.__init__(self, name, int, None, (0, sys.maxsize))
 
     def validate_value(self, value):
         # skips the 'None' error from ConfigValueParam
@@ -190,7 +189,10 @@ class ConfigParameters:
               name(str): name of the boolean parameter.
               default_value(bool): the default boolean value.
         """
-        self.add_option(name, bool, default_value, [True, False])
+        param = create_bool_param(name, default_value)
+
+        self.__add_param(param)
+        self.options.append(param)
 
     def add_option(self, name, value_type, default_option, options):
         """Adds an option parameter.
@@ -231,7 +233,7 @@ class ConfigParameters:
         self.__add_param(param)
         self.values.append(param)
 
-    def add_value(self, name, value_type, default_value, min_value, max_value):
+    def add_value(self, name, value_type, default_value, min_max_value):
         """Adds a value parameter.
 
         The default, min, and max value are all expected to be of the same value_type.
@@ -244,15 +246,13 @@ class ConfigParameters:
             name(str): name of the parameter.
             value_type(int/float): type of the parameter.
             default_value(int/float): default value of the parameter.
-            min_value(int/float): minimum value of the parameter.
-            max_value(int/float): maximum value of the parameter.
+            min_max_value(int/float): tuple with the minimum and maximum value of the parameter.
         """
         param = ConfigValueParam(
             name,
             value_type,
             default_value,
-            min_value,
-            max_value
+            min_max_value
         )
 
         self.__add_param(param)
@@ -332,9 +332,22 @@ class ConfigParameters:
             param(ConfigParam): the parameter to add.
         """
         if param.name in self.params:
-            raise KeyError('Config parameter already exists: ', + param.name)
+            raise KeyError('Config parameter already exists: ' + param.name)
 
         self.params[param.name] = param
+
+
+def create_bool_param(name, default_value):
+    """ Creates a boolean option parameter.
+
+    Args:
+        name(str): name of the boolean parameter.
+        default_value(bool): the default boolean value.
+
+    Returns:
+        (ConfigOptionParam): the boolean parameter
+    """
+    return ConfigOptionParam(name, bool, default_value, [True, False])
 
 
 def get_empty_parameters():

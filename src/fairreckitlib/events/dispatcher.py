@@ -26,10 +26,10 @@ class EventDispatcher:
             event_id: unique ID that classifies the event.
             event_listener(object): the listener of the event. This object is passed to
                 the event callback function as the first argument when the event is dispatched.
-            func_on_event(function): the callback function that is called when the event
+            func_on_event(tuple(function)): the callback functions that are called when the event
                 is dispatched. The first argument is the event_listener, followed by keyword args.
         """
-        if not event_id in self.__listeners:
+        if event_id not in self.__listeners:
             self.__listeners[event_id] = []
 
         listener = (event_listener, func_on_event)
@@ -47,14 +47,14 @@ class EventDispatcher:
             event_id: unique ID that classifies the event.
             event_listener(object): the listener of the event. This object is passed to
                 the event callback function as the first argument when the event is dispatched.
-            func_on_event(function): the callback function that is called when the event
+            func_on_event(tuple(function)): the callback functions that are called when the event
                 is dispatched. The first argument is the event_listener, followed by keyword args.
         """
-        if not event_id in self.__listeners:
+        if event_id not in self.__listeners:
             return
 
         listener = (event_listener, func_on_event)
-        if not listener in self.__listeners[event_id]:
+        if listener not in self.__listeners[event_id]:
             return
 
         self.__listeners[event_id].remove(listener)
@@ -72,8 +72,12 @@ class EventDispatcher:
         Keyword Args:
             kwargs: varies depending on the event.
         """
-        if not event_id in self.__listeners:
+        if event_id not in self.__listeners:
             return
 
         for _, (event_listener, func_on_event) in enumerate(self.__listeners[event_id]):
-            func_on_event(event_listener, **kwargs)
+            internal_func, external_func = func_on_event
+            internal_func(event_listener, **kwargs)
+            if external_func is not None:
+                external_func(event_listener, **kwargs)
+

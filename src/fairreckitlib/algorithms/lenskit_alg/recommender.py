@@ -5,7 +5,6 @@ Utrecht University within the Software Project course.
 """
 
 import numpy as np
-from lenskit import algorithms
 from lenskit import batch
 
 from ..recommender import Recommender
@@ -15,7 +14,7 @@ class LensKitRecommender(Recommender):
     """Recommender implementation for LensKit.
 
     Args:
-        predictor(lenskit.Predictor): the prediction algorithm.
+        recommender(lenskit.Recommender): the recommender algorithm.
         params(dict): the parameters of the algorithm.
 
     Keyword Args:
@@ -23,14 +22,10 @@ class LensKitRecommender(Recommender):
         rated_items_filter(bool): whether to filter already rated items when
             producing item recommendations.
     """
-    def __init__(self, predictor, params, **kwargs):
+    def __init__(self, recommender, params, **kwargs):
         Recommender.__init__(self, **kwargs)
-        self.__recommender = algorithms.Recommender.adapt(predictor)
+        self.__recommender = recommender
         self.__params = params
-
-        if not self.rated_items_filter:
-            # TODO lenskit candidate selectors
-            raise NotImplementedError()
 
     def get_params(self):
         return dict(self.__params)

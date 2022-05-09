@@ -7,6 +7,8 @@ Utrecht University within the Software Project course.
 from abc import ABCMeta, abstractmethod
 from threading import Thread
 
+from src.fairreckitlib.events.dispatcher import EventDispatcher
+
 
 class ThreadBase(metaclass=ABCMeta):
     """Base class for all threads.
@@ -26,17 +28,20 @@ class ThreadBase(metaclass=ABCMeta):
 
     Args:
         name(str) the name of the thread.
-        event_dispatcher(EventDispatcher): to dispatch events.
+        events(dict): events to dispatch for this thread
 
     Keyword Args:
         varying: these are passed to the run function from step 2.
     """
-    def __init__(self, name, event_dispatcher, **kwargs):
+    def __init__(self, name, events, verbose, **kwargs):
         self.__is_running = False
         self.__thread = Thread(target=self.__main, name=name, kwargs=kwargs)
         self.__on_terminate = None
 
-        self.event_dispatcher = event_dispatcher
+        self.verbose = verbose
+        self.event_dispatcher = EventDispatcher()
+        for (event_id, func_on_event) in events.items():
+            self.event_dispatcher.add_listener(event_id, self, func_on_event)
 
     def start(self, func_on_terminate):
         """Starts running a thread.

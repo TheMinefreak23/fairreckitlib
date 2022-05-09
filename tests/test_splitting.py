@@ -5,20 +5,21 @@ Utrecht University within the Software Project course.
 """
 
 import pandas as pd
+import pytest
 
-from fairreckitlib.data.split import factory, random, temporal
+from src.fairreckitlib.data.split import factory, random, temporal
 
 # sample of the first 1000 entries of the lfm-360k dataset
 # this already has headers and indices
 # [user, artistid, artistname, plays]
 df_lfm360k_sample = pd.read_csv(
-    'tests\\datasets\\sample\\lfm-360k-sample.tsv', delimiter='\t')
+    './tests/datasets/sample/lfm-360k-sample.tsv', delimiter='\t')
 
 # sample of the first 1000 entries of the ml-100k dataset
 # this already has headers and indices
 # [user, item, rating, timestamp]
 df_ml100k_sample = pd.read_csv(
-    'tests\\datasets\\sample\\ml-100k-sample.tsv', delimiter='\t')
+    './tests/datasets/sample/ml-100k-sample.tsv', delimiter='\t')
 
 # the list of dataframes to test splitting with
 dfs =  [('df_lfm360k', df_lfm360k_sample),
@@ -43,43 +44,45 @@ def test_split_classes():
     assert isinstance(random_split, random.RandomSplitter)
     assert isinstance(temp_split, temporal.TemporalSplitter)
 
+@pytest.mark.parametrize('data', dfs)
+@pytest.mark.parametrize('ratio', ratios)
 
-def test_temp_split():
+def test_temp_split(data, ratio):
     """ tests if the temporal split returns a tuple with the test set being
     the size of the ratio, with a 75% margin
     larger margin because it is split on user timestamps, which differs slightly
     compared to the overall timestamps in the dataset
     """
-    for (df_name, df) in dfs:
-        if 'timestamp' in df:
-            for test_ratio in ratios:
-                (train, test) = temp_split.run(df, test_ratio)
-                assert len(train.index) != 0, \
-                    'Train set is empty: ' + df_name + str(test_ratio)
-                assert len(test.index) != 0, \
-                    'Test set is empty: ' + df_name + str(test_ratio)
+    (df_name, df) = data
+    if 'timestamp' in df:
+        (train, test) = temp_split.run(df, ratio)
+        assert len(train.index) != 0, \
+            'Train set is empty: ' + df_name + str(ratio)
+        assert len(test.index) != 0, \
+            'Test set is empty: ' + df_name + str(ratio)
 
-                ratio = len(test.index) / (len(train.index) + len(test.index))
-                assert (test_ratio * 0.25) < ratio < (test_ratio * 1.75), \
-                    'Test set should be around ' + str(test_ratio) + ': ' + df_name
+        ratio = len(test.index) / (len(train.index) + len(test.index))
+        assert (ratio * 0.25) < ratio < (ratio * 1.75), \
+            'Test set should be around ' + str(ratio) + ': '# + df_name
 
-                # for every row, assert that the timestamps are bigger in the test set per user
-                for _, row in train.iterrows():
-                    for _, row_ in test.iterrows():
-                        if row['user'] == row_['user']:
-                            assert row['timestamp'] <= row_['timestamp']
+        # for every row, assert that the timestamps are bigger in the test set per user
+        for _, row in train.iterrows():
+            for _, row_ in test.iterrows():
+                if row['user'] == row_['user']:
+                    assert row['timestamp'] <= row_['timestamp']
 
+@pytest.mark.parametrize('data', dfs)
+@pytest.mark.parametrize('ratio', ratios)
 
-def test_random_split():
+def test_random_split(data, ratio):
     """tests if the random split returns a tuple with the test set being
     the size of the ratio, with a 10% margin
     """
-    for (df_name, df) in dfs:
-        for test_ratio in ratios:
-            (train, test) = random_split.run(df, test_ratio)
-            assert len(train.index) != 0, 'Train set is empty: ' + df_name + str(test_ratio)
-            assert len(test.index) != 0, 'Test set is empty: ' + df_name + str(test_ratio)
+    (df_name, df) = data
+    (train, test) = random_split.run(df, ratio)
+    assert len(train.index) != 0, 'Train set is empty: ' + df_name + str(ratio)
+    assert len(test.index) != 0, 'Test set is empty: ' + df_name + str(ratio)
 
-            ratio = len(test.index) / (len(train.index) + len(test.index))
-            assert (test_ratio * 0.9) < ratio < (test_ratio * 1.1), \
-                'Test set should be around ' + str(test_ratio) + ': ' + df_name
+    ratio = len(test.index) / (len(train.index) + len(test.index))
+    assert (ratio * 0.9) < ratio < (ratio * 1.1), \
+        'Test set should be around ' + str(ratio) + ': ' + df_name
