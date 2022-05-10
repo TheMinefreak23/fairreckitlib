@@ -7,7 +7,7 @@ Utrecht University within the Software Project course.
 import pandas as pd
 import pytest
 from src.fairreckitlib.data.convert import convert_factory, to_explicit_converter, count
-from src.fairreckitlib.data.set import dataset_registry, dataset
+from src.fairreckitlib.data.set import dataset_registry
 
 # sample of the first 1000 entries of the lfm-360k dataset
 # this already has headers
@@ -40,7 +40,7 @@ def test_apc_alc(data):
     listen = count.calculate_alc(df)
     for key, value in listen.items():
         assert value <= play[key], 'Listener count cannot be greater than playcount: ' \
-            + str(key) + ' ' + str(listen[key]) + ' ' + str(play[key]) + ' ' + df_name
+            + str(key) + ' ' + str(value) + ' ' + str(play[key]) + ' ' + df_name
 
 @pytest.mark.parametrize('data', dfs)
 
