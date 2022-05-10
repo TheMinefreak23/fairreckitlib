@@ -4,9 +4,9 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from .age import AgeFilter, create_age_filter
-from .country import CountryFilter, create_country_filter
-from .gender import GenderFilter, create_gender_filter
+from .age import create_age_filter
+from .country import create_country_filter
+from .gender import create_gender_filter
 
 FILTER_AGE = 'age'
 FILTER_COUNTRY = 'country'
