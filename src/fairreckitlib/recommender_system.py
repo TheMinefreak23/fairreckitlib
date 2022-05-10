@@ -3,7 +3,7 @@ This program has been developed by students from the bachelor Computer Science a
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
-
+import errno
 import os
 
 from .core.event_io import get_io_events
@@ -52,11 +52,14 @@ class RecommenderSystem:
         """Runs an experiment with the specified configuration.
 
         Args:
-            events(list(tuple)): the external events to dispatch during the experiment.
+            events(dict): the external events to dispatch during the experiment.
+            verbose(bool): whether the internal events should give verbose output.
             config(ExperimentConfig): the configuration of the experiment.
             num_threads(int): the max number of threads the experiment can use.
             validate_config(bool): whether to validate the configuration beforehand.
         """
+
+        print('oi')
         result_dir = os.path.join(self.result_dir, config.name)
         if os.path.isdir(result_dir):
             raise IOError('Result already exists: ' + result_dir)
@@ -74,10 +77,12 @@ class RecommenderSystem:
 
         self.start_thread_experiment(events, result_dir, config, num_threads, verbose)
 
-    def run_experiment_from_yml(self, file_path, verbose=True, num_threads=0):
+    def run_experiment_from_yml(self, events, file_path, verbose=True, num_threads=0):
         """Runs an experiment from a yml file.
 
         Args:
+            events(dict): the external events to dispatch during the experiment.
+            verbose(bool): whether the internal events should give verbose output.
             file_path(str): path to the yml file without extension.
             num_threads(int): the max number of threads the experiment can use.
         """
@@ -89,9 +94,10 @@ class RecommenderSystem:
             if config is None:
                 return
         except FileNotFoundError:
+            raise FileNotFoundError(errno.ENOENT, 'Config file not found', file_path)
             return
 
-        self.run_experiment(config, num_threads=num_threads, validate_config=False)
+        self.run_experiment(events, config, num_threads=num_threads, verbose=verbose, validate_config=False)
 
     def validate_experiment(self, events, result_dir, num_runs, num_threads=0, verbose=True):
         """Validates an experiment for an additional number of runs.
