@@ -7,7 +7,10 @@ Utrecht University within the Software Project course.
 import pandas as pd
 import pytest
 
-from src.fairreckitlib.data.split import factory, random, temporal
+from src.fairreckitlib.core.factories import Factory
+from src.fairreckitlib.data.split.split_factory import create_split_factory
+from src.fairreckitlib.data.split.random_splitter import RandomSplitter
+from src.fairreckitlib.data.split.temporal_splitter import TemporalSplitter
 
 # sample of the first 1000 entries of the lfm-360k dataset
 # this already has headers and indices
@@ -26,9 +29,9 @@ dfs =  [('df_lfm360k', df_lfm360k_sample),
         ('df_ml100k' , df_ml100k_sample)]
 
 # creating the factories to run splitting with
-split_factory = factory.create_split_factory()
-random_split = split_factory.create('random', {})
-temp_split = split_factory.create('temporal', {})
+split_factory = create_split_factory()
+random_split = split_factory.create('random')
+temp_split = split_factory.create('temporal')
 
 
 # the list of test ratios to test splitting with
@@ -40,9 +43,9 @@ ratios = [0.2, 0.3, 0.8]
 
 def test_split_classes():
     """tests if the created variables are in fact of that class"""
-    assert isinstance(split_factory, factory.SplitFactory)
-    assert isinstance(random_split, random.RandomSplitter)
-    assert isinstance(temp_split, temporal.TemporalSplitter)
+    assert isinstance(split_factory, Factory)
+    assert isinstance(random_split, RandomSplitter)
+    assert isinstance(temp_split, TemporalSplitter)
 
 @pytest.mark.parametrize('data', dfs)
 @pytest.mark.parametrize('ratio', ratios)
