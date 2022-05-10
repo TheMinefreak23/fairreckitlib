@@ -7,7 +7,7 @@ Utrecht University within the Software Project course.
 from .model_pipeline import ModelPipeline
 
 
-class PredictorPipeline(ModelPipeline):
+class PredictionPipeline(ModelPipeline):
     """Prediction Pipeline that computes user/item rating predictions.
 
     The (user,item) prediction will be computed and for each pair that is present in the test set.

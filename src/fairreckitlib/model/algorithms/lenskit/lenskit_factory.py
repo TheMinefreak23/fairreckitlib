@@ -9,19 +9,19 @@ from lenskit.algorithms.basic import UnratedItemCandidateSelector
 from lenskit.algorithms.ranking import TopN
 
 from ....core.apis import LENSKIT_API
-from ....core.factory import create_factory_from_list
+from ....core.factories import create_factory_from_list
 from .lenskit_algorithms import create_biased_mf
 from .lenskit_algorithms import create_implicit_mf
 from .lenskit_algorithms import create_item_item
 from .lenskit_algorithms import create_pop_score
 from .lenskit_algorithms import create_random
 from .lenskit_algorithms import create_user_user
-from .lenskit_params import get_lenskit_params_biased_mf
-from .lenskit_params import get_lenskit_params_implicit_mf
-from .lenskit_params import get_lenskit_params_item_item
-from .lenskit_params import get_lenskit_params_pop_score
-from .lenskit_params import get_lenskit_params_random
-from .lenskit_params import get_lenskit_params_user_user
+from .lenskit_params import create_lenskit_params_biased_mf
+from .lenskit_params import create_lenskit_params_implicit_mf
+from .lenskit_params import create_lenskit_params_item_item
+from .lenskit_params import create_lenskit_params_pop_score
+from .lenskit_params import create_lenskit_params_random
+from .lenskit_params import create_lenskit_params_user_user
 from .lenskit_predictor import LensKitPredictor
 from .lenskit_recommender import LensKitRecommender
 
@@ -33,66 +33,66 @@ LENSKIT_RANDOM = 'Random'
 LENSKIT_USER_USER = 'UserUser'
 
 
-def get_lenskit_predictor_factory():
-    """Gets the algorithm factory with LensKit predictors.
+def create_lenskit_predictor_factory():
+    """Creates the algorithm factory with LensKit predictors.
 
     Returns:
-        (BaseFactory) with available predictors.
+        (Factory) with available predictors.
     """
     return create_factory_from_list(LENSKIT_API, [
         (LENSKIT_BIASED_MF,
          _create_predictor_biased_mf,
-         get_lenskit_params_biased_mf
+         create_lenskit_params_biased_mf
          ),
         (LENSKIT_IMPLICIT_MF,
          _create_predictor_implicit_mf,
-         get_lenskit_params_implicit_mf
+         create_lenskit_params_implicit_mf
          ),
         (LENSKIT_ITEM_ITEM,
          _create_predictor_item_item,
-         get_lenskit_params_item_item
+         create_lenskit_params_item_item
          ),
         (LENSKIT_POP_SCORE,
          _create_predictor_pop_score,
-         get_lenskit_params_pop_score
+         create_lenskit_params_pop_score
          ),
         (LENSKIT_USER_USER,
          _create_predictor_user_user,
-         get_lenskit_params_user_user
+         create_lenskit_params_user_user
         )
     ])
 
 
-def get_lenskit_recommender_factory():
-    """Gets the algorithm factory with LensKit recommenders.
+def create_lenskit_recommender_factory():
+    """Creates the algorithm factory with LensKit recommenders.
 
     Returns:
-        (BaseFactory) with available recommenders.
+        (Factory) with available recommenders.
     """
     return create_factory_from_list(LENSKIT_API, [
         (LENSKIT_BIASED_MF,
          _create_recommender_biased_mf,
-         get_lenskit_params_biased_mf
+         create_lenskit_params_biased_mf
          ),
         (LENSKIT_IMPLICIT_MF,
          _create_recommender_implicit_mf,
-         get_lenskit_params_implicit_mf
+         create_lenskit_params_implicit_mf
          ),
         (LENSKIT_ITEM_ITEM,
          _create_recommender_item_item,
-         get_lenskit_params_item_item
+         create_lenskit_params_item_item
          ),
         (LENSKIT_POP_SCORE,
          _create_recommender_pop_score,
-         get_lenskit_params_pop_score
+         create_lenskit_params_pop_score
          ),
         (LENSKIT_RANDOM,
          _create_recommender_random,
-         get_lenskit_params_random
+         create_lenskit_params_random
          ),
         (LENSKIT_USER_USER,
          _create_recommender_user_user,
-         get_lenskit_params_user_user
+         create_lenskit_params_user_user
          )
     ])
 

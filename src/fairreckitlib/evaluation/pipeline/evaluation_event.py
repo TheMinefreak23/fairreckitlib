@@ -4,11 +4,6 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from .model_event import on_begin_load_test_set
-from .model_event import on_end_load_test_set
-from .model_event import on_begin_load_train_set
-from .model_event import on_end_load_train_set
-
 ON_BEGIN_LOAD_TEST_SET = 'EvaluationPipeline.on_begin_load_test_set'
 ON_END_LOAD_TEST_SET = 'EvaluationPipeline.on_end_load_test_set'
 ON_BEGIN_LOAD_TRAIN_SET = 'EvaluationPipeline.on_begin_load_train_set'
@@ -72,6 +67,34 @@ def on_end_load_recs_set(event_listener, **kwargs):
         print(f'Loaded recs set in {elapsed_time:1.4f}s')
 
 
+def on_begin_load_test_set(event_listener, **kwargs):
+    """Callback function when test set loading started.
+
+    Args:
+        event_listener(object): the listener that is registered
+            in the event dispatcher with this callback.
+
+    Keyword Args:
+        test_set_path(str): the path where the test set is loaded from.
+    """
+    if event_listener.verbose:
+        print('Loading test set from', kwargs['test_set_path'])
+
+
+def on_begin_load_train_set(event_listener, **kwargs):
+    """Callback function when train set loading started.
+
+    Args:
+        event_listener(object): the listener that is registered
+            in the event dispatcher with this callback.
+
+    Keyword Args:
+        train_set_path(str): the path where the train set is loaded from.
+    """
+    if event_listener.verbose:
+        print('Loading train set from', kwargs['train_set_path'])
+
+
 def on_begin_eval(event_listener, **kwargs):
     """Callback function when a model computation started.
 
@@ -84,6 +107,42 @@ def on_begin_eval(event_listener, **kwargs):
     """
     if event_listener.verbose:
         print('Starting evaluation with metric', kwargs['metric'].value)
+
+
+def on_end_load_test_set(event_listener, **kwargs):
+    """Callback function when test set loading finished.
+
+    Args:
+        event_listener(object): the listener that is registered
+            in the event dispatcher with this callback.
+
+    Keyword Args:
+        test_set_path(str): the path where the test set was loaded from.
+        test_set(pandas.DataFrame): the loaded test set.
+        elapsed_time(float): the time that has passed since the loading started,
+            expressed in seconds.
+    """
+    if event_listener.verbose:
+        elapsed_time = kwargs['elapsed_time']
+        print(f'Loaded test set in {elapsed_time:1.4f}s')
+
+
+def on_end_load_train_set(event_listener, **kwargs):
+    """Callback function when train set loading finished.
+
+    Args:
+        event_listener(object): the listener that is registered
+            in the event dispatcher with this callback.
+
+    Keyword Args:
+        train_set_path(str): the path where the train set was loaded from.
+        train_set(pandas.DataFrame): the loaded train set.
+        elapsed_time(float): the time that has passed since the loading started,
+            expressed in seconds.
+    """
+    if event_listener.verbose:
+        elapsed_time = kwargs['elapsed_time']
+        print(f'Loaded train set in {elapsed_time:1.4f}s')
 
 
 def on_end_eval(event_listener, **kwargs):

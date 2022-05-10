@@ -6,16 +6,16 @@ Utrecht University within the Software Project course.
 
 import os
 
+from ...core.event_io import ON_MAKE_DIR, ON_REMOVE_DIR, ON_RENAME_FILE, ON_REMOVE_FILE
 from ...data.utility import save_yml
-from ...events import io_event
 from .model_pipeline import RATING_OUTPUT_FILE
-from .recommender_pipeline import RecommenderPipeline
+from .recommendation_pipeline import RecommendationPipeline
 
 
-class RecommenderPipelineElliot(RecommenderPipeline):
-    """Recommender Pipeline implementation for the Elliot framework."""
+class RecommendationPipelineElliot(RecommendationPipeline):
+    """Recommendation Pipeline implementation for the Elliot framework."""
     def __init__(self, factory, event_dispatcher):
-        RecommenderPipeline.__init__(self, factory, event_dispatcher)
+        RecommendationPipeline.__init__(self, factory, event_dispatcher)
         self.train_set_path = None
         self.test_set_path = None
 
@@ -79,7 +79,7 @@ class RecommenderPipelineElliot(RecommenderPipeline):
         if not os.path.isdir(temp_dir):
             os.mkdir(temp_dir)
             self.event_dispatcher.dispatch(
-                io_event.ON_MAKE_DIR,
+                ON_MAKE_DIR,
                 dir=temp_dir
             )
 
@@ -97,13 +97,13 @@ class RecommenderPipelineElliot(RecommenderPipeline):
             if os.path.isdir(file_path):
                 os.rmdir(file_path)
                 self.event_dispatcher.dispatch(
-                    io_event.ON_REMOVE_DIR,
+                    ON_REMOVE_DIR,
                     dir=temp_dir
                 )
             else:
                 os.remove(file_path)
                 self.event_dispatcher.dispatch(
-                    io_event.ON_REMOVE_FILE,
+                    ON_REMOVE_FILE,
                     file=file_path
                 )
 
@@ -131,7 +131,7 @@ class RecommenderPipelineElliot(RecommenderPipeline):
             if used_epoch not in file_name:
                 os.remove(file_path)
                 self.event_dispatcher.dispatch(
-                    io_event.ON_REMOVE_FILE,
+                    ON_REMOVE_FILE,
                     file=file_path
                 )
 
@@ -152,7 +152,7 @@ class RecommenderPipelineElliot(RecommenderPipeline):
 
             os.rename(src_path, dst_path)
             self.event_dispatcher.dispatch(
-                io_event.ON_RENAME_FILE,
+                ON_RENAME_FILE,
                 src_file=src_path,
                 dst_file=dst_path
             )

@@ -1,8 +1,8 @@
 datasets:
 - name: ML-100K
   splitting:
+    name: random
     test_ratio: 0.2
-    type: random
 models:
   Elliot:
   - name: FunkSVD

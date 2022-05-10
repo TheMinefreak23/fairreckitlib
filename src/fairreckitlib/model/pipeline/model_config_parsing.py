@@ -4,16 +4,13 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ...core.parsing.parse_assert import assert_is_container_not_empty
-from ...core.parsing.parse_assert import assert_is_key_in_dict
-from ...core.parsing.parse_assert import assert_is_one_of_list
-from ...core.parsing.parse_assert import assert_is_type
+from ...core.config_constants import KEY_NAME, KEY_PARAMS
+from ...core.parsing.parse_assert import assert_is_type, assert_is_container_not_empty
+from ...core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
 from ...core.parsing.parse_event import ON_PARSE
-from ...experiment.constants import EXP_KEY_MODELS
-from ...experiment.constants import EXP_KEY_OBJ_NAME
-from ...experiment.constants import EXP_KEY_OBJ_PARAMS
 from ...core.parsing.parse_params import parse_config_parameters
-from .model_pipeline import ModelConfig
+from ..model_factory import KEY_MODELS
+from .model_config import ModelConfig
 
 
 def parse_models_config(experiment_config, model_factory, event_dispatcher):
@@ -31,21 +28,21 @@ def parse_models_config(experiment_config, model_factory, event_dispatcher):
 
     # assert EXP_KEY_MODELS is present
     if not assert_is_key_in_dict(
-        EXP_KEY_MODELS,
+        KEY_MODELS,
         experiment_config,
         event_dispatcher,
-        'PARSE ERROR: missing experiment key \'' + EXP_KEY_MODELS + '\' (required)',
+        'PARSE ERROR: missing experiment key \'' + KEY_MODELS + '\' (required)',
         default=parsed_config
     ): return parsed_config
 
-    models_config = experiment_config[EXP_KEY_MODELS]
+    models_config = experiment_config[KEY_MODELS]
 
     # assert models_config is a dict
     if not assert_is_type(
         models_config,
         dict,
         event_dispatcher,
-        'PARSE ERROR: invalid experiment value for key \'' + EXP_KEY_MODELS + '\'',
+        'PARSE ERROR: invalid experiment value for key \'' + KEY_MODELS + '\'',
         default=parsed_config
     ): return parsed_config
 
@@ -53,7 +50,7 @@ def parse_models_config(experiment_config, model_factory, event_dispatcher):
     if not assert_is_container_not_empty(
         models_config,
         event_dispatcher,
-        'PARSE ERROR: experiment \'' + EXP_KEY_MODELS + '\' is empty',
+        'PARSE ERROR: experiment \'' + KEY_MODELS + '\' is empty',
         default=parsed_config
     ): return parsed_config
 
@@ -160,14 +157,14 @@ def parse_model(model_config, algo_factory, event_dispatcher):
 
     # assert model name is present
     if not assert_is_key_in_dict(
-        EXP_KEY_OBJ_NAME,
+        KEY_NAME,
         model_config,
         event_dispatcher,
         'PARSE ERROR: ' + algo_factory.get_name() +
-        ' model missing key \'' + EXP_KEY_OBJ_NAME + '\''
+        ' model missing key \'' + KEY_NAME + '\''
     ): return None, None
 
-    model_name = model_config[EXP_KEY_OBJ_NAME]
+    model_name = model_config[KEY_NAME]
 
     # assert model name is available in the algorithm factory
     if not assert_is_one_of_list(
@@ -181,18 +178,18 @@ def parse_model(model_config, algo_factory, event_dispatcher):
     algo_params = algo_factory.create_params(model_name)
     model_params = algo_params.get_defaults()
 
-    # assert EXP_KEY_OBJ_PARAMS is present
+    # assert KEY_PARAMS is present
     # skip when the model has no parameters at all
     if len(model_params) > 0 and assert_is_key_in_dict(
-        EXP_KEY_OBJ_PARAMS,
+        KEY_PARAMS,
         model_config,
         event_dispatcher,
-        'PARSE WARNING: model ' + model_name + ' missing key \'' + EXP_KEY_OBJ_PARAMS + '\'',
+        'PARSE WARNING: model ' + model_name + ' missing key \'' + KEY_PARAMS + '\'',
         default=model_params
     ):
         # parse the model parameters
         model_params = parse_config_parameters(
-            model_config[EXP_KEY_OBJ_PARAMS],
+            model_config[KEY_PARAMS],
             model_name,
             algo_params,
             event_dispatcher

@@ -80,4 +80,3 @@ class EventDispatcher:
             internal_func(event_listener, **kwargs)
             if external_func is not None:
                 external_func(event_listener, **kwargs)
-

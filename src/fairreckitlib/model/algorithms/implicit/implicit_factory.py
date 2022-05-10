@@ -12,10 +12,10 @@ from implicit.bpr import BayesianPersonalizedRanking
 from implicit.lmf import LogisticMatrixFactorization
 
 from ....core.apis import IMPLICIT_API
-from ....core.factory import create_factory_from_list
-from .implicit_params import get_implicit_params_alternating_least_squares
-from .implicit_params import get_implicit_params_bayesian_personalized_ranking
-from .implicit_params import get_implicit_params_logistic_matrix_factorization
+from ....core.factories import create_factory_from_list
+from .implicit_params import create_implicit_params_alternating_least_squares
+from .implicit_params import create_implicit_params_bayesian_personalized_ranking
+from .implicit_params import create_implicit_params_logistic_matrix_factorization
 from .implicit_recommender import ImplicitRecommender
 
 IMPLICIT_ALS = 'AlternatingLeastSquares'
@@ -23,24 +23,24 @@ IMPLICIT_BPR = 'BayesianPersonalizedRanking'
 IMPLICIT_LMF = 'LogisticMatrixFactorization'
 
 
-def get_implicit_recommender_factory():
-    """Gets the algorithm factory with Implicit recommenders.
+def create_implicit_recommender_factory():
+    """Creates the algorithm factory with Implicit recommenders.
 
     Returns:
-        (BaseFactory) with available recommenders.
+        (Factory) with available recommenders.
     """
     return create_factory_from_list(IMPLICIT_API, [
         (IMPLICIT_ALS,
          _create_recommender_alternating_least_squares,
-         get_implicit_params_alternating_least_squares
+         create_implicit_params_alternating_least_squares
          ),
         (IMPLICIT_BPR,
          _create_recommender_bayesian_personalized_ranking,
-         get_implicit_params_bayesian_personalized_ranking
+         create_implicit_params_bayesian_personalized_ranking
          ),
         (IMPLICIT_LMF,
          _create_recommender_logistic_matrix_factorization,
-         get_implicit_params_logistic_matrix_factorization
+         create_implicit_params_logistic_matrix_factorization
          )
     ])
 

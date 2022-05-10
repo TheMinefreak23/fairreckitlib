@@ -4,9 +4,6 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-DATASET_RATINGS_EXPLICIT = 'explicit'
-DATASET_RATINGS_IMPLICIT = 'implicit'
-
 DATASET_CONFIG_FILE = '_config.yml'
 DATASET_FILE = 'file'
 DATASET_PREFIX = 'FRK_'

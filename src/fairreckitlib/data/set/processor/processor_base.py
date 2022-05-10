@@ -9,15 +9,14 @@ import os
 
 from ...utility import save_array_to_hdf5
 from ...utility import save_yml
-from ..dataset_config import DATASET_FILE
 from ..dataset_config import DATASET_INDICES
 from ..dataset_config import DATASET_ITEMS
 from ..dataset_config import DATASET_MATRIX
 from ..dataset_config import DATASET_PREFIX
 from ..dataset_config import DATASET_TABLES
 from ..dataset_config import DATASET_USERS
-from ..dataset_table import read_table
-from ..dataset_table import write_table
+from ..dataset_table import DATASET_FILE
+from ..dataset_table import read_table, write_table
 
 
 class DataProcessorBase(metaclass=ABCMeta):

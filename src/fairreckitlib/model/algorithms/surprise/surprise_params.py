@@ -4,11 +4,11 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ....core.params import ConfigParameters
+from ....core.config_params import ConfigParameters
 
 
-def get_surprise_params_baseline_only_als():
-    """Gets the parameters of the BaselineOnly ALS algorithm.
+def create_surprise_params_baseline_only_als():
+    """Creates the parameters of the BaselineOnly ALS algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.
@@ -22,8 +22,8 @@ def get_surprise_params_baseline_only_als():
     return params
 
 
-def get_surprise_params_baseline_only_sgd():
-    """Gets the parameters of the BaselineOnly SGD algorithm.
+def create_surprise_params_baseline_only_sgd():
+    """Creates the parameters of the BaselineOnly SGD algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.
@@ -37,8 +37,8 @@ def get_surprise_params_baseline_only_sgd():
     return params
 
 
-def get_surprise_params_co_clustering():
-    """Gets the parameters of the CoClustering algorithm.
+def create_surprise_params_co_clustering():
+    """Creates the parameters of the CoClustering algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.
@@ -52,8 +52,8 @@ def get_surprise_params_co_clustering():
 
     return params
 
-def get_surprise_params_nmf():
-    """Gets the parameters of the NMF algorithm.
+def create_surprise_params_nmf():
+    """Creates the parameters of the NMF algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.
@@ -76,8 +76,8 @@ def get_surprise_params_nmf():
     return params
 
 
-def get_surprise_params_svd():
-    """Gets the parameters of the SVD algorithm.
+def create_surprise_params_svd():
+    """Creates the parameters of the SVD algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.
@@ -96,8 +96,8 @@ def get_surprise_params_svd():
     return params
 
 
-def get_surprise_params_svd_pp():
-    """Gets the parameters of the SVDpp algorithm.
+def create_surprise_params_svd_pp():
+    """Creates the parameters of the SVDpp algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.

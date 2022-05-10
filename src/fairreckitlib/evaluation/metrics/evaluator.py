@@ -7,7 +7,7 @@ Utrecht University within the Software Project course.
 import time
 from abc import ABC, abstractmethod
 
-from ...events import evaluation_event
+from ..pipeline import evaluation_event
 
 
 class Evaluator(ABC):

@@ -5,7 +5,7 @@ Utrecht University within the Software Project course.
 """
 
 from ...utility import load_table
-from ..dataset_config import DATASET_RATINGS_IMPLICIT
+from ..dataset import DATASET_RATINGS_IMPLICIT
 from ..dataset_table import create_table_config
 from .processor_base import DataProcessorBase
 

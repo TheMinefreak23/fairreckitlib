@@ -7,8 +7,8 @@ Utrecht University within the Software Project course.
 from .model_pipeline import ModelPipeline
 
 
-class RecommenderPipeline(ModelPipeline):
-    """Recommender Pipeline that computes item recommendations.
+class RecommendationPipeline(ModelPipeline):
+    """Recommendation Pipeline that computes item recommendations.
 
     The topK item recommendations will be computed for each user that is present in the test set.
     """

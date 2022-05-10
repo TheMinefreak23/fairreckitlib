@@ -4,9 +4,10 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from abc import ABCMeta
+from abc import ABCMeta, abstractmethod
 
-from .params import get_empty_parameters
+from .config_constants import KEY_NAME, KEY_PARAMS
+from .config_params import get_empty_parameters
 
 FUNC_CREATE_OBJ = 'f_create_obj'
 FUNC_CREATE_PARAMS = 'f_create_params'
@@ -18,6 +19,10 @@ class BaseFactory(metaclass=ABCMeta):
         self.factory_name = factory_name
         self.factory = {}
 
+    @abstractmethod
+    def get_available(self):
+        raise NotImplementedError()
+
     def get_available_names(self):
         result = []
 
@@ -28,6 +33,10 @@ class BaseFactory(metaclass=ABCMeta):
 
     def get_name(self):
         return self.factory_name
+
+    @abstractmethod
+    def is_available(self, obj_name):
+        raise NotImplementedError()
 
 
 class Factory(BaseFactory):
@@ -67,11 +76,14 @@ class Factory(BaseFactory):
         for obj_name, entry in self.factory.items():
             obj_params = entry[FUNC_CREATE_PARAMS]()
             obj_list.append({
-                'name': obj_name,
-                'params': obj_params.to_dict()
+                KEY_NAME: obj_name,
+                KEY_PARAMS: obj_params.to_dict()
             })
 
         return obj_list
+
+    def is_available(self, obj_name):
+        return obj_name in self.factory is not None
 
 
 class GroupFactory(BaseFactory):
@@ -95,8 +107,23 @@ class GroupFactory(BaseFactory):
 
         return self.factory[factory_name].create_params(obj_name)
 
+    def get_available(self):
+        factory_list = {}
+
+        for factory_name, factory in self.factory.items():
+            factory_list[factory_name] = factory.get_available()
+
+        return factory_list
+
     def get_factory(self, factory_name):
         return self.factory.get(factory_name)
+
+    def is_available(self, obj_name):
+        for _, factory in self.factory.items():
+            if factory.is_available(obj_name):
+                return True
+
+        return False
 
 
 def create_factory_from_list(factory_name, obj_tuple_list):

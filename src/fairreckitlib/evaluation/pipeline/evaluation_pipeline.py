@@ -4,29 +4,19 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from dataclasses import dataclass
 from datetime import datetime
 import os
 import time
-from typing import Any
 
 import json
 import pandas as pd
 
-from ...events import evaluation_event, io_event
+from ...core.event_io import ON_MAKE_DIR, ON_REMOVE_FILE
+from ...evaluation.pipeline import evaluation_event
 from ..metrics.common import metric_matches_type
 from ..metrics.evaluator_lenskit import EvaluatorLenskit
 from ..metrics.evaluator_rexmex import EvaluatorRexmex
 from ..metrics.filter import filter_data
-
-
-@dataclass
-class MetricConfig:
-    """Metric Configuration."""
-
-    name: str
-    params: {str: Any}
-    prefilters: []
 
 
 class EvaluationPipeline:
@@ -88,7 +78,7 @@ class EvaluationPipeline:
                     os.remove(path)
 
                     self.event_dispatcher.dispatch(
-                        io_event.on_remove_file,
+                        ON_REMOVE_FILE,
                         file=path
                     )
 
@@ -149,7 +139,7 @@ class EvaluationPipeline:
         json.dump({'evaluations': evaluations}, out_file, indent=4)
 
         self.event_dispatcher.dispatch(
-            io_event.on_make_dir,
+            ON_MAKE_DIR,
             dir=file_path
         )
 

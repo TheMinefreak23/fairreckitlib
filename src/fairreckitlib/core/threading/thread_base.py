@@ -7,7 +7,7 @@ Utrecht University within the Software Project course.
 from abc import ABCMeta, abstractmethod
 from threading import Thread
 
-from src.fairreckitlib.events.dispatcher import EventDispatcher
+from ..event_dispatcher import EventDispatcher
 
 
 class ThreadBase(metaclass=ABCMeta):

@@ -9,9 +9,8 @@ import os
 import pandas as pd
 
 from ...utility import load_table
-from ..dataset_config import DATASET_FILE
-from ..dataset_config import DATASET_RATINGS_IMPLICIT
-from ..dataset_config import DATASET_PREFIX
+from ..dataset import DATASET_RATINGS_IMPLICIT
+from ..dataset_config import DATASET_FILE, DATASET_PREFIX
 from ..dataset_table import create_table_config
 from ..dataset_table import write_table
 from .processor_base import DataProcessorBase

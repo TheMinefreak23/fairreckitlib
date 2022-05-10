@@ -7,10 +7,11 @@ Utrecht University within the Software Project course.
 import os
 import time
 
-from src.fairreckitlib.experiment.run import Experiment
-from .thread_base import ThreadBase
-from ..events import experiment_event, io_event
-from ..experiment.config import save_config_to_yml
+from ..core.event_io import ON_MAKE_DIR
+from ..core.threading.thread_base import ThreadBase
+from .experiment_config import save_config_to_yml
+from .experiment_event import ON_BEGIN_THREAD_EXPERIMENT, ON_END_THREAD_EXPERIMENT
+from .experiment_run import Experiment
 
 
 class ThreadExperiment(ThreadBase):
@@ -37,7 +38,7 @@ class ThreadExperiment(ThreadBase):
         if not os.path.isdir(output_dir):
             os.mkdir(output_dir)
             self.event_dispatcher.dispatch(
-                io_event.ON_MAKE_DIR,
+                ON_MAKE_DIR,
                 dir=output_dir
             )
 
@@ -45,13 +46,14 @@ class ThreadExperiment(ThreadBase):
 
         start_time = time.time()
         self.event_dispatcher.dispatch(
-            experiment_event.ON_BEGIN_THREAD_EXP,
+            ON_BEGIN_THREAD_EXPERIMENT,
             num_runs=num_runs,
             experiment_name=kwargs['config'].name
         )
 
         experiment = Experiment(
-            kwargs['factories'],
+            kwargs['registry'],
+            kwargs['factory'],
             kwargs['config'],
             self.event_dispatcher
         )
@@ -64,7 +66,7 @@ class ThreadExperiment(ThreadBase):
             )
 
         self.event_dispatcher.dispatch(
-            experiment_event.ON_END_THREAD_EXP,
+            ON_END_THREAD_EXPERIMENT,
             num_runs=num_runs,
             experiment_name=kwargs['config'].name,
             elapsed_time=time.time()-start_time,

@@ -4,11 +4,11 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ....core.params import ConfigParameters
+from ....core.config_params import ConfigParameters
 
 
-def get_lenskit_params_biased_mf():
-    """Gets the params of the BiasedMF algorithm.
+def create_lenskit_params_biased_mf():
+    """Creates the params of the BiasedMF algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.
@@ -31,8 +31,8 @@ def get_lenskit_params_biased_mf():
     return params
 
 
-def get_lenskit_params_implicit_mf():
-    """Gets the params of the ImplicitMF algorithm.
+def create_lenskit_params_implicit_mf():
+    """Creates the params of the ImplicitMF algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.
@@ -55,8 +55,8 @@ def get_lenskit_params_implicit_mf():
     return params
 
 
-def get_lenskit_params_item_item():
-    """Gets the params of the ItemItem algorithm.
+def create_lenskit_params_item_item():
+    """Creates the params of the ItemItem algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.
@@ -70,8 +70,8 @@ def get_lenskit_params_item_item():
     return params
 
 
-def get_lenskit_params_pop_score():
-    """Gets the params of the PopScore algorithm.
+def create_lenskit_params_pop_score():
+    """Creates the params of the PopScore algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.
@@ -89,8 +89,8 @@ def get_lenskit_params_pop_score():
     return params
 
 
-def get_lenskit_params_random():
-    """Gets the params of the Random algorithm.
+def create_lenskit_params_random():
+    """Creates the params of the Random algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.
@@ -102,8 +102,8 @@ def get_lenskit_params_random():
     return params
 
 
-def get_lenskit_params_user_user():
-    """Gets the params of the UserUser algorithm.
+def create_lenskit_params_user_user():
+    """Creates the params of the UserUser algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.

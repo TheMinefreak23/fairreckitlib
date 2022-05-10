@@ -4,10 +4,10 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-ON_BEGIN_EXP = 'on_begin_experiment'
-ON_END_EXP = 'on_end_experiment'
-ON_BEGIN_THREAD_EXP = 'on_begin_thread_experiment'
-ON_END_THREAD_EXP = 'on_end_thread_experiment'
+ON_BEGIN_EXPERIMENT = 'Experiment.on_begin_experiment'
+ON_END_EXPERIMENT = 'Experiment.on_end_experiment'
+ON_BEGIN_THREAD_EXPERIMENT = 'Experiment.on_begin_thread_experiment'
+ON_END_THREAD_EXPERIMENT = 'Experiment.on_end_thread_experiment'
 
 
 def get_experiment_events():
@@ -17,10 +17,10 @@ def get_experiment_events():
         (array like) list of pairs in the format (event_id, func_on_event)
     """
     return [
-        (ON_BEGIN_EXP, on_begin_experiment),
-        (ON_END_EXP, on_end_experiment),
-        (ON_BEGIN_THREAD_EXP, on_begin_thread_experiment),
-        (ON_END_THREAD_EXP, on_end_thread_experiment)
+        (ON_BEGIN_EXPERIMENT, on_begin_experiment),
+        (ON_END_EXPERIMENT, on_end_experiment),
+        (ON_BEGIN_THREAD_EXPERIMENT, on_begin_thread_experiment),
+        (ON_END_THREAD_EXPERIMENT, on_end_thread_experiment)
     ]
 
 
@@ -51,8 +51,8 @@ def on_end_experiment(event_listener, **kwargs):
             computation started, expressed in seconds.
     """
     if event_listener.verbose:
-            elapsed_time = kwargs['elapsed_time']
-            print('Finished experiment', kwargs['experiment_name'], f'in {elapsed_time:1.4f}s')
+        elapsed_time = kwargs['elapsed_time']
+        print('Finished experiment', kwargs['experiment_name'], f'in {elapsed_time:1.4f}s')
 
 
 def on_begin_thread_experiment(event_listener, **kwargs):
@@ -85,6 +85,3 @@ def on_end_thread_experiment(event_listener, **kwargs):
     """
     if event_listener.verbose:
         print('Finished', kwargs['num_runs'], 'experiment(s) with name', kwargs['experiment_name'])
-
-
-

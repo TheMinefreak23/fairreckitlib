@@ -15,14 +15,14 @@ from surprise.prediction_algorithms import SVD
 from surprise.prediction_algorithms import SVDpp
 
 from ....core.apis import SURPRISE_API
-from ....core.factory import create_factory_from_list
+from ....core.factories import create_factory_from_list
 from ..top_k_recommender import TopK
-from .surprise_params import get_surprise_params_baseline_only_als
-from .surprise_params import get_surprise_params_baseline_only_sgd
-from .surprise_params import get_surprise_params_co_clustering
-from .surprise_params import get_surprise_params_nmf
-from .surprise_params import get_surprise_params_svd
-from .surprise_params import get_surprise_params_svd_pp
+from .surprise_params import create_surprise_params_baseline_only_als
+from .surprise_params import create_surprise_params_baseline_only_sgd
+from .surprise_params import create_surprise_params_co_clustering
+from .surprise_params import create_surprise_params_nmf
+from .surprise_params import create_surprise_params_svd
+from .surprise_params import create_surprise_params_svd_pp
 from .surprise_predictor import SurprisePredictor
 
 SURPRISE_BASELINE_ONLY_ALS = 'BaselineOnlyALS'
@@ -35,28 +35,28 @@ SURPRISE_SVD = 'SVD'
 SURPRISE_SVD_PP = 'SVDpp'
 
 
-def get_surprise_predictor_factory():
-    """Gets the algorithm factory with Surprise predictors.
+def create_surprise_predictor_factory():
+    """Creates the algorithm factory with Surprise predictors.
 
     Returns:
-        (BaseFactory) with available predictors.
+        (Factory) with available predictors.
     """
     return create_factory_from_list(SURPRISE_API, [
         (SURPRISE_BASELINE_ONLY_ALS,
          _create_predictor_baseline_only_als,
-         get_surprise_params_baseline_only_als
+         create_surprise_params_baseline_only_als
          ),
         (SURPRISE_BASELINE_ONLY_SGD,
          _create_predictor_baseline_only_sgd,
-         get_surprise_params_baseline_only_sgd
+         create_surprise_params_baseline_only_sgd
          ),
         (SURPRISE_CO_CLUSTERING,
          _create_predictor_co_clustering,
-         get_surprise_params_co_clustering
+         create_surprise_params_co_clustering
          ),
         (SURPRISE_NMF,
          _create_predictor_nmf,
-         get_surprise_params_nmf
+         create_surprise_params_nmf
          ),
         (SURPRISE_NORMAL_PREDICTOR,
          _create_predictor_normal_predictor,
@@ -68,37 +68,37 @@ def get_surprise_predictor_factory():
          ),
         (SURPRISE_SVD,
          _create_predictor_svd,
-         get_surprise_params_svd
+         create_surprise_params_svd
          ),
         (SURPRISE_SVD_PP,
          _create_predictor_svd_pp,
-         get_surprise_params_svd_pp
+         create_surprise_params_svd_pp
          )
     ])
 
 
-def get_surprise_recommender_factory():
-    """Gets the algorithm factory with Surprise recommenders.
+def create_surprise_recommender_factory():
+    """Creates the algorithm factory with Surprise recommenders.
 
     Returns:
-        (BaseFactory) with available recommenders.
+        (Factory) with available recommenders.
     """
     return create_factory_from_list(SURPRISE_API, [
         (SURPRISE_BASELINE_ONLY_ALS,
          _create_recommender_baseline_only_als,
-         get_surprise_params_baseline_only_als
+         create_surprise_params_baseline_only_als
          ),
         (SURPRISE_BASELINE_ONLY_SGD,
          _create_recommender_baseline_only_sgd,
-         get_surprise_params_baseline_only_sgd
+         create_surprise_params_baseline_only_sgd
          ),
         (SURPRISE_CO_CLUSTERING,
          _create_recommender_co_clustering,
-         get_surprise_params_co_clustering
+         create_surprise_params_co_clustering
          ),
         (SURPRISE_NMF,
          _create_recommender_nmf,
-         get_surprise_params_nmf
+         create_surprise_params_nmf
          ),
         (SURPRISE_NORMAL_PREDICTOR,
          _create_recommender_normal_predictor,
@@ -110,11 +110,11 @@ def get_surprise_recommender_factory():
          ),
         (SURPRISE_SVD,
          _create_recommender_svd,
-         get_surprise_params_svd
+         create_surprise_params_svd
          ),
         (SURPRISE_SVD_PP,
          _create_recommender_svd_pp,
-         get_surprise_params_svd_pp
+         create_surprise_params_svd_pp
          )
     ])
 

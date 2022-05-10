@@ -8,30 +8,16 @@ from abc import ABCMeta
 from dataclasses import dataclass
 import os
 import time
-from typing import Any
 
+from ...core.event_io import ON_MAKE_DIR
 from ..set.dataset import Dataset
-from ...events import data_event
-from ...events import io_event
-
-
-@dataclass
-class SplitConfig:
-    """Dataset Splitting Configuration."""
-
-    test_ratio: float
-    type: str
-    params: {str: Any}
-
-
-@dataclass
-class DatasetConfig:
-    """Dataset Configuration."""
-
-    name: str
-    prefilters: []
-    rating_modifier: None
-    splitting: SplitConfig
+from ..split.split_factory import KEY_SPLITTING
+from .data_event import ON_BEGIN_DATA_PIPELINE, ON_END_DATA_PIPELINE
+from .data_event import ON_BEGIN_LOAD_DATASET, ON_END_LOAD_DATASET
+from .data_event import ON_BEGIN_FILTER_DATASET, ON_END_FILTER_DATASET
+from .data_event import ON_BEGIN_MODIFY_DATASET, ON_END_MODIFY_DATASET
+from .data_event import ON_BEGIN_SPLIT_DATASET, ON_END_SPLIT_DATASET
+from .data_event import ON_BEGIN_SAVE_SETS, ON_END_SAVE_SETS
 
 
 @dataclass
@@ -53,13 +39,13 @@ class DataPipeline(metaclass=ABCMeta):
     splitting it into train/test set, and saving these in the designated directory.
 
     Args:
-        split_factory(BaseFactory): factory of available splitters.
+        data_factory(GroupFactory):
         event_dispatcher(EventDispatcher): used to dispatch data/IO events
             when running the pipeline.
     """
-    def __init__(self, split_factory, event_dispatcher):
+    def __init__(self, data_factory, event_dispatcher):
         self.split_datasets = {}
-        self.split_factory = split_factory
+        self.data_factory = data_factory
         self.event_dispatcher = event_dispatcher
 
     def run(self, output_dir, dataset, data_config, is_running):
@@ -82,7 +68,7 @@ class DataPipeline(metaclass=ABCMeta):
             data_output(DataTransition): the output of the pipeline.
         """
         self.event_dispatcher.dispatch(
-            data_event.ON_BEGIN_DATA_PIPELINE,
+            ON_BEGIN_DATA_PIPELINE,
             dataset=dataset
         )
 
@@ -101,6 +87,8 @@ class DataPipeline(metaclass=ABCMeta):
 
         # step 3
         dataframe = self.convert_ratings(dataframe, data_config.rating_modifier)
+        # TODO this needs to be dynamically retrieved after modifying ratings
+        rating_type = dataset.get_matrix_info('rating_type')
         if not is_running():
             return None
 
@@ -115,7 +103,7 @@ class DataPipeline(metaclass=ABCMeta):
         end = time.time()
 
         self.event_dispatcher.dispatch(
-            data_event.ON_END_DATA_PIPELINE,
+            ON_END_DATA_PIPELINE,
             dataset=dataset,
             elapsed_time=end - start
         )
@@ -126,7 +114,7 @@ class DataPipeline(metaclass=ABCMeta):
             train_set_path,
             test_set_path,
             (dataframe['rating'].min(), dataframe['rating'].max()),
-            dataset.get_matrix_info('rating_type') # TODO this needs to be dynamically retrieved after modifying ratings
+            rating_type
         )
 
         return data_output
@@ -150,7 +138,7 @@ class DataPipeline(metaclass=ABCMeta):
         data_dir = os.path.join(output_dir, dataset.name + '_' + str(index))
         os.mkdir(data_dir)
         self.event_dispatcher.dispatch(
-            io_event.ON_MAKE_DIR,
+            ON_MAKE_DIR,
             dir=data_dir
         )
 
@@ -169,7 +157,7 @@ class DataPipeline(metaclass=ABCMeta):
                 available in the specified dataset.
         """
         self.event_dispatcher.dispatch(
-            data_event.ON_BEGIN_LOAD_DATASET,
+            ON_BEGIN_LOAD_DATASET,
             dataset=dataset
         )
 
@@ -178,7 +166,7 @@ class DataPipeline(metaclass=ABCMeta):
         end = time.time()
 
         self.event_dispatcher.dispatch(
-            data_event.ON_END_LOAD_DATASET,
+            ON_END_LOAD_DATASET,
             dataset=dataset,
             elapsed_time=end - start
         )
@@ -202,7 +190,7 @@ class DataPipeline(metaclass=ABCMeta):
             return dataframe
 
         self.event_dispatcher.dispatch(
-            data_event.ON_BEGIN_FILTER_DATASET,
+            ON_BEGIN_FILTER_DATASET,
             prefilters=prefilters
         )
 
@@ -213,7 +201,7 @@ class DataPipeline(metaclass=ABCMeta):
         end = time.time()
 
         self.event_dispatcher.dispatch(
-            data_event.ON_END_FILTER_DATASET,
+            ON_END_FILTER_DATASET,
             prefilters=prefilters,
             elapsed_time=end - start
         )
@@ -235,7 +223,7 @@ class DataPipeline(metaclass=ABCMeta):
             return dataframe
 
         self.event_dispatcher.dispatch(
-            data_event.ON_BEGIN_MODIFY_DATASET,
+            ON_BEGIN_MODIFY_DATASET,
             rating_modifier=rating_modifier
         )
 
@@ -244,7 +232,7 @@ class DataPipeline(metaclass=ABCMeta):
         end = time.time()
 
         self.event_dispatcher.dispatch(
-            data_event.ON_END_MODIFY_DATASET,
+            ON_END_MODIFY_DATASET,
             rating_modifier=rating_modifier,
             elapsed_time=end - start
         )
@@ -267,18 +255,19 @@ class DataPipeline(metaclass=ABCMeta):
             test_set(pandas.DataFrame): the test set split of the specified dataframe.
         """
         self.event_dispatcher.dispatch(
-            data_event.ON_BEGIN_SPLIT_DATASET,
+            ON_BEGIN_SPLIT_DATASET,
             split_type=split_config.type,
             test_ratio=split_config.test_ratio
         )
 
         start = time.time()
-        splitter = self.split_factory.create(split_config.type, split_config.params)
+        split_factory = self.data_factory.get_factory(KEY_SPLITTING)
+        splitter = split_factory.create(split_config.type, split_config.params)
         train_set, test_set = splitter.run(dataframe, split_config.test_ratio)
         end = time.time()
 
         self.event_dispatcher.dispatch(
-            data_event.ON_END_SPLIT_DATASET,
+            ON_END_SPLIT_DATASET,
             split_type=split_config.type,
             test_ratio=split_config.test_ratio,
             elapsed_time=end - start
@@ -310,7 +299,7 @@ class DataPipeline(metaclass=ABCMeta):
         test_set_path = os.path.join(output_dir, 'test_set.tsv')
 
         self.event_dispatcher.dispatch(
-            data_event.ON_BEGIN_SAVE_SETS,
+            ON_BEGIN_SAVE_SETS,
             train_set_path=train_set_path,
             test_set_path=test_set_path
         )
@@ -321,7 +310,7 @@ class DataPipeline(metaclass=ABCMeta):
         end = time.time()
 
         self.event_dispatcher.dispatch(
-            data_event.ON_END_SAVE_SETS,
+            ON_END_SAVE_SETS,
             train_set_path=train_set_path,
             test_set_path=test_set_path,
             elapsed_time=end - start

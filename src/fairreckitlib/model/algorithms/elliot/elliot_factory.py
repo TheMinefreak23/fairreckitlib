@@ -7,14 +7,14 @@ Utrecht University within the Software Project course.
 import time
 
 from ....core.apis import ELLIOT_API
-from ....core.factory import create_factory_from_list
-from .elliot_params import get_elliot_params_funk_svd
-from .elliot_params import get_elliot_params_item_knn
-from .elliot_params import get_elliot_params_multi_vae
-from .elliot_params import get_elliot_params_pure_svd
-from .elliot_params import get_elliot_params_random
-from .elliot_params import get_elliot_params_svd_pp
-from .elliot_params import get_elliot_params_user_knn
+from ....core.factories import create_factory_from_list
+from .elliot_params import create_elliot_params_funk_svd
+from .elliot_params import create_elliot_params_item_knn
+from .elliot_params import create_elliot_params_multi_vae
+from .elliot_params import create_elliot_params_pure_svd
+from .elliot_params import create_elliot_params_random
+from .elliot_params import create_elliot_params_svd_pp
+from .elliot_params import create_elliot_params_user_knn
 from .elliot_recommender import ElliotRecommender
 
 ELLIOT_FUNK_SVD = 'FunkSVD'
@@ -27,20 +27,20 @@ ELLIOT_SVD_PP = 'SVDpp'
 ELLIOT_USER_KNN = 'UserKNN'
 
 
-def get_elliot_recommender_factory():
-    """Gets the algorithm factory with Elliot recommenders.
+def create_elliot_recommender_factory():
+    """Creates the algorithm factory with Elliot recommenders.
 
     Returns:
-        (BaseFactory) with available recommenders.
+        (Factory) with available recommenders.
     """
     return create_factory_from_list(ELLIOT_API, [
         (ELLIOT_FUNK_SVD,
          _create_recommender_funk_svd,
-         get_elliot_params_funk_svd
+         create_elliot_params_funk_svd
          ),
         (ELLIOT_ITEM_KNN,
          _create_recommender_item_knn,
-         get_elliot_params_item_knn
+         create_elliot_params_item_knn
          ),
         (ELLIOT_MOST_POP,
          _create_recommender_most_pop,
@@ -48,23 +48,23 @@ def get_elliot_recommender_factory():
          ),
         (ELLIOT_MULTI_VAE,
          _create_recommender_multi_vae,
-         get_elliot_params_multi_vae
+         create_elliot_params_multi_vae
          ),
         (ELLIOT_PURE_SVD,
          _create_recommender_pure_svd,
-         get_elliot_params_pure_svd
+         create_elliot_params_pure_svd
          ),
         (ELLIOT_RANDOM,
          _create_recommender_random,
-         get_elliot_params_random
+         create_elliot_params_random
          ),
         (ELLIOT_SVD_PP,
          _create_recommender_svd_pp,
-         get_elliot_params_svd_pp
+         create_elliot_params_svd_pp
          ),
         (ELLIOT_USER_KNN,
          _create_recommender_user_knn,
-         get_elliot_params_user_knn
+         create_elliot_params_user_knn
          )
     ])
 

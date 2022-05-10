@@ -10,38 +10,30 @@ import os
 
 import json
 
-from ..core.factory import Factory
-from ..core.factory import GroupFactory
+from ..core.config_constants import TYPE_RECOMMENDATION
+from ..core.event_io import ON_MAKE_DIR
 from ..data.pipeline.data_run import run_data_pipeline
-from ..data.set.dataset_registry import DataRegistry
-from ..events import io_event, experiment_event
-from ..evaluation.metrics.factory import MetricFactory
+from ..data.data_factory import KEY_DATASETS
 from ..evaluation.pipeline.evaluation_run import run_evaluation_pipelines
+from ..evaluation.evaluation_factory import KEY_EVALUATION
 from ..model.pipeline.model_run import run_model_pipelines
-from .constants import EXP_TYPE_RECOMMENDATION
-
-
-@dataclass
-class ExperimentFactories:
-    """Experiment Factories wrapper."""
-
-    data_registry: DataRegistry
-    split_factory: Factory
-    model_factory: GroupFactory
-    metric_factory: MetricFactory
+from ..model.model_factory import KEY_MODELS
+from .experiment_event import ON_BEGIN_EXPERIMENT, ON_END_EXPERIMENT
 
 
 class Experiment:
     """Experiment wrapper of the data, model and evaluation pipelines.
 
     Args:
-        factories(ExperimentFactories): the factories used by the experiment.
+        data_registry(DataRegistry):
+        experiment_factory(GroupFactory):
         config(ExperimentConfig): the configuration of the experiment.
         event_dispatcher(EventDispatcher): to dispatch the experiment events.
     """
-    def __init__(self, factories, config, event_dispatcher):
-        self.__factories = factories
-        self.__config = config
+    def __init__(self, data_registry, experiment_factory, config, event_dispatcher):
+        self.data_registry = data_registry
+        self.experiment_factory = experiment_factory
+        self.config = config
 
         self.event_dispatcher = event_dispatcher
 
@@ -51,7 +43,7 @@ class Experiment:
         Returns:
             (ExperimentConfig): the used configuration.
         """
-        return self.__config
+        return self.config
 
     def run(self, output_dir, num_threads, is_running):
         """Runs an experiment with the specified configuration.
@@ -67,17 +59,17 @@ class Experiment:
 
         data_result = run_data_pipeline(
             output_dir,
-            self.__factories.data_registry,
-            self.__factories.split_factory,
-            self.__config.datasets,
+            self.data_registry,
+            self.experiment_factory.get_factory(KEY_DATASETS),
+            self.config.datasets,
             self.event_dispatcher,
             is_running
         )
 
         kwargs = {'num_threads': num_threads}
-        if self.__config.type == EXP_TYPE_RECOMMENDATION:
-            kwargs['num_items'] = self.__config.top_k
-            kwargs['rated_items_filter'] = self.__config.rated_items_filter
+        if self.config.type == TYPE_RECOMMENDATION:
+            kwargs['num_items'] = self.config.top_k
+            kwargs['rated_items_filter'] = self.config.rated_items_filter
 
         for data_transition in data_result:
             if not is_running():
@@ -86,8 +78,8 @@ class Experiment:
             model_dirs = run_model_pipelines(
                 data_transition.output_dir,
                 data_transition,
-                self.__factories.model_factory.get_factory(self.__config.type),
-                self.__config.models,
+                self.experiment_factory.get_factory(KEY_MODELS).get_factory(self.config.type),
+                self.config.models,
                 self.event_dispatcher,
                 is_running,
                 **kwargs
@@ -95,12 +87,12 @@ class Experiment:
             if not is_running():
                 return
 
-            if len(self.__config.evaluation) > 0:
+            if len(self.config.evaluation) > 0:
                 run_evaluation_pipelines(
                     model_dirs,
                     data_transition,
-                    self.__factories.metric_factory,
-                    self.__config.evaluation,
+                    self.experiment_factory.get_factory(KEY_EVALUATION).get_factory(self.config.type),
+                    self.config.evaluation,
                     self.event_dispatcher,
                     is_running,
                     **kwargs
@@ -122,13 +114,13 @@ class Experiment:
         """
         start_time = time.time()
         self.event_dispatcher.dispatch(
-            experiment_event.ON_BEGIN_EXP,
-            experiment_name=self.__config.name
+            ON_BEGIN_EXPERIMENT,
+            experiment_name=self.config.name
         )
 
         os.mkdir(output_dir)
         self.event_dispatcher.dispatch(
-            io_event.ON_MAKE_DIR,
+            ON_MAKE_DIR,
             dir=output_dir
         )
 
@@ -147,8 +139,8 @@ class Experiment:
         write_storage_file(output_dir, results)
 
         self.event_dispatcher.dispatch(
-            experiment_event.ON_END_EXP,
-            experiment_name=self.__config.name,
+            ON_END_EXPERIMENT,
+            experiment_name=self.config.name,
             elapsed_time=time.time()-start_time
         )
 
@@ -206,4 +198,3 @@ def resolve_experiment_start_run(result_dir):
         start_run = max(start_run, int(run_split[1]))
 
     return start_run + 1
-

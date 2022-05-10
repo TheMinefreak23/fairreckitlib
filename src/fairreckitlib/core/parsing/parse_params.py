@@ -4,10 +4,8 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from .parse_assert import assert_is_container_not_empty
-from .parse_assert import assert_is_key_in_dict
-from .parse_assert import assert_is_one_of_list
-from .parse_assert import assert_is_type
+from .parse_assert import assert_is_container_not_empty, assert_is_type
+from .parse_assert import assert_is_key_in_dict, assert_is_one_of_list
 from .parse_event import ON_PARSE
 
 

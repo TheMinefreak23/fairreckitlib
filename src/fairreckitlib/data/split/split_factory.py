@@ -6,15 +6,19 @@ Utrecht University within the Software Project course.
 
 import time
 
-from ...core.factory import create_factory_from_list
-from ...core.params import ConfigParameters
+from ...core.config_params import ConfigParameters
+from ...core.factories import create_factory_from_list
 from .random_splitter import RandomSplitter
 from .temporal_splitter import TemporalSplitter
 
-SPLITTING_KEY = 'splitting'
-
 SPLIT_RANDOM = 'random'
 SPLIT_TEMPORAL = 'temporal'
+
+KEY_SPLITTING = 'splitting'
+KEY_SPLIT_TEST_RATIO = 'test_ratio'
+
+DEFAULT_SPLIT_TEST_RATIO = 0.2
+DEFAULT_SPLIT_TYPE = SPLIT_RANDOM
 
 
 def create_split_factory():
@@ -23,7 +27,7 @@ def create_split_factory():
     Returns:
         (Factory) with all splitters.
     """
-    return create_factory_from_list(SPLITTING_KEY, [
+    return create_factory_from_list(KEY_SPLITTING, [
         (SPLIT_RANDOM,
          _create_random_splitter,
          _create_random_splitter_params

@@ -4,11 +4,11 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ....core.params import ConfigParameters
+from ....core.config_params import ConfigParameters
 
 
-def get_implicit_params_alternating_least_squares():
-    """Gets the parameters of the AlternatingLeastSquares algorithm.
+def create_implicit_params_alternating_least_squares():
+    """Creates the parameters of the AlternatingLeastSquares algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.
@@ -26,8 +26,8 @@ def get_implicit_params_alternating_least_squares():
     return params
 
 
-def get_implicit_params_bayesian_personalized_ranking():
-    """Gets the parameters of the BayesianPersonalizedRanking algorithm.
+def create_implicit_params_bayesian_personalized_ranking():
+    """Creates the parameters of the BayesianPersonalizedRanking algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.
@@ -44,8 +44,8 @@ def get_implicit_params_bayesian_personalized_ranking():
     return params
 
 
-def get_implicit_params_logistic_matrix_factorization():
-    """Gets the parameters of the LogisticMatrixFactorization algorithm.
+def create_implicit_params_logistic_matrix_factorization():
+    """Creates the parameters of the LogisticMatrixFactorization algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.

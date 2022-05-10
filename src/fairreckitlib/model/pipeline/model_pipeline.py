@@ -5,27 +5,23 @@ Utrecht University within the Software Project course.
 """
 
 from abc import ABCMeta, abstractmethod
-from dataclasses import dataclass
 import os
 import time
-from typing import Any
 
 import json
 import pandas as pd
 
-from ...events import io_event
-from ...events import model_event
+from ...core.event_io import ON_MAKE_DIR
+from .model_event import ON_BEGIN_LOAD_TEST_SET, ON_END_LOAD_TEST_SET
+from .model_event import ON_BEGIN_LOAD_TRAIN_SET, ON_END_LOAD_TRAIN_SET
+from .model_event import ON_BEGIN_MODEL_PIPELINE, ON_END_MODEL_PIPELINE
+from .model_event import ON_BEGIN_TEST_MODEL, ON_END_TEST_MODEL
+from .model_event import ON_BEGIN_TRAIN_MODEL, ON_END_TRAIN_MODEL
+from .model_event import ON_BEGIN_MODEL, ON_END_MODEL
+from .model_event import ON_SAVE_MODEL_SETTINGS
 
 MODEL_USER_BATCH_SIZE = 10000
 RATING_OUTPUT_FILE = 'ratings.tsv'
-
-
-@dataclass
-class ModelConfig:
-    """Model Configuration."""
-
-    name: str
-    params: {str: Any}
 
 
 class ModelPipeline(metaclass=ABCMeta):
@@ -70,7 +66,7 @@ class ModelPipeline(metaclass=ABCMeta):
                 where computation results are stored.
         """
         self.event_dispatcher.dispatch(
-            model_event.ON_BEGIN_MODEL_PIPELINE,
+            ON_BEGIN_MODEL_PIPELINE,
             api_name=self.algo_factory.get_name(),
             num_models=len(models_config)
         )
@@ -100,7 +96,7 @@ class ModelPipeline(metaclass=ABCMeta):
         end = time.time()
 
         self.event_dispatcher.dispatch(
-            model_event.ON_END_MODEL_PIPELINE,
+            ON_END_MODEL_PIPELINE,
             api_name=self.algo_factory.get_name(),
             num_models=len(models_config),
             elapsed_time=end - start
@@ -169,7 +165,7 @@ class ModelPipeline(metaclass=ABCMeta):
         start = time.time()
 
         self.event_dispatcher.dispatch(
-            model_event.ON_BEGIN_MODEL,
+            ON_BEGIN_MODEL,
             model_name=model_name
         )
 
@@ -203,7 +199,7 @@ class ModelPipeline(metaclass=ABCMeta):
                                  '_' + model_name + '_' + str(index))
         if not os.path.isdir(model_dir):
             self.event_dispatcher.dispatch(
-                io_event.ON_MAKE_DIR,
+                ON_MAKE_DIR,
                 dir=model_dir
             )
             os.mkdir(model_dir)
@@ -225,7 +221,7 @@ class ModelPipeline(metaclass=ABCMeta):
         end = time.time()
 
         self.event_dispatcher.dispatch(
-            model_event.ON_END_MODEL,
+            ON_END_MODEL,
             model=model,
             elapsed_time=end - start
         )
@@ -237,7 +233,7 @@ class ModelPipeline(metaclass=ABCMeta):
             test_set_path(str): path to where the test set is stored.
         """
         self.event_dispatcher.dispatch(
-            model_event.ON_BEGIN_LOAD_TEST_SET,
+            ON_BEGIN_LOAD_TEST_SET,
             test_set_path=test_set_path
         )
 
@@ -251,7 +247,7 @@ class ModelPipeline(metaclass=ABCMeta):
         end = time.time()
 
         self.event_dispatcher.dispatch(
-            model_event.ON_END_LOAD_TEST_SET,
+            ON_END_LOAD_TEST_SET,
             test_set_path=test_set_path,
             test_set=self.test_set,
             elapsed_time=end - start
@@ -264,7 +260,7 @@ class ModelPipeline(metaclass=ABCMeta):
             train_set_path(str): path to where the train set is stored.
         """
         self.event_dispatcher.dispatch(
-            model_event.ON_BEGIN_LOAD_TRAIN_SET,
+            ON_BEGIN_LOAD_TRAIN_SET,
             train_set_path=train_set_path
         )
 
@@ -278,7 +274,7 @@ class ModelPipeline(metaclass=ABCMeta):
         end = time.time()
 
         self.event_dispatcher.dispatch(
-            model_event.ON_END_LOAD_TRAIN_SET,
+            ON_END_LOAD_TRAIN_SET,
             train_set_path=train_set_path,
             train_set=self.train_set,
             elapsed_time=end - start
@@ -307,7 +303,7 @@ class ModelPipeline(metaclass=ABCMeta):
             json.dump(model_params, file, indent=4)
 
         self.event_dispatcher.dispatch(
-            model_event.ON_SAVE_MODEL_SETTINGS,
+            ON_SAVE_MODEL_SETTINGS,
             settings_path=settings_path,
             model_params=model_params
         )
@@ -327,7 +323,7 @@ class ModelPipeline(metaclass=ABCMeta):
                 needed when running the pipeline for recommender algorithms.
         """
         self.event_dispatcher.dispatch(
-            model_event.ON_BEGIN_TEST_MODEL,
+            ON_BEGIN_TEST_MODEL,
             model=model,
             test_set=self.test_set
         )
@@ -345,7 +341,7 @@ class ModelPipeline(metaclass=ABCMeta):
         end = time.time()
 
         self.event_dispatcher.dispatch(
-            model_event.ON_END_TEST_MODEL,
+            ON_END_TEST_MODEL,
             model=model,
             test_set=self.test_set,
             elapsed_time=end - start
@@ -375,7 +371,7 @@ class ModelPipeline(metaclass=ABCMeta):
             model(Algorithm): the model that needs to be trained.
         """
         self.event_dispatcher.dispatch(
-            model_event.ON_BEGIN_TRAIN_MODEL,
+            ON_BEGIN_TRAIN_MODEL,
             model=model,
             train_set=self.train_set
         )
@@ -385,7 +381,7 @@ class ModelPipeline(metaclass=ABCMeta):
         end = time.time()
 
         self.event_dispatcher.dispatch(
-            model_event.ON_END_TRAIN_MODEL,
+            ON_END_TRAIN_MODEL,
             model=model,
             train_set=self.train_set,
             elapsed_time=end - start

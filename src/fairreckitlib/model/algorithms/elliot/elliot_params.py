@@ -4,7 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ....core.params import ConfigParameters
+from ....core.config_params import ConfigParameters
 
 _implementations = [
     'aiolli',
@@ -22,8 +22,8 @@ _similarities = [
     'tanimoto'
 ]
 
-def get_elliot_params_funk_svd():
-    """Gets the parameters of the FunkSVD algorithm.
+def create_elliot_params_funk_svd():
+    """Creates the parameters of the FunkSVD algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.
@@ -41,8 +41,8 @@ def get_elliot_params_funk_svd():
     return params
 
 
-def get_elliot_params_item_knn():
-    """Gets the parameters of the ItemKNN algorithm.
+def create_elliot_params_item_knn():
+    """Creates the parameters of the ItemKNN algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.
@@ -56,8 +56,8 @@ def get_elliot_params_item_knn():
     return params
 
 
-def get_elliot_params_multi_vae():
-    """Gets the parameters of the MultiVAE algorithm.
+def create_elliot_params_multi_vae():
+    """Creates the parameters of the MultiVAE algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.
@@ -76,8 +76,8 @@ def get_elliot_params_multi_vae():
     return params
 
 
-def get_elliot_params_pure_svd():
-    """Gets the parameters of the PureSVD algorithm.
+def create_elliot_params_pure_svd():
+    """Creates the parameters of the PureSVD algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.
@@ -90,8 +90,8 @@ def get_elliot_params_pure_svd():
     return params
 
 
-def get_elliot_params_random():
-    """Gets the parameters of the Random algorithm.
+def create_elliot_params_random():
+    """Creates the parameters of the Random algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.
@@ -103,8 +103,8 @@ def get_elliot_params_random():
     return params
 
 
-def get_elliot_params_svd_pp():
-    """Gets the parameters of the SVDpp algorithm.
+def create_elliot_params_svd_pp():
+    """Creates the parameters of the SVDpp algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.
@@ -122,8 +122,8 @@ def get_elliot_params_svd_pp():
     return params
 
 
-def get_elliot_params_user_knn():
-    """Gets the parameters of the UserKNN algorithm.
+def create_elliot_params_user_knn():
+    """Creates the parameters of the UserKNN algorithm.
 
     Returns:
         params(ConfigParameters) the params of the algorithm.

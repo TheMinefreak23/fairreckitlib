@@ -11,14 +11,10 @@ import numpy as np
 import pandas as pd
 from scipy import sparse
 
-from ...utility import convert_csr_to_coo
-from ...utility import convert_coo_to_df
-from ..dataset_config import DATASET_FILE
-from ..dataset_config import DATASET_PREFIX
-from ..dataset_config import DATASET_RATINGS_IMPLICIT
-from ..dataset_table import create_table_config
-from ..dataset_table import read_table
-from ..dataset_table import write_table
+from ...utility import convert_csr_to_coo, convert_coo_to_df
+from ..dataset import DATASET_RATINGS_IMPLICIT
+from ..dataset_config import DATASET_FILE, DATASET_PREFIX
+from ..dataset_table import create_table_config, read_table, write_table
 from .processor_base import DataProcessorBase
 
 

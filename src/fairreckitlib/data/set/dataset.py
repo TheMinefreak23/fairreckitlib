@@ -9,13 +9,16 @@ import os
 import pandas as pd
 
 from ..utility import load_array_from_hdf5
-from .dataset_config import DATASET_FILE
 from .dataset_config import DATASET_INDICES
 from .dataset_config import DATASET_ITEMS
 from .dataset_config import DATASET_MATRIX
 from .dataset_config import DATASET_TABLES
 from .dataset_config import DATASET_USERS
+from .dataset_table import DATASET_FILE
 from .dataset_table import read_table
+
+DATASET_RATINGS_EXPLICIT = 'explicit'
+DATASET_RATINGS_IMPLICIT = 'implicit'
 
 
 class Dataset:
