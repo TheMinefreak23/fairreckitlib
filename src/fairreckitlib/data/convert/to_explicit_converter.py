@@ -4,7 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from base import RatingConverter
+from .base_converter import RatingConverter
 
 class ToExplicitConverter(RatingConverter):
     """Class with the functionality to convert ratings to an explicit rating between [0,1]"""

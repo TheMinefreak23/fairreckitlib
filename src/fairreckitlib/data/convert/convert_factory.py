@@ -4,7 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from to_explicit import create_to_explicit_converter
+from .to_explicit_converter import create_to_explicit_converter
 
 def create_converter(rating_modifier : str):
     """Creates a converter with the specified modifier."""
