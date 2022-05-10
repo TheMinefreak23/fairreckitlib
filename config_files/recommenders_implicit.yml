@@ -1,8 +1,12 @@
 datasets:
 - name: ML-100K
   splitting:
+    name: random
     test_ratio: 0.2
-    type: random
+evaluation:
+- name: P@K
+  params:
+    K: 5
 models:
   Implicit:
   - name: AlternatingLeastSquares
