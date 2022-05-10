@@ -60,7 +60,7 @@ class Factory(BaseFactory):
 
         func_create_obj = self.factory[obj_name][FUNC_CREATE_OBJ]
         if obj_params is None:
-            obj_params = self.create_params(obj_name)
+            obj_params = self.create_params(obj_name).get_defaults()
 
         return func_create_obj(obj_name, dict(obj_params), **kwargs)
 
