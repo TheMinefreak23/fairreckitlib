@@ -11,9 +11,7 @@ from src.fairreckitlib.core.config_constants import KEY_RATED_ITEMS_FILTER
 from src.fairreckitlib.core.config_constants import TYPE_PREDICTION, TYPE_RECOMMENDATION
 from src.fairreckitlib.core.config_params import ConfigParameters, create_empty_parameters
 from src.fairreckitlib.core.factories import Factory, GroupFactory, create_factory_from_list
-from src.fairreckitlib.data.ratings.rating_modifier_factory import create_rating_modifier_factory
-from src.fairreckitlib.data.ratings.base_modifier import DataModifier
-from src.fairreckitlib.data.set.dataset import DATASET_RATINGS_EXPLICIT, DATASET_RATINGS_IMPLICIT
+from src.fairreckitlib.data.set.dataset import DATASET_RATINGS_EXPLICIT
 from src.fairreckitlib.data.split.base_splitter import DataSplitter
 from src.fairreckitlib.data.split.split_factory import create_split_factory
 from src.fairreckitlib.model.algorithms.base_predictor import Predictor
@@ -24,6 +22,7 @@ dummy_names = ['dummy_a', 'dummy_b', 'dummy_c']
 
 
 def create_dummy_obj(name, params, **kwargs):
+    """Create dummy object that returns the function arguments."""
     return name, params, kwargs
 
 
