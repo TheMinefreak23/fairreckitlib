@@ -3,10 +3,6 @@ datasets:
   splitting:
     name: random
     test_ratio: 0.2
-evaluation:
-- name: P@K
-  params:
-    K: 5
 models:
   Implicit:
   - name: AlternatingLeastSquares
