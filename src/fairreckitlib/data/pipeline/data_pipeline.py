@@ -12,6 +12,7 @@ import time
 from ...core.event_io import ON_MAKE_DIR
 from ..set.dataset import Dataset
 from ..split.split_factory import KEY_SPLITTING
+from ..ratings.rating_converter_factory import KEY_RATING_CONVERTER, CONVERTER_RANGE, CONVERTER_KL
 from .data_event import ON_BEGIN_DATA_PIPELINE, ON_END_DATA_PIPELINE
 from .data_event import ON_BEGIN_LOAD_DATASET, ON_END_LOAD_DATASET
 from .data_event import ON_BEGIN_FILTER_DATASET, ON_END_FILTER_DATASET
@@ -208,17 +209,19 @@ class DataPipeline(metaclass=ABCMeta):
 
         return dataframe
 
-    def convert_ratings(self, dataframe, rating_modifier):
+    def convert_ratings(self, dataset, rating_modifier):
         """Converts the ratings in the dataframe with the specified rating modifier.
 
         Args:
-            dataframe(pandas.DataFrame): the dataset to convert the ratings for.
+            dataset(Dataset): the dataset to load the matrix and rating_type from.
                 At the least a 'rating' column is expected to be present.
             rating_modifier(object): the modifier to apply to the 'rating' column.
 
         Returns:
             dataframe(pandas.DataFrame): with the modified 'rating' column.
         """
+
+        dataframe = dataset.load_matrix_df()
         if rating_modifier is None:
             return dataframe
 
@@ -228,7 +231,9 @@ class DataPipeline(metaclass=ABCMeta):
         )
 
         start = time.time()
-        # TODO convert the ratings of the dataset
+        converter = self.data_factory.get_factory(KEY_RATING_CONVERTER).create(CONVERTER_RANGE)
+        (dataframe, rating_type) = converter.run(dataframe, rating_modifier)
+        # TODO update rating_type
         end = time.time()
 
         self.event_dispatcher.dispatch(

@@ -11,7 +11,7 @@ from .core.threading.thread_processor import ThreadProcessor
 from .data.data_factory import KEY_DATASETS
 from .data.pipeline.data_event import get_data_events
 from .data.set.dataset_registry import DataRegistry
-from .data.ratings.rating_modifier_factory import KEY_RATING_MODIFIER
+from .data.ratings.rating_converter_factory import KEY_RATING_MODIFIER
 from .data.split.split_factory import KEY_SPLITTING
 from .evaluation.evaluation_factory import KEY_EVALUATION
 from .evaluation.pipeline.evaluation_event import get_evaluation_events

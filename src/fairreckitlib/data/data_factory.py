@@ -6,7 +6,7 @@ Utrecht University within the Software Project course.
 
 from ..core.factories import GroupFactory
 from .pipeline.data_config import KEY_DATASETS
-from .ratings.rating_modifier_factory import create_rating_modifier_factory
+from .ratings.rating_converter_factory import create_rating_modifier_factory
 from .split.split_factory import create_split_factory
 
 
