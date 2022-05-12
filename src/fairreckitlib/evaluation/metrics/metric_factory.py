@@ -90,7 +90,7 @@ def create_metric(name, params, **kwargs):
 def resolve_metric_factory(metric_name, metric_category_factory):
     for _, factory_name in enumerate(metric_category_factory.get_available_names()):
         metric_factory = metric_category_factory.get_factory(factory_name)
-        if metric_factory.is_available(metric_name):
+        if metric_factory.is_obj_available(metric_name):
             return metric_factory
 
     return None

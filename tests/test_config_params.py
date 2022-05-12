@@ -10,7 +10,7 @@ from src.fairreckitlib.core.config_params import ConfigOptionParam
 from src.fairreckitlib.core.config_params import ConfigRandomParam
 from src.fairreckitlib.core.config_params import ConfigValueParam
 from src.fairreckitlib.core.config_params import create_bool_param
-from src.fairreckitlib.core.config_params import get_empty_parameters
+from src.fairreckitlib.core.config_params import create_empty_parameters
 
 
 @pytest.mark.parametrize('value_type, valid, invalid', [
@@ -111,7 +111,7 @@ def test_config_parameters():
     2) Repeat step 1 but check the opposite, because duplicates are not allowed.
     3) Check correctness of parameter defaults.
     """
-    config_parameters = get_empty_parameters()
+    config_parameters = create_empty_parameters()
     assert config_parameters.get_num_params() == 0, 'Empty parameters should have no entries.'
 
     param_list = [
