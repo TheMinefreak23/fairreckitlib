@@ -12,12 +12,13 @@ class AgeFilter(DataFilter):
     def __init__(self, df):
             self.df = df
     
-    def run(self, df, min=0, max=100): 
+    def run(self, min=0, max=100): 
         """Min and max allowed age of the users. Default is 0 & 100."""
-        if 'age' in df.columns:
-            filter = df['age'] >= min and df['age'] <= max
-            return df.loc[filter]
-        else: return df
+        if 'age' in self.df.columns:
+            # filter = self.df['age'].ge(min) & self.df['age'].le(max)
+            filter = self.df['age'].between(min, max, inclusive="both")
+            return self.df[filter]
+        else: return self.df
 
-def create_age_filter():
-    return AgeFilter()
+def create_age_filter(df):
+    return AgeFilter(df)

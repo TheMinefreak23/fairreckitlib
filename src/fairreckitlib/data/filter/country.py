@@ -18,8 +18,8 @@ class CountryFilter(DataFilter):
         """
         if 'country' in df.columns:
             filter = df['country'] == country
-            return df.loc[filter]
+            return df[filter]
         else: return df
 
-def create_country_filter():
-    return CountryFilter()
+def create_country_filter(df):
+    return CountryFilter(df)

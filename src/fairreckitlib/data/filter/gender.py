@@ -20,5 +20,5 @@ class GenderFilter(DataFilter):
             return df.loc[filter]
         else: return df
 
-def create_gender_filter():
-    return GenderFilter()
+def create_gender_filter(df):
+    return GenderFilter(df)
