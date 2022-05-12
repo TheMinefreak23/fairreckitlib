@@ -59,7 +59,6 @@ class RecommenderSystem:
             validate_config(bool): whether to validate the configuration beforehand.
         """
 
-        print('oi')
         result_dir = os.path.join(self.result_dir, config.name)
         if os.path.isdir(result_dir):
             raise IOError('Result already exists: ' + result_dir)
