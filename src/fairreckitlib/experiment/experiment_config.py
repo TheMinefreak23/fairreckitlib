@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from ..core.config_constants import KEY_NAME, KEY_PARAMS, KEY_TYPE
 from ..core.config_constants import KEY_TOP_K, KEY_RATED_ITEMS_FILTER
 from ..data.pipeline.data_config import DatasetConfig, KEY_DATASETS, KEY_DATA_FILTERS
-from ..data.ratings.rating_converter_factory import KEY_RATING_MODIFIER
+from ..data.ratings.rating_converter_factory import KEY_RATING_CONVERTER
 from ..data.split.split_factory import KEY_SPLITTING, KEY_SPLIT_TEST_RATIO
 from ..data.utility import save_yml
 from ..evaluation.pipeline.evaluation_config import MetricConfig, KEY_EVALUATION
@@ -85,9 +85,9 @@ def experiment_config_to_dict(experiment_config: ExperimentConfig):
             dataset[KEY_DATA_FILTERS] = []
 
         # only include rating modifier if it is present
-        if dataset_config.rating_modifier:
+        if dataset_config.rating_converter:
             # TODO
-            dataset[KEY_RATING_MODIFIER] = dataset_config.rating_modifier
+            dataset[KEY_RATING_CONVERTER] = dataset_config.rating_converter
 
         config[KEY_DATASETS].append(dataset)
 
