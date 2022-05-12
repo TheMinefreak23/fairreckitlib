@@ -48,14 +48,19 @@ class Recommender(Algorithm, metaclass=ABCMeta):
             num_items(int): the number of item recommendations to produce.
 
         Returns:
-            pandas.DataFrame: with the columns 'user', 'item', 'score'.
+            pandas.DataFrame: with the columns 'rank', 'user', 'item', 'score'.
         """
         result = pd.DataFrame()
 
         for _, user in enumerate(users):
             item_scores = self.recommend(user, num_items)
+
+            item_scores['rank'] = np.arange(1, 1 + num_items)
             item_scores['user'] = np.full(num_items, user)
 
-            result = result.append(item_scores[['user', 'item', 'score']], ignore_index=True)
+            result = result.append(
+                item_scores[['rank', 'user', 'item', 'score']],
+                ignore_index=True
+            )
 
         return result

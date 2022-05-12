@@ -49,4 +49,4 @@ class LensKitRecommender(Recommender):
         if recs.get('score') is None:
             recs['score'] = np.full(len(users) * num_items, 1)
 
-        return recs[['user', 'item', 'score']]
+        return recs[['rank', 'user', 'item', 'score']]

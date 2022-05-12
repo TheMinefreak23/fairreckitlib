@@ -8,6 +8,10 @@ import time
 
 from surprise.prediction_algorithms import BaselineOnly
 from surprise.prediction_algorithms import CoClustering
+from surprise.prediction_algorithms import KNNBasic
+from surprise.prediction_algorithms import KNNBaseline
+from surprise.prediction_algorithms import KNNWithMeans
+from surprise.prediction_algorithms import KNNWithZScore
 from surprise.prediction_algorithms import NMF
 from surprise.prediction_algorithms import NormalPredictor
 from surprise.prediction_algorithms import SlopeOne
@@ -20,6 +24,9 @@ from ..top_k_recommender import TopK
 from .surprise_params import create_surprise_params_baseline_only_als
 from .surprise_params import create_surprise_params_baseline_only_sgd
 from .surprise_params import create_surprise_params_co_clustering
+from .surprise_params import create_surprise_params_knn_similarities
+from .surprise_params import create_surprise_params_knn_base_line_als
+from .surprise_params import create_surprise_params_knn_base_line_sgd
 from .surprise_params import create_surprise_params_nmf
 from .surprise_params import create_surprise_params_svd
 from .surprise_params import create_surprise_params_svd_pp
@@ -28,6 +35,11 @@ from .surprise_predictor import SurprisePredictor
 SURPRISE_BASELINE_ONLY_ALS = 'BaselineOnlyALS'
 SURPRISE_BASELINE_ONLY_SGD = 'BaselineOnlySGD'
 SURPRISE_CO_CLUSTERING = 'CoClustering'
+SURPRISE_KNN_BASIC = 'KNNBasic'
+SURPRISE_KNN_BASELINE_ALS = 'KNNBaselineALS'
+SURPRISE_KNN_BASELINE_SGD = 'KNNBaselineSGD'
+SURPRISE_KNN_WITH_MEANS = 'KNNWithMeans'
+SURPRISE_KNN_WITH_ZSCORE = 'KNNWithZScore'
 SURPRISE_NMF = 'NMF'
 SURPRISE_NORMAL_PREDICTOR = 'NormalPredictor'
 SURPRISE_SLOPE_ONE = 'SlopeOne'
@@ -53,6 +65,26 @@ def create_surprise_predictor_factory():
         (SURPRISE_CO_CLUSTERING,
          _create_predictor_co_clustering,
          create_surprise_params_co_clustering
+         ),
+        (SURPRISE_KNN_BASIC,
+         _create_predictor_knn_basic,
+         create_surprise_params_knn_similarities
+         ),
+        (SURPRISE_KNN_BASELINE_ALS,
+         _create_predictor_knn_baseline_als,
+         create_surprise_params_knn_base_line_als
+         ),
+        (SURPRISE_KNN_BASELINE_SGD,
+         _create_predictor_knn_baseline_sgd,
+         create_surprise_params_knn_base_line_sgd
+         ),
+        (SURPRISE_KNN_WITH_MEANS,
+         _create_predictor_knn_with_means,
+         create_surprise_params_knn_similarities
+         ),
+        (SURPRISE_KNN_WITH_ZSCORE,
+         _create_predictor_knn_with_zscore,
+         create_surprise_params_knn_similarities
          ),
         (SURPRISE_NMF,
          _create_predictor_nmf,
@@ -95,6 +127,26 @@ def create_surprise_recommender_factory():
         (SURPRISE_CO_CLUSTERING,
          _create_recommender_co_clustering,
          create_surprise_params_co_clustering
+         ),
+        (SURPRISE_KNN_BASIC,
+         _create_recommender_knn_basic,
+         create_surprise_params_knn_similarities
+         ),
+        (SURPRISE_KNN_BASELINE_ALS,
+         _create_recommender_knn_baseline_als,
+         create_surprise_params_knn_base_line_als
+         ),
+        (SURPRISE_KNN_BASELINE_SGD,
+         _create_recommender_knn_baseline_sgd,
+         create_surprise_params_knn_base_line_sgd
+         ),
+        (SURPRISE_KNN_WITH_MEANS,
+         _create_recommender_knn_with_means,
+         create_surprise_params_knn_similarities
+         ),
+        (SURPRISE_KNN_WITH_ZSCORE,
+         _create_recommender_knn_with_zscore,
+         create_surprise_params_knn_similarities
          ),
         (SURPRISE_NMF,
          _create_recommender_nmf,
@@ -211,6 +263,192 @@ def _create_predictor_co_clustering(name, params, **kwargs):
 
 def _create_recommender_co_clustering(name, params, **kwargs):
     predictor = _create_predictor_co_clustering(name, params, **kwargs)
+    return TopK(predictor, **kwargs)
+
+
+def _create_predictor_knn_basic(name, params, **kwargs):
+    """Creates the KNNBasic predictor.
+
+    Args:
+        name(str): the name of the algorithm.
+        params(dict): with the entries:
+            k,
+            min_k,
+            similarity,
+            user_based,
+            min_support
+
+    Returns:
+        (SurprisePredictor) wrapper of KNNBasic.
+    """
+    algo = KNNBasic(
+        k=params['k'],
+        min_k=params['min_k'],
+        sim_options={
+            'name': params['similarity'],
+            'user_based': params['user_based'],
+            'min_support': params['min_support']
+        },
+        verbose=False
+    )
+
+    return SurprisePredictor(algo, name, params, **kwargs)
+
+
+def _create_recommender_knn_basic(name, params, **kwargs):
+    predictor = _create_predictor_knn_basic(name, params, **kwargs)
+    return TopK(predictor, **kwargs)
+
+
+def _create_predictor_knn_baseline_als(name, params, **kwargs):
+    """Creates the KNNBaseline ALS predictor.
+
+    Args:
+        name(str): the name of the algorithm.
+        params(dict): with the entries:
+            k,
+            min_k,
+            user_based,
+            min_support,
+            reg_i,
+            reg_u,
+            epochs
+
+    Returns:
+        (SurprisePredictor) wrapper of KNNBaseline with method 'als'.
+    """
+    algo = KNNBaseline(
+        k=params['k'],
+        min_k=params['min_k'],
+        bsl_options={
+            'name': 'als',
+            'reg_i': params['reg_i'],
+            'reg_u': params['reg_u'],
+            'n_epochs': params['epochs']
+        },
+        sim_options={
+            'name': 'pearson_baseline',
+            'user_based': params['user_based'],
+            'min_support': params['min_support']
+        },
+        verbose=False
+    )
+
+    return SurprisePredictor(algo, name, params, **kwargs)
+
+
+def _create_recommender_knn_baseline_als(name, params, **kwargs):
+    predictor = _create_predictor_knn_baseline_als(name, params, **kwargs)
+    return TopK(predictor, **kwargs)
+
+
+def _create_predictor_knn_baseline_sgd(name, params, **kwargs):
+    """Creates the KNNBaseline SGD predictor.
+
+    Args:
+        name(str): the name of the algorithm.
+        params(dict): with the entries:
+            k,
+            min_k,
+            user_based,
+            min_support,
+            regularization,
+            learning_rate,
+            epochs
+
+    Returns:
+        (SurprisePredictor) wrapper of KNNBaseline with method 'sgd'.
+    """
+    algo = KNNBaseline(
+        k=params['k'],
+        min_k=params['min_k'],
+        bsl_options={
+            'method': 'sgd',
+            'reg': params['regularization'],
+            'learning_rate': params['learning_rate'],
+            'n_epochs': params['epochs']
+         },
+        sim_options={
+            'name': 'pearson_baseline',
+            'user_based': params['user_based'],
+            'min_support': params['min_support']
+        },
+        verbose=False
+    )
+
+    return SurprisePredictor(algo, name, params, **kwargs)
+
+
+def _create_recommender_knn_baseline_sgd(name, params, **kwargs):
+    predictor = _create_predictor_knn_baseline_sgd(name, params, **kwargs)
+    return TopK(predictor, **kwargs)
+
+
+def _create_predictor_knn_with_means(name, params, **kwargs):
+    """Creates the KNNWithMeans predictor.
+
+    Args:
+        name(str): the name of the algorithm.
+        params(dict): with the entries:
+            k,
+            min_k,
+            similarity,
+            user_based,
+            min_support
+
+    Returns:
+        (SurprisePredictor) wrapper of KNNWithMeans.
+    """
+    algo = KNNWithMeans(
+        k=params['k'],
+        min_k=params['min_k'],
+        sim_options={
+            'name': params['similarity'],
+            'user_based': params['user_based'],
+            'min_support': params['min_support']
+        },
+        verbose=False
+    )
+
+    return SurprisePredictor(algo, name, params, **kwargs)
+
+
+def _create_recommender_knn_with_means(name, params, **kwargs):
+    predictor = _create_predictor_knn_with_means(name, params, **kwargs)
+    return TopK(predictor, **kwargs)
+
+
+def _create_predictor_knn_with_zscore(name, params, **kwargs):
+    """Creates the KNNWithZScore predictor.
+
+    Args:
+        name(str): the name of the algorithm.
+        params(dict): with the entries:
+            k,
+            min_k,
+            similarity,
+            user_based,
+            min_support
+
+    Returns:
+        (SurprisePredictor) wrapper of KNNWithZScore.
+    """
+    algo = KNNWithZScore(
+        k=params['k'],
+        min_k=params['min_k'],
+        sim_options={
+            'name': params['similarity'],
+            'user_based': params['user_based'],
+            'min_support': params['min_support']
+        },
+        verbose=False
+    )
+
+    return SurprisePredictor(algo, name, params, **kwargs)
+
+
+def _create_recommender_knn_with_zscore(name, params, **kwargs):
+    predictor = _create_predictor_knn_with_zscore(name, params, **kwargs)
     return TopK(predictor, **kwargs)
 
 

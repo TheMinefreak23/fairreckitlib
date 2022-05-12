@@ -66,6 +66,7 @@ class ImplicitRecommender(Recommender):
         num_users = len(users)
         for i in range(num_users):
             result = result.append(pd.DataFrame({
+                'rank': np.arange(1, 1 + num_items),
                 'user': np.full(num_items, users[i]),
                 'item': items[i],
                 'score': scores[i]
