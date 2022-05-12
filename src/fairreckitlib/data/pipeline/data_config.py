@@ -7,7 +7,7 @@ Utrecht University within the Software Project course.
 from dataclasses import dataclass
 from typing import Any
 
-from ..ratings.base_modifier import DataModifier
+from ..ratings.base_converter import RatingConverter
 
 KEY_DATASETS = 'datasets'
 KEY_DATA_FILTERS = 'filters'
@@ -28,5 +28,5 @@ class DatasetConfig:
 
     name: str
     prefilters: []
-    rating_modifier: DataModifier
+    rating_converter: RatingConverter
     splitting: SplitConfig

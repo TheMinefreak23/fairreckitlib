@@ -7,38 +7,40 @@ Utrecht University within the Software Project course.
 from abc import ABCMeta, abstractmethod
 
 
-class DataModifier(metaclass=ABCMeta):
+class RatingConverter(metaclass=ABCMeta):
+    """Base class for FairRecKit rating converters.
 
+    A converter is used to convert ratings of a dataframe.
+    """
     def __init__(self, name, params):
         self.__name = name
-        self.__params = params
+        self.params = params
 
     def get_name(self):
-        """Gets the name of the modifier.
+        """Gets the name of the converter.
 
         Returns:
-            (str) the modifier name.
+            (str) the converter name.
         """
         return self.__name
 
     def get_params(self):
-        """Get the parameters of the modifier.
+        """Get the parameters of the converter.
 
         Returns:
-            (dict) with the modifier parameters.
+            (dict) with the converter parameters.
         """
-        return dict(self.__params)
+        return dict(self.params)
 
     @abstractmethod
-    def run(self, dataframe, rating_type):
-        """Runs the modifier on the specified dataframe.
+    def run(self, dataframe):
+        """Runs the converter on the specified dataframe.
 
         Args:
             dataframe(pandas.DataFrame): with at least the 'rating' column.
-            rating_type(str): the type of rating, either 'explicit' or 'implicit'.
 
         Returns:
-            dataframe(pandas.DataFrame): the modified dataframe.
-            rating_type(str): the modified type of rating, either 'explicit' or 'implicit'.
+            dataframe(pandas.DataFrame): the converter dataframe.
+            rating_type(str): the converted type of rating, either 'explicit' or 'implicit'.
         """
         raise NotImplementedError()

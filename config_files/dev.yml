@@ -1,13 +1,11 @@
 datasets:
 - name: ML-100K
   splitting:
-    name: random
     test_ratio: 0.2
+    name: random
 models:
   Implicit:
   - name: AlternatingLeastSquares
-  - name: BayesianPersonalizedRanking
-  - name: LogisticMatrixFactorization
-name: Recommenders_Implicit
+name: 123129832083_Dev
 top_K: 10
 type: recommendation

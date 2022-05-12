@@ -4,7 +4,9 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from .model_pipeline import ModelPipeline
+import pandas as pd
+
+from .model_pipeline import ModelPipeline, write_computed_ratings
 
 
 class RecommendationPipeline(ModelPipeline):
@@ -12,6 +14,9 @@ class RecommendationPipeline(ModelPipeline):
 
     The topK item recommendations will be computed for each user that is present in the test set.
     """
+
+    def get_ratings_dataframe(self):
+        return pd.concat([self.train_set, self.test_set])
 
     def test_model_ratings(self, model, output_path, batch_size, is_running, **kwargs):
         test_users = self.test_set.user.unique()
@@ -22,5 +27,8 @@ class RecommendationPipeline(ModelPipeline):
 
             user_batch = test_users[start_index : start_index + batch_size]
             recommendations = model.recommend_batch(user_batch, num_items=kwargs['num_items'])
-            recommendations.to_csv(output_path, mode='a', sep='\t', header=False, index=False)
+            if not is_running():
+                return
+
+            write_computed_ratings(output_path, recommendations, start_index==0)
             start_index += batch_size

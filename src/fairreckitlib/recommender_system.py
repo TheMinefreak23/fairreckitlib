@@ -3,7 +3,7 @@ This program has been developed by students from the bachelor Computer Science a
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
-
+import errno
 import os
 
 from .core.event_io import get_io_events
@@ -11,7 +11,7 @@ from .core.threading.thread_processor import ThreadProcessor
 from .data.data_factory import KEY_DATASETS
 from .data.pipeline.data_event import get_data_events
 from .data.set.dataset_registry import DataRegistry
-from .data.ratings.rating_modifier_factory import KEY_RATING_MODIFIER
+from .data.ratings.rating_converter_factory import KEY_RATING_CONVERTER
 from .data.split.split_factory import KEY_SPLITTING
 from .evaluation.evaluation_factory import KEY_EVALUATION
 from .evaluation.pipeline.evaluation_event import get_evaluation_events
@@ -52,11 +52,13 @@ class RecommenderSystem:
         """Runs an experiment with the specified configuration.
 
         Args:
-            events(list(tuple)): the external events to dispatch during the experiment.
+            events(dict): the external events to dispatch during the experiment.
+            verbose(bool): whether the internal events should give verbose output.
             config(ExperimentConfig): the configuration of the experiment.
             num_threads(int): the max number of threads the experiment can use.
             validate_config(bool): whether to validate the configuration beforehand.
         """
+
         result_dir = os.path.join(self.result_dir, config.name)
         if os.path.isdir(result_dir):
             raise IOError('Result already exists: ' + result_dir)
@@ -74,10 +76,12 @@ class RecommenderSystem:
 
         self.start_thread_experiment(events, result_dir, config, num_threads, verbose)
 
-    def run_experiment_from_yml(self, file_path, verbose=True, num_threads=0):
+    def run_experiment_from_yml(self, events, file_path, verbose=True, num_threads=0):
         """Runs an experiment from a yml file.
 
         Args:
+            events(dict): the external events to dispatch during the experiment.
+            verbose(bool): whether the internal events should give verbose output.
             file_path(str): path to the yml file without extension.
             num_threads(int): the max number of threads the experiment can use.
         """
@@ -89,9 +93,10 @@ class RecommenderSystem:
             if config is None:
                 return
         except FileNotFoundError:
+            raise FileNotFoundError(errno.ENOENT, 'Config file not found', file_path)
             return
 
-        self.run_experiment(config, num_threads=num_threads, validate_config=False)
+        self.run_experiment(events, config, num_threads=num_threads, verbose=verbose, validate_config=False)
 
     def validate_experiment(self, events, result_dir, num_runs, num_threads=0, verbose=True):
         """Validates an experiment for an additional number of runs.
@@ -177,8 +182,8 @@ class RecommenderSystem:
         """
         return self.__get_factory_sub_availability(KEY_EVALUATION, eval_type)
 
-    def get_available_rating_modifiers(self):
-        return self.__get_factory_sub_availability(KEY_DATASETS, sub_type=KEY_RATING_MODIFIER)
+    def get_available_rating_converters(self):
+        return self.__get_factory_sub_availability(KEY_DATASETS, sub_type=KEY_RATING_CONVERTER)
 
     def get_available_splitters(self):
         """Gets the available data splitters of the recommender system.
