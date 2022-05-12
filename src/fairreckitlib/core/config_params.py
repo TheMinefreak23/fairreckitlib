@@ -338,7 +338,7 @@ class ConfigParameters:
 
 
 def create_bool_param(name, default_value):
-    """ Creates a boolean option parameter.
+    """Creates a boolean option parameter.
 
     Args:
         name(str): name of the boolean parameter.
@@ -350,6 +350,6 @@ def create_bool_param(name, default_value):
     return ConfigOptionParam(name, bool, default_value, [True, False])
 
 
-def get_empty_parameters():
-    """Gets the Config parameters with no entries."""
+def create_empty_parameters():
+    """Create the Config parameters with no entries."""
     return ConfigParameters()

@@ -12,6 +12,7 @@ import time
 from ...core.event_io import ON_MAKE_DIR
 from ..set.dataset import Dataset
 from ..split.split_factory import KEY_SPLITTING
+from ..ratings.rating_converter_factory import KEY_RATING_CONVERTER, CONVERTER_RANGE, CONVERTER_KL
 from .data_event import ON_BEGIN_DATA_PIPELINE, ON_END_DATA_PIPELINE
 from .data_event import ON_BEGIN_LOAD_DATASET, ON_END_LOAD_DATASET
 from .data_event import ON_BEGIN_FILTER_DATASET, ON_END_FILTER_DATASET
@@ -86,9 +87,7 @@ class DataPipeline(metaclass=ABCMeta):
             return None
 
         # step 3
-        dataframe = self.convert_ratings(dataframe, data_config.rating_modifier)
-        # TODO this needs to be dynamically retrieved after modifying ratings
-        rating_type = dataset.get_matrix_info('rating_type')
+        dataframe, rating_type = self.convert_ratings(dataset, dataframe, data_config.rating_converter)
         if not is_running():
             return None
 
@@ -208,36 +207,37 @@ class DataPipeline(metaclass=ABCMeta):
 
         return dataframe
 
-    def convert_ratings(self, dataframe, rating_modifier):
+    def convert_ratings(self, dataset, dataframe, rating_converter):
         """Converts the ratings in the dataframe with the specified rating modifier.
 
         Args:
-            dataframe(pandas.DataFrame): the dataset to convert the ratings for.
+            dataset(Dataset): the dataset to load the matrix and rating_type from.
+            dataframe(pandas.DataFrame): the dataframe to convert the ratings of.
                 At the least a 'rating' column is expected to be present.
-            rating_modifier(object): the modifier to apply to the 'rating' column.
+            rating_converter(RatingConverter): the converter to apply to the 'rating' column.
 
         Returns:
             dataframe(pandas.DataFrame): with the modified 'rating' column.
         """
-        if rating_modifier is None:
-            return dataframe
+        if rating_converter is None:
+            return dataframe, dataset.get_matrix_info('rating_type')
 
         self.event_dispatcher.dispatch(
             ON_BEGIN_MODIFY_DATASET,
-            rating_modifier=rating_modifier
+            rating_converter=rating_converter
         )
 
         start = time.time()
-        # TODO convert the ratings of the dataset
+        dataframe, rating_type = rating_converter.run(dataframe)
         end = time.time()
 
         self.event_dispatcher.dispatch(
             ON_END_MODIFY_DATASET,
-            rating_modifier=rating_modifier,
+            rating_converter=rating_converter,
             elapsed_time=end - start
         )
 
-        return dataframe
+        return dataframe, rating_type
 
     def split(self, dataframe, split_config):
         """Splits the dataframe into a train and test set.

@@ -6,6 +6,9 @@ Utrecht University within the Software Project course.
 
 import os
 
+import numpy as np
+import pandas as pd
+
 from ...core.event_io import ON_MAKE_DIR, ON_REMOVE_DIR, ON_RENAME_FILE, ON_REMOVE_FILE
 from ...data.utility import save_yml
 from .model_pipeline import RATING_OUTPUT_FILE
@@ -14,20 +17,22 @@ from .recommendation_pipeline import RecommendationPipeline
 
 class RecommendationPipelineElliot(RecommendationPipeline):
     """Recommendation Pipeline implementation for the Elliot framework."""
+
     def __init__(self, factory, event_dispatcher):
         RecommendationPipeline.__init__(self, factory, event_dispatcher)
         self.train_set_path = None
         self.test_set_path = None
 
     def load_train_and_test_set(self, train_set_path, test_set_path):
-        # the loading is done by the Elliot framework
-        # storing both paths instead for later use
-        self.train_set_path = os.path.join('../../pipelines', '..', 'train_set.tsv')
-        self.test_set_path = os.path.join('../../pipelines', '..', 'test_set.tsv')
+        # the loading is done by the Elliot framework, delay until after it is done.
+        self.train_set_path = train_set_path
+        self.test_set_path = test_set_path
 
     def train_and_test_model(self, model, model_dir, is_running, **kwargs):
         params = model.get_params()
         params['meta'] = {'verbose': False, 'save_recs': True, 'save_weights': False}
+
+        top_k = kwargs['num_items']
 
         temp_dir = self.__create_temp_dir(model_dir)
         yml_path = os.path.join(temp_dir, 'config.yml')
@@ -37,10 +42,10 @@ class RecommendationPipelineElliot(RecommendationPipeline):
                 'dataset': 'df',
                 'data_config': {
                     'strategy': 'fixed',
-                    'train_path': self.train_set_path,
-                    'test_path': self.test_set_path,
+                    'train_path': os.path.join('..', '..', 'train_set.tsv'),
+                    'test_path': os.path.join('..', '..', 'test_set.tsv'),
                 },
-                'top_k': kwargs['num_items'],
+                'top_k': top_k,
                 'models': {
                     model.get_name(): params
                 },
@@ -64,7 +69,17 @@ class RecommendationPipelineElliot(RecommendationPipeline):
             # remove everything so that only the final epochs file remains
             self.__clear_unused_epochs(params['epochs'], model_dir)
 
-        self.__rename_result(model_dir)
+        result_file_path = self.__reconstruct_rank_column(model_dir, top_k)
+
+        # load the train and test set now the elliot framework is done
+        RecommendationPipeline.load_train_and_test_set(
+            self,
+            self.train_set_path,
+            self.test_set_path
+        )
+
+        return result_file_path
+
 
     def __create_temp_dir(self, model_dir):
         """Creates a temp directory to store unnecessary artifacts.
@@ -135,11 +150,53 @@ class RecommendationPipelineElliot(RecommendationPipeline):
                     file=file_path
                 )
 
+    def __reconstruct_rank_column(self, model_dir, top_k):
+        """Reconstruct the rank column in the result file that the framework generated.
+
+        Args:
+            model_dir(str): the directory where the computed ratings are stored.
+            top_k(int): the topK that was used to compute the ratings.
+
+        Returns:
+            result_file_path(str): the path to the computed ratings file.
+        """
+
+        result_file_path = self.__rename_result(model_dir)
+        result = pd.read_csv(
+            result_file_path,
+            sep='\t',
+            header=None,
+            names=['user', 'item', 'score']
+        )
+
+        # create topK ranking array
+        row_count = len(result)
+        ranks = np.zeros(row_count)
+        for i in range(row_count):
+            ranks[i] = i % top_k + 1
+
+        # add rank column
+        result['rank'] = ranks
+        result['rank'] = result['rank'].astype(int)
+
+        # overwrite result
+        result[['rank', 'user', 'item', 'score']].to_csv(
+            result_file_path,
+            sep='\t',
+            header=True,
+            index=False
+        )
+
+        return result_file_path
+
     def __rename_result(self, model_dir):
         """Renames the computed ratings file to be consistent.
 
         Args:
             model_dir(str): the directory where the computed ratings are stored.
+
+        Returns:
+            dst_path(str): the file path of the result after renaming.
         """
         for file in os.listdir(model_dir):
             file_name = os.fsdecode(file)
@@ -156,3 +213,5 @@ class RecommendationPipelineElliot(RecommendationPipeline):
                 src_file=src_path,
                 dst_file=dst_path
             )
+
+            return dst_path

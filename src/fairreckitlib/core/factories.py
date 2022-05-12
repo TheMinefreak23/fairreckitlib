@@ -5,25 +5,52 @@ Utrecht University within the Software Project course.
 """
 
 from abc import ABCMeta, abstractmethod
+from typing import Any, Callable, Dict, List, Tuple
 
 from .config_constants import KEY_NAME, KEY_PARAMS
-from .config_params import get_empty_parameters
+from .config_params import ConfigParameters, create_empty_parameters
 
 FUNC_CREATE_OBJ = 'f_create_obj'
 FUNC_CREATE_PARAMS = 'f_create_params'
 
 
 class BaseFactory(metaclass=ABCMeta):
+    """Base class for all FairRecKit experiment factories.
 
-    def __init__(self, factory_name):
+    The abstraction is intended to support functionality for a tree-like structure.
+    The actual factory is a leaf and a group of factories that belong together a branch.
+
+    Public methods:
+
+    get_available
+    get_available_names
+    get_name
+    is_available
+    """
+
+    def __init__(self, factory_name: str):
+        """Construct the base factory.
+
+        Args:
+            factory_name: the name of the factory.
+        """
         self.factory_name = factory_name
         self.factory = {}
 
     @abstractmethod
-    def get_available(self):
+    def get_available(self) -> Any:
+        """Get the available objects in the factory.
+
+        The availability return type depends on the derived class.
+        """
         raise NotImplementedError()
 
-    def get_available_names(self):
+    def get_available_names(self) -> List[str]:
+        """Get the names that are available in the factory.
+
+        Returns:
+            a list of names that is available.
+        """
         result = []
 
         for name, _ in self.factory.items():
@@ -31,30 +58,87 @@ class BaseFactory(metaclass=ABCMeta):
 
         return result
 
-    def get_name(self):
+    def get_name(self) -> str:
+        """Get the name of the factory.
+
+        Returns:
+            the factory name.
+        """
         return self.factory_name
 
+    def get_num_entries(self) -> int:
+        """Get the number of entries present in the factory.
+
+        Returns:
+            the amount of entries.
+        """
+        return len(self.factory)
+
     @abstractmethod
-    def is_available(self, obj_name):
+    def is_obj_available(self, obj_name: str) -> bool:
+        """Is the object with the specified name available.
+
+        Args:
+            obj_name: the name of the object to query for availability.
+
+        Returns:
+            whether the object is available.
+        """
         raise NotImplementedError()
 
 
 class Factory(BaseFactory):
+    """The factory that implements object and parameters creation.
 
-    def add(self, obj_name, func_create_obj, func_create_obj_params=None):
+    Public methods:
+
+    add_obj
+    create
+    create_params
+    """
+
+    def add_obj(self,
+                obj_name: str,
+                func_create_obj: Callable[[str, ConfigParameters, Dict[str, Any]], Any],
+                func_create_obj_params: Callable[[], ConfigParameters]=None
+                ) -> None:
+        """Add object with associated parameter creation to the factory.
+
+        Parameter creation is optional and should be None if the object has no parameters.
+        A key error is raised when the obj_name is present in the factory.
+
+        Args:
+            obj_name: the name of the object
+            func_create_obj: the function that creates and returns a new object.
+            func_create_obj_params: the function that creates and returns the parameters
+                that are associated with a newly created object.
+        """
         if obj_name in self.factory:
             raise KeyError('Factory ' + self.factory_name,
-                           ': obj already exists: ' + obj_name)
+                           ': object already exists: ' + obj_name)
 
         if func_create_obj_params is None:
-            func_create_obj_params = get_empty_parameters
+            func_create_obj_params = create_empty_parameters
 
         self.factory[obj_name] = {
             FUNC_CREATE_OBJ: func_create_obj,
             FUNC_CREATE_PARAMS: func_create_obj_params
         }
 
-    def create(self, obj_name, obj_params=None, **kwargs):
+    def create(self, obj_name: str, obj_params: Dict[str, Any]=None, **kwargs) -> Any:
+        """Create and return a new object with the specified name.
+
+        The specified parameters are expected to be of the same structure as the defaults
+        of the ConfigParameters that are associated with the desired object. When no parameters
+        are specified it will use the object's defaults.
+
+        Args:
+            obj_name: the name of the object to create.
+            obj_params: the parameters of the object.
+
+        Keyword Args:
+            Any: extra arguments that need to be passed to the object on creation.
+        """
         if obj_name not in self.factory:
             return None
 
@@ -64,13 +148,30 @@ class Factory(BaseFactory):
 
         return func_create_obj(obj_name, dict(obj_params), **kwargs)
 
-    def create_params(self, obj_name):
+    def create_params(self, obj_name: str) -> ConfigParameters:
+        """Create parameters for the object with the specified name.
+
+        Args:
+            obj_name: name of the object to create parameters for.
+
+        Returns:
+            the configuration parameters of the object or empty parameters when it does not exist.
+        """
         if obj_name not in self.factory:
-            return get_empty_parameters()
+            return create_empty_parameters()
 
         return self.factory[obj_name][FUNC_CREATE_PARAMS]()
 
-    def get_available(self):
+    def get_available(self) -> List[Dict[str, Dict[str, Any]]]:
+        """Get the availability of all object names and their parameters.
+
+        override
+        Each object in the factory has a name and parameters that consists of
+        a dictionary with name-value pairs.
+
+        Returns:
+            a list of dictionary entries that includes the name and the parameters.
+        """
         obj_list = []
 
         for obj_name, entry in self.factory.items():
@@ -82,32 +183,47 @@ class Factory(BaseFactory):
 
         return obj_list
 
-    def is_available(self, obj_name):
+    def is_obj_available(self, obj_name: str) -> bool:
         return obj_name in self.factory is not None
 
 
 class GroupFactory(BaseFactory):
+    """The factory that groups other factories together.
 
-    def add_factory(self, factory):
+    Public methods:
+
+    add_factory
+    get_factory
+    """
+
+    def add_factory(self, factory: BaseFactory) -> None:
+        """Add the specified factory to the group.
+
+        The name of the factory is used as the key, and thus it will raise a
+        KeyError when the name of the factory already exists in the group.
+
+        Args:
+            factory: to add to the group.
+        """
         factory_name = factory.get_name()
         if factory_name in self.factory:
-            raise KeyError()
+            raise KeyError('Factory ' + self.factory_name,
+                           ': factory already exists: ' + factory_name)
 
         self.factory[factory_name] = factory
 
-    def create(self, factory_name, obj_name, obj_params=None, **kwargs):
-        if factory_name not in self.factory:
-            return None
+    def get_available(self) -> Dict[str, Any]:
+        """Get the availability of all factories in the group.
 
-        return self.factory[factory_name].create(obj_name, obj_params, **kwargs)
+        override
 
-    def create_params(self, factory_name, obj_name):
-        if factory_name not in self.factory:
-            return get_empty_parameters()
+        Each factory has a name and availability that depends on the
+        type of the factory. Effectively this will generate a tree-like
+        structure of the factory's availability.
 
-        return self.factory[factory_name].create_params(obj_name)
-
-    def get_available(self):
+        Returns:
+            a dictionary with factory name and availability pairs.
+        """
         factory_list = {}
 
         for factory_name, factory in self.factory.items():
@@ -115,23 +231,49 @@ class GroupFactory(BaseFactory):
 
         return factory_list
 
-    def get_factory(self, factory_name):
+    def get_factory(self, factory_name: str) -> BaseFactory:
+        """Get the factory with the specified name.
+
+        Args:
+            factory_name: the name of the factory to retrieve
+
+        Returns:
+            the requested factory or None when not available.
+        """
         return self.factory.get(factory_name)
 
-    def is_available(self, obj_name):
+    def is_obj_available(self, obj_name: str) -> bool:
         for _, factory in self.factory.items():
-            if factory.is_available(obj_name):
+            if factory.is_obj_available(obj_name):
                 return True
 
         return False
 
 
-def create_factory_from_list(factory_name, obj_tuple_list):
+def create_factory_from_list(
+        factory_name: str,
+        obj_tuple_list: List[Tuple[
+            str,
+            Callable[[str, ConfigParameters, Dict[str, Any]], Any],
+            Callable[[], ConfigParameters]
+        ]]) -> Factory:
+    """Create and return the factory with the specified tuple entries.
+
+    Each tuple in the list consists of three things; the name of the object,
+    the object creation function and the parameter creation function.
+
+    Args:
+        factory_name: the name of the factory to create.
+        obj_tuple_list: a list of object tuples to add after factory creation.
+
+    Returns:
+        the factory with the added objects.
+    """
     factory = Factory(factory_name)
 
     for _, obj in enumerate(obj_tuple_list):
         (obj_name, func_create_obj, func_create_obj_params) = obj
-        factory.add(
+        factory.add_obj(
             obj_name,
             func_create_obj,
             func_create_obj_params

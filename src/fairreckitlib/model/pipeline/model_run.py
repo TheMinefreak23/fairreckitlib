@@ -33,9 +33,6 @@ def run_model_pipelines(output_dir, data_transition, model_factory,
     model_dirs = []
 
     for api_name, models in models_config.items():
-        if not is_running():
-            return None
-
         api_factory = model_factory.get_factory(api_name)
         if api_factory is None:
             # TODO log this
@@ -55,5 +52,8 @@ def run_model_pipelines(output_dir, data_transition, model_factory,
             continue
 
         model_dirs += dirs
+
+        if not is_running():
+            return None
 
     return model_dirs

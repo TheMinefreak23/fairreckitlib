@@ -4,7 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from .model_pipeline import ModelPipeline
+from .model_pipeline import ModelPipeline, write_computed_ratings
 
 
 class PredictionPipeline(ModelPipeline):
@@ -12,6 +12,9 @@ class PredictionPipeline(ModelPipeline):
 
     The (user,item) prediction will be computed and for each pair that is present in the test set.
     """
+
+    def get_ratings_dataframe(self):
+        return self.test_set
 
     def test_model_ratings(self, model, output_path, batch_size, is_running, **kwargs):
         start_index = 0
@@ -21,5 +24,8 @@ class PredictionPipeline(ModelPipeline):
 
             user_batch = self.test_set[start_index : start_index + batch_size]
             predictions = model.predict_batch(user_batch)
-            predictions.to_csv(output_path, mode='a', sep='\t', header=False, index=False)
+            if not is_running():
+                return
+
+            write_computed_ratings(output_path, predictions, start_index==0)
             start_index += batch_size
