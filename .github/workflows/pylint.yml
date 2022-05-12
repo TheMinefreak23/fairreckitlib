@@ -1,4 +1,4 @@
-name: Full Pylint
+name: Pylint
 
 on:
   workflow_dispatch:
