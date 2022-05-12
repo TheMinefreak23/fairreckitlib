@@ -14,7 +14,7 @@ class RatingConverter(metaclass=ABCMeta):
     """
     def __init__(self, name, params):
         self.__name = name
-        self.__params = params
+        self.params = params
 
     def get_name(self):
         """Gets the name of the converter.
@@ -30,7 +30,7 @@ class RatingConverter(metaclass=ABCMeta):
         Returns:
             (dict) with the converter parameters.
         """
-        return dict(self.__params)
+        return dict(self.params)
 
     @abstractmethod
     def run(self, dataframe):

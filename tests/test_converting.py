@@ -26,12 +26,13 @@ dfs = [('ml_100k', df_ml_100k)
 
 
 
-converter = rating_converter_factory.create_rating_converter_factory().create(rating_converter_factory.CONVERTER_RANGE)
+converter_factory = rating_converter_factory.create_rating_converter_factory()
 data_pipeline = DataPipeline(None, None)
 rating_modifier = 5
 
 def test_convert_classes():
     """Tests if the created variables are in fact of that class."""
+    converter = converter_factory.create(rating_converter_factory.CONVERTER_RANGE)
     assert isinstance(converter, range_converter.RangeConverter)
 
 @pytest.mark.parametrize('data', dfs)
@@ -49,8 +50,10 @@ def test_apc_alc(data):
 
 def test_to_explicit(data):
     """Tests if the ratings are converted to an explicit range of [0,1]"""
+    converter_params = {'upper_bound': rating_modifier}
+    converter = converter_factory.create(rating_converter_factory.CONVERTER_RANGE, converter_params)
     (df_name, df) = data
-    (converted_df, rating_type) = converter.run(df, rating_modifier)
+    (converted_df, rating_type) = converter.run(df)
     for _, row in converted_df.iterrows():
         assert 0 < row['rating'] <= rating_modifier, \
             'Rating {0} should be 0<x<{1} : {2}'.format(row['rating'], str(rating_modifier), df_name)

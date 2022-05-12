@@ -11,7 +11,7 @@ from .core.threading.thread_processor import ThreadProcessor
 from .data.data_factory import KEY_DATASETS
 from .data.pipeline.data_event import get_data_events
 from .data.set.dataset_registry import DataRegistry
-from .data.ratings.rating_converter_factory import KEY_RATING_MODIFIER
+from .data.ratings.rating_converter_factory import KEY_RATING_CONVERTER
 from .data.split.split_factory import KEY_SPLITTING
 from .evaluation.evaluation_factory import KEY_EVALUATION
 from .evaluation.pipeline.evaluation_event import get_evaluation_events
@@ -177,8 +177,8 @@ class RecommenderSystem:
         """
         return self.__get_factory_sub_availability(KEY_EVALUATION, eval_type)
 
-    def get_available_rating_modifiers(self):
-        return self.__get_factory_sub_availability(KEY_DATASETS, sub_type=KEY_RATING_MODIFIER)
+    def get_available_rating_converters(self):
+        return self.__get_factory_sub_availability(KEY_DATASETS, sub_type=KEY_RATING_CONVERTER)
 
     def get_available_splitters(self):
         """Gets the available data splitters of the recommender system.

@@ -14,5 +14,6 @@ class KLConverter(RatingConverter):
     """
 
     def run(self, dataframe):
+        method = self.params['method']
         # TODO apply kullback-leibler formula on the rating column. Needs APC/ALC arg.
         raise NotImplementedError()

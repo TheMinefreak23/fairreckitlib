@@ -38,7 +38,7 @@ def _create_range_converter_params():
     return params
 
 
-def _create_kl_converter(name, params, **kwargs):
+def _create_kl_converter(name, params):
     return KLConverter(name, params)
 
 
