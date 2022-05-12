@@ -65,6 +65,9 @@ class ModelPipeline(metaclass=ABCMeta):
             result_dirs(array like): list of model directories
                 where computation results are stored.
         """
+        if not is_running():
+            return None
+
         self.event_dispatcher.dispatch(
             ON_BEGIN_MODEL_PIPELINE,
             api_name=self.algo_factory.get_name(),
@@ -133,7 +136,17 @@ class ModelPipeline(metaclass=ABCMeta):
             rated_items_filter=kwargs.get('rated_items_filter'),
             num_threads=kwargs['num_threads']
         )
-        self.train_and_test_model(model, model_dir, is_running, **kwargs)
+        if not is_running():
+            return None
+
+        result_file_path = self.train_and_test_model(model, model_dir, is_running, **kwargs)
+        if not is_running():
+            return None
+
+        self.reconstruct_ratings(result_file_path)
+        if not is_running():
+            return None
+
         self.end_model(model, start)
 
         return model_dir
@@ -226,6 +239,15 @@ class ModelPipeline(metaclass=ABCMeta):
             elapsed_time=end - start
         )
 
+    @abstractmethod
+    def get_ratings_dataframe(self):
+        """Get the dataframe that contains the original ratings.
+
+        Returns:
+            (pandas.DataFrame): containing the 'user', 'item', 'rating', columns.
+        """
+        raise NotImplementedError()
+
     def load_test_set(self, test_set_path):
         """Loads the test set that all models can use for testing.
 
@@ -290,6 +312,17 @@ class ModelPipeline(metaclass=ABCMeta):
         self.load_train_set(train_set_path)
         self.load_test_set(test_set_path)
 
+    def reconstruct_ratings(self, result_file_path):
+        """Reconstruct the original ratings in the specified result file.
+
+        Args:
+            result_file_path(str): path to the file that needs the ratings to be added.
+
+        """
+        result = pd.read_csv(result_file_path, sep='\t')
+        result = pd.merge(result, self.get_ratings_dataframe(), how='left', on=['user', 'item'])
+        result.to_csv(result_file_path, sep='\t', header=True, index=False)
+
     def write_settings_file(self, settings_dir, model_params):
         """Write model params in settings file in the model's result directory.
 
@@ -330,9 +363,10 @@ class ModelPipeline(metaclass=ABCMeta):
 
         start = time.time()
 
+        result_file_path = os.path.join(model_dir, RATING_OUTPUT_FILE)
         self.test_model_ratings(
             model,
-            os.path.join(model_dir, RATING_OUTPUT_FILE),
+            result_file_path,
             MODEL_USER_BATCH_SIZE,
             is_running,
             **kwargs
@@ -346,6 +380,8 @@ class ModelPipeline(metaclass=ABCMeta):
             test_set=self.test_set,
             elapsed_time=end - start
         )
+
+        return result_file_path
 
     @abstractmethod
     def test_model_ratings(self, model, output_path, batch_size, is_running, **kwargs):
@@ -402,6 +438,18 @@ class ModelPipeline(metaclass=ABCMeta):
         """
         self.train_model(model)
         if not is_running():
-            return
+            return None
 
-        self.test_model(model, model_dir, is_running, **kwargs)
+        return self.test_model(model, model_dir, is_running, **kwargs)
+
+
+def write_computed_ratings(output_path, ratings, header):
+    """Append the ratings to the file specified by the output path.
+
+    Args:
+        output_path(str): path to the file where the ratings are appended to.
+        ratings(pd.DataFrame): the ratings dataframe that needs to be appended.
+        header(bool): whether to write the header as the first line.
+
+    """
+    ratings.to_csv(output_path, mode='a', sep='\t', header=header, index=False)
