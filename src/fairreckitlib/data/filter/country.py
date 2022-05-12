@@ -8,7 +8,7 @@ from .base import DataFilter
 
 
 class CountryFilter(DataFilter):
-    """Filters the dataframe on country, if such a column exists."""
+    """Filters the dataframe on country, if such column exists."""
     def __init__(self, df):
         self.df = df
     
