@@ -1,0 +1,11 @@
+datasets:
+- name: ML-100K
+  splitting:
+    test_ratio: 0.2
+    name: random
+models:
+  Implicit:
+  - name: AlternatingLeastSquares
+name: 123129832083_Dev
+top_K: 10
+type: recommendation
