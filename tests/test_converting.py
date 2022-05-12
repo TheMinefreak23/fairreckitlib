@@ -13,7 +13,7 @@ from src.fairreckitlib.data.set import dataset_registry
 # this already has headers
 # [user, item, artistname, rating]
 df_lfm360k_sample = pd.read_csv(
-    '.tests/datasets/sample/lfm-360k-sample.tsv', delimiter='\t')
+    './tests/datasets/sample/lfm-360k-sample.tsv', delimiter='\t')
 
 datasets = dataset_registry.DataRegistry('tests/datasets')
 set_ml_100k = datasets.get_set('ML-100K')
