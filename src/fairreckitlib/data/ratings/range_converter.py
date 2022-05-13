@@ -4,6 +4,8 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+import pandas as pd
+
 from ..set.dataset import DATASET_RATINGS_EXPLICIT, DATASET_RATINGS_IMPLICIT
 from .base_converter import RatingConverter
 
@@ -14,8 +16,8 @@ class RangeConverter(RatingConverter):
     Converts the rating column of the dataframe to a specified range.
     """
 
-    def run(self, dataframe):
-        """Converts ratings in the dataframe.
+    def run(self, dataframe: pd.DataFrame) -> tuple[pd.DataFrame, str]:
+        """Convert ratings in the dataframe.
 
         Takes the max value and divides all values so
         they all fall within a range of [0,1], unless another upper
@@ -23,10 +25,11 @@ class RangeConverter(RatingConverter):
         also be multiplied by a scalar, eg when an implicit rating is needed.
 
         Args:
-            dataframe(pandas.DataFrame): a df that should contain a 'rating' header.
+            dataframe: a df that should contain a 'rating' header.
 
         Returns:
-            dataframe(pandas.DataFrame): with the converted rating values.
+            dataframe with the converted rating values.
+            (str) new rating_type.
         """
         upper_bound = self.params['upper_bound']
         max_rating = dataframe.max()['rating']
