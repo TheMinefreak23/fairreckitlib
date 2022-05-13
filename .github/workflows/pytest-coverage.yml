@@ -14,9 +14,23 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        
       - name: Install Python
         uses: actions/setup-python@v3
         with:
-          cache: 'pip'
+          python-version: 3.8
+        
+      - name: Setup cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.pythonLocation }}
+          key: ${{ env.pythonLocation }}-${{ hashFiles('setup.py') }}-${{ hashFiles('requirements.txt') }}
+          
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest-cov
+        
       - name: Run tests and coverage
-        uses: lpenz/ghaction-pytest-cov@v1
+        run: pytest --cov
