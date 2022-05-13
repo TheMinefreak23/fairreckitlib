@@ -4,15 +4,6 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from dataclasses import dataclass
-from typing import Any, Dict
-
-KEY_MODELS = 'models'
-
-
-@dataclass
-class ModelConfig:
-    """Model Configuration."""
-
-    name: str
-    params: Dict[str, Any]
+ALTERNATING_LEAST_SQUARES = 'AlternatingLeastSquares'
+BAYESIAN_PERSONALIZED_RANKING = 'BayesianPersonalizedRanking'
+LOGISTIC_MATRIX_FACTORIZATION = 'LogisticMatrixFactorization'

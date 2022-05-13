@@ -14,7 +14,7 @@ from .model_config import ModelConfig
 
 
 def parse_models_config(experiment_config, model_factory, event_dispatcher):
-    """Parses all model configurations.
+    """Parse all model configurations.
 
     Args:
         experiment_config(dict): the experiment's total configuration.
@@ -77,7 +77,7 @@ def parse_models_config(experiment_config, model_factory, event_dispatcher):
 
 
 def parse_api_models(api_name, model_configs, model_factory, event_dispatcher):
-    """Parses the model configurations for the specified API name.
+    """Parse the model configurations for the specified API name.
 
     Args:
         api_name(str): name of the API that will be parsed.
@@ -135,7 +135,7 @@ def parse_api_models(api_name, model_configs, model_factory, event_dispatcher):
 
 
 def parse_model(model_config, algo_factory, event_dispatcher):
-    """Parses the model configuration.
+    """Parse a single model configuration.
 
     Args:
         model_config(dict): dictionary with the model's configuration.

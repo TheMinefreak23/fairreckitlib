@@ -5,11 +5,11 @@ Utrecht University within the Software Project course.
 """
 
 from abc import ABCMeta
-from dataclasses import dataclass
 import os
 import time
 
 from ...core.event_io import ON_MAKE_DIR
+from ..data_transition import DataTransition
 from ..set.dataset import Dataset
 from ..split.split_factory import KEY_SPLITTING
 from ..ratings.rating_converter_factory import KEY_RATING_CONVERTER, CONVERTER_RANGE, CONVERTER_KL
@@ -19,18 +19,6 @@ from .data_event import ON_BEGIN_FILTER_DATASET, ON_END_FILTER_DATASET
 from .data_event import ON_BEGIN_MODIFY_DATASET, ON_END_MODIFY_DATASET
 from .data_event import ON_BEGIN_SPLIT_DATASET, ON_END_SPLIT_DATASET
 from .data_event import ON_BEGIN_SAVE_SETS, ON_END_SAVE_SETS
-
-
-@dataclass
-class DataTransition:
-    """Data Transition struct to transfer pipeline data."""
-
-    dataset : Dataset
-    output_dir: str
-    train_set_path: str
-    test_set_path: str
-    rating_scale: (float, float)
-    rating_type: str
 
 
 class DataPipeline(metaclass=ABCMeta):

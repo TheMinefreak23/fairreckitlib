@@ -99,7 +99,7 @@ class Factory(BaseFactory):
 
     def add_obj(self,
                 obj_name: str,
-                func_create_obj: Callable[[str, ConfigParameters, Dict[str, Any]], Any],
+                func_create_obj: Callable[[str, Dict[str, Any]], Any],
                 func_create_obj_params: Callable[[], ConfigParameters]=None
                 ) -> None:
         """Add object with associated parameter creation to the factory.
@@ -254,7 +254,7 @@ def create_factory_from_list(
         factory_name: str,
         obj_tuple_list: List[Tuple[
             str,
-            Callable[[str, ConfigParameters, Dict[str, Any]], Any],
+            Callable[[str, Dict[str, Any]], Any],
             Callable[[], ConfigParameters]
         ]]) -> Factory:
     """Create and return the factory with the specified tuple entries.

@@ -5,34 +5,41 @@ Utrecht University within the Software Project course.
 """
 
 import time
+from typing import Any, Dict
 
-from lenskit.algorithms.als import BiasedMF
-from lenskit.algorithms.als import ImplicitMF
-from lenskit.algorithms.basic import PopScore
-from lenskit.algorithms.basic import Random
+from lenskit.algorithms import CandidateSelector
+from lenskit.algorithms.als import BiasedMF, ImplicitMF
+from lenskit.algorithms.basic import PopScore, Random
 from lenskit.algorithms.item_knn import ItemItem
 from lenskit.algorithms.user_knn import UserUser
 from seedbank import numpy_rng
 
+BIASED_MF = 'BiasedMF'
+IMPLICIT_MF = 'ImplicitMF'
+ITEM_ITEM = 'ItemItem'
+POP_SCORE = 'PopScore'
+RANDOM = 'Random'
+USER_USER = 'UserUser'
 
-def create_biased_mf(params):
-    """Creates the BiasedMF algorithm.
+
+def create_biased_mf(params: Dict[str, Any]) -> BiasedMF:
+    """Create the lenskit BiasedMF algorithm.
 
     Args:
-        params(dict): with the entries:
-            features,
-            iterations,
-            user_reg,
-            item_reg,
-            damping,
-            method,
-            random_seed
+        params: containing the following name-value pairs:
+            features(int): the number of features to train.
+            iterations(int): the number of iterations to train.
+            user_reg(float): the regularization factor for users.
+            item_reg(float): the regularization factor for items.
+            damping(float): damping factor for the underlying bias.
+            method(str): the solver to use ('cd' or 'lu').
+            random_seed(int): the random seed or None for the current time as seed.
 
     Returns:
-        (lenskit.BiasedMF) algorithm.
+        the lenskit BiasedMF algorithm.
     """
-    if params['random_seed'] is None:
-        params['random_seed'] = int(time.time())
+    if params['seed'] is None:
+        params['seed'] = int(time.time())
 
     return BiasedMF(
         params['features'],
@@ -41,30 +48,31 @@ def create_biased_mf(params):
         damping=params['damping'],
         bias=True,
         method=params['method'],
-        rng_spec=numpy_rng(spec=params['random_seed']),
+        rng_spec=numpy_rng(spec=params['seed']),
         progress=None,
         save_user_features=True
     )
 
 
-def create_implicit_mf(params):
-    """Creates the ImplicitMF algorithm.
+def create_implicit_mf(params: Dict[str, Any]) -> ImplicitMF:
+    """Create the lenskit ImplicitMF algorithm.
 
     Args:
-        params(dict): with the entries:
-            features,
-            iterations,
-            reg,
-            weight,
-            use_ratings,
-            method,
-            random_seed
+        params: containing the following name-value pairs:
+            features(int): the number of features to train.
+            iterations(int): the number of iterations to train.
+            reg(float): the regularization factor.
+            weight(flot): the scaling weight for positive samples.
+            use_ratings(bool): whether to use the rating column or treat
+                every rated user-item pair as having a rating of 1.
+            method(str): the training method ('cg' or 'lu').
+            random_seed(int): the random seed or None for the current time as seed.
 
     Returns:
-        (lenskit.ImplicitMF) algorithm.
+        the lenskit ImplicitMF algorithm.
     """
-    if params['random_seed'] is None:
-        params['random_seed'] = int(time.time())
+    if params['seed'] is None:
+        params['seed'] = int(time.time())
 
     return ImplicitMF(
         params['features'],
@@ -73,89 +81,85 @@ def create_implicit_mf(params):
         weight=params['weight'],
         use_ratings=params['use_ratings'],
         method=params['method'],
-        rng_spec=numpy_rng(spec=params['random_seed']),
+        rng_spec=numpy_rng(spec=params['seed']),
         progress=None,
         save_user_features=True
     )
 
 
-def create_item_item(params, feedback):
-    """Creates the ItemItem algorithm.
+def create_item_item(params: Dict[str, Any]) -> ItemItem:
+    """Create the lenskit ItemItem algorithm.
 
     Args:
-        params(dict): with the entries:
-            max_nnbrs,
-            min_nbrs,
-            min_sim
-        feedback(str): one of:
-            explicit,
-            implicit
+        params: containing the following name-value pairs:
+            max_neighbors(int): the maximum number of neighbors for scoring each item.
+            min_neighbors(int): the minimum number of neighbors for scoring each item.
+            min_similarity(float): minimum similarity threshold for considering a neighbor.
+            feedback(str): control how feedback should be interpreted ('explicit' or 'implicit').
 
     Returns:
-        (lenskit.ItemItem) algorithm.
+        the lenskit ItemItem algorithm.
     """
     return ItemItem(
-        params['max_nnbrs'],
-        min_nbrs=params['min_nbrs'],
-        min_sim=params['min_sim'],
+        params['max_neighbors'],
+        min_nbrs=params['min_neighbors'],
+        min_sim=params['min_similarity'],
         save_nbrs=None,
-        feedback=feedback
+        feedback=params['feedback']
     )
 
 
-def create_pop_score(params):
-    """Creates the PopScore algorithm.
+def create_pop_score(params: Dict[str, Any]) -> PopScore:
+    """Create the lenskit PopScore algorithm.
 
     Args:
-        params(dict): with the entries:
-            score_method
+        params: containing the following name-value pairs:
+            score_method(str): for computing popularity scores ('quantile', 'rank' or 'count').
 
     Returns:
-        (lenskit.PopScore) algorithm.
+        the lenskit PopScore algorithm.
     """
     return PopScore(
         score_method=params['score_method']
     )
 
 
-def create_random(params, selector):
-    """Creates the Random algorithm.
+def create_random(params: Dict[str, Any], selector: CandidateSelector) -> Random:
+    """Create the lenskit Random algorithm.
 
     Args:
-        params(dict): with the entries:
-            random_seed
-        selector(lenskit.CandidateSelector): selects candidate items for recommendations.
+        params: containing the following name-value pairs:
+            random_seed(int): the random seed or None for the current time as seed.
+        selector: that selects candidate items for recommendations.
 
     Returns:
-        (lenskit.Random) algorithm.
+        the lenskit Random algorithm.
     """
-    if params['random_seed'] is None:
-        params['random_seed'] = int(time.time())
+    if params['seed'] is None:
+        params['seed'] = int(time.time())
 
     return Random(
         selector=selector,
-        rng_spec=numpy_rng(spec=params['random_seed'])
+        rng_spec=numpy_rng(spec=params['seed'])
     )
 
 
-def create_user_user(params, feedback):
-    """Creates the UserUser algorithm.
+def create_user_user(params: Dict[str, Any]) -> UserUser:
+    """Create the lenskit UserUser algorithm.
 
     Args:
-        params(dict): with the entries:
-            max_nnbrs,
-            min_nbrs,
-            min_sim
-        feedback(str): one of:
-            explicit,
-            implicit
+        params: containing the following name-value pairs:
+            max_neighbors(int): the maximum number of neighbors for scoring each item.
+            min_neighbors(int): the minimum number of neighbors for scoring each item.
+            min_similarity(float): minimum similarity threshold for considering a neighbor.
+            feedback(str): control how feedback should be interpreted ('explicit' or 'implicit').
 
     Returns:
-        (lenskit.UserUser) algorithm.
+        the lenskit UserUser algorithm.
     """
     return UserUser(
-        params['max_nnbrs'],
-        min_nbrs=params['min_nbrs'],
-        min_sim=params['min_sim'],
-        feedback=feedback
+        params['max_neighbors'],
+        min_nbrs=params['min_neighbors'],
+        min_sim=params['min_similarity'],
+        feedback=params['feedback']
     )
