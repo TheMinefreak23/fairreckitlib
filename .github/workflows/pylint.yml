@@ -13,26 +13,18 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        # python-version is singleton, but kept to easily add more versions
         python-version: ["3.8"]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
+        cache: 'pip'
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pylint
-        pip install pytest
-        pip install lenskit
-        pip install implicit
-        pip install Cython
-        pip install scikit-surprise
-        pip install pandas
-        pip install PyYAML
-        pip install rexmex
-        pip install h5py
+        pip install -r requirements.txt
     - name: Analysing the code with pylint
-      run: |
-        pylint $(git ls-files '*.py') --fail-under=9 --fail-on=E
+      run: pylint $(git ls-files '*.py') --fail-under=9 --fail-on=E
