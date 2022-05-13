@@ -46,5 +46,5 @@ jobs:
       - name: Lint all changed files
         run: |
           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            pylint --disable=R0913,C0103,R0903,W0611,W0105,C0321,W0511,R0902,C0301,W0613 $file
+            pylint --disable=R0913,C0103,R0903,W0611,W0105,C0321,W0511,R0902,C0301,W0613,W0612 $file
           done
