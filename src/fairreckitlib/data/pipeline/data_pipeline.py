@@ -8,18 +8,21 @@ from abc import ABCMeta
 from dataclasses import dataclass
 import os
 import time
+from typing import Any, Dict, List
+import pandas as pd
 
+from ...core.event_dispatcher import EventDispatcher
 from ...core.event_io import ON_MAKE_DIR
+from ...core.factories import Factory
 from ..set.dataset import Dataset
 from ..split.split_factory import KEY_SPLITTING
-from ..ratings.rating_converter_factory import KEY_RATING_CONVERTER, CONVERTER_RANGE, CONVERTER_KL
+from ..ratings.range_converter import RatingConverter
 from .data_event import ON_BEGIN_DATA_PIPELINE, ON_END_DATA_PIPELINE
 from .data_event import ON_BEGIN_LOAD_DATASET, ON_END_LOAD_DATASET
 from .data_event import ON_BEGIN_FILTER_DATASET, ON_END_FILTER_DATASET
 from .data_event import ON_BEGIN_MODIFY_DATASET, ON_END_MODIFY_DATASET
 from .data_event import ON_BEGIN_SPLIT_DATASET, ON_END_SPLIT_DATASET
 from .data_event import ON_BEGIN_SAVE_SETS, ON_END_SAVE_SETS
-
 
 @dataclass
 class DataTransition:
@@ -44,13 +47,21 @@ class DataPipeline(metaclass=ABCMeta):
         event_dispatcher(EventDispatcher): used to dispatch data/IO events
             when running the pipeline.
     """
-    def __init__(self, data_factory, event_dispatcher):
+
+    def __init__(self, data_factory: Factory, event_dispatcher: EventDispatcher):
+        """Construct the DataPipeline.
+
+        Args:
+            data_factory: #TODO explain this
+            event_dispatcher: #TODO explain this
+        """
         self.split_datasets = {}
         self.data_factory = data_factory
         self.event_dispatcher = event_dispatcher
 
-    def run(self, output_dir, dataset, data_config, is_running):
-        """Runs the entire data pipeline from beginning to end.
+    def run(self, output_dir: str, dataset: Dataset, data_config: Dict[str, Any],
+            is_running: function) -> DataTransition:
+        """Run the entire data pipeline from beginning to end.
 
         1) load the dataset into a dataframe.
         2) filter rows based on 'user'/'item' columns. (optional)
@@ -59,14 +70,14 @@ class DataPipeline(metaclass=ABCMeta):
         5) save the train and test set in the output directory.
 
         Args:
-            output_dir(str): the path of the directory to store the output.
-            dataset(Dataset): the dataset to run the pipeline on.
-            data_config(DatasetConfig): the dataset configuration.
-            is_running(func -> bool): function that returns whether the pipeline
+            output_dir: the path of the directory to store the output.
+            dataset: the dataset to run the pipeline on.
+            data_config: the dataset configuration.
+            is_running: function that returns whether the pipeline
                 is still running. Stops early when False is returned.
 
         Returns:
-            data_output(DataTransition): the output of the pipeline.
+            data_output: the output of the pipeline.
         """
         self.event_dispatcher.dispatch(
             ON_BEGIN_DATA_PIPELINE,
@@ -87,7 +98,8 @@ class DataPipeline(metaclass=ABCMeta):
             return None
 
         # step 3
-        dataframe, rating_type = self.convert_ratings(dataset, dataframe, data_config.rating_converter)
+        dataframe, rating_type = self.convert_ratings(dataset, dataframe,
+                                                      data_config.rating_converter)
         if not is_running():
             return None
 
@@ -118,15 +130,15 @@ class DataPipeline(metaclass=ABCMeta):
 
         return data_output
 
-    def create_data_output_dir(self, output_dir, dataset):
-        """Creates the data output directory for a dataset.
+    def create_data_output_dir(self, output_dir: str, dataset: Dataset) -> str:
+        """Create the data output directory for a dataset.
 
         Args:
-            output_dir(str): the path of the directory to store the output.
-            dataset(Dataset): the dataset to create a directory for.
+            output_dir: the path of the directory to store the output.
+            dataset: the dataset to create a directory for.
 
         Returns:
-            data_dir(str): the path of the directory where the output data can be stored.
+            data_dir: the path of the directory where the output data can be stored.
         """
         if not self.split_datasets.get(dataset.name):
             self.split_datasets[dataset.name] = 0
@@ -143,14 +155,14 @@ class DataPipeline(metaclass=ABCMeta):
 
         return data_dir
 
-    def load_from_dataset(self, dataset):
-        """Loads in the desired dataset into a dataframe.
+    def load_from_dataset(self, dataset: Dataset) -> pd.DataFrame:
+        """Load in the desired dataset into a dataframe.
 
         Args:
-            dataset(Dataset): the dataset to load the matrix dataframe from.
+            dataset: the dataset to load the matrix dataframe from.
 
         Returns:
-            dataframe(pandas.DataFrame): belonging to the specified dataset. The
+            dataframe: belonging to the specified dataset. The
                 dataframe contains at least three columns 'user', 'item', 'rating'.
                 In addition, the 'timestamp' column can be present when
                 available in the specified dataset.
@@ -172,17 +184,17 @@ class DataPipeline(metaclass=ABCMeta):
 
         return dataframe
 
-    def filter_rows(self, dataframe, prefilters):
-        """Applies the specified filters to the dataframe.
+    def filter_rows(self, dataframe: pd.DataFrame, prefilters: List) -> pd.DataFrame:
+        """Apply the specified filters to the dataframe.
 
         Args:
-            dataframe(pandas.DataFrame): the dataset to filter with at least
+            dataframe: the dataset to filter with at least
                 two columns: 'user', 'item'.
-            prefilters(array like): list of user/item filters to apply
+            prefilters: list of user/item filters to apply #TODO specify list content type
                 to the dataframe.
 
         Returns:
-            dataframe(pandas.DataFrame): with the specified filters applied to it.
+            dataframe: with the specified filters applied to it.
         """
         # early exit, because no filtering is needed
         if len(prefilters) == 0:
@@ -207,17 +219,19 @@ class DataPipeline(metaclass=ABCMeta):
 
         return dataframe
 
-    def convert_ratings(self, dataset, dataframe, rating_converter):
-        """Converts the ratings in the dataframe with the specified rating modifier.
+    def convert_ratings(self, dataset: Dataset, dataframe: pd.DataFrame, 
+                        rating_converter: RatingConverter) -> tuple[pd.DataFrame, str]:
+        """Convert the ratings in the dataframe with the specified rating modifier.
 
         Args:
-            dataset(Dataset): the dataset to load the matrix and rating_type from.
-            dataframe(pandas.DataFrame): the dataframe to convert the ratings of.
+            dataset: the dataset to load the matrix and rating_type from.
+            dataframe: the dataframe to convert the ratings of.
                 At the least a 'rating' column is expected to be present.
-            rating_converter(RatingConverter): the converter to apply to the 'rating' column.
+            rating_converter: the converter to apply to the 'rating' column.
 
         Returns:
-            dataframe(pandas.DataFrame): with the modified 'rating' column.
+            dataframe: with the modified 'rating' column.
+            rating_type: the new rating type, either implicit or explicit.
         """
         if rating_converter is None:
             return dataframe, dataset.get_matrix_info('rating_type')
@@ -239,20 +253,21 @@ class DataPipeline(metaclass=ABCMeta):
 
         return dataframe, rating_type
 
-    def split(self, dataframe, split_config):
-        """Splits the dataframe into a train and test set.
+    def split(self, dataframe: pd.DataFrame, split_config: Dict[str, Any])\
+              -> tuple[pd.DataFrame, pd.DataFrame]:
+        """Split the dataframe into a train and test set.
 
         This will be split 80/20 (or a similar ratio), and be done either random, or timestamp-wise.
 
         Args:
-            dataframe(pandas.DataFrame): the dataset to split with at least
+            dataframe: the dataset to split with at least
                 three columns: 'user', 'item', 'rating'. In addition, the 'timestamp' column
                 is required for temporal splits.
-            split_config(SplitConfig): the dataset splitting configuration.
+            split_config: the dataset splitting configuration.
 
         Returns:
-            train_set(pandas.DataFrame): the train set split of the specified dataframe.
-            test_set(pandas.DataFrame): the test set split of the specified dataframe.
+            train_set: the train set split of the specified dataframe.
+            test_set: the test set split of the specified dataframe.
         """
         self.event_dispatcher.dispatch(
             ON_BEGIN_SPLIT_DATASET,
@@ -275,21 +290,21 @@ class DataPipeline(metaclass=ABCMeta):
 
         return train_set, test_set
 
-    def save_sets(self, output_dir, train_set, test_set):
-        """Saves the train and test sets to the desired output directory.
+    def save_sets(self, output_dir: str, train_set: pd.DataFrame, test_set: pd.DataFrame)\
+                  -> tuple[str, str]:
+        """Save the train and test sets to the desired output directory.
 
         Args:
-            output_dir(str): the path of the directory to store both sets.
-            train_set(pandas.DataFrame): the train set to save with at least
+            output_dir: the path of the directory to store both sets.
+            train_set: the train set to save with at least
                 three columns: 'user', 'item', 'rating'.
-            test_set(pandas.DataFrame): the test set to save with at least
+            test_set: the test set to save with at least
                 three columns: 'user', 'item', 'rating'.
 
         Returns:
-            train_set_path(str): the path where the train set was stored.
-            test_set_path(str): the path where the test set was stored.
+            train_set_path: the path where the train set was stored.
+            test_set_path: the path where the test set was stored.
         """
-
         headers_to_save = ['user', 'item', 'rating']
 
         train_set = train_set[headers_to_save]
