@@ -30,6 +30,11 @@ jobs:
         run: |
           echo "${{ steps.changed-files.outputs.any_changed }}"
       
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.8
+      
       - uses: actions/cache@v2
         with:
           path: ${{ env.pythonLocation }}
