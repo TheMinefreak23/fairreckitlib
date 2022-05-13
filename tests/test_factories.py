@@ -14,8 +14,8 @@ from src.fairreckitlib.core.factories import Factory, GroupFactory, create_facto
 from src.fairreckitlib.data.set.dataset import DATASET_RATINGS_EXPLICIT
 from src.fairreckitlib.data.split.base_splitter import DataSplitter
 from src.fairreckitlib.data.split.split_factory import create_split_factory
-from src.fairreckitlib.model.algorithms.base_predictor import Predictor
-from src.fairreckitlib.model.algorithms.base_recommender import Recommender
+from src.fairreckitlib.model.algorithms.base_predictor import BasePredictor
+from src.fairreckitlib.model.algorithms.base_recommender import BaseRecommender
 from src.fairreckitlib.model.model_factory import create_model_factory
 
 dummy_names = ['dummy_a', 'dummy_b', 'dummy_c']
@@ -158,7 +158,7 @@ def test_group_factory_add_and_available(create_child_factory):
 
 
 @pytest.mark.parametrize('model_type, algo_type', [
-    (TYPE_PREDICTION, Predictor), (TYPE_RECOMMENDATION, Recommender)
+    (TYPE_PREDICTION, BasePredictor), (TYPE_RECOMMENDATION, BaseRecommender)
 ])
 def test_model_factory(model_type, algo_type):
     """Test if all algorithms of different model types are derived from the correct base class."""

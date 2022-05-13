@@ -6,6 +6,7 @@ Utrecht University within the Software Project course.
 import errno
 import os
 
+from .core.event_error import get_error_events
 from .core.event_io import get_io_events
 from .core.threading.thread_processor import ThreadProcessor
 from .data.data_factory import KEY_DATASETS
@@ -215,10 +216,10 @@ class RecommenderSystem:
             (array like) list of pairs in the format (event_id, func_on_event)
         """
         events = []
-        events += get_experiment_events()
+        events += get_error_events()
         events += get_io_events()
         events += get_data_events()
         events += get_model_events()
         events += get_evaluation_events()
-
+        events += get_experiment_events()
         return events
