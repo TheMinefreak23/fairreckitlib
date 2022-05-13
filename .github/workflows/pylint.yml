@@ -10,6 +10,7 @@ on:
 
 jobs:
   full-lint:
+    name: Full Lint
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repo
@@ -31,4 +32,4 @@ jobs:
         pip install -r requirements.txt
         
     - name: Analysing the code with pylint
-      run: pylint $(git ls-files '*.py') --fail-under=9 --fail-on=E
+      run: pylint $(git ls-files '*.py') --fail-under=9 --fail-on=E --exit-zero
