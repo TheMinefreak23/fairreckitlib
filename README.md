@@ -1,4 +1,8 @@
 # FairRecKitLib
+[![Pylint](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pylint.yml/badge.svg)](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pylint.yml)
+[![Pytest with Coverage](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pytest-coverage.yml/badge.svg)](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pytest-coverage.yml)
+[![Upload to PyPI](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pypi_publish.yml/badge.svg)](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pypi_publish.yml)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/TheMinefreak23/fairreckitlib?label=Release)
 
 FairRecKitLib is a library that functions as a combinatory interface between a set of existing recommender libraries, such as [Lenskit](https://pypi.org/project/lenskit/), [Implicit](https://pypi.org/project/implicit/), and [Elliot](https://github.com/sisinflab/elliot). It was made to accompany the [FairRecKit application](https://github.com/TheMinefreak23/fair-rec-kit-app).
 
