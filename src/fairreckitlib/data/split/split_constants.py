@@ -4,15 +4,11 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from dataclasses import dataclass
-from typing import Any, Dict
+SPLIT_RANDOM = 'random'
+SPLIT_TEMPORAL = 'temporal'
 
-KEY_MODELS = 'models'
+KEY_SPLITTING = 'splitting'
+KEY_SPLIT_TEST_RATIO = 'test_ratio'
 
-
-@dataclass
-class ModelConfig:
-    """Model Configuration."""
-
-    name: str
-    params: Dict[str, Any]
+DEFAULT_SPLIT_NAME = SPLIT_RANDOM
+DEFAULT_SPLIT_TEST_RATIO = 0.2

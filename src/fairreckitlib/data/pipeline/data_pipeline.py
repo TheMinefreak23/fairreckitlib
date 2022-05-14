@@ -5,18 +5,23 @@ Utrecht University within the Software Project course.
 """
 
 from abc import ABCMeta
-from dataclasses import dataclass
 import os
 import time
-from typing import Any, Dict, List
+from typing import Any, Callable, List, Optional, Tuple
+
 import pandas as pd
 
 from ...core.event_dispatcher import EventDispatcher
+from ...core.event_error import ON_FAILURE_ERROR
 from ...core.event_io import ON_MAKE_DIR
-from ...core.factories import Factory
+from ...core.factories import GroupFactory
+from ..data_transition import DataTransition
 from ..set.dataset import Dataset
-from ..split.split_factory import KEY_SPLITTING
-from ..ratings.range_converter import RatingConverter
+from ..split.split_config import SplitConfig
+from ..split.split_constants import KEY_SPLITTING, KEY_SPLIT_TEST_RATIO
+from ..ratings.convert_config import ConvertConfig
+from ..ratings.rating_converter_factory import KEY_RATING_CONVERTER
+from .data_config import DatasetConfig
 from .data_event import ON_BEGIN_DATA_PIPELINE, ON_END_DATA_PIPELINE
 from .data_event import ON_BEGIN_LOAD_DATASET, ON_END_LOAD_DATASET
 from .data_event import ON_BEGIN_FILTER_DATASET, ON_END_FILTER_DATASET
@@ -24,44 +29,39 @@ from .data_event import ON_BEGIN_MODIFY_DATASET, ON_END_MODIFY_DATASET
 from .data_event import ON_BEGIN_SPLIT_DATASET, ON_END_SPLIT_DATASET
 from .data_event import ON_BEGIN_SAVE_SETS, ON_END_SAVE_SETS
 
-@dataclass
-class DataTransition:
-    """Data Transition struct to transfer pipeline data."""
-
-    dataset : Dataset
-    output_dir: str
-    train_set_path: str
-    test_set_path: str
-    rating_scale: (float, float)
-    rating_type: str
-
 
 class DataPipeline(metaclass=ABCMeta):
     """Data Pipeline to prepare datasets to be used in the ModelPipeline(s).
 
-    From loading in the required dataset(s) to aggregating them, converting the ratings,
+    From loading in the required dataset(s) to filtering them, converting the ratings,
     splitting it into train/test set, and saving these in the designated directory.
 
-    Args:
-        data_factory(GroupFactory):
-        event_dispatcher(EventDispatcher): used to dispatch data/IO events
-            when running the pipeline.
+    Public methods:
+
+    run
     """
 
-    def __init__(self, data_factory: Factory, event_dispatcher: EventDispatcher):
+    def __init__(self, data_factory: GroupFactory, event_dispatcher: EventDispatcher):
         """Construct the DataPipeline.
 
         Args:
-            data_factory: #TODO explain this
-            event_dispatcher: #TODO explain this
+            data_factory: the factory with available data modifier factories.
+            event_dispatcher: used to dispatch data/IO events when running the pipeline.
         """
         self.split_datasets = {}
         self.data_factory = data_factory
         self.event_dispatcher = event_dispatcher
 
-    def run(self, output_dir: str, dataset: Dataset, data_config: Dict[str, Any],
-            is_running: function) -> DataTransition:
+    def run(self,
+            output_dir: str,
+            dataset: Dataset,
+            data_config: DatasetConfig,
+            is_running: Callable[[], bool]) -> Optional[DataTransition]:
         """Run the entire data pipeline from beginning to end.
+
+        Two errors can be raised during execution of the pipeline:
+        FileNotFoundError is raised if the dataset matrix file does not exist.
+        RuntimeError is raised if any data modifiers are not found in their respective factories.
 
         1) load the dataset into a dataframe.
         2) filter rows based on 'user'/'item' columns. (optional)
@@ -77,7 +77,7 @@ class DataPipeline(metaclass=ABCMeta):
                 is still running. Stops early when False is returned.
 
         Returns:
-            data_output: the output of the pipeline.
+            the data transition output of the pipeline.
         """
         self.event_dispatcher.dispatch(
             ON_BEGIN_DATA_PIPELINE,
@@ -98,8 +98,7 @@ class DataPipeline(metaclass=ABCMeta):
             return None
 
         # step 3
-        dataframe, rating_type = self.convert_ratings(dataset, dataframe,
-                                                      data_config.rating_converter)
+        dataframe, rating_type = self.convert_ratings(dataset, dataframe, data_config.converter)
         if not is_running():
             return None
 
@@ -138,7 +137,7 @@ class DataPipeline(metaclass=ABCMeta):
             dataset: the dataset to create a directory for.
 
         Returns:
-            data_dir: the path of the directory where the output data can be stored.
+            the path of the directory where the output data can be stored.
         """
         if not self.split_datasets.get(dataset.name):
             self.split_datasets[dataset.name] = 0
@@ -156,7 +155,9 @@ class DataPipeline(metaclass=ABCMeta):
         return data_dir
 
     def load_from_dataset(self, dataset: Dataset) -> pd.DataFrame:
-        """Load in the desired dataset into a dataframe.
+        """Load in the desired dataset matrix into a dataframe.
+
+        It raises a FileNotFoundError when the dataset matrix file does not exist.
 
         Args:
             dataset: the dataset to load the matrix dataframe from.
@@ -173,7 +174,17 @@ class DataPipeline(metaclass=ABCMeta):
         )
 
         start = time.time()
-        dataframe = dataset.load_matrix_df()
+
+        try:
+            dataframe = dataset.load_matrix_df()
+        except FileNotFoundError as err:
+            self.event_dispatcher.dispatch(
+                ON_FAILURE_ERROR,
+                msg='Failure: to load dataset matrix ' + dataset.name
+            )
+            # raise again so the data run aborts
+            raise err
+
         end = time.time()
 
         self.event_dispatcher.dispatch(
@@ -184,17 +195,16 @@ class DataPipeline(metaclass=ABCMeta):
 
         return dataframe
 
-    def filter_rows(self, dataframe: pd.DataFrame, prefilters: List) -> pd.DataFrame:
+    def filter_rows(self, dataframe: pd.DataFrame, prefilters: List[Any]) -> pd.DataFrame:
         """Apply the specified filters to the dataframe.
 
         Args:
             dataframe: the dataset to filter with at least
                 two columns: 'user', 'item'.
-            prefilters: list of user/item filters to apply #TODO specify list content type
-                to the dataframe.
+            prefilters: list of user/item filters to apply to the dataframe.
 
         Returns:
-            dataframe: with the specified filters applied to it.
+            the dataframe with the specified filters applied to it.
         """
         # early exit, because no filtering is needed
         if len(prefilters) == 0:
@@ -219,45 +229,60 @@ class DataPipeline(metaclass=ABCMeta):
 
         return dataframe
 
-    def convert_ratings(self, dataset: Dataset, dataframe: pd.DataFrame, 
-                        rating_converter: RatingConverter) -> tuple[pd.DataFrame, str]:
+    def convert_ratings(self,
+                        dataset: Dataset,
+                        dataframe: pd.DataFrame,
+                        convert_config: ConvertConfig) -> Tuple[pd.DataFrame, str]:
         """Convert the ratings in the dataframe with the specified rating modifier.
+
+        It raises a RuntimeError when the converter specified by the configuration is not available.
 
         Args:
             dataset: the dataset to load the matrix and rating_type from.
             dataframe: the dataframe to convert the ratings of.
                 At the least a 'rating' column is expected to be present.
-            rating_converter: the converter to apply to the 'rating' column.
+            convert_config: the configuration of the converter to apply to the 'rating' column.
 
         Returns:
-            dataframe: with the modified 'rating' column.
-            rating_type: the new rating type, either implicit or explicit.
+            the converted dataframe and the type of rating, either 'explicit' or 'implicit'.
         """
-        if rating_converter is None:
+        if convert_config is None:
             return dataframe, dataset.get_matrix_info('rating_type')
 
         self.event_dispatcher.dispatch(
             ON_BEGIN_MODIFY_DATASET,
-            rating_converter=rating_converter
+            rating_converter=convert_config.name
         )
 
         start = time.time()
-        dataframe, rating_type = rating_converter.run(dataframe)
+        convert_factory = self.data_factory.get_factory(KEY_RATING_CONVERTER)
+        converter = convert_factory.create(convert_config.name, convert_config.params)
+        if converter is None:
+            self.event_dispatcher.dispatch(
+                ON_FAILURE_ERROR,
+                msg='Failure: to get converter from factory: ' + convert_config.name
+            )
+            # raise error so the data run aborts
+            raise RuntimeError()
+
+        dataframe, rating_type = converter.run(dataframe)
         end = time.time()
 
         self.event_dispatcher.dispatch(
             ON_END_MODIFY_DATASET,
-            rating_converter=rating_converter,
+            rating_converter=convert_config.name,
             elapsed_time=end - start
         )
 
         return dataframe, rating_type
 
-    def split(self, dataframe: pd.DataFrame, split_config: Dict[str, Any])\
-              -> tuple[pd.DataFrame, pd.DataFrame]:
+    def split(self,
+              dataframe: pd.DataFrame,
+              split_config: SplitConfig) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Split the dataframe into a train and test set.
 
         This will be split 80/20 (or a similar ratio), and be done either random, or timestamp-wise.
+        It raises a RuntimeError when the splitter specified by the configuration is not available.
 
         Args:
             dataframe: the dataset to split with at least
@@ -271,27 +296,38 @@ class DataPipeline(metaclass=ABCMeta):
         """
         self.event_dispatcher.dispatch(
             ON_BEGIN_SPLIT_DATASET,
-            split_type=split_config.type,
+            split_name=split_config.name,
             test_ratio=split_config.test_ratio
         )
 
         start = time.time()
+        split_kwargs = {KEY_SPLIT_TEST_RATIO: split_config.test_ratio}
         split_factory = self.data_factory.get_factory(KEY_SPLITTING)
-        splitter = split_factory.create(split_config.type, split_config.params)
-        train_set, test_set = splitter.run(dataframe, split_config.test_ratio)
+        splitter = split_factory.create(split_config.name, split_config.params, **split_kwargs)
+        if splitter is None:
+            self.event_dispatcher.dispatch(
+                ON_FAILURE_ERROR,
+                msg='Failure: to get splitter from factory: ' + split_config.name
+            )
+            # raise error so the data run aborts
+            raise RuntimeError()
+
+        train_set, test_set = splitter.run(dataframe)
         end = time.time()
 
         self.event_dispatcher.dispatch(
             ON_END_SPLIT_DATASET,
-            split_type=split_config.type,
+            split_name=split_config.name,
             test_ratio=split_config.test_ratio,
             elapsed_time=end - start
         )
 
         return train_set, test_set
 
-    def save_sets(self, output_dir: str, train_set: pd.DataFrame, test_set: pd.DataFrame)\
-                  -> tuple[str, str]:
+    def save_sets(self,
+                  output_dir: str,
+                  train_set: pd.DataFrame,
+                  test_set: pd.DataFrame) -> Tuple[str, str]:
         """Save the train and test sets to the desired output directory.
 
         Args:
@@ -302,8 +338,7 @@ class DataPipeline(metaclass=ABCMeta):
                 three columns: 'user', 'item', 'rating'.
 
         Returns:
-            train_set_path: the path where the train set was stored.
-            test_set_path: the path where the test set was stored.
+            the paths where the train and test set are stored.
         """
         headers_to_save = ['user', 'item', 'rating']
 

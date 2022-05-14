@@ -4,8 +4,12 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+import time
+from typing import Any, Dict, Tuple
+
 import lenskit.crossfold as xf
 import pandas as pd
+from seedbank import numpy_rng
 
 from .base_splitter import DataSplitter
 
@@ -16,17 +20,28 @@ class RandomSplitter(DataSplitter):
     Splits the dataframe into a train and test set randomly.
     """
 
-    def run(self, dataframe: pd.DataFrame, test_ratio: float) -> tuple[pd.DataFrame, pd.DataFrame]:
+    def run(self, dataframe: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Split the dataframe into a train and test set.
 
         Args:
             dataframe: with at least the 'user' column.
-            test_ratio: the fraction of users to use for testing.
 
         Returns:
-            train_set, test_set: the train and test set.
+            the train and test set dataframes of the split.
         """
-        # TODO set random seed as specified in params
-        frac = xf.SampleFrac(test_ratio)
-        for train_set, test_set in xf.partition_users(dataframe, 1, frac):
+        rng_spec = numpy_rng(spec=self.params['seed'])
+        frac = xf.SampleFrac(self.test_ratio)
+        for train_set, test_set in xf.partition_users(dataframe, 1, frac, rng_spec=rng_spec):
             return train_set, test_set
+
+
+def create_random_splitter(name: str, params: Dict[str, Any], **kwargs) -> RandomSplitter:
+    """Create the Random Splitter.
+
+    Returns:
+        the random data splitter.
+    """
+    if params['seed'] is None:
+        params['seed'] = int(time.time())
+
+    return RandomSplitter(name, params, kwargs['test_ratio'])

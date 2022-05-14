@@ -4,8 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from typing import List
-
+from typing import Any, Callable, List, Tuple
 
 ON_BEGIN_DATA_PIPELINE = 'DataPipeline.on_begin'
 ON_BEGIN_FILTER_DATASET = 'DataPipeline.on_begin_filter_dataset'
@@ -21,7 +20,7 @@ ON_END_SAVE_SETS = 'DataPipeline.on_end_save_sets'
 ON_END_SPLIT_DATASET = 'DataPipeline.on_end_split_dataset'
 
 
-def get_data_events() -> List[tuple[str, function]]:
+def get_data_events() -> List[Tuple[str, Callable[[Any], None]]]:
     """Get all data pipeline events.
 
     The callback functions are specified below and serve as a default
@@ -29,7 +28,7 @@ def get_data_events() -> List[tuple[str, function]]:
     that are passed down by the data pipeline.
 
     Returns:
-        (array like) list of pairs in the format (event_id, func_on_event)
+        a list of pairs in the format (event_id, func_on_event)
     """
     return [
         (ON_BEGIN_DATA_PIPELINE, on_begin_data_pipeline),
@@ -47,7 +46,7 @@ def get_data_events() -> List[tuple[str, function]]:
     ]
 
 
-def on_begin_data_pipeline(event_listener: object, **kwargs) -> None:
+def on_begin_data_pipeline(event_listener: Any, **kwargs) -> None:
     """Call back when the data pipeline starts.
 
     Args:
@@ -61,7 +60,7 @@ def on_begin_data_pipeline(event_listener: object, **kwargs) -> None:
         print('\nStarting Data Pipeline:', kwargs['dataset'].name)
 
 
-def on_begin_filter_dataset(event_listener: object, **kwargs) -> None:
+def on_begin_filter_dataset(event_listener: Any, **kwargs) -> None:
     """Call back when dataset filtering starts.
 
     Args:
@@ -75,7 +74,7 @@ def on_begin_filter_dataset(event_listener: object, **kwargs) -> None:
         print('Filtering dataset using:', kwargs['prefilters'])
 
 
-def on_begin_load_dataset(event_listener: object, **kwargs) -> None:
+def on_begin_load_dataset(event_listener: Any, **kwargs) -> None:
     """Call back when dataset loading starts.
 
     Args:
@@ -89,7 +88,7 @@ def on_begin_load_dataset(event_listener: object, **kwargs) -> None:
         print('Loading dataset from', kwargs['dataset'].get_matrix_file_path())
 
 
-def on_begin_modify_dataset(event_listener: object, **kwargs) -> None:
+def on_begin_modify_dataset(event_listener: Any, **kwargs) -> None:
     """Call back when dataset rating conversion starts.
 
     Args:
@@ -104,7 +103,7 @@ def on_begin_modify_dataset(event_listener: object, **kwargs) -> None:
         print('Converting dataset ratings:', kwargs['rating_modifier'])
 
 
-def on_begin_save_sets(event_listener: object, **kwargs) -> None:
+def on_begin_save_sets(event_listener: Any, **kwargs) -> None:
     """Call back when train/test set saving starts.
 
     Args:
@@ -120,7 +119,7 @@ def on_begin_save_sets(event_listener: object, **kwargs) -> None:
         print('Saving test set to', kwargs['test_set_path'])
 
 
-def on_begin_split_dataset(event_listener: object, **kwargs) -> None:
+def on_begin_split_dataset(event_listener: Any, **kwargs) -> None:
     """Call back when dataset splitting starts.
 
     Args:
@@ -128,17 +127,17 @@ def on_begin_split_dataset(event_listener: object, **kwargs) -> None:
             in the event dispatcher with this callback.
 
     Keyword Args:
-        split_type(str): the type of split that is performed.
+        split_name(str): the name of the split that is performed.
         test_ratio(float): the ratio of the test set size relative
             to the original dataset.
     """
     if event_listener.verbose:
         test_perc = int(kwargs['test_ratio'] * 100.0)
         print('Splitting dataset:', 100 - test_perc, '/', test_perc,
-              '=>', kwargs['split_type'])
+              '=>', kwargs['split_name'])
 
 
-def on_end_data_pipeline(event_listener: object, **kwargs) -> None:
+def on_end_data_pipeline(event_listener: Any, **kwargs) -> None:
     """Call back when the data pipeline finishes.
 
     Args:
@@ -156,7 +155,7 @@ def on_end_data_pipeline(event_listener: object, **kwargs) -> None:
               f'in {elapsed_time:1.4f}s')
 
 
-def on_end_filter_dataset(event_listener: object, **kwargs) -> None:
+def on_end_filter_dataset(event_listener: Any, **kwargs) -> None:
     """Call back when dataset filtering finishes.
 
     Args:
@@ -173,7 +172,7 @@ def on_end_filter_dataset(event_listener: object, **kwargs) -> None:
         print(f'Filtered dataset in {elapsed_time:1.4f}s')
 
 
-def on_end_load_dataset(event_listener: object, **kwargs) -> None:
+def on_end_load_dataset(event_listener: Any, **kwargs) -> None:
     """Call back when dataset loading finishes.
 
     Args:
@@ -190,7 +189,7 @@ def on_end_load_dataset(event_listener: object, **kwargs) -> None:
         print(f'Loaded dataset in {elapsed_time:1.4f}s')
 
 
-def on_end_modify_dataset(event_listener: object, **kwargs) -> None:
+def on_end_modify_dataset(event_listener: Any, **kwargs) -> None:
     """Call back when dataset rating conversion finishes.
 
     Args:
@@ -208,7 +207,7 @@ def on_end_modify_dataset(event_listener: object, **kwargs) -> None:
         print(f'Converted dataset ratings in {elapsed_time:1.4f}s')
 
 
-def on_end_save_sets(event_listener: object, **kwargs) -> None:
+def on_end_save_sets(event_listener: Any, **kwargs) -> None:
     """Call back when train/test set saving finishes.
 
     Args:
@@ -226,7 +225,7 @@ def on_end_save_sets(event_listener: object, **kwargs) -> None:
         print(f'Saved train and test sets in {elapsed_time:1.4f}s')
 
 
-def on_end_split_dataset(event_listener: object, **kwargs) -> None:
+def on_end_split_dataset(event_listener: Any, **kwargs) -> None:
     """Call back when dataset splitting finishes.
 
     Args:
@@ -234,7 +233,7 @@ def on_end_split_dataset(event_listener: object, **kwargs) -> None:
             in the event dispatcher with this callback.
 
     Keyword Args:
-        split_type(str): the type of split that was performed.
+        split_name(str): the name of the split that was performed.
         test_ratio(float): the ratio of the test set size relative
             to the original dataset.
         elapsed_time(float): the time that has passed since the

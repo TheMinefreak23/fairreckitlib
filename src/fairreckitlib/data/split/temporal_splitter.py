@@ -4,6 +4,8 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from typing import Any, Dict, Tuple
+
 import lenskit.crossfold as xf
 import pandas as pd
 
@@ -16,17 +18,26 @@ class TemporalSplitter(DataSplitter):
     Splits the dataframe into a train and test set based on time.
     """
 
-    def run(self, dataframe: pd.DataFrame, test_ratio: float) -> tuple[pd.DataFrame, pd.DataFrame]:
+    def run(self, dataframe: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Split the dataframe into a train and test set.
+
+        For this function to work, it needs a 'user' and 'timestamp' column.
 
         Args:
             dataframe: with at least the 'user' column.
-            test_ratio: the fraction of users to use for testing.
 
         Returns:
-            train_set, test_set: the train and test set.
+            the train and test set dataframes of the split.
         """
-        # Note: for this function to work, it needs a 'user' and 'timestamp' column.
-        frac = xf.LastFrac(test_ratio, col='timestamp')
+        frac = xf.LastFrac(self.test_ratio, col='timestamp')
         for train_set, test_set in xf.partition_users(dataframe, 1, frac):
             return train_set, test_set
+
+
+def create_temporal_splitter(name: str, params: Dict[str, Any], **kwargs) -> TemporalSplitter:
+    """Create the Temporal Splitter.
+
+    Returns:
+        the temporal data splitter.
+    """
+    return TemporalSplitter(name, params, kwargs['test_ratio'])

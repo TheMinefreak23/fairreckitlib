@@ -5,6 +5,7 @@ Utrecht University within the Software Project course.
 """
 
 import os
+from typing import Any, Dict, List, Optional
 
 from ..utility import load_yml
 from .dataset_config import DATASET_CONFIG_FILE
@@ -30,11 +31,14 @@ class DataRegistry:
     Each subdirectory is considered to store a single dataset. The name of
     the subdirectory needs to be exactly the same as one of the available
     processors to trigger automatic data processing.
-
-    Args:
-        data_dir(str): path to the directory that contains the datasets.
     """
-    def __init__(self, data_dir):
+
+    def __init__(self, data_dir: str):
+        """Construct the data registry and scan for available datasets.
+
+        Args:
+            data_dir: path to the directory that contains the datasets.
+        """
         if not os.path.isdir(data_dir):
             raise IOError('Failed to initialize DataRegistry: '
                           'unknown data directory => ' + data_dir)
@@ -68,11 +72,11 @@ class DataRegistry:
 
             self.__registry[file_name] = Dataset(file_name, dataset_dir, config)
 
-    def get_available_processors(self):
-        """Gets the names of the available processors in the registry.
+    def get_available_processors(self) -> List[str]:
+        """Get the names of the available processors in the registry.
 
         Returns:
-            processor_names(array like): list data processor names.
+            a list of data processor names.
         """
         processor_names = []
 
@@ -81,11 +85,11 @@ class DataRegistry:
 
         return processor_names
 
-    def get_available_sets(self):
-        """Gets the names of the available datasets in the registry.
+    def get_available_sets(self) -> List[str]:
+        """Get the names of the available datasets in the registry.
 
         Returns:
-            dataset_names(array like): list dataset names.
+            a list of dataset names.
         """
         dataset_names = []
 
@@ -94,11 +98,11 @@ class DataRegistry:
 
         return dataset_names
 
-    def get_info(self):
-        """Gets the matrix information for each available dataset.
+    def get_info(self) -> Dict[str, Dict[str, Any]]:
+        """Get the matrix information for each available dataset.
 
         Returns:
-            (dict): where the key corresponds to the dataset name and
+            a dictionary where the key corresponds to the dataset name and
                 the value corresponds to the matrix information dictionary.
         """
         info = {}
@@ -108,13 +112,13 @@ class DataRegistry:
 
         return info
 
-    def get_set(self, dataset_name):
-        """Gets the dataset with the specified name.
+    def get_set(self, dataset_name: str) -> Optional[Dataset]:
+        """Get the dataset with the specified name.
 
         Args:
-            dataset_name(str): name of the dataset to retrieve.
+            dataset_name: name of the dataset to retrieve.
 
         Returns:
-            (Dataset): the retrieved set or None when not present.
+            the retrieved set or None when not present.
         """
         return self.__registry.get(dataset_name)

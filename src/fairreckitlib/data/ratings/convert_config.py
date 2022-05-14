@@ -7,12 +7,10 @@ Utrecht University within the Software Project course.
 from dataclasses import dataclass
 from typing import Any, Dict
 
-KEY_MODELS = 'models'
-
 
 @dataclass
-class ModelConfig:
-    """Model Configuration."""
+class ConvertConfig:
+    """Dataset rating conversion Configuration."""
 
     name: str
     params: Dict[str, Any]

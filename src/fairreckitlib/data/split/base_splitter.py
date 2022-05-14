@@ -4,52 +4,49 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from abc import ABCMeta, abstractmethod
-from typing import Dict, Any
+from typing import Any, Dict, Tuple
+
 import pandas as pd
 
+from ..data_modifier import DataModifier
 
-class DataSplitter(metaclass=ABCMeta):
+
+class DataSplitter(DataModifier):
     """Base class for FairRecKit data splitters.
 
     A splitter is used to split a dataframe into a train and test set.
+
+    Public methods:
+
+    get_test_ratio
     """
 
-    def __init__(self, name: str, params: Dict[str, Any]):
+    def __init__(self, name: str, params: Dict[str, Any], test_ratio: float):
         """Construct the base splitter.
 
         Args:
             name: the name of the splitter.
             params: a dictionary containing the parameters for the splitter.
+            test_ratio: the fraction of users to use for testing.
         """
-        self.__name = name
-        self.__params = params
+        DataModifier.__init__(self, name, params)
+        self.test_ratio = test_ratio
 
-    def get_name(self) -> str:
-        """Get the name of the splitter.
+    def get_test_ratio(self) -> float:
+        """Get the test ratio used by the splitter when run.
 
         Returns:
-            (str) the splitter name.
+            the test ratio
         """
-        return self.__name
+        return self.test_ratio
 
-    def get_params(self) -> Dict[str, Any]:
-        """Get the parameters of the splitter.
-
-        Returns:
-            (dict) with the splitter parameters.
-        """
-        return dict(self.__params)
-
-    @abstractmethod
-    def run(self, dataframe: pd.DataFrame, test_ratio: float) -> tuple[pd.DataFrame, pd.DataFrame]:
+    def run(self, dataframe: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Run the splitter on the specified dataframe.
 
         Args:
             dataframe: with at least the 'user' column.
-            test_ratio: the fraction of users to use for testing.
 
         Returns:
-            train_set, test_set: the train and test set of the split.
+            the train and test set dataframes of the split.
         """
         raise NotImplementedError()

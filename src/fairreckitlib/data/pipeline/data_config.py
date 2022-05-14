@@ -5,21 +5,13 @@ Utrecht University within the Software Project course.
 """
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Optional
 
-from ..ratings.base_converter import RatingConverter
+from ..ratings.convert_config import ConvertConfig
+from ..split.split_config import SplitConfig
 
 KEY_DATASETS = 'datasets'
 KEY_DATA_FILTERS = 'filters'
-
-
-@dataclass
-class SplitConfig:
-    """Dataset Splitting Configuration."""
-
-    test_ratio: float
-    type: str
-    params: {str: Any}
 
 
 @dataclass
@@ -28,5 +20,5 @@ class DatasetConfig:
 
     name: str
     prefilters: []
-    rating_converter: RatingConverter
+    converter: Optional[ConvertConfig]
     splitting: SplitConfig

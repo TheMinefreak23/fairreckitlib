@@ -4,15 +4,9 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from dataclasses import dataclass
-from typing import Any, Dict
+KEY_RATING_CONVERTER = 'rating_converter'
 
-KEY_MODELS = 'models'
+CONVERTER_RANGE = 'range'
+CONVERTER_KL = 'kl'
 
-
-@dataclass
-class ModelConfig:
-    """Model Configuration."""
-
-    name: str
-    params: Dict[str, Any]
+RATING_TYPE_THRESHOLD = 10

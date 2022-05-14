@@ -6,13 +6,14 @@ Utrecht University within the Software Project course.
 import errno
 import os
 
+from .core.event_error import get_error_events
 from .core.event_io import get_io_events
 from .core.threading.thread_processor import ThreadProcessor
 from .data.data_factory import KEY_DATASETS
 from .data.pipeline.data_event import get_data_events
 from .data.set.dataset_registry import DataRegistry
 from .data.ratings.rating_converter_factory import KEY_RATING_CONVERTER
-from .data.split.split_factory import KEY_SPLITTING
+from .data.split.split_constants import KEY_SPLITTING
 from .evaluation.evaluation_factory import KEY_EVALUATION
 from .evaluation.pipeline.evaluation_event import get_evaluation_events
 from .experiment.experiment_event import get_experiment_events
@@ -215,10 +216,10 @@ class RecommenderSystem:
             (array like) list of pairs in the format (event_id, func_on_event)
         """
         events = []
-        events += get_experiment_events()
+        events += get_error_events()
         events += get_io_events()
         events += get_data_events()
         events += get_model_events()
         events += get_evaluation_events()
-
+        events += get_experiment_events()
         return events

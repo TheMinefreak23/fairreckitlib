@@ -5,41 +5,59 @@ Utrecht University within the Software Project course.
 """
 
 from abc import ABCMeta, abstractmethod
+from typing import Any, Dict
+
+import pandas as pd
 
 
-class Algorithm(metaclass=ABCMeta):
+class BaseAlgorithm(metaclass=ABCMeta):
     """Base class for FairRecKit algorithms.
 
     An algorithm is used for carrying out recommender system experiments.
 
-    Keyword Args:
-        num_threads(int): the max number of threads the algorithm can use.
+    Public methods:
+
+    get_name
+    get_num_threads
+    get_params
+    train
     """
-    def __init__(self, **kwargs):
-        self.num_threads = kwargs['num_threads']
+
+    def __init__(self):
+        """Construct the algorithm."""
 
     @abstractmethod
-    def get_name(self):
-        """Gets the name of the algorithm.
+    def get_name(self) -> str:
+        """Get the name of the algorithm.
 
         Returns:
-            (str) the algorithm name.
-        """
-    @abstractmethod
-    def get_params(self):
-        """Get the parameters of the algorithm.
-
-        Returns:
-            (dict) with the algorithm parameters.
+            the algorithm name.
         """
         raise NotImplementedError()
 
     @abstractmethod
-    def train(self, train_set):
-        """Trains the model on the specified train set.
+    def get_num_threads(self) -> int:
+        """Get the max number of threads the algorithm can use.
+
+        Returns:
+            the number of threads.
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_params(self) -> Dict[str, Any]:
+        """Get the parameters of the algorithm.
+
+        Returns:
+            the algorithm parameters.
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def train(self, train_set: pd.DataFrame) -> None:
+        """Train the algorithm on the specified train set.
 
         Args:
-            train_set(pandas.DataFrame): with at least three columns:
-                'user', 'item', 'rating'.
+            train_set: with at least three columns: 'user', 'item', 'rating'.
         """
         raise NotImplementedError()

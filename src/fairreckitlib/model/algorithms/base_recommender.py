@@ -5,50 +5,67 @@ Utrecht University within the Software Project course.
 """
 
 from abc import ABCMeta, abstractmethod
+from typing import Any, Dict, List
 
 import numpy as np
 import pandas as pd
 
-from .base_algorithm import Algorithm
+from .base_algorithm import BaseAlgorithm
 
 
-class Recommender(Algorithm, metaclass=ABCMeta):
+class BaseRecommender(BaseAlgorithm, metaclass=ABCMeta):
     """Base class for FairRecKit recommenders.
 
-    A recommender is used for recommender experiments. It can compute a number of
+    A recommender is used for recommender experiments. It computes a number of
     item recommendations for any user that it was trained on.
 
-    Keyword Args:
-        num_threads(int): the max number of threads the algorithm can use.
-        rated_items_filter(bool): whether to filter already rated items when
-            producing item recommendations.
-    """
-    def __init__(self, **kwargs):
-        Algorithm.__init__(self, **kwargs)
-        self.rated_items_filter = kwargs['rated_items_filter']
+    Public methods:
 
-    @abstractmethod
-    def recommend(self, user, num_items=10):
-        """Computes item recommendations for the specified user.
+    has_rated_items_filter
+    recommend
+    recommend_batch
+    """
+
+    def __init__(self, rated_items_filter: bool):
+        """Construct the recommender.
 
         Args:
-            user(int): the user ID.
-            num_items(int): the number of item recommendations to produce.
+            rated_items_filter: whether to filter already rated items when
+                producing item recommendations.
+        """
+        BaseAlgorithm.__init__(self)
+        self.rated_items_filter = rated_items_filter
+
+    def has_rated_items_filter(self) -> bool:
+        """Get if the recommender filters already rated items when producing recommendations.
 
         Returns:
-            pandas.DataFrame: with the columns 'item' and 'score'.
+            whether the recommender filters already rated items.
+        """
+        return self.rated_items_filter
+
+    @abstractmethod
+    def recommend(self, user: int, num_items: int=10) -> pd.DataFrame:
+        """Compute item recommendations for the specified user.
+
+        Args:
+            user: the user ID to compute recommendations for.
+            num_items: the number of item recommendations to produce.
+
+        Returns:
+            dataframe with the columns: 'item' and 'score'.
         """
         raise NotImplementedError()
 
-    def recommend_batch(self, users, num_items=10):
-        """Computes the items recommendations for each of the specified users.
+    def recommend_batch(self, users: List[int], num_items: int=10) -> pd.DataFrame:
+        """Compute the items recommendations for each of the specified users.
 
         Args:
-            users(array-like): the user ID's.
-            num_items(int): the number of item recommendations to produce.
+            users: the user ID's to compute recommendations for.
+            num_items: the number of item recommendations to produce.
 
         Returns:
-            pandas.DataFrame: with the columns 'rank', 'user', 'item', 'score'.
+            dataframe with the columns: 'rank', 'user', 'item', 'score'.
         """
         result = pd.DataFrame()
 
@@ -64,3 +81,47 @@ class Recommender(Algorithm, metaclass=ABCMeta):
             )
 
         return result
+
+
+class Recommender(BaseRecommender, metaclass=ABCMeta):
+    """Recommender that implements basic shared functionality."""
+
+    def __init__(self, name: str, params: Dict[str, Any], num_threads: int,
+                 rated_items_filter: bool):
+        """Construct the recommender.
+
+        Args:
+            name: the name of the recommender.
+            params: the parameters of the recommender.
+            num_threads: the max number of threads the recommender can use.
+            rated_items_filter: whether to filter already rated items when
+                producing item recommendations.
+        """
+        BaseRecommender.__init__(self, rated_items_filter)
+        self.num_threads = num_threads
+        self.recommender_name = name
+        self.params = params
+
+    def get_name(self) -> str:
+        """Get the name of the recommender.
+
+        Returns:
+            the recommender name.
+        """
+        return self.recommender_name
+
+    def get_num_threads(self) -> int:
+        """Get the max number of threads the recommender can use.
+
+        Returns:
+            the number of threads.
+        """
+        return self.num_threads
+
+    def get_params(self) -> Dict[str, Any]:
+        """Get the parameters of the recommender.
+
+        Returns:
+            the recommender parameters.
+        """
+        return dict(self.params)
