@@ -6,6 +6,8 @@ Utrecht University within the Software Project course.
 
 import pandas as pd
 import pytest
+from src.fairreckitlib.core.factories import Factory
+from src.fairreckitlib.data.ratings.base_converter import RatingConverter
 from src.fairreckitlib.data.ratings import count, rating_converter_factory, range_converter
 from src.fairreckitlib.data.set import dataset_registry
 from src.fairreckitlib.data.pipeline.data_pipeline import DataPipeline
@@ -29,6 +31,14 @@ dfs = [('ml_100k', df_ml_100k)
 converter_factory = rating_converter_factory.create_rating_converter_factory()
 data_pipeline = DataPipeline(None, None)
 rating_modifier = 5
+
+
+def test_converter_factory():
+    """Test if all converters in the factory are derived from the correct base class."""
+    assert isinstance(converter_factory, Factory)
+    for _, converter_name in enumerate(converter_factory.get_available_names()):
+        converter = converter_factory.create(converter_name)
+        assert isinstance(converter, RatingConverter)
 
 def test_convert_classes():
     """Tests if the created variables are in fact of that class."""

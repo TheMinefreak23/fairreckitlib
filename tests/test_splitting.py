@@ -8,7 +8,11 @@ import pandas as pd
 import pytest
 
 from src.fairreckitlib.core.factories import Factory
+from src.fairreckitlib.data.split.split_constants import DEFAULT_SPLIT_TEST_RATIO
+from src.fairreckitlib.data.split.split_constants import KEY_SPLIT_TEST_RATIO
+from src.fairreckitlib.data.split.split_constants import SPLIT_RANDOM, SPLIT_TEMPORAL
 from src.fairreckitlib.data.split.split_factory import create_split_factory
+from src.fairreckitlib.data.split.base_splitter import DataSplitter
 from src.fairreckitlib.data.split.random_splitter import RandomSplitter
 from src.fairreckitlib.data.split.temporal_splitter import TemporalSplitter
 
@@ -30,8 +34,7 @@ dfs =  [('df_lfm360k', df_lfm360k_sample),
 
 # creating the factories to run splitting with
 split_factory = create_split_factory()
-random_split = split_factory.create('random')
-temp_split = split_factory.create('temporal')
+split_kwargs = {KEY_SPLIT_TEST_RATIO: DEFAULT_SPLIT_TEST_RATIO}
 
 
 # the list of test ratios to test splitting with
@@ -39,13 +42,21 @@ temp_split = split_factory.create('temporal')
 ratios = [0.2, 0.3, 0.8]
 
 
-
-
-def test_split_classes():
-    """tests if the created variables are in fact of that class"""
+def test_split_factory():
+    """Test if all splitters in the factory are derived from the correct base class."""
     assert isinstance(split_factory, Factory)
-    assert isinstance(random_split, RandomSplitter)
-    assert isinstance(temp_split, TemporalSplitter)
+    for _, splitter_name in enumerate(split_factory.get_available_names()):
+        splitter = split_factory.create(splitter_name, None, **split_kwargs)
+        assert isinstance(splitter, DataSplitter)
+
+@pytest.mark.parametrize('splitter_name, splitter_type', [
+    (SPLIT_RANDOM, RandomSplitter), (SPLIT_TEMPORAL, TemporalSplitter)
+])
+
+def test_split_classes(splitter_name, splitter_type):
+    """tests if the created variables are in fact of that class"""
+    splitter = split_factory.create(splitter_name, None, **split_kwargs)
+    assert isinstance(splitter, splitter_type)
 
 @pytest.mark.parametrize('data', dfs)
 @pytest.mark.parametrize('ratio', ratios)
@@ -56,9 +67,10 @@ def test_temp_split(data, ratio):
     larger margin because it is split on user timestamps, which differs slightly
     compared to the overall timestamps in the dataset
     """
+    temp_split = split_factory.create(SPLIT_TEMPORAL, None, **{KEY_SPLIT_TEST_RATIO: ratio})
     (df_name, df) = data
     if 'timestamp' in df:
-        (train, test) = temp_split.run(df, ratio)
+        (train, test) = temp_split.run(df)
         assert len(train.index) != 0, \
             'Train set is empty: ' + df_name + str(ratio)
         assert len(test.index) != 0, \
@@ -81,8 +93,9 @@ def test_random_split(data, ratio):
     """tests if the random split returns a tuple with the test set being
     the size of the ratio, with a 10% margin
     """
+    random_split = split_factory.create(SPLIT_RANDOM, None, **{KEY_SPLIT_TEST_RATIO: ratio})
     (df_name, df) = data
-    (train, test) = random_split.run(df, ratio)
+    (train, test) = random_split.run(df)
     assert len(train.index) != 0, 'Train set is empty: ' + df_name + str(ratio)
     assert len(test.index) != 0, 'Test set is empty: ' + df_name + str(ratio)
 

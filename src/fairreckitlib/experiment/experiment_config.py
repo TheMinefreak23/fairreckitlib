@@ -10,7 +10,8 @@ from ..core.config_constants import KEY_NAME, KEY_PARAMS, KEY_TYPE
 from ..core.config_constants import KEY_TOP_K, KEY_RATED_ITEMS_FILTER
 from ..data.pipeline.data_config import DatasetConfig, KEY_DATASETS, KEY_DATA_FILTERS
 from ..data.ratings.rating_converter_factory import KEY_RATING_CONVERTER
-from ..data.split.split_factory import KEY_SPLITTING, KEY_SPLIT_TEST_RATIO
+from ..data.split.split_constants import KEY_SPLITTING
+from ..data.split.split_config import split_config_to_dict
 from ..data.utility import save_yml
 from ..evaluation.pipeline.evaluation_config import MetricConfig, KEY_EVALUATION
 from ..model.pipeline.model_config import ModelConfig, KEY_MODELS
@@ -85,9 +86,9 @@ def experiment_config_to_dict(experiment_config: ExperimentConfig):
             dataset[KEY_DATA_FILTERS] = []
 
         # only include rating modifier if it is present
-        if dataset_config.rating_converter:
+        if dataset_config.converter:
             # TODO
-            dataset[KEY_RATING_CONVERTER] = dataset_config.rating_converter
+            dataset[KEY_RATING_CONVERTER] = dataset_config.converter
 
         config[KEY_DATASETS].append(dataset)
 
@@ -126,24 +127,3 @@ def experiment_config_to_dict(experiment_config: ExperimentConfig):
             config[KEY_EVALUATION].append(metric)
 
     return config
-
-
-def split_config_to_dict(split_config):
-    """Converts a splitting configuration to a dictionary.
-
-    Args:
-        split_config(SplitConfig): the configuration to convert to dictionary.
-
-    Returns:
-        (dict): containing the splitting configuration.
-    """
-    splitting = {
-        KEY_SPLIT_TEST_RATIO: split_config.test_ratio,
-        KEY_NAME: split_config.type
-    }
-
-    # only include splitting params if it has entries
-    if len(split_config.params) > 0:
-        splitting[KEY_PARAMS] = split_config.params
-
-    return splitting

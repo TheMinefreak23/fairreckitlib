@@ -4,6 +4,8 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from typing import Any, Callable, List, Tuple
+
 ON_BEGIN_DATA_PIPELINE = 'DataPipeline.on_begin'
 ON_BEGIN_FILTER_DATASET = 'DataPipeline.on_begin_filter_dataset'
 ON_BEGIN_LOAD_DATASET = 'DataPipeline.on_begin_load_dataset'
@@ -18,15 +20,15 @@ ON_END_SAVE_SETS = 'DataPipeline.on_end_save_sets'
 ON_END_SPLIT_DATASET = 'DataPipeline.on_end_split_dataset'
 
 
-def get_data_events():
-    """Gets all data pipeline events.
+def get_data_events() -> List[Tuple[str, Callable[[Any], None]]]:
+    """Get all data pipeline events.
 
     The callback functions are specified below and serve as a default
     implementation for the RecommenderSystem class including the keyword arguments
     that are passed down by the data pipeline.
 
     Returns:
-        (array like) list of pairs in the format (event_id, func_on_event)
+        a list of pairs in the format (event_id, func_on_event)
     """
     return [
         (ON_BEGIN_DATA_PIPELINE, on_begin_data_pipeline),
@@ -44,11 +46,11 @@ def get_data_events():
     ]
 
 
-def on_begin_data_pipeline(event_listener, **kwargs):
-    """Callback function when the data pipeline started.
+def on_begin_data_pipeline(event_listener: Any, **kwargs) -> None:
+    """Call back when the data pipeline starts.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -58,11 +60,11 @@ def on_begin_data_pipeline(event_listener, **kwargs):
         print('\nStarting Data Pipeline:', kwargs['dataset'].name)
 
 
-def on_begin_filter_dataset(event_listener, **kwargs):
-    """Callback function when dataset filtering started.
+def on_begin_filter_dataset(event_listener: Any, **kwargs) -> None:
+    """Call back when dataset filtering starts.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -72,11 +74,11 @@ def on_begin_filter_dataset(event_listener, **kwargs):
         print('Filtering dataset using:', kwargs['prefilters'])
 
 
-def on_begin_load_dataset(event_listener, **kwargs):
-    """Callback function when dataset loading started.
+def on_begin_load_dataset(event_listener: Any, **kwargs) -> None:
+    """Call back when dataset loading starts.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -86,11 +88,11 @@ def on_begin_load_dataset(event_listener, **kwargs):
         print('Loading dataset from', kwargs['dataset'].get_matrix_file_path())
 
 
-def on_begin_modify_dataset(event_listener, **kwargs):
-    """Callback function when dataset rating modification started.
+def on_begin_modify_dataset(event_listener: Any, **kwargs) -> None:
+    """Call back when dataset rating conversion starts.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -98,14 +100,14 @@ def on_begin_modify_dataset(event_listener, **kwargs):
             applied to the dataset.
     """
     if event_listener.verbose:
-        print('Modifying dataset ratings:', kwargs['rating_modifier'])
+        print('Converting dataset ratings:', kwargs['rating_modifier'])
 
 
-def on_begin_save_sets(event_listener, **kwargs):
-    """Callback function when train/test set saving started.
+def on_begin_save_sets(event_listener: Any, **kwargs) -> None:
+    """Call back when train/test set saving starts.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -117,29 +119,29 @@ def on_begin_save_sets(event_listener, **kwargs):
         print('Saving test set to', kwargs['test_set_path'])
 
 
-def on_begin_split_dataset(event_listener, **kwargs):
-    """Callback function when dataset splitting started.
+def on_begin_split_dataset(event_listener: Any, **kwargs) -> None:
+    """Call back when dataset splitting starts.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
-        split_type(str): the type of split that is performed.
+        split_name(str): the name of the split that is performed.
         test_ratio(float): the ratio of the test set size relative
             to the original dataset.
     """
     if event_listener.verbose:
         test_perc = int(kwargs['test_ratio'] * 100.0)
         print('Splitting dataset:', 100 - test_perc, '/', test_perc,
-              '=>', kwargs['split_type'])
+              '=>', kwargs['split_name'])
 
 
-def on_end_data_pipeline(event_listener, **kwargs):
-    """Callback function when the data pipeline finished.
+def on_end_data_pipeline(event_listener: Any, **kwargs) -> None:
+    """Call back when the data pipeline finishes.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -153,11 +155,11 @@ def on_end_data_pipeline(event_listener, **kwargs):
               f'in {elapsed_time:1.4f}s')
 
 
-def on_end_filter_dataset(event_listener, **kwargs):
-    """Callback function when dataset filtering finished.
+def on_end_filter_dataset(event_listener: Any, **kwargs) -> None:
+    """Call back when dataset filtering finishes.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -170,11 +172,11 @@ def on_end_filter_dataset(event_listener, **kwargs):
         print(f'Filtered dataset in {elapsed_time:1.4f}s')
 
 
-def on_end_load_dataset(event_listener, **kwargs):
-    """Callback function when dataset loading finished.
+def on_end_load_dataset(event_listener: Any, **kwargs) -> None:
+    """Call back when dataset loading finishes.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -187,11 +189,11 @@ def on_end_load_dataset(event_listener, **kwargs):
         print(f'Loaded dataset in {elapsed_time:1.4f}s')
 
 
-def on_end_modify_dataset(event_listener, **kwargs):
-    """Callback function when dataset rating modification finished.
+def on_end_modify_dataset(event_listener: Any, **kwargs) -> None:
+    """Call back when dataset rating conversion finishes.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -202,14 +204,14 @@ def on_end_modify_dataset(event_listener, **kwargs):
     """
     if event_listener.verbose:
         elapsed_time = kwargs['elapsed_time']
-        print(f'Modified dataset ratings in {elapsed_time:1.4f}s')
+        print(f'Converted dataset ratings in {elapsed_time:1.4f}s')
 
 
-def on_end_save_sets(event_listener, **kwargs):
-    """Callback function when train/test set saving finished.
+def on_end_save_sets(event_listener: Any, **kwargs) -> None:
+    """Call back when train/test set saving finishes.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -223,15 +225,15 @@ def on_end_save_sets(event_listener, **kwargs):
         print(f'Saved train and test sets in {elapsed_time:1.4f}s')
 
 
-def on_end_split_dataset(event_listener, **kwargs):
-    """Callback function when dataset splitting finished.
+def on_end_split_dataset(event_listener: Any, **kwargs) -> None:
+    """Call back when dataset splitting finishes.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
-        split_type(str): the type of split that was performed.
+        split_name(str): the name of the split that was performed.
         test_ratio(float): the ratio of the test set size relative
             to the original dataset.
         elapsed_time(float): the time that has passed since the

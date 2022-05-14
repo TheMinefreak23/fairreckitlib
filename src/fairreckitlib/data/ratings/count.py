@@ -7,6 +7,7 @@ Utrecht University within the Software Project course.
 from typing import Dict
 import pandas as pd
 
+
 def get_item_dict(dataframe: pd.DataFrame) -> Dict[int, float]:
     """Make a dict with all unique items from the dataframe and starting value 0.
 
@@ -14,12 +15,13 @@ def get_item_dict(dataframe: pd.DataFrame) -> Dict[int, float]:
         dataframe: the dataframe from which the items are taken.
 
     Returns:
-        (dict) with unique items as keys and 0 as values.
+        a dictionary with unique items as keys and 0 as values.
     """
     result = {}
     for item in dataframe['item'].unique():
         result[item] = 0
     return result
+
 
 def calculate_apc(dataframe: pd.DataFrame) -> Dict[int, float]:
     """Sum up the total artist play count (apc).
@@ -30,7 +32,7 @@ def calculate_apc(dataframe: pd.DataFrame) -> Dict[int, float]:
         dataframe with an item and rating header.
 
     Returns:
-        dict with key:item, value:apc
+        a dictionary with key:item, value:apc.
     """
     apc = get_item_dict(dataframe)
 
@@ -38,6 +40,7 @@ def calculate_apc(dataframe: pd.DataFrame) -> Dict[int, float]:
         apc[row['item']] += row['rating']
 
     return apc
+
 
 def calculate_alc(dataframe: pd.DataFrame) -> Dict[int, float]:
     """Sum up the total artist listener count (alc).
@@ -48,7 +51,7 @@ def calculate_alc(dataframe: pd.DataFrame) -> Dict[int, float]:
         dataframe with an item and rating header.
 
     Returns:
-        dict with key:item, value:alc
+        a dictionary with key:item, value:alc.
     """
     alc = get_item_dict(dataframe)
 

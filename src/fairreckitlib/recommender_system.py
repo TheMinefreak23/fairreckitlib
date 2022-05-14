@@ -13,7 +13,7 @@ from .data.data_factory import KEY_DATASETS
 from .data.pipeline.data_event import get_data_events
 from .data.set.dataset_registry import DataRegistry
 from .data.ratings.rating_converter_factory import KEY_RATING_CONVERTER
-from .data.split.split_factory import KEY_SPLITTING
+from .data.split.split_constants import KEY_SPLITTING
 from .evaluation.evaluation_factory import KEY_EVALUATION
 from .evaluation.pipeline.evaluation_event import get_evaluation_events
 from .experiment.experiment_event import get_experiment_events

@@ -4,7 +4,11 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from typing import Any, Dict, List, Tuple, Union
+
 from ...core.config_constants import KEY_NAME, KEY_PARAMS
+from ...core.event_dispatcher import EventDispatcher
+from ...core.factories import Factory, GroupFactory
 from ...core.parsing.parse_assert import assert_is_type, assert_is_container_not_empty
 from ...core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
 from ...core.parsing.parse_event import ON_PARSE
@@ -13,16 +17,19 @@ from ..model_factory import KEY_MODELS
 from .model_config import ModelConfig
 
 
-def parse_models_config(experiment_config, model_factory, event_dispatcher):
+def parse_models_config(
+        experiment_config: Dict[str, Any],
+        model_factory: GroupFactory,
+        event_dispatcher: EventDispatcher) -> Dict[str, List[ModelConfig]]:
     """Parse all model configurations.
 
     Args:
-        experiment_config(dict): the experiment's total configuration.
-        model_factory(ModelFactory): the model factory containing the available models.
-        event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
+        experiment_config: the experiment's total configuration.
+        model_factory: the model factory containing the available models.
+        event_dispatcher: to dispatch the parse event on failure.
 
     Returns:
-        parsed_config(dict): dictionary of parsed ModelConfig's keyed by API name.
+        a dictionary of parsed ModelConfig's keyed by API name.
     """
     parsed_config = {}
 
@@ -76,17 +83,21 @@ def parse_models_config(experiment_config, model_factory, event_dispatcher):
     return parsed_config
 
 
-def parse_api_models(api_name, model_configs, model_factory, event_dispatcher):
+def parse_api_models(
+        api_name: str,
+        model_configs: List[Dict[str, Any]],
+        model_factory: GroupFactory,
+        event_dispatcher: EventDispatcher) -> List[ModelConfig]:
     """Parse the model configurations for the specified API name.
 
     Args:
-        api_name(str): name of the API that will be parsed.
-        model_configs(array like): list of model configurations.
-        model_factory(ModelFactory): the model factory containing the available models.
-        event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
+        api_name: name of the API that will be parsed.
+        model_configs: list of model configurations.
+        model_factory: the model factory containing the available models for each API.
+        event_dispatcher: to dispatch the parse event on failure.
 
     Returns:
-        parsed_models(array like): list of parsed ModelConfig's.
+        a list of parsed ModelConfig's.
     """
     parsed_models = []
 
@@ -134,17 +145,19 @@ def parse_api_models(api_name, model_configs, model_factory, event_dispatcher):
     return parsed_models
 
 
-def parse_model(model_config, algo_factory, event_dispatcher):
+def parse_model(
+        model_config: Dict[str, Any],
+        algo_factory: Factory,
+        event_dispatcher: EventDispatcher) -> Union[Tuple[ModelConfig, str], Tuple[None, None]]:
     """Parse a single model configuration.
 
     Args:
-        model_config(dict): dictionary with the model's configuration.
-        algo_factory(AlgorithmFactory): the algorithm factory related to the model config.
-        event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
+        model_config: dictionary with the model's configuration.
+        algo_factory: the algorithm factory related to the model config.
+        event_dispatcher: to dispatch the parse event on failure.
 
     Returns:
-        parsed_config(ModelConfig): the parsed configuration or None on failure.
-        model_name(str): the name of the parsed model or None on failure.
+        the parsed configuration and model name or None on failure.
     """
     # assert model_config is a dict
     if not assert_is_type(
