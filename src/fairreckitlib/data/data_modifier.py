@@ -21,7 +21,7 @@ class DataModifier(metaclass=ABCMeta):
     """
 
     def __init__(self, name: str, params: Dict[str, Any]):
-        """Construct the Rating Converter.
+        """Construct the DataModifier.
 
         Args:
             name: the name of the modifier.
