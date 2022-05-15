@@ -35,17 +35,17 @@ class ElliotRecommender(Recommender):
     def on_train(self) -> None:
         """Train the elliot model not supported."""
         # not used, training is done by running the framework
-        raise NotImplementedError()
+        raise RuntimeError()
 
     def on_recommend(self, user: int, num_items: int) -> pd.DataFrame:
         """Recommend with the elliot model not supported."""
         # not used, recommending is done by running the framework
-        raise NotImplementedError()
+        raise RuntimeError()
 
     def on_recommend_batch(self, users: List[int], num_items: int) -> pd.DataFrame:
         """Recommend batching with the elliot model not supported."""
         # not used, recommending is done by running the framework
-        raise NotImplementedError()
+        raise RuntimeError()
 
 
 def create_funk_svd(name: str, params: Dict[str, Any], **kwargs) -> ElliotRecommender:
