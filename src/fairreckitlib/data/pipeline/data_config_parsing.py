@@ -4,7 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from ...core.config_constants import KEY_NAME
 from ...core.event_dispatcher import EventDispatcher
@@ -12,17 +12,20 @@ from ...core.factories import GroupFactory
 from ...core.parsing.parse_assert import assert_is_type, assert_is_container_not_empty
 from ...core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
 from ...core.parsing.parse_event import ON_PARSE
+from ..data_factory import KEY_DATASETS
+from ..ratings.convert_constants import KEY_RATING_CONVERTER
+from ..ratings.convert_config_parsing import parse_data_convert_config
 from ..set.dataset_registry import DataRegistry
 from ..split.split_constants import KEY_SPLITTING
 from ..split.split_config_parsing import parse_data_split_config
-from .data_config import DatasetConfig, KEY_DATASETS
+from .data_config import DatasetConfig
 
 
 def parse_data_config(
         experiment_config: Dict[str, Any],
         data_registry: DataRegistry,
         data_factory: GroupFactory,
-        event_dispatcher: EventDispatcher) -> List[DatasetConfig]:
+        event_dispatcher: EventDispatcher) -> Optional[List[DatasetConfig]]:
     """Parse all dataset configurations.
 
     Args:
@@ -32,7 +35,7 @@ def parse_data_config(
         event_dispatcher: to dispatch the parse event on failure.
 
     Returns:
-        parsed_config: list of parsed DatasetConfig's.
+        a list of parsed DatasetConfig's or None when empty.
     """
     parsed_config = []
 
@@ -83,6 +86,12 @@ def parse_data_config(
 
         parsed_config.append(dataset)
 
+    if not assert_is_container_not_empty(
+        parsed_config,
+        event_dispatcher,
+        'PARSE ERROR: no experiment ' + KEY_DATASETS + ' specified'
+    ): return None
+
     return parsed_config
 
 
@@ -129,14 +138,23 @@ def parse_dataset_config(
         'PARSE ERROR: unknown dataset name \'' + str(dataset_name) + '\''
     ): return None, dataset_name
 
-    # TODO parse these
+    dataset = data_registry.get_set(dataset_name)
+
+    # TODO parse this
     dataset_prefilters = []
-    dataset_rating_modifier = None
+
+    # parse dataset rating converter
+    dataset_rating_modifier = parse_data_convert_config(
+        dataset_config,
+        dataset,
+        data_factory.get_factory(KEY_RATING_CONVERTER),
+        event_dispatcher
+    )
 
     # parse dataset split
     dataset_splitting = parse_data_split_config(
         dataset_config,
-        dataset_name,
+        dataset,
         data_factory.get_factory(KEY_SPLITTING),
         event_dispatcher
     )

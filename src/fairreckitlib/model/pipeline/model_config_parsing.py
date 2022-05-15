@@ -4,7 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from ...core.config_constants import KEY_NAME, KEY_PARAMS
 from ...core.event_dispatcher import EventDispatcher
@@ -20,7 +20,7 @@ from .model_config import ModelConfig
 def parse_models_config(
         experiment_config: Dict[str, Any],
         model_factory: GroupFactory,
-        event_dispatcher: EventDispatcher) -> Dict[str, List[ModelConfig]]:
+        event_dispatcher: EventDispatcher) -> Optional[Dict[str, List[ModelConfig]]]:
     """Parse all model configurations.
 
     Args:
@@ -29,7 +29,7 @@ def parse_models_config(
         event_dispatcher: to dispatch the parse event on failure.
 
     Returns:
-        a dictionary of parsed ModelConfig's keyed by API name.
+        a dictionary of parsed ModelConfig's keyed by API name or None when empty.
     """
     parsed_config = {}
 
@@ -79,6 +79,12 @@ def parse_models_config(
         ): continue
 
         parsed_config[api_name] = api_config
+
+    if not assert_is_container_not_empty(
+        parsed_config,
+        event_dispatcher,
+        'PARSE ERROR: no experiment ' + KEY_MODELS + ' specified'
+    ): return None
 
     return parsed_config
 

@@ -5,9 +5,10 @@ Utrecht University within the Software Project course.
 """
 
 from ..core.factories import GroupFactory
-from .pipeline.data_config import KEY_DATASETS
 from .ratings.rating_converter_factory import create_rating_converter_factory
 from .split.split_factory import create_split_factory
+
+KEY_DATASETS = 'datasets'
 
 
 def create_data_factory() -> GroupFactory:

@@ -83,6 +83,7 @@ class TopK(BaseRecommender):
         Returns:
             dataframe with the columns: 'item' and 'score'.
         """
+        items = self.items
         # filter items that are rated by the user already
         if self.rated_items_filter:
             is_user = self.train_set['user'] == user
@@ -91,7 +92,7 @@ class TopK(BaseRecommender):
 
         # TODO this is not very efficient, but works (also should utilize available num_threads)
         # compute recommendations for all items and truncate to the top num_items
-        item_ratings = list(map(lambda i: (i, self.predictor.predict(user, i)), self.items))
+        item_ratings = list(map(lambda i: (i, self.predictor.predict(user, i)), items))
         item_ratings.sort(key=lambda i: i[1], reverse=True)
 
         return pd.DataFrame(item_ratings[:num_items], columns=['item', 'score'])

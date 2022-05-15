@@ -9,7 +9,7 @@ import time
 
 from ..core.event_io import ON_MAKE_DIR
 from ..core.threading.thread_base import ThreadBase
-from .experiment_config import save_config_to_yml
+from ..data.utility import save_yml
 from .experiment_event import ON_BEGIN_THREAD_EXPERIMENT, ON_END_THREAD_EXPERIMENT
 from .experiment_run import Experiment
 
@@ -18,21 +18,21 @@ class ThreadExperiment(ThreadBase):
     """Thread that runs the same experiment one or more times."""
 
     def on_run(self, **kwargs):
-        """Runs the experiments.
+        """Run the experiment.
 
         Keyword Args:
             output_dir(str): the path of the directory to store the output.
             start_run(int): the initial run index.
             num_runs(int): the number of runs to conduct the experiment.
-            factories(ExperimentFactories): the factories used by the experiment.
+            registry(DataRegistry): the registry with available datasets.
+            factory(GroupFactory): the factory containing all three pipeline factories.
             config(ExperimentConfig): the configuration of the experiment.
             num_threads(int): the max number of threads the experiment can use.
-            on_end_experiment(function): function to execute at the end of the thread experiment.
         """
-
         output_dir = kwargs['output_dir']
         start_run = kwargs['start_run']
         num_runs = kwargs['num_runs']
+        config = kwargs['config']
 
         # Create result output directory
         if not os.path.isdir(output_dir):
@@ -42,19 +42,19 @@ class ThreadExperiment(ThreadBase):
                 dir=output_dir
             )
 
-        save_config_to_yml(os.path.join(output_dir, 'config'), kwargs['config'])
+            save_yml(os.path.join(output_dir, 'config.yml'), config.to_yml_format())
 
         start_time = time.time()
         self.event_dispatcher.dispatch(
             ON_BEGIN_THREAD_EXPERIMENT,
             num_runs=num_runs,
-            experiment_name=kwargs['config'].name
+            experiment_name=config.name
         )
 
         experiment = Experiment(
             kwargs['registry'],
             kwargs['factory'],
-            kwargs['config'],
+            config,
             self.event_dispatcher
         )
 
@@ -68,6 +68,6 @@ class ThreadExperiment(ThreadBase):
         self.event_dispatcher.dispatch(
             ON_END_THREAD_EXPERIMENT,
             num_runs=num_runs,
-            experiment_name=kwargs['config'].name,
+            experiment_name=config.name,
             elapsed_time=time.time()-start_time,
         )

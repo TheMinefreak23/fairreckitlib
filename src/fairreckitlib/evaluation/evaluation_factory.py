@@ -6,15 +6,21 @@ Utrecht University within the Software Project course.
 
 from ..core.config_constants import TYPE_PREDICTION, TYPE_RECOMMENDATION
 from ..core.factories import GroupFactory
-from .pipeline.evaluation_config import KEY_EVALUATION
 from .metrics.metric_factory import create_accuracy_metric_factory
 from .metrics.metric_factory import create_coverage_metric_factory
 from .metrics.metric_factory import create_diversity_metric_factory
 from .metrics.metric_factory import create_novelty_metric_factory
 from .metrics.metric_factory import create_rating_metric_factory
 
+KEY_EVALUATION = 'evaluation'
 
-def create_evaluation_factory():
+
+def create_evaluation_factory() -> GroupFactory:
+    """Create a factory with all predictor and recommender metric category factories.
+
+    Returns:
+        the group factory with available predictor and recommender factories.
+    """
     shared_categories = [
         create_coverage_metric_factory,
         create_diversity_metric_factory,

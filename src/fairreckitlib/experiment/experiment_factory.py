@@ -10,7 +10,17 @@ from ..evaluation.evaluation_factory import create_evaluation_factory
 from ..model.model_factory import create_model_factory
 
 
-def create_experiment_factory():
+def create_experiment_factory() -> GroupFactory:
+    """Create a group factory with all three pipeline factories.
+
+    Consists of three factories:
+        1) data factory.
+        2) model factory.
+        3) evaluation factory.
+
+    Returns:
+        the group factory containing the pipeline factories.
+    """
     experiment_factory = GroupFactory('experiment')
     experiment_factory.add_factory(create_data_factory())
     experiment_factory.add_factory(create_model_factory())
