@@ -4,11 +4,4 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from dataclasses import dataclass
-
-from ...core.config_object import ObjectConfig
-
-
-@dataclass
-class ConvertConfig(ObjectConfig):
-    """Dataset rating conversion Configuration."""
+KEY_DATA_FILTERS = 'filters'

@@ -18,7 +18,6 @@ from .evaluation.evaluation_factory import KEY_EVALUATION
 from .evaluation.pipeline.evaluation_event import get_evaluation_events
 from .experiment.experiment_event import get_experiment_events
 from .experiment.experiment_config import ExperimentConfig
-from .experiment.experiment_config import experiment_config_to_dict
 from .experiment.experiment_config_parsing import Parser
 from .experiment.experiment_factory import create_experiment_factory
 from .experiment.experiment_run import resolve_experiment_start_run
@@ -69,7 +68,7 @@ class RecommenderSystem:
 
         if validate_config:
             parser = Parser(verbose)
-            config = parser.parse_experiment_config(experiment_config_to_dict(config),
+            config = parser.parse_experiment_config(config.to_yml_format(),
                                                     self.data_registry,
                                                     self.experiment_factory)
             if config is None:

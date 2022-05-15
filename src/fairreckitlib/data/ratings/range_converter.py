@@ -68,5 +68,5 @@ def create_range_converter_params() -> ConfigParameters:
         the configuration parameters of the converter.
     """
     params = ConfigParameters()
-    params.add_value('upper_bound', float, 1.0, (1.0, 1000.0))
+    params.add_value('upper_bound', float, 1.0, (1.0, 1000000.0))
     return params

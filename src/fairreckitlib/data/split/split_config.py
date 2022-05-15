@@ -7,35 +7,22 @@ Utrecht University within the Software Project course.
 from dataclasses import dataclass
 from typing import Any, Dict
 
-from ...core.config_constants import KEY_NAME, KEY_PARAMS
+from ...core.config_object import ObjectConfig
 from .split_constants import KEY_SPLIT_TEST_RATIO
 
 
 @dataclass
-class SplitConfig:
+class SplitConfig(ObjectConfig):
     """Dataset Splitting Configuration."""
 
-    name: str
     test_ratio: float
-    params: Dict[str, Any]
 
+    def to_yml_format(self) -> Dict[str, Any]:
+        """Format splitting configuration to a yml compatible dictionary.
 
-def split_config_to_dict(split_config: SplitConfig) -> Dict[str, Any]:
-    """Convert a splitting configuration to a dictionary.
-
-    Args:
-        split_config: the configuration to convert to dictionary.
-
-    Returns:
-        a dictionary containing the splitting configuration.
-    """
-    splitting = {
-        KEY_NAME: split_config.name,
-        KEY_SPLIT_TEST_RATIO: split_config.test_ratio
-    }
-
-    # only include splitting params if it has entries
-    if len(split_config.params) > 0:
-        splitting[KEY_PARAMS] = split_config.params
-
-    return splitting
+        Returns:
+            a dictionary containing the splitting configuration.
+        """
+        yml_format = ObjectConfig.to_yml_format(self)
+        yml_format[KEY_SPLIT_TEST_RATIO] = self.test_ratio
+        return yml_format

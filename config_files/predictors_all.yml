@@ -1,5 +1,9 @@
 datasets:
 - name: ML-100K
+  rating_converter:
+    name: range
+  splitting:
+    name: random
 evaluation:
 - name: MAE
 - name: RMSE

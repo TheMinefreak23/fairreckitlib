@@ -100,7 +100,7 @@ def on_begin_modify_dataset(event_listener: Any, **kwargs) -> None:
             applied to the dataset.
     """
     if event_listener.verbose:
-        print('Converting dataset ratings:', kwargs['rating_modifier'])
+        print('Converting dataset ratings:', kwargs['rating_converter'])
 
 
 def on_begin_save_sets(event_listener: Any, **kwargs) -> None:
