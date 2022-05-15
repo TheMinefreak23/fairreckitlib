@@ -18,6 +18,12 @@ class BaseRecommender(BaseAlgorithm, metaclass=ABCMeta):
 
     A recommender is used for recommender experiments. It computes a number of
     item recommendations for any user that it was trained on.
+    Derived recommenders are expected to implement the abstract interface.
+
+    Abstract methods:
+
+    on_recommend
+    on_recommend_batch (optional)
 
     Public methods:
 
@@ -44,28 +50,75 @@ class BaseRecommender(BaseAlgorithm, metaclass=ABCMeta):
         """
         return self.rated_items_filter
 
-    @abstractmethod
     def recommend(self, user: int, num_items: int=10) -> pd.DataFrame:
         """Compute item recommendations for the specified user.
+
+        A recommendation is impossible when the user is not present in
+        the unique users it was trained on and will return an empty dataframe.
 
         Args:
             user: the user ID to compute recommendations for.
             num_items: the number of item recommendations to produce.
 
         Returns:
-            dataframe with the columns: 'item' and 'score'.
+            a dataframe with the columns: 'item' and 'score'.
+        """
+        if user not in self.users:
+            return pd.DataFrame(columns=['item', 'score'])
+
+        return self.on_recommend(user, num_items)
+
+    @abstractmethod
+    def on_recommend(self, user: int, num_items: int) -> pd.DataFrame:
+        """Compute item recommendations for the specified user.
+
+        The user is assumed to be present in the train set that the
+        recommender was trained on.
+        Derived implementations are expected to return a dataframe
+        with the 'score' column in descending order.
+
+        Args:
+            user: the user ID to compute recommendations for.
+            num_items: the number of item recommendations to produce.
+
+        Returns:
+            a dataframe with the columns: 'item' and 'score'.
         """
         raise NotImplementedError()
 
     def recommend_batch(self, users: List[int], num_items: int=10) -> pd.DataFrame:
         """Compute the items recommendations for each of the specified users.
 
+        All the users that are not present in the train set that the recommender
+        was trained on are filtered before recommendations are made.
+
         Args:
             users: the user ID's to compute recommendations for.
             num_items: the number of item recommendations to produce.
 
         Returns:
-            dataframe with the columns: 'rank', 'user', 'item', 'score'.
+            a dataframe with the columns: 'rank', 'user', 'item', 'score'.
+        """
+        users = [u for u in users if u in self.users]
+        if len(users) == 0:
+            return pd.DataFrame(columns=['rank', 'user', 'item', 'score'])
+
+        return self.on_recommend_batch(users, num_items)
+
+    def on_recommend_batch(self, users: List[int], num_items: int) -> pd.DataFrame:
+        """Compute the items recommendations for each of the specified users.
+
+        All the users are assumed to be present in the train set that
+        the recommender was trained on.
+        A standard batch implementation is provided, but derived classes are
+        allowed to override batching with their own logic.
+
+        Args:
+            users: the user ID's to compute recommendations for.
+            num_items: the number of item recommendations to produce.
+
+        Returns:
+            a dataframe with the columns: 'rank', 'user', 'item', 'score'.
         """
         result = pd.DataFrame()
 

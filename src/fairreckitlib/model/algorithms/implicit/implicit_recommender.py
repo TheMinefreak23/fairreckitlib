@@ -40,22 +40,19 @@ class ImplicitRecommender(Recommender):
         self.algo = algo
         self.csr_train_set = None
 
-    def train(self, train_set: pd.DataFrame) -> None:
-        """Train the algorithm on the specified train set.
+    def on_train(self) -> None:
+        """Train the algorithm on the train set.
 
         Implicit recommenders expect a CSR matrix, convert the train set and store
         it for recommending items.
-
-        Args:
-            train_set: with at least three columns: 'user', 'item', 'rating'.
         """
         self.csr_train_set = sparse.csr_matrix(
-            (train_set['rating'], (train_set['user'], train_set['item']))
+            (self.train_set['rating'], (self.train_set['user'], self.train_set['item']))
         )
 
         self.algo.fit(self.csr_train_set, False)
 
-    def recommend(self, user: int, num_items: int=10) -> pd.DataFrame:
+    def on_recommend(self, user: int, num_items: int) -> pd.DataFrame:
         """Compute item recommendations for the specified user.
 
         Implicit recommenders use the stored CSR train set to produce item recommendations.
@@ -76,7 +73,7 @@ class ImplicitRecommender(Recommender):
 
         return pd.DataFrame({ 'item': items, 'score': scores })
 
-    def recommend_batch(self, users: List[int], num_items: int=10) -> pd.DataFrame:
+    def on_recommend_batch(self, users: List[int], num_items: int) -> pd.DataFrame:
         """Compute the items recommendations for each of the specified users.
 
         Implicit recommenders use the stored CSR train set to produce item recommendations.

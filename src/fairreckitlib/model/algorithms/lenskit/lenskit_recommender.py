@@ -38,15 +38,11 @@ class LensKitRecommender(Recommender):
                              kwargs['num_threads'], kwargs['rated_items_filter'])
         self.algo = algo
 
-    def train(self, train_set: pd.DataFrame) -> None:
-        """Fit the lenskit algorithm on the specified train set.
+    def on_train(self) -> None:
+        """Fit the lenskit algorithm on the train set."""
+        self.algo.fit(self.train_set)
 
-        Args:
-            train_set: with at least three columns: 'user', 'item', 'rating'.
-        """
-        self.algo.fit(train_set)
-
-    def recommend(self, user: int, num_items: int=10) -> pd.DataFrame:
+    def on_recommend(self, user: int, num_items: int) -> pd.DataFrame:
         """Compute item recommendations for the specified user.
 
         Lenskit recommenders have an implementation that is exactly the
@@ -59,9 +55,14 @@ class LensKitRecommender(Recommender):
         Returns:
             dataframe with the columns: 'item' and 'score'.
         """
-        return self.algo.recommend(user, n=num_items)
+        recs = self.algo.recommend(user, n=num_items)
+        # random algo does not produce a score
+        if self.get_name() == lenskit_algorithms.RANDOM:
+            recs['score'] = np.full(num_items, 1)
 
-    def recommend_batch(self, users: List[int], num_items: int=10) -> pd.DataFrame:
+        return recs
+
+    def on_recommend_batch(self, users: List[int], num_items: int) -> pd.DataFrame:
         """Compute the items recommendations for each of the specified users.
 
         Lenskit recommenders have a batch implementation available that allows for
@@ -78,7 +79,7 @@ class LensKitRecommender(Recommender):
         recs = batch.recommend(self.algo, users, num_items, n_jobs=n_jobs)
 
         # random algo does not produce a score
-        if recs.get('score') is None:
+        if self.get_name() == lenskit_algorithms.RANDOM:
             recs['score'] = np.full(len(users) * num_items, 1)
 
         return recs[['rank', 'user', 'item', 'score']]

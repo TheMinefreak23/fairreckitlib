@@ -14,12 +14,11 @@ def create_params_funk_svd() -> ConfigParameters:
         the configuration parameters of the algorithm.
     """
     params = ConfigParameters()
-    params.add_value('epochs', int, 10, (1, 50))
-    params.add_value('batch_size', int, 512, (100, 10000))
+    params.add_value('iterations', int, 10, (1, 50))
     params.add_value('factors', int, 10, (1, 100))
-    params.add_value('lr', float, 0.001, (0.0001, 1.0))
-    params.add_value('reg_w', float, 0.1, (0.0001, 1.0))
-    params.add_value('reg_b', float, 0.001, (0.0001, 1.0))
+    params.add_value('learning_rate', float, 0.001, (0.0001, 1.0))
+    params.add_value('regularization_factors', float, 0.1, (0.0001, 1.0))
+    params.add_value('regularization_bias', float, 0.001, (0.0001, 1.0))
     params.add_random_seed('seed')
     return params
 
@@ -43,7 +42,7 @@ def create_params_knn() -> ConfigParameters:
     ]
 
     params = ConfigParameters()
-    params.add_value('neighbours', int, 40, (1, 50))
+    params.add_value('neighbors', int, 40, (1, 50))
     params.add_option('similarity', str, similarities[0], similarities)
     params.add_option('implementation', str, implementations[0], implementations)
     return params
@@ -56,13 +55,12 @@ def create_params_multi_vae() -> ConfigParameters:
         the configuration parameters of the algorithm.
     """
     params = ConfigParameters()
-    params.add_value('epochs', int, 10, (1, 50))
-    params.add_value('batch_size', int, 512, (100, 10000))
-    params.add_value('lr', float, 0.001, (0.0001, 1.0))
-    params.add_value('reg_lambda', float, 0.01, (0.0001, 1.0))
-    params.add_value('intermediate_dim', int, 100, (1000, 600))
-    params.add_value('latent_dim', int, 200, (100, 500))
-    params.add_value('dropout_pkeep', float, 1.0, (0.0, 1.0))
+    params.add_value('iterations', int, 10, (1, 50))
+    params.add_value('factors', int, 200, (100, 500))
+    params.add_value('learning_rate', float, 0.001, (0.0001, 1.0))
+    params.add_value('regularization_factors', float, 0.01, (0.0001, 1.0))
+    params.add_value('intermediate_dimensions', int, 100, (1000, 600))
+    params.add_value('dropout_probability', float, 1.0, (0.0, 1.0))
     params.add_random_seed('seed')
     return params
 
@@ -86,11 +84,10 @@ def create_params_svd_pp() -> ConfigParameters:
         the configuration parameters of the algorithm.
     """
     params = ConfigParameters()
-    params.add_value('epochs', int, 10, (1, 50))
-    params.add_value('batch_size', int, 512, (100, 10000))
+    params.add_value('iterations', int, 10, (1, 50))
     params.add_value('factors', int, 50, (1, 100))
-    params.add_value('lr', float, 0.001, (0.0001, 1.0))
-    params.add_value('reg_w', float, 0.1, (0.0001, 1.0))
-    params.add_value('reg_b', float, 0.001, (0.0001, 1.0))
+    params.add_value('learning_rate', float, 0.001, (0.0001, 1.0))
+    params.add_value('regularization_factors', float, 0.1, (0.0001, 1.0))
+    params.add_value('regularization_bias', float, 0.001, (0.0001, 1.0))
     params.add_random_seed('seed')
     return params
