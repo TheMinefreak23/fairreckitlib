@@ -31,15 +31,11 @@ class LensKitPredictor(Predictor):
         Predictor.__init__(self, name, params, kwargs['num_threads'])
         self.algo = algo
 
-    def train(self, train_set: pd.DataFrame) -> None:
-        """Fit the lenskit algorithm on the specified train set.
+    def on_train(self) -> None:
+        """Fit the lenskit algorithm on the train set."""
+        self.algo.fit(self.train_set)
 
-        Args:
-            train_set: with at least three columns: 'user', 'item', 'rating'.
-        """
-        self.algo.fit(train_set)
-
-    def predict(self, user: int, item: int) -> float:
+    def on_predict(self, user: int, item: int) -> float:
         """Compute a prediction for the specified user and item.
 
         Lenskit predictors allow for predicting multiple items at the same time.
@@ -51,12 +47,12 @@ class LensKitPredictor(Predictor):
             item: the item ID.
 
         Returns:
-            the prediction rating.
+            the predicted rating.
         """
         prediction = self.algo.predict_for_user(user, [item])
         return prediction[item]
 
-    def predict_batch(self, user_item_pairs: pd.DataFrame) -> pd.DataFrame:
+    def on_predict_batch(self, user_item_pairs: pd.DataFrame) -> pd.DataFrame:
         """Compute the predictions for each of the specified user and item pairs.
 
         Lenskit predictors have a batch implementation available that allows for

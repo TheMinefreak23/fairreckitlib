@@ -138,8 +138,6 @@ def create_params_nmf() -> ConfigParameters:
     params.add_value('epochs', int, 50, (1, 50))
     params.add_value('reg_pu', float, 0.06, (0.00001, 1.0))
     params.add_value('reg_qi', float, 0.06, (0.00001, 1.0))
-    params.add_value('reg_bu', float, 0.02, (0.00001, 1.0))
-    params.add_value('reg_bi', float, 0.02, (0.00001, 1.0))
     params.add_value('init_low', int, 0, (0, 100))
     params.add_value('init_high', int, 1, (0, 100))
     params.add_random_seed('random_seed')

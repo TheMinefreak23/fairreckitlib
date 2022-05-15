@@ -32,17 +32,17 @@ class ElliotRecommender(Recommender):
         if not self.rated_items_filter:
             raise RuntimeError('no rated items filter is not supported.')
 
-    def train(self, train_set: pd.DataFrame) -> None:
+    def on_train(self) -> None:
         """Train the elliot model not supported."""
         # not used, training is done by running the framework
         raise NotImplementedError()
 
-    def recommend(self, user: int, num_items: int=10) -> pd.DataFrame:
+    def on_recommend(self, user: int, num_items: int) -> pd.DataFrame:
         """Recommend with the elliot model not supported."""
         # not used, recommending is done by running the framework
         raise NotImplementedError()
 
-    def recommend_batch(self, users: List[int], num_items: int=10) -> pd.DataFrame:
+    def on_recommend_batch(self, users: List[int], num_items: int) -> pd.DataFrame:
         """Recommend batching with the elliot model not supported."""
         # not used, recommending is done by running the framework
         raise NotImplementedError()
@@ -55,20 +55,26 @@ def create_funk_svd(name: str, params: Dict[str, Any], **kwargs) -> ElliotRecomm
         name: the name of the algorithm.
         params: containing the following name-value pairs:
             epochs(int): number of iterations.
-            batch_size(int): batch size of the computation.
             factors(int): number of factors of feature embeddings.
             learning_rate(float): the learning rate.
-            reg_w(float): regularization coefficient for latent factors.
-            reg_b(flot): regularization coefficient for bias.
+            regularization_factors(float): regularization coefficient for latent factors.
+            regularization_bias(flot): regularization coefficient for bias.
             seed(int): the random seed or None for the current time as seed.
 
     Returns:
         the ElliotRecommender wrapper of FunkSVD.
     """
-    if params['seed'] is None:
-        params['seed'] = int(time.time())
+    elliot_params = {
+        'epochs': params['iterations'],
+        'batch_size': 512,
+        'factors': params['factors'],
+        'lr': params['learning_rate'],
+        'reg_w': params['regularization_factors'],
+        'reg_b': params['regularization_bias'],
+        'seed': params['seed'] if params.get('seed') else int(time.time())
+    }
 
-    return ElliotRecommender(name, params, **kwargs)
+    return ElliotRecommender(name, elliot_params, **kwargs)
 
 
 def create_item_knn(name: str, params: Dict[str, Any], **kwargs) -> ElliotRecommender:
@@ -77,14 +83,20 @@ def create_item_knn(name: str, params: Dict[str, Any], **kwargs) -> ElliotRecomm
     Args:
         name: the name of the algorithm.
         params: containing the following name-value pairs:
-            neighbours(int): number of item neighbors.
+            neighbors(int): number of item neighbors.
             similarity(str): similarity function to use.
             implementation(str): implementation type (‘aiolli’ or ‘classical’).
 
     Returns:
         the ElliotRecommender wrapper of ItemKNN.
     """
-    return ElliotRecommender(name, params, **kwargs)
+    elliot_params = {
+        'neighbors': params['neighbors'],
+        'similarity': params['similarity'],
+        'implementation': params['implementation'],
+    }
+
+    return ElliotRecommender(name, elliot_params, **kwargs)
 
 
 def create_most_pop(name: str, params: Dict[str, Any], **kwargs) -> ElliotRecommender:
@@ -104,39 +116,51 @@ def create_multi_vae(name: str, params: Dict[str, Any], **kwargs) -> ElliotRecom
     """Create the MultiVAE recommender.
 
     Args:
-        name(str): the name of the algorithm.
-        params(dict): with the entries:
-            epochs(int): number of iterations.
-            batch_size(int): batch size of the computation.
+        name: the name of the algorithm.
+        params: containing the following name-value pairs:
+            iterations(int): number of iterations.
+            factors(int): number of latent factors.
             learning_rate(float): the learning rate.
-            reg_lambda(float): regularization coefficient.
-            intermediate_dim(int): number of intermediate dimension.
-            latent_dim(int): number of latent factors.
-            dropout_pkeep(float): the dropout probability.
+            intermediate_dimensions(int): number of intermediate dimension.
+            regularization_factors(float): regularization coefficient.
+            dropout_probability(float): the dropout probability.
             seed(int): the random seed or None for the current time as seed.
 
     Returns:
         the ElliotRecommender wrapper of MultiVAE.
     """
-    if params['seed'] is None:
-        params['seed'] = int(time.time())
+    elliot_params = {
+        'epochs': params['iterations'],
+        'batch_size': 512,
+        'lr': params['learning_rate'],
+        'reg_lambda': params['regularization_factors'],
+        'intermediate_dim': params['intermediate_dimensions'],
+        'latent_dim': params['factors'],
+        'dropout_pkeep': params['dropout_probability'],
+        'seed': params['seed'] if params.get('seed') else int(time.time())
+    }
 
-    return ElliotRecommender(name, params, **kwargs)
+    return ElliotRecommender(name, elliot_params, **kwargs)
 
 
 def create_pure_svd(name: str, params: Dict[str, Any], **kwargs) -> ElliotRecommender:
     """Create the PureSVD recommender.
 
     Args:
-        name(str): the name of the algorithm.
-        params(dict): with the entries:
+        name: the name of the algorithm.
+        params: containing the following name-value pairs:
             factors(int): number of latent factors.
             seed(int): the random seed or None for the current time as seed.
 
     Returns:
         the ElliotRecommender wrapper of PureSVD.
     """
-    return ElliotRecommender(name, params, **kwargs)
+    elliot_params = {
+        'factors': params['factors'],
+        'seed': params['seed'] if params.get('seed') else int(time.time())
+    }
+
+    return ElliotRecommender(name, elliot_params, **kwargs)
 
 
 def create_random(name: str, params: Dict[str, Any], **kwargs) -> ElliotRecommender:
@@ -150,13 +174,11 @@ def create_random(name: str, params: Dict[str, Any], **kwargs) -> ElliotRecommen
     Returns:
         the ElliotRecommender wrapper of Random.
     """
-    if params['seed'] is None:
-        params['random_seed'] = int(time.time())
-    else:
-        params['random_seed'] = params['seed']
-        del params['seed']
+    elliot_params = {
+        'random_seed': params['seed'] if params.get('seed') else int(time.time())
+    }
 
-    return ElliotRecommender(name, params, **kwargs)
+    return ElliotRecommender(name, elliot_params, **kwargs)
 
 
 def create_svd_pp(name: str, params: Dict[str, Any], **kwargs) -> ElliotRecommender:
@@ -165,21 +187,27 @@ def create_svd_pp(name: str, params: Dict[str, Any], **kwargs) -> ElliotRecommen
     Args:
         name: the name of the algorithm.
         params: containing the following name-value pairs:
-            epochs(int): number of iterations.
-            batch_size(int): batch size of the computation.
+            iterations(int): number of iterations.
             factors(int): number of latent factors.
             learning_rate(float): the learning rate.
-            reg_w(float): regularization coefficient for latent factors.
-            reg_b(float): regularization coefficient for bias.
+            regularization_factors(float): regularization coefficient for latent factors.
+            regularization_bias(float): regularization coefficient for bias.
             seed(int): the random seed or None for the current time as seed.
 
     Returns:
         the ElliotRecommender wrapper of SVDpp.
     """
-    if params['seed'] is None:
-        params['seed'] = int(time.time())
+    elliot_params = {
+        'epochs': params['iterations'],
+        'batch_size': 512,
+        'factors': params['factors'],
+        'lr': params['learning_rate'],
+        'reg_w': params['regularization_factors'],
+        'reg_b': params['regularization_bias'],
+        'seed': params['seed'] if params.get('seed') else int(time.time())
+    }
 
-    return ElliotRecommender(name, params, **kwargs)
+    return ElliotRecommender(name, elliot_params, **kwargs)
 
 
 def create_user_knn(name: str, params: Dict[str, Any], **kwargs) -> ElliotRecommender:
@@ -188,11 +216,17 @@ def create_user_knn(name: str, params: Dict[str, Any], **kwargs) -> ElliotRecomm
     Args:
         name: the name of the algorithm.
         params: containing the following name-value pairs:
-            neighbours(int): number of user neighbors.
+            neighbors(int): number of user neighbors.
             similarity(str): similarity function to use.
             implementation(str): implementation type (‘aiolli’ or ‘classical’).
 
     Returns:
         the ElliotRecommender wrapper of UserKNN.
     """
-    return ElliotRecommender(name, params, **kwargs)
+    elliot_params = {
+        'neighbors': params['neighbors'],
+        'similarity': params['similarity'],
+        'implementation': params['implementation'],
+    }
+
+    return ElliotRecommender(name, elliot_params, **kwargs)
