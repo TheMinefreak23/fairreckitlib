@@ -4,22 +4,30 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from typing import Any, Dict, Tuple
+
+from ..config_params import ConfigParameters, ConfigParam
+from ..event_dispatcher import EventDispatcher
 from .parse_assert import assert_is_container_not_empty, assert_is_type
 from .parse_assert import assert_is_key_in_dict, assert_is_one_of_list
 from .parse_event import ON_PARSE
 
 
-def parse_config_parameters(params_config, parent_name, parameters, event_dispatcher):
-    """Parses the model parameters' configuration.
+def parse_config_parameters(
+        params_config: Dict[str, Any],
+        parent_name: str,
+        parameters: ConfigParameters,
+        event_dispatcher: EventDispatcher) -> Dict[str, Any]:
+    """Parse the object's parameters configuration.
 
     Args:
-        params_config(dict): dictionary with the configuration to parse.
-        parent_name(str): name of the parent related to the parameters' configuration.
-        parameters(ConfigParameters): the configuration parameters.
-        event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
+        params_config: dictionary with the configuration to parse.
+        parent_name: name of the parent related to the parameters' configuration.
+        parameters: the configuration parameters.
+        event_dispatcher: to dispatch the parse event on failure.
 
     Returns:
-        parsed_params(dict): the parsed params configuration as key-value pairs.
+        the parsed params configuration as key-value pairs.
     """
     # start with parameter defaults
     parsed_params = parameters.get_defaults()
@@ -65,18 +73,21 @@ def parse_config_parameters(params_config, parent_name, parameters, event_dispat
     return parsed_params
 
 
-def parse_config_param(params_config, parent_name, param, event_dispatcher):
-    """Parses a parameter from the specified configuration.
+def parse_config_param(
+        params_config: Dict[str, Any],
+        parent_name: str,
+        param: ConfigParam,
+        event_dispatcher: EventDispatcher) -> Tuple[bool, Any]:
+    """Parse a parameter from the specified configuration.
 
     Args:
-        params_config(dict): dictionary with the parameters' configuration.
-        parent_name(str): name of the parent related to the parameters' configuration.
-        param(ConfigParam): the parameter that is being parsed.
-        event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
+        params_config: dictionary with the parameters' configuration.
+        parent_name: name of the parent related to the parameters' configuration.
+        param: the parameter that is being parsed.
+        event_dispatcher: to dispatch the parse event on failure.
 
     Returns:
-        success(bool): whether the parsing succeeded.
-        value: the parsed and validated value.
+        whether the parsing succeeded and the parsed (validated) value.
     """
     param_default = param.default_value
 
@@ -113,20 +124,24 @@ def parse_config_param(params_config, parent_name, param, event_dispatcher):
     return success, value
 
 
-def trim_config_params(params_config, parent_name, parameters, event_dispatcher):
-    """Trims parameters from the specified configuration.
+def trim_config_params(
+        params_config: Dict[str, Any],
+        parent_name: str,
+        parameters: ConfigParameters,
+        event_dispatcher: EventDispatcher) -> Dict[str, Any]:
+    """Trim the parameters from the specified configuration.
 
     Removes unnecessary parameters that are not present in the
     original config parameter list.
 
     Args:
-        params_config(dict): dictionary with the parameters' configuration.
-        parent_name(str): name of the parent related to the parameters' configuration.
-        parameters(ConfigParameters): the configuration parameters.
-        event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
+        params_config: dictionary with the parameters' configuration.
+        parent_name: name of the parent related to the parameters' configuration.
+        parameters: the configuration parameters.
+        event_dispatcher: to dispatch the parse event on failure.
 
     Returns:
-        trimmed_config(dict): dictionary with the trimmed parameters.
+        the dictionary with the trimmed parameters.
     """
     trimmed_config = {}
 

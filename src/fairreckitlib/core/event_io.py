@@ -13,7 +13,7 @@ ON_RENAME_FILE = 'IO.on_rename_file'
 
 
 def get_io_events() -> List[Tuple[str, Callable[[Any], None]]]:
-    """Gets all IO events.
+    """Get all IO events.
 
     The Call backs are specified below and serve as a default
     implementation for the RecommenderSystem class including the keyword arguments

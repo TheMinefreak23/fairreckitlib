@@ -4,22 +4,24 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from typing import Any
+
 ON_PARSE = 'Config.on_parse'
 
 
-def on_parse(event_listener, **kwargs):
-    """Callback function when parsing is executed.
+def on_parse(event_listener: Any, **kwargs) -> None:
+    """Call back function when parsing is executed.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
         msg(str): the message describing the parsing.
-        one_of_list(array like): list of values that contains the expected value.
-        expect(object): the type that is expected to be parsed.
-        actual(object): the type that is attempted to be parsed.
-        default(object): the default value that is returned after parsing.
+        one_of_list(List[Any]): list of values that contains the expected value.
+        expect(Type): the type that is expected to be parsed.
+        actual(Type): the type that is attempted to be parsed.
+        default(Any): the default value that is returned after parsing.
     """
     if event_listener.verbose:
         print(kwargs['msg'])
