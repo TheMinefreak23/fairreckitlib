@@ -4,28 +4,35 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ...core.config_constants import KEY_NAME, KEY_PARAMS
-from ...core.config_params import ConfigOptionParam, ConfigValueParam
+from typing import Any, Dict, List, Tuple, Union
+
+from ...core.config_constants import KEY_NAME
+from ...core.event_dispatcher import EventDispatcher
+from ...core.factories import GroupFactory
 from ...core.parsing.parse_assert import assert_is_type, assert_is_container_not_empty
 from ...core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
 from ...core.parsing.parse_event import ON_PARSE
-from ...core.parsing.parse_params import parse_config_param, parse_config_parameters
-from ..split.split_factory import KEY_SPLITTING, KEY_SPLIT_TEST_RATIO
-from ..split.split_factory import DEFAULT_SPLIT_TEST_RATIO, DEFAULT_SPLIT_TYPE
-from .data_config import DatasetConfig, SplitConfig, KEY_DATASETS
+from ..set.dataset_registry import DataRegistry
+from ..split.split_constants import KEY_SPLITTING
+from ..split.split_config_parsing import parse_data_split_config
+from .data_config import DatasetConfig, KEY_DATASETS
 
 
-def parse_data_config(experiment_config, data_registry, data_factory, event_dispatcher):
-    """Parses all dataset configurations.
+def parse_data_config(
+        experiment_config: Dict[str, Any],
+        data_registry: DataRegistry,
+        data_factory: GroupFactory,
+        event_dispatcher: EventDispatcher) -> List[DatasetConfig]:
+    """Parse all dataset configurations.
 
     Args:
-        experiment_config(dict): the experiment's total configuration.
-        data_registry(DataRegistry): the data registry containing the available datasets.
-        data_factory(GroupFactory):
-        event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
+        experiment_config: the experiment's total configuration.
+        data_registry: the data registry containing the available datasets.
+        data_factory: factory with available data modifier factories.
+        event_dispatcher: to dispatch the parse event on failure.
 
     Returns:
-        parsed_config(array like): list of parsed DatasetConfig's.
+        parsed_config: list of parsed DatasetConfig's.
     """
     parsed_config = []
 
@@ -79,18 +86,22 @@ def parse_data_config(experiment_config, data_registry, data_factory, event_disp
     return parsed_config
 
 
-def parse_dataset_config(dataset_config, data_registry, data_factory, event_dispatcher):
-    """Parses a dataset configuration.
+def parse_dataset_config(
+        dataset_config: Dict[str, Any],
+        data_registry: DataRegistry,
+        data_factory: GroupFactory,
+        event_dispatcher: EventDispatcher) -> Union[Tuple[DatasetConfig, str],Tuple[None, None]]:
+    """Parse a dataset configuration.
 
     Args:
-        dataset_config(dict): the dataset's configuration.
-        data_registry(DataRegistry): the data registry containing the available datasets.
-        data_factory(Factory):
-        event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
+        dataset_config: the dataset's configuration.
+        data_registry: the data registry containing the available datasets.
+        data_factory: factory with available data modifier factories.
+        event_dispatcher: to dispatch the parse event on failure.
 
     Returns:
-        parsed_config(DatasetConfig): the parsed configuration or None on failure.
-        dataset_name(str): the name of the parsed dataset or None on failure.
+        parsed_config: the parsed configuration or None on failure.
+        dataset_name: the name of the parsed dataset or None on failure.
     """
     # assert dataset_config is a dict
     if not assert_is_type(
@@ -138,96 +149,3 @@ def parse_dataset_config(dataset_config, data_registry, data_factory, event_disp
     )
 
     return parsed_config, dataset_name
-
-
-def parse_data_split_config(dataset_config, dataset_name, split_factory, event_dispatcher):
-    """Parses a dataset splitting configuration.
-
-    Args:
-        dataset_config(dict): the dataset's total configuration.
-        dataset_name(str): the dataset name related to the splitting configuration.
-        split_factory(Factory): the split factory containing available splitters.
-        event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
-
-    Returns:
-        parsed_config(SplitConfig): the parsed configuration or None on failure.
-    """
-    parsed_config = SplitConfig(
-        DEFAULT_SPLIT_TEST_RATIO,
-        DEFAULT_SPLIT_TYPE,
-        split_factory.create_params(DEFAULT_SPLIT_TYPE).get_defaults()
-    )
-
-    # dataset splitting is optional
-    if KEY_SPLITTING not in dataset_config:
-        event_dispatcher.dispatch(
-            ON_PARSE,
-            msg='PARSE WARNING: dataset ' + dataset_name + ' missing key \'' +
-                KEY_SPLITTING + '\'',
-            default=parsed_config
-        )
-        return parsed_config
-
-    split_config = dataset_config[KEY_SPLITTING]
-
-    # assert split_config is a dict
-    if not assert_is_type(
-        split_config,
-        dict,
-        event_dispatcher,
-        'PARSE WARNING: dataset ' + dataset_name + ' invalid splitting value',
-        default=parsed_config
-    ): return parsed_config
-
-    # parse splitting test ratio
-    success, test_ratio = parse_config_param(
-        split_config,
-        dataset_name + ' ' + KEY_SPLITTING,
-        ConfigValueParam(
-            KEY_SPLIT_TEST_RATIO,
-            float,
-            DEFAULT_SPLIT_TEST_RATIO,
-            (0.01, 0.99)
-        ),
-        event_dispatcher
-    )
-    if success:
-        parsed_config.test_ratio = test_ratio
-
-    # parse splitting type
-    success, split_type = parse_config_param(
-        split_config,
-        dataset_name + ' ' + KEY_SPLITTING,
-        ConfigOptionParam(
-            KEY_NAME,
-            str,
-            DEFAULT_SPLIT_TYPE,
-            split_factory.get_available_names()
-        ),
-        event_dispatcher
-    )
-    if success:
-        parsed_config.type = split_type
-
-    split_params = split_factory.create_params(split_type)
-    parsed_config.params = split_params.get_defaults()
-
-    # assert KEY_PARAMS is present
-    # skip when the splitter has no parameters at all
-    if split_params.get_num_params() > 0 and assert_is_key_in_dict(
-        KEY_PARAMS,
-        split_config,
-        event_dispatcher,
-        'PARSE WARNING: dataset ' + dataset_name + ' ' + KEY_SPLITTING + ' missing key \'' +
-        KEY_PARAMS + '\'',
-        default=parsed_config.params
-    ):
-        # parse the splitter parameters
-        parsed_config.params = parse_config_parameters(
-            split_config[KEY_PARAMS],
-            dataset_name,
-            split_params,
-            event_dispatcher
-        )
-
-    return parsed_config

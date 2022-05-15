@@ -5,7 +5,6 @@ Utrecht University within the Software Project course.
 """
 
 import time
-from dataclasses import dataclass
 import os
 
 import json

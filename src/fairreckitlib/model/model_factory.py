@@ -1,64 +1,81 @@
-""""
+"""
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from typing import Callable
+
 from ..core.config_constants import TYPE_PREDICTION, TYPE_RECOMMENDATION
-from ..core.factories import GroupFactory
-from .algorithms.elliot.elliot_factory import create_elliot_recommender_factory
-from .algorithms.implicit.implicit_factory import create_implicit_recommender_factory
-from .algorithms.lenskit.lenskit_factory import create_lenskit_predictor_factory
-from .algorithms.lenskit.lenskit_factory import create_lenskit_recommender_factory
-from .algorithms.surprise.surprise_factory import create_surprise_predictor_factory
-from .algorithms.surprise.surprise_factory import create_surprise_recommender_factory
+from ..core.event_dispatcher import EventDispatcher
+from ..core.factories import Factory, GroupFactory
+from .algorithms.elliot import elliot_factory
+from .algorithms.implicit import implicit_factory
+from .algorithms.lenskit import lenskit_factory
+from .algorithms.surprise import surprise_factory
+from .pipeline.model_config import KEY_MODELS
+from .pipeline.model_pipeline import ModelPipeline
 from .pipeline.prediction_pipeline import PredictionPipeline
 from .pipeline.recommendation_pipeline import RecommendationPipeline
 from .pipeline.recommendation_pipeline_elliot import RecommendationPipelineElliot
-from .pipeline.model_config import KEY_MODELS
 
 
-def create_algorithm_factory(func_create_factory, func_create_pipeline):
-    algo_factory = func_create_factory()
-    algo_factory.func_create_pipeline = func_create_pipeline # TODO document this
+def create_pipeline_factory(
+        algo_factory: Factory,
+        create_pipeline: Callable[[Factory, EventDispatcher], ModelPipeline]) -> Factory:
+    """Create an algorithm pipeline factory.
+
+    Args:
+        algo_factory: the factory with available algorithms.
+        create_pipeline: the pipeline creation function associated with the factory.
+
+    Returns
+        the algorithm pipeline factory.
+    """
+    algo_factory.create_pipeline = create_pipeline
     return algo_factory
 
 
-def create_model_factory():
+def create_model_factory() -> GroupFactory:
+    """Create a model factory with all predictor and recommender algorithms.
+
+    Returns:
+        the group factory with all predictors and recommenders.
+    """
     model_factory = GroupFactory(KEY_MODELS)
     model_factory.add_factory(create_prediction_model_factory())
     model_factory.add_factory(create_recommendation_model_factory())
     return model_factory
 
 
-def create_model_factory_from_list(algo_type, algo_factory_tuples):
-    model_factory = GroupFactory(algo_type)
-
-    for _, (func_create_factory, func_create_pipeline) in enumerate(algo_factory_tuples):
-        algo_factory = create_algorithm_factory(func_create_factory, func_create_pipeline)
-        model_factory.add_factory(algo_factory)
-
-    return model_factory
-
-
-def create_prediction_model_factory():
-    """Creates a model factory with all predictor algorithms.
+def create_prediction_model_factory() -> GroupFactory:
+    """Create a model factory with all predictor algorithms.
 
     Consists of algorithms from two APIs:
         1) LensKit predictor algorithms.
         2) Surprise predictor algorithms.
 
     Returns:
-        (GroupFactory) with all predictors.
+        the group factory with all predictors.
     """
-    return create_model_factory_from_list(TYPE_PREDICTION, [
-        (create_lenskit_predictor_factory, PredictionPipeline),
-        (create_surprise_predictor_factory, PredictionPipeline)
-    ])
+    model_factory = GroupFactory(TYPE_PREDICTION)
+
+    # lenskit predictors
+    model_factory.add_factory(create_pipeline_factory(
+        lenskit_factory.create_predictor_factory(),
+        PredictionPipeline
+    ))
+    # surprise predictors
+    model_factory.add_factory(create_pipeline_factory(
+        surprise_factory.create_predictor_factory(),
+        PredictionPipeline
+    ))
+
+    return model_factory
 
 
-def create_recommendation_model_factory():
-    """Creates a model factory with all recommender algorithms.
+def create_recommendation_model_factory() -> GroupFactory:
+    """Create a model factory with all recommender algorithms.
 
     Consists of algorithms from four APIs:
         1) Elliot recommender algorithms.
@@ -67,11 +84,29 @@ def create_recommendation_model_factory():
         4) Surprise recommender algorithms.
 
     Returns:
-        (GroupFactory) with all recommenders.
+        the group factory with all recommenders.
     """
-    return create_model_factory_from_list(TYPE_RECOMMENDATION, [
-        (create_elliot_recommender_factory, RecommendationPipelineElliot),
-        (create_lenskit_recommender_factory, RecommendationPipeline),
-        (create_implicit_recommender_factory, RecommendationPipeline),
-        (create_surprise_recommender_factory, RecommendationPipeline)
-    ])
+    model_factory = GroupFactory(TYPE_RECOMMENDATION)
+
+    # elliot recommenders
+    model_factory.add_factory(create_pipeline_factory(
+        elliot_factory.create_recommender_factory(),
+        RecommendationPipelineElliot
+    ))
+    # lenskit recommenders
+    model_factory.add_factory(create_pipeline_factory(
+        lenskit_factory.create_recommender_factory(),
+        RecommendationPipeline
+    ))
+    # implicit recommenders
+    model_factory.add_factory(create_pipeline_factory(
+        implicit_factory.create_recommender_factory(),
+        RecommendationPipeline
+    ))
+    # surprise recommenders
+    model_factory.add_factory(create_pipeline_factory(
+        surprise_factory.create_recommender_factory(),
+        RecommendationPipeline
+    ))
+
+    return model_factory

@@ -12,10 +12,8 @@ from src.fairreckitlib.core.config_constants import TYPE_PREDICTION, TYPE_RECOMM
 from src.fairreckitlib.core.config_params import ConfigParameters, create_empty_parameters
 from src.fairreckitlib.core.factories import Factory, GroupFactory, create_factory_from_list
 from src.fairreckitlib.data.set.dataset import DATASET_RATINGS_EXPLICIT
-from src.fairreckitlib.data.split.base_splitter import DataSplitter
-from src.fairreckitlib.data.split.split_factory import create_split_factory
-from src.fairreckitlib.model.algorithms.base_predictor import Predictor
-from src.fairreckitlib.model.algorithms.base_recommender import Recommender
+from src.fairreckitlib.model.algorithms.base_predictor import BasePredictor
+from src.fairreckitlib.model.algorithms.base_recommender import BaseRecommender
 from src.fairreckitlib.model.model_factory import create_model_factory
 
 dummy_names = ['dummy_a', 'dummy_b', 'dummy_c']
@@ -158,7 +156,7 @@ def test_group_factory_add_and_available(create_child_factory):
 
 
 @pytest.mark.parametrize('model_type, algo_type', [
-    (TYPE_PREDICTION, Predictor), (TYPE_RECOMMENDATION, Recommender)
+    (TYPE_PREDICTION, BasePredictor), (TYPE_RECOMMENDATION, BaseRecommender)
 ])
 def test_model_factory(model_type, algo_type):
     """Test if all algorithms of different model types are derived from the correct base class."""
@@ -179,11 +177,3 @@ def test_model_factory(model_type, algo_type):
             algo = algo_factory.create(algo_name, algo_params, **algo_kwargs)
             assert isinstance(algo, algo_type), str(model_type) + ' algorithm has incorrect' \
                                                                   'type: ' + algo_name
-
-
-def test_split_factory():
-    """Test if all splitters in the factory are derived from the correct base class."""
-    split_factory = create_split_factory()
-    for _, splitter_name in enumerate(split_factory.get_available_names()):
-        splitter = split_factory.create(splitter_name)
-        assert isinstance(splitter, DataSplitter)

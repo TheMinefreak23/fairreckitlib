@@ -350,6 +350,17 @@ def create_bool_param(name, default_value):
     return ConfigOptionParam(name, bool, default_value, [True, False])
 
 
-def create_empty_parameters():
+def create_empty_parameters() -> ConfigParameters:
     """Create the Config parameters with no entries."""
     return ConfigParameters()
+
+
+def create_params_random_seed() -> ConfigParameters:
+    """Create the configuration with only the random 'seed' parameter.
+
+    Returns:
+        the configuration parameters of the algorithm.
+    """
+    params = ConfigParameters()
+    params.add_random_seed('seed')
+    return params

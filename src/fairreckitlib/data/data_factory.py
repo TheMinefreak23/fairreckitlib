@@ -10,7 +10,16 @@ from .ratings.rating_converter_factory import create_rating_converter_factory
 from .split.split_factory import create_split_factory
 
 
-def create_data_factory():
+def create_data_factory() -> GroupFactory:
+    """Create a group factory with all data modifiers.
+
+    Consists of two data modifier factories:
+        1) data rating converters.
+        2) data splitters.
+
+    Returns:
+        the group factory with available data modifier factories.
+    """
     data_factory = GroupFactory(KEY_DATASETS)
     data_factory.add_factory(create_rating_converter_factory())
     data_factory.add_factory(create_split_factory())

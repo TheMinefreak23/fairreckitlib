@@ -4,15 +4,11 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from dataclasses import dataclass
-from typing import Any, Dict
-
-KEY_MODELS = 'models'
-
-
-@dataclass
-class ModelConfig:
-    """Model Configuration."""
-
-    name: str
-    params: Dict[str, Any]
+FUNK_SVD = 'FunkSVD'
+ITEM_KNN = 'ItemKNN'
+MULTI_VAE = 'MultiVAE'
+MOST_POP = 'MostPop'
+RANDOM = 'Random'
+PURE_SVD = 'PureSVD'
+SVD_PP = 'SVDpp'
+USER_KNN = 'UserKNN'
