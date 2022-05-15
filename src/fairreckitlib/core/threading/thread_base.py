@@ -6,6 +6,7 @@ Utrecht University within the Software Project course.
 
 from abc import ABCMeta, abstractmethod
 from threading import Thread
+from typing import Any, Callable, Dict
 
 from ..event_dispatcher import EventDispatcher
 
@@ -26,73 +27,84 @@ class ThreadBase(metaclass=ABCMeta):
     Threads cannot be cancelled so any derived class logic needs to account for this request
     by checking the is_running function pointer (in step 2) regularly.
 
-    Args:
-        name(str) the name of the thread.
-        events(dict): events to dispatch for this thread
+    Public methods:
 
-    Keyword Args:
-        varying: these are passed to the run function from step 2.
+    get_name
+    is_running
+    start
+    stop
     """
-    def __init__(self, name, events, verbose, **kwargs):
-        self.__is_running = False
-        self.__thread = Thread(target=self.__main, name=name, kwargs=kwargs)
-        self.__on_terminate = None
+
+    def __init__(self, name: str, events: Dict[Any, Callable[[Any], None]],
+                 verbose: bool, **kwargs):
+        """Construct the BaseThread.
+
+        Args:
+            name the name of the thread.
+            events: events to dispatch for this thread
+
+        Keyword Args:
+            varying: these are passed to the run function from step 2.
+        """
+        self.running = False
+        self.thread = Thread(target=self.main, name=name, kwargs=kwargs)
+        self.terminate_callback = None
 
         self.verbose = verbose
         self.event_dispatcher = EventDispatcher()
         for (event_id, func_on_event) in events.items():
             self.event_dispatcher.add_listener(event_id, self, func_on_event)
 
-    def start(self, func_on_terminate):
-        """Starts running a thread.
+    def start(self, terminate_callback: Callable[[Any], None]) -> None:
+        """Start running the thread.
 
         Args:
-            func_on_terminate(function): callback function that is called once
-                the thread is finished running and is terminated. This function has
-                one argument which is the thread itself.
+            terminate_callback: call back function that is called once the thread is
+            finished running and is terminated. This function has one argument
+            which is the thread itself.
         """
-        if self.__is_running:
+        if self.running:
             return
 
-        self.__is_running = True
-        self.__on_terminate = func_on_terminate
-        self.__thread.start()
+        self.running = True
+        self.terminate_callback = terminate_callback
+        self.thread.start()
 
-    def stop(self):
-        """Stops running a thread.
+    def stop(self) -> None:
+        """Stop running the thread.
 
         Does not cancel the thread, but rather requests for the thread to finish
         by settings the is_running flag to False. Derived classes need to account
         for this request by checking the status regularly.
         """
-        self.__is_running = False
+        self.running = False
 
-    def get_name(self):
-        """Gets the name of the thread.
-
-        Returns:
-            name(str): the thread's name.
-        """
-        return self.__thread.name
-
-    def is_running(self):
-        """Returns if the thread is still running.
+    def get_name(self) -> str:
+        """Get the name of the thread.
 
         Returns:
-            is_running(bool): whether the thread is running.
+            the thread's name.
         """
-        return self.__is_running
+        return self.thread.name
 
-    def on_initialize(self):
-        """Initializes the thread.
+    def is_running(self) -> bool:
+        """Get if the thread is still running.
+
+        Returns:
+            whether the thread is running.
+        """
+        return self.running
+
+    def on_initialize(self) -> None:
+        """Initialize the thread.
 
         This function is called once when the thread is started.
         It should not be used directly, add specific logic in derived classes.
         """
 
     @abstractmethod
-    def on_run(self, **kwargs):
-        """Runs the thread.
+    def on_run(self, **kwargs) -> None:
+        """Run the thread.
 
         This function is called once after the thread is initialized.
         It should not be used directly, add specific logic in derived classes.
@@ -102,16 +114,20 @@ class ThreadBase(metaclass=ABCMeta):
         """
         raise NotImplementedError()
 
-    def on_terminate(self):
-        """Terminates the thread.
+    def on_terminate(self) -> None:
+        """Terminate the thread.
 
         This function is called once after the thread is done running.
         It should not be used directly, add specific logic in derived classes.
         """
-        self.__on_terminate(self)
+        self.terminate_callback(self)
 
-    def __main(self, **kwargs):
-        """The main function target of the thread."""
+    def main(self, **kwargs) -> None:
+        """Run the main function target of the thread.
+
+        Keyword Args:
+            varying: these are passed directly from the thread's constructor.
+        """
         self.on_initialize()
         self.on_run(**kwargs)
         self.on_terminate()
