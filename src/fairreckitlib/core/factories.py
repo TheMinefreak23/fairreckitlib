@@ -184,6 +184,16 @@ class Factory(BaseFactory):
         return obj_list
 
     def is_obj_available(self, obj_name: str) -> bool:
+        """Is the object with the specified name available.
+
+        Checks the object for existing in this factory.
+
+        Args:
+            obj_name: the name of the object to query for availability.
+
+        Returns:
+            whether the object is available.
+        """
         return obj_name in self.factory is not None
 
 
@@ -243,6 +253,16 @@ class GroupFactory(BaseFactory):
         return self.factory.get(factory_name)
 
     def is_obj_available(self, obj_name: str) -> bool:
+        """Is the object with the specified name available.
+
+        Checks the object for existing in any of the child factories.
+
+        Args:
+            obj_name: the name of the object to query for availability.
+
+        Returns:
+            whether the object is available.
+        """
         for _, factory in self.factory.items():
             if factory.is_obj_available(obj_name):
                 return True
