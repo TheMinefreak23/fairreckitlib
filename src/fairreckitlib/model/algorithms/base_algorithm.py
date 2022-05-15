@@ -5,7 +5,7 @@ Utrecht University within the Software Project course.
 """
 
 from abc import ABCMeta, abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
@@ -14,17 +14,27 @@ class BaseAlgorithm(metaclass=ABCMeta):
     """Base class for FairRecKit algorithms.
 
     An algorithm is used for carrying out recommender system experiments.
+    Derived algorithms are expected to implement the abstract interface.
+
+    Abstract methods:
+
+    on_train
 
     Public methods:
 
+    get_items
     get_name
     get_num_threads
     get_params
+    get_users
     train
     """
 
     def __init__(self):
         """Construct the algorithm."""
+        self.train_set = None
+        self.users = None
+        self.items = None
 
     @abstractmethod
     def get_name(self) -> str:
@@ -53,11 +63,39 @@ class BaseAlgorithm(metaclass=ABCMeta):
         """
         raise NotImplementedError()
 
-    @abstractmethod
+    def get_items(self) -> Optional[List[int]]:
+        """Get the (unique) items the algorithm was trained on.
+
+        Returns:
+            a list of unique item IDs or None if the algorithm is not trained yet.
+        """
+        return self.items
+
+    def get_users(self) -> Optional[List[int]]:
+        """Get the (unique) users the algorithm was trained on.
+
+        Returns:
+            a list of unique user IDs or None if the algorithm is not trained yet.
+        """
+        return self.users
+
     def train(self, train_set: pd.DataFrame) -> None:
         """Train the algorithm on the specified train set.
 
         Args:
             train_set: with at least three columns: 'user', 'item', 'rating'.
+        """
+        self.train_set = train_set
+        self.users = train_set['user'].unique()
+        self.items = train_set['item'].unique()
+
+        self.on_train()
+
+    @abstractmethod
+    def on_train(self) -> None:
+        """Train the algorithm on the train set.
+
+        Derived classes should implement the training logic
+        of the algorithm.
         """
         raise NotImplementedError()

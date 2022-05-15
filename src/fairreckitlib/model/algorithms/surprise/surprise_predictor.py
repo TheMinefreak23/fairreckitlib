@@ -4,10 +4,10 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+import math
 import time
 from typing import Any, Dict
 
-import pandas as pd
 from surprise.dataset import Dataset
 from surprise.prediction_algorithms import AlgoBase
 from surprise.prediction_algorithms import BaselineOnly
@@ -42,20 +42,18 @@ class SurprisePredictor(Predictor):
         self.algo = algo
         self.rating_scale = kwargs['rating_scale']
 
-    def train(self, train_set: pd.DataFrame) -> None:
-        """Train the algorithm on the specified train set.
+    def on_train(self) -> None:
+        """Train the algorithm on the train set.
 
         Surprise predictors expect the train set as a Dataset class,
         so the original train set needs to be converted before training can be done.
-
-        Args:
-            train_set: with at least three columns: 'user', 'item', 'rating'.
         """
         reader = Reader(rating_scale=self.rating_scale)
-        dataset = Dataset.load_from_df(train_set, reader)
+        # other columns in the train set need to be removed, otherwise it raises an error
+        dataset = Dataset.load_from_df(self.train_set[['user', 'item', 'rating']], reader)
         self.algo.fit(dataset.build_full_trainset())
 
-    def predict(self, user: int, item: int) -> float:
+    def on_predict(self, user: int, item: int) -> float:
         """Compute a prediction for the specified user and item.
 
         Surprise predictors clip the predicted ratings by default to the original rating scale
@@ -66,10 +64,10 @@ class SurprisePredictor(Predictor):
             item: the item ID.
 
         Returns:
-            the prediction rating.
+            the predicted rating.
         """
         prediction = self.algo.predict(user, item, clip=False)
-        return prediction.est
+        return math.nan if prediction.details['was_impossible'] else prediction.est
 
 
 def create_baseline_only_als(name: str, params: Dict[str, Any], **kwargs) -> SurprisePredictor:
@@ -154,7 +152,6 @@ def create_co_clustering(name: str, params: Dict[str, Any], **kwargs) -> Surpris
     return SurprisePredictor(algo, name, params, **kwargs)
 
 
-
 def create_knn_basic(name: str, params: Dict[str, Any], **kwargs) -> SurprisePredictor:
     """Create the KNNBasic predictor.
 
@@ -217,7 +214,8 @@ def create_knn_baseline_als(name: str, params: Dict[str, Any], **kwargs) -> Surp
         sim_options={
             'name': 'pearson_baseline',
             'user_based': params['user_based'],
-            'min_support': params['min_support']
+            'min_support': params['min_support'],
+            'shrinkage': params['shrinkage']
         },
         verbose=False
     )

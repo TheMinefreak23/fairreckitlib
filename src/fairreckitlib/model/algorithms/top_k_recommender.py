@@ -4,7 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 
 import pandas as pd
 
@@ -25,7 +25,6 @@ class TopK(BaseRecommender):
         """
         BaseRecommender.__init__(self, rated_items_filter)
         self.predictor = predictor
-        self.train_set = None
 
     def get_name(self) -> str:
         """Get the name of the underlying predictor.
@@ -51,18 +50,27 @@ class TopK(BaseRecommender):
         """
         return self.predictor.get_params()
 
-    def train(self, train_set: pd.DataFrame) -> None:
-        """Train the underlying predictor on the specified train set.
+    def get_items(self) -> Optional[List[int]]:
+        """Get the (unique) items the underlying predictor was trained on.
 
-        Stores the train set so that it can be used later for producing item recommendations.
-
-        Args:
-            train_set: with at least three columns: 'user', 'item', 'rating'.
+        Returns:
+            a list of unique item IDs or None if the algorithm is not trained yet.
         """
-        self.predictor.train(train_set)
-        self.train_set = train_set
+        return self.predictor.get_items()
 
-    def recommend(self, user: int, num_items: int=10) -> pd.DataFrame:
+    def get_users(self) -> Optional[List[int]]:
+        """Get the (unique) users the underlying predictor was trained on.
+
+        Returns:
+            a list of unique user IDs or None if the algorithm is not trained yet.
+        """
+        return self.predictor.get_users()
+
+    def on_train(self) -> None:
+        """Train the underlying predictor on the train set."""
+        self.predictor.train(self.train_set)
+
+    def on_recommend(self, user: int, num_items: int) -> pd.DataFrame:
         """Compute item recommendations using the underlying predictor.
 
         Go through all user-item combinations for the specified user and
@@ -75,15 +83,14 @@ class TopK(BaseRecommender):
         Returns:
             dataframe with the columns: 'item' and 'score'.
         """
-        items = self.train_set['item'].unique()
-
+        items = self.items
         # filter items that are rated by the user already
         if self.rated_items_filter:
             is_user = self.train_set['user'] == user
             user_item_ratings = self.train_set.loc[is_user]['item'].tolist()
-            items = [i for i in items if i not in user_item_ratings]
+            items = [i for i in self.items if i not in user_item_ratings]
 
-        # TODO this is not very efficient, but works
+        # TODO this is not very efficient, but works (also should utilize available num_threads)
         # compute recommendations for all items and truncate to the top num_items
         item_ratings = list(map(lambda i: (i, self.predictor.predict(user, i)), items))
         item_ratings.sort(key=lambda i: i[1], reverse=True)

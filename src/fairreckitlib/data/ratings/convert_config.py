@@ -5,12 +5,10 @@ Utrecht University within the Software Project course.
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict
+
+from ...core.config_object import ObjectConfig
 
 
 @dataclass
-class ConvertConfig:
+class ConvertConfig(ObjectConfig):
     """Dataset rating conversion Configuration."""
-
-    name: str
-    params: Dict[str, Any]

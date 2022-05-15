@@ -3,3 +3,5 @@ This program has been developed by students from the bachelor Computer Science a
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
+
+KEY_DATA_FILTERS = 'filters'

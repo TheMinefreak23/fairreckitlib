@@ -5,15 +5,29 @@ Utrecht University within the Software Project course.
 """
 
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Dict
 
-KEY_EVALUATION = 'evaluation'
+from ...core.config_object import ObjectConfig
+from ...data.filter.filter_constants import KEY_DATA_FILTERS
 
 
 @dataclass
-class MetricConfig:
+class MetricConfig(ObjectConfig):
     """Metric Configuration."""
 
-    name: str
-    params: {str: Any}
     prefilters: []
+
+    def to_yml_format(self) -> Dict[str, Any]:
+        """Format metric configuration to a yml compatible dictionary.
+
+        Returns:
+            a dictionary containing the metric configuration.
+        """
+        yml_format = ObjectConfig.to_yml_format(self)
+
+        # only include prefilters if it has entries
+        if len(self.prefilters) > 0:
+            # TODO convert filters to yml format
+            yml_format[KEY_DATA_FILTERS] = self.prefilters
+
+        return yml_format
