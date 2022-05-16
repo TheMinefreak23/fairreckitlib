@@ -1,9 +1,19 @@
-"""
+"""This module contains functionality that wraps running the model pipeline multiple times.
+
+Classes:
+
+    ModelPipelineConfig: configuration class to run the model pipelines.
+
+Functions:
+
+    run_model_pipelines: run (multiple) pipelines for specified model configurations.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from dataclasses import dataclass
 from typing import Callable, Dict, List
 
 from ...core.event_dispatcher import EventDispatcher
@@ -13,21 +23,25 @@ from ...data.data_transition import DataTransition
 from .model_config import ModelConfig
 
 
+@dataclass
+class ModelPipelineConfig:
+    """ModelPipeline Configuration."""
+
+    output_dir: str
+    data_transition: DataTransition
+    model_factory: GroupFactory
+    models: Dict[str, List[ModelConfig]]
+
+
 def run_model_pipelines(
-        output_dir: str,
-        data_transition: DataTransition,
-        model_factory: GroupFactory,
-        models_config: Dict[str, List[ModelConfig]],
+        pipeline_config: ModelPipelineConfig,
         event_dispatcher: EventDispatcher,
         is_running: Callable[[], bool],
         **kwargs) -> List[str]:
-    """Run several model pipelines for the specified model configurations.
+    """Run several model pipelines according to the specified model pipeline configuration.
 
     Args:
-        output_dir: the path of the directory to store the output.
-        data_transition: data input.
-        model_factory: the model factory with available algorithms.
-        models_config: containing list of ModelConfig's keyed by API name.
+        pipeline_config: the configuration on how to run the model pipelines.
         event_dispatcher: used to dispatch model/IO events when running the model pipelines.
         is_running: function that returns whether the pipelines
             are still running. Stops early when False is returned.
@@ -44,8 +58,8 @@ def run_model_pipelines(
     """
     model_dirs = []
 
-    for api_name, models in models_config.items():
-        api_factory = model_factory.get_factory(api_name)
+    for api_name, models in pipeline_config.models.items():
+        api_factory = pipeline_config.model_factory.get_factory(api_name)
         if api_factory is None:
             event_dispatcher.dispatch(
                 ON_FAILURE_ERROR,
@@ -56,8 +70,8 @@ def run_model_pipelines(
         try:
             model_pipeline = api_factory.create_pipeline(api_factory, event_dispatcher)
             dirs = model_pipeline.run(
-                output_dir,
-                data_transition,
+                pipeline_config.output_dir,
+                pipeline_config.data_transition,
                 models,
                 is_running,
                 **kwargs

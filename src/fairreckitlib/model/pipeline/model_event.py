@@ -1,4 +1,22 @@
-"""
+"""This module contains all callback functions used in the model pipeline.
+
+Functions:
+
+    get_model_events: get model pipeline events.
+    on_begin_load_test_set: call when a test set is being loaded.
+    on_begin_load_train_set: call when a train set is being loaded.
+    on_begin_model_pipeline: call when the pipeline starts.
+    on_begin_test_model: call when testing a model started.
+    on_begin_train_model: call when training a model started.
+    on_begin_model: call when a model computation started.
+    on_end_load_test_set: call when a test set has been loaded.
+    on_end_load_train_set: call when a train set has been loaded.
+    on_end_model_pipeline: call when the pipeline ends.
+    on_end_test_model: call when test a model finishes.
+    on_end_train_model: call when training a model finishes.
+    on_end_model: call when a model computation finishes.
+    on_save_model_settings: call when the model settings have been saved.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

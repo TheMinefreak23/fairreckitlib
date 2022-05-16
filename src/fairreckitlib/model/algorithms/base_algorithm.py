@@ -1,4 +1,9 @@
-"""
+"""This module contains the base class for all algorithms.
+
+Classes:
+
+    BaseAlgorithm: the base class for algorithms.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

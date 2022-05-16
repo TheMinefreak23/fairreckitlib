@@ -1,4 +1,9 @@
-"""
+"""This module contains functionality to create the implicit recommender factory.
+
+Functions:
+
+    create_recommender_factory: create factory with implicit recommenders.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

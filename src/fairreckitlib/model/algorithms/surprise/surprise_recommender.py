@@ -1,4 +1,21 @@
-"""
+"""This module contains the surprise top k predictor creation functions.
+
+Functions:
+
+    create_baseline_only_als: create BaselineOnly ALS recommender (factory creation compatible).
+    create_baseline_only_sgd: create BaselineOnly SGD recommender (factory creation compatible).
+    create_co_clustering: create CoClustering recommender (factory creation compatible).
+    create_knn_basic: create KNNBasic recommender (factory creation compatible).
+    create_knn_baseline_als: create KNNBaseline ALS recommender (factory creation compatible).
+    create_knn_baseline_sgd: create KNNBaseline SGD recommender (factory creation compatible).
+    create_knn_with_means: create KNNWithMeans recommender (factory creation compatible).
+    create_knn_with_zscore: create KNNWithZScore recommender (factory creation compatible).
+    create_nmf: create NMF recommender (factory creation compatible).
+    create_normal_predictor: create NormalPredictor recommender (factory creation compatible).
+    create_slope_one: create SlopeOne recommender (factory creation compatible).
+    create_svd: create SVD recommender (factory creation compatible).
+    create_svd_pp: create SVDpp recommender (factory creation compatible).
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

@@ -1,4 +1,15 @@
-"""
+"""This module contains the implicit recommender and creation functions.
+
+Classes:
+
+    ImplicitRecommender: recommender implementation for implicit.
+
+Functions:
+
+    create_als: create AlternatingLeastSquares recommender (factory creation compatible).
+    create_bpr: create BayesianPersonalizedRanking recommender (factory creation compatible).
+    create_lmf: create LogisticMatrixFactorization recommender (factory creation compatible).
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
