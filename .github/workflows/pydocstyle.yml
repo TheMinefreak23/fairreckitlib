@@ -29,5 +29,5 @@ jobs:
         pip install -r requirements.txt
         pip install pydocstyle
         
-    - name: Analysing the code with pylint
+    - name: Analysing the code with pydocstyle
       run: pydocstyle $(git ls-files '*.py')
