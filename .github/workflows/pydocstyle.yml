@@ -30,4 +30,4 @@ jobs:
         pip install pydocstyle
         
     - name: Analysing the code with pylint
-      run: pydocstyle .\src
+      run: pydocstyle $(git ls-files '*.py')
