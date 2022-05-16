@@ -1,4 +1,9 @@
-"""
+"""This module contains functionality to run the data pipeline.
+
+Functions:
+
+    run_data_pipeline: run the pipeline using dataset configurations.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

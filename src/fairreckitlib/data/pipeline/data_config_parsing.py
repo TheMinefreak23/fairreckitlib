@@ -1,4 +1,10 @@
-"""
+"""This module contains a parser for data configuration.
+
+Functions:
+
+    parse_data_config: parse dataset configurations.
+    parse_dataset_config: parse dataset configuration.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

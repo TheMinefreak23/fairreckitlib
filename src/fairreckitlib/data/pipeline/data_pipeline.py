@@ -1,4 +1,9 @@
-"""
+"""This module contains the complete data pipeline.
+
+Classes:
+
+    DataPipeline: can run all functions on data to be used in the model pipeline.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -217,8 +222,6 @@ class DataPipeline(metaclass=ABCMeta):
 
         start = time.time()
         # TODO aggregated the set using the given filters
-        for data_filter in prefilters:
-            continue
         end = time.time()
 
         self.event_dispatcher.dispatch(

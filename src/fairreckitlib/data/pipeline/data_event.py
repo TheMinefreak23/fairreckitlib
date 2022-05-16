@@ -1,4 +1,21 @@
-"""
+"""This module contains all callback functions used in the data pipeline.
+
+Functions:
+
+    get_data_events: get data pipeline events.
+    on_begin_data_pipeline: call when the pipeline starts.
+    on_begin_filter_dataset: call when filtering starts.
+    on_begin_load_dataset: call when a set is being loaded.
+    on_begin_modify_dataset: call when ratings are being modified.
+    on_begin_save_set: call when sets are being saved.
+    on_begin_split_dataset: call when a set is being split.
+    on_end_data_pipeline: call when the pipeline ends.
+    on_end_filter_dataset: call when filtering finishes.
+    on_end_load_dataset: call when a set has been loaded.
+    on_end_modify_dataset: call when ratings has been modified.
+    on_end_save_set: call when sets has been saved.
+    on_end_split_dataset: call when a set has been split.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

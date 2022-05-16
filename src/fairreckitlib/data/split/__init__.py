@@ -4,7 +4,7 @@ Modules:
 
     base_splitter: base class for splitters.
     random_splitter: class for splitting randomly.
-    split_config_parsing: parses configuration.
+    split_config_parsing: parse configuration.
     split_config: split configuration class.
     split_constant: constants to be used in other modules.
     split_factory: create split factory.
