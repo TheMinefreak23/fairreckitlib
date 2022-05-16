@@ -1,5 +1,6 @@
 # FairRecKitLib
 [![Pylint](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pylint.yml/badge.svg)](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pylint.yml)
+[![PEP257](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pydocstyle.yml/badge.svg)](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pydocstyle.yml)
 [![Pytest with Coverage](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pytest-coverage.yml/badge.svg)](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pytest-coverage.yml)
 [![Upload to PyPI](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pypi_publish.yml/badge.svg)](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pypi_publish.yml)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/TheMinefreak23/fairreckitlib?label=Release)
