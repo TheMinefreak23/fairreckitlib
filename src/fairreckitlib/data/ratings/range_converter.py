@@ -6,8 +6,8 @@ Classes:
 
 Functions:
 
-    create_range_converter: create an instance of the class.
-    create_range_converter_params: create range convert parameters.
+    create_range_converter: create an instance of the class to be used in a factory.
+    create_range_converter_params: create range convert parameters to be used in a factory.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.

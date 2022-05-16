@@ -6,7 +6,7 @@ Classes:
 
 Functions:
 
-    create_random_splitter: create an instance of the class.
+    create_random_splitter: create an instance of the class to be used in a factory.
 
 
 This program has been developed by students from the bachelor Computer Science at
