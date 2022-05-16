@@ -1,4 +1,14 @@
-"""
+"""This module contains the range converting functionality.
+
+Classes:
+
+    RangeConverter: can convert ratings with a scalar.
+
+Functions:
+
+    create_range_converter: create an instance of the class.
+    create_range_converter_params: create range convert parameters.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
