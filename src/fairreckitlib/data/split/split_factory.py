@@ -1,4 +1,9 @@
-"""
+"""This module contains functionality to create a splitters factory.
+
+Functions:
+
+    create_split_factory: create a factory with splitters.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

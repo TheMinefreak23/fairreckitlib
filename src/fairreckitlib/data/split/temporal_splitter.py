@@ -1,4 +1,13 @@
-"""
+"""This module contains time splitting functionality.
+
+Classes:
+
+    TemporalSplitter: can split on timestamp.
+
+Functions:
+
+    create_temporal_splitter: create an instance of the class.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

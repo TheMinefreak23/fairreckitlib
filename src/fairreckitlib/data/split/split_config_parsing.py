@@ -1,4 +1,9 @@
-"""
+"""This module contains a parser for split configuration.
+
+Functions:
+
+    parse_data_split_config: parse split configuration.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
