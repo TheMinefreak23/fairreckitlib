@@ -6,7 +6,7 @@ Classes:
 
 Functions:
 
-    create_temporal_splitter: create an instance of the class to be used in a factory.
+    create_temporal_splitter: create an instance of the class (factory creation compatible).
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
@@ -24,7 +24,7 @@ from .base_splitter import DataSplitter
 class TemporalSplitter(DataSplitter):
     """Temporal Splitter.
 
-    Splits the dataframe into a train and test set based on time.
+    Splits the dataframe into a train and test set based on time user-by-user.
     """
 
     def run(self, dataframe: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:

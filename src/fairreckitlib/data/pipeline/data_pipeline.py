@@ -1,8 +1,8 @@
-"""This module contains the complete data pipeline.
+"""This module contains functionality of the complete data pipeline.
 
 Classes:
 
-    DataPipeline: can run all functions on data to be used in the model pipeline.
+    DataPipeline: class that performs dataset operations in preparation for the model pipeline.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
@@ -36,10 +36,19 @@ from .data_event import ON_BEGIN_SAVE_SETS, ON_END_SAVE_SETS
 
 
 class DataPipeline(metaclass=ABCMeta):
-    """Data Pipeline to prepare datasets to be used in the ModelPipeline(s).
+    """Data Pipeline to prepare a dataset for a transition to the ModelPipeline(s).
 
-    From loading in the required dataset(s) to filtering them, converting the ratings,
-    splitting it into train/test set, and saving these in the designated directory.
+    The pipeline is intended to be reused multiple times depending on the specified
+    datasets. This is not limited to using a dataset only once as they are numbered
+    internally to distinguish them later.
+    For each dataset the following steps are performed in order:
+
+    1) create output directory.
+    2) load the dataset into a dataframe.
+    3) filter rows based on 'user'/'item' columns. (optional)
+    4) convert 'rating' column. (optional)
+    5) split the dataframe into a train and test set.
+    6) save the train and test set in the output directory.
 
     Public methods:
 
@@ -68,12 +77,6 @@ class DataPipeline(metaclass=ABCMeta):
         FileNotFoundError is raised if the dataset matrix file does not exist.
         RuntimeError is raised if any data modifiers are not found in their respective factories.
 
-        1) load the dataset into a dataframe.
-        2) filter rows based on 'user'/'item' columns. (optional)
-        3) convert 'rating' column. (optional)
-        4) split the dataframe into a train and test set.
-        5) save the train and test set in the output directory.
-
         Args:
             output_dir: the path of the directory to store the output.
             dataset: the dataset to run the pipeline on.
@@ -93,26 +96,28 @@ class DataPipeline(metaclass=ABCMeta):
 
         # step 1
         data_dir = self.create_data_output_dir(output_dir, dataset)
+
+        # step 2
         dataframe = self.load_from_dataset(dataset)
         if not is_running():
             return None
 
-        # step 2
+        # step 3
         dataframe = self.filter_rows(dataframe, data_config.prefilters)
         if not is_running():
             return None
 
-        # step 3
+        # step 4
         dataframe, rating_type = self.convert_ratings(dataset, dataframe, data_config.converter)
         if not is_running():
             return None
 
-        # step 4
+        # step 5
         train_set, test_set = self.split(dataframe, data_config.splitting)
         if not is_running():
             return None
 
-        # step 5
+        # step 6
         train_set_path, test_set_path = self.save_sets(data_dir, train_set, test_set)
 
         end = time.time()

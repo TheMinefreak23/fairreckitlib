@@ -1,4 +1,4 @@
-"""This module contains a parser for split configuration.
+"""This module contains a parser for the dataset splitting configuration.
 
 Functions:
 

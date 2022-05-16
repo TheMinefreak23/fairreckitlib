@@ -6,8 +6,8 @@ Classes:
 
 Functions:
 
-    create_kl_converter: create an instance of the class to be used in a factory.
-    create_kl_converter_params: create kl convert parameters to be used in a factory.
+    create_kl_converter: create an instance of the class (factory creation compatible).
+    create_kl_converter_params: create kl converter config parameters.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.

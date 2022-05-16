@@ -9,6 +9,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from dataclasses import dataclass
 from typing import Callable, List
 
 from ...core.event_dispatcher import EventDispatcher
@@ -19,32 +20,36 @@ from .data_config import DatasetConfig
 from .data_pipeline import DataPipeline, DataTransition
 
 
+@dataclass
+class DataPipelineConfig:
+    """DataPipeline Configuration."""
+
+    output_dir: str
+    data_registry: DataRegistry
+    data_factory: GroupFactory
+    data_config: List[DatasetConfig]
+
+
 def run_data_pipeline(
-        output_dir: str,
-        data_registry: DataRegistry,
-        data_factory: GroupFactory,
-        datasets_config: List[DatasetConfig],
+        pipeline_config: DataPipelineConfig,
         event_dispatcher: EventDispatcher,
         is_running: Callable[[], bool]) -> List[DataTransition]:
-    """Run the Data Pipeline for multiple dataset configurations.
+    """Run a Data Pipeline several times according to the specified data pipeline configuration.
 
     Args:
-        output_dir: the path of the directory to store the output.
-        data_registry: the registry with available datasets.
-        data_factory: the factory with available data modifier factories.
-        datasets_config: list of DatasetConfig objects.
+        pipeline_config: the configuration on how to run the data pipelines.
         event_dispatcher: used to dispatch data/IO events when running the pipeline.
         is_running: function that returns whether the pipelines
             are still running. Stops early when False is returned.
 
     Returns:
-        a list of DataTransition's .
+        a list of DataTransition's.
     """
     data_result = []
 
-    data_pipeline = DataPipeline(data_factory, event_dispatcher)
-    for _, data_config in enumerate(datasets_config):
-        dataset = data_registry.get_set(data_config.name)
+    data_pipeline = DataPipeline(pipeline_config.data_factory, event_dispatcher)
+    for _, data_config in enumerate(pipeline_config.data_config):
+        dataset = pipeline_config.data_registry.get_set(data_config.name)
         if dataset is None:
             event_dispatcher.dispatch(
                 ON_FAILURE_ERROR,
@@ -54,7 +59,7 @@ def run_data_pipeline(
 
         try:
             data_transition = data_pipeline.run(
-                output_dir,
+                pipeline_config.output_dir,
                 dataset,
                 data_config,
                 is_running

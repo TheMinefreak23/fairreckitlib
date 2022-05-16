@@ -2,11 +2,11 @@
 
 Modules:
 
-    data_config_parsing: parse dataset configuration.
     data_config: dataset configuration class.
+    data_config_parsing: parse dataset configuration.
     data_event: callback functions to be used in the data pipeline.
     data_pipeline: the data pipeline class.
-    data_run: run the data pipeline.
+    data_run: run (multiple) data pipelines.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.

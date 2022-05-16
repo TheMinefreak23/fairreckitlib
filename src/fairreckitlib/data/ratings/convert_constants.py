@@ -1,4 +1,4 @@
-"""This module contains constants that are used in other modules.
+"""This module contains rating conversion constants that are used in other modules.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
