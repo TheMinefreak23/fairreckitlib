@@ -1,4 +1,4 @@
-name: PEP257 Check
+name: PEP257
 
 on:
   workflow_dispatch:
