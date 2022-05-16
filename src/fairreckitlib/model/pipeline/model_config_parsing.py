@@ -1,4 +1,4 @@
-"""This module contains a parser for data configuration.
+"""This module contains a parser for the model configuration(s).
 
 Functions:
 
