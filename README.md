@@ -1,4 +1,4 @@
-# FairRecKitLib
+# FairRecKit Lib
 [![Pylint](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pylint.yml/badge.svg)](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pylint.yml)
 [![PEP257](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pydocstyle.yml/badge.svg)](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pydocstyle.yml)
 [![Pytest with Coverage](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pytest-coverage.yml/badge.svg)](https://github.com/TheMinefreak23/fairreckitlib/actions/workflows/pytest-coverage.yml)
