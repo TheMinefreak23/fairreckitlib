@@ -5,26 +5,39 @@ Utrecht University within the Software Project course.
 """
 
 from abc import ABCMeta, abstractmethod
+import pandas as pd
 
 
-"""
-base class to filter a df (not a dataset in particular), as long as the df
-contains a 'user' and 'item' column.
-
-Dataset class is not really necessary here, but when combined with the
-data.format module it needs to know about them to construct them.
-
-Together with a factory pattern similar to the data.split module
-we can define a variety of filters to exclude rows that do not satisfy the filter
-from the specified df as long as it retains the 'user' and 'item' columns.
-
-These filters could be used by the fair-rec-kit-app as well (table browsing).
-"""
 class DataFilter(metaclass=ABCMeta):
+    """
+    Base class to filter a df (not a dataset in particular), as long as the df
+    contains a 'user' and 'item' column.
 
-    def __init__(self, dataset):
+    Dataset class is not really necessary here, but when combined with the
+    data.format module it needs to know about them to construct them.
+
+    Together with a factory pattern similar to the data.split module
+    we can define a variety of filters to exclude rows that do not satisfy the filter
+    from the specified df as long as it retains the 'user' and 'item' columns.
+
+    These filters could be used by the fair-rec-kit-app as well (table browsing).
+
+    Public method:
+        run
+    """
+
+    def __init__(self, dataset: pd.DataFrame) -> None:
+        """
+        Constructor of the class.
+        """
         self.dataset = dataset
 
     @abstractmethod
-    def run(self, df, **kwargs):
+    def run(self, **kwargs):
+        """
+        Carry out the filtering
+
+        Raises:
+            NotImplementedError: this method should be implimented in the subclasses
+        """
         raise NotImplementedError()
