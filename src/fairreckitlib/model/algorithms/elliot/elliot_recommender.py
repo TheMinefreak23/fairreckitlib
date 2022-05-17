@@ -1,4 +1,19 @@
-"""
+"""This module contains the elliot recommender and creation functions.
+
+Classes:
+
+    ElliotRecommender: recommender implementation for elliot.
+
+Functions:
+
+    create_funk_svd: create FunkSVD recommender (factory creation compatible).
+    create_item_knn: create ItemKNN recommender (factory creation compatible).
+    create_most_pop: create MostPop recommender (factory creation compatible).
+    create_multi_vae: create MultiVAE recommender (factory creation compatible).
+    create_pure_svd: create PureSVD recommender (factory creation compatible).
+    create_random: create Random recommender (factory creation compatible).
+    create_user_knn: create UserKNN recommender (factory creation compatible).
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -18,6 +33,10 @@ class ElliotRecommender(Recommender):
     def __init__(self, name: str, params: Dict[str, Any], **kwargs):
         """Construct the elliot recommender.
 
+        The recommender is not procedural, instead it serves as a wrapper
+        that holds the correct parameters used by the framework which are
+        used in the model pipeline.
+
         Args:
             name: the name of the recommender.
             params: the parameters of the recommender.
@@ -34,18 +53,15 @@ class ElliotRecommender(Recommender):
 
     def on_train(self) -> None:
         """Train the elliot model not supported."""
-        # not used, training is done by running the framework
-        raise RuntimeError()
+        raise RuntimeError('training is done by running the framework')
 
     def on_recommend(self, user: int, num_items: int) -> pd.DataFrame:
         """Recommend with the elliot model not supported."""
-        # not used, recommending is done by running the framework
-        raise RuntimeError()
+        raise RuntimeError('recommending is done by running the framework')
 
     def on_recommend_batch(self, users: List[int], num_items: int) -> pd.DataFrame:
         """Recommend batching with the elliot model not supported."""
-        # not used, recommending is done by running the framework
-        raise RuntimeError()
+        raise RuntimeError('recommending is done by running the framework')
 
 
 def create_funk_svd(name: str, params: Dict[str, Any], **kwargs) -> ElliotRecommender:

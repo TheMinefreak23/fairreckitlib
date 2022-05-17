@@ -1,4 +1,13 @@
-"""
+"""This module contains base functionality of the complete model pipeline.
+
+Classes:
+
+    ModelPipeline: class that batches multiple model computations for a specific API.
+
+Functions:
+
+    write_computed_ratings: append computed ratings to a result file.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -31,6 +40,23 @@ from .model_event import ON_SAVE_MODEL_SETTINGS
 
 class ModelPipeline(metaclass=ABCMeta):
     """Model Pipeline to run computations for algorithms from a specific API.
+
+    Wraps the common functionality that applies to all models disregarding the type.
+    Loading the train and test is only done once each time the pipeline is run.
+    After the previously mentioned sets are done loading, the pipeline loops
+    through all specified models and executes the following steps:
+
+    1) create the output directory.
+    2) create the model.
+    3) save the model's creation settings.
+    4) train the model using the train set.
+    5) test the model using the test set.
+    6) add original ratings to the result.
+
+    Abstract methods:
+
+    get_ratings_dataframe
+    test_model_ratings
 
     Public methods:
 

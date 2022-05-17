@@ -1,4 +1,13 @@
-"""
+"""This module contains the parameter creation functions for elliot recommenders.
+
+Functions:
+
+    create_params_funk_svd: create FunkSVD config parameters.
+    create_params_knn: create ItemKNN/UserKNN config parameters.
+    create_params_multi_vae: create MultiVAE config parameters.
+    create_params_pure_svd: create PureSVD config parameters.
+    create_params_svd_pp: create SVDpp config parameters.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

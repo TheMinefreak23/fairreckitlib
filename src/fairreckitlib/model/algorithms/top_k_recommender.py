@@ -1,4 +1,9 @@
-"""
+"""This module contains a recommender that utilizes a predictor to produce item recommendations.
+
+Classes:
+
+    TopK: wrap a predictor to be used as a recommender.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

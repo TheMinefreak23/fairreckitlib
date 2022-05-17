@@ -1,4 +1,14 @@
-"""
+"""This module contains name constants and creation wrappers for implemented lenskit algorithms.
+
+Functions:
+
+    create_biased_mf: create lenskit BiasedMF algorithm.
+    create_implicit_mf: create lenskit ImplicitMF algorithm.
+    create_item_item: create lenskit ItemItem algorithm.
+    create_pop_score: create lenskit PopScore algorithm.
+    create_random: create lenskit Random algorithm.
+    create_user_user: create lenskit UserUser algorithm.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

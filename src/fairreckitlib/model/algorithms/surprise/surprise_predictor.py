@@ -1,4 +1,25 @@
-"""
+"""This module contains the surprise predictor and creation functions.
+
+Classes:
+
+    SurprisePredictor: predictor implementation for surprise.
+
+Functions:
+
+    create_baseline_only_als: create BaselineOnly ALS predictor (factory creation compatible).
+    create_baseline_only_sgd: create BaselineOnly SGD predictor (factory creation compatible).
+    create_co_clustering: create CoClustering predictor (factory creation compatible).
+    create_knn_basic: create KNNBasic predictor (factory creation compatible).
+    create_knn_baseline_als: create KNNBaseline ALS predictor (factory creation compatible).
+    create_knn_baseline_sgd: create KNNBaseline SGD predictor (factory creation compatible).
+    create_knn_with_means: create KNNWithMeans predictor (factory creation compatible).
+    create_knn_with_zscore: create KNNWithZScore predictor (factory creation compatible).
+    create_nmf: create NMF predictor (factory creation compatible).
+    create_normal_predictor: create NormalPredictor predictor (factory creation compatible).
+    create_slope_one: create SlopeOne predictor (factory creation compatible).
+    create_svd: create SVD predictor (factory creation compatible).
+    create_svd_pp: create SVDpp predictor (factory creation compatible).
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

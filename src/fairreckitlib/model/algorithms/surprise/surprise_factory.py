@@ -1,4 +1,10 @@
-"""
+"""This module contains functionality to create the surprise predictor/recommender factory.
+
+Functions:
+
+    create_predictor_factory: create factory with surprise predictors.
+    create_recommender_factory: create factory with surprise recommenders.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -37,11 +43,11 @@ def create_predictor_factory() -> Factory:
          ),
         (surprise_algorithms.KNN_BASELINE_ALS,
          surprise_predictor.create_knn_baseline_als,
-         surprise_params.create_params_knn_base_line_als
+         surprise_params.create_params_knn_baseline_als
          ),
         (surprise_algorithms.KNN_BASELINE_SGD,
          surprise_predictor.create_knn_baseline_sgd,
-         surprise_params.create_params_knn_base_line_sgd
+         surprise_params.create_params_knn_baseline_sgd
          ),
         (surprise_algorithms.KNN_WITH_MEANS,
          surprise_predictor.create_knn_with_means,
@@ -99,11 +105,11 @@ def create_recommender_factory() -> Factory:
          ),
         (surprise_algorithms.KNN_BASELINE_ALS,
          surprise_recommender.create_knn_baseline_als,
-         surprise_params.create_params_knn_base_line_als
+         surprise_params.create_params_knn_baseline_als
          ),
         (surprise_algorithms.KNN_BASELINE_SGD,
          surprise_recommender.create_knn_baseline_sgd,
-         surprise_params.create_params_knn_base_line_sgd
+         surprise_params.create_params_knn_baseline_sgd
          ),
         (surprise_algorithms.KNN_WITH_MEANS,
          surprise_recommender.create_knn_with_means,
