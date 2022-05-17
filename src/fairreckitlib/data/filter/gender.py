@@ -33,10 +33,11 @@ class GenderFilter(DataFilter):
         return self.dataset
 
     def __str__(self):
-        """_summary_
+        """
+        to string
 
         Returns:
-            _type_: _description_
+            name of the class
         """
         return self.__class__.__name__
 
