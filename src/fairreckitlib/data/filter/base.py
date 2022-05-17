@@ -41,3 +41,11 @@ class DataFilter(metaclass=ABCMeta):
             NotImplementedError: this method should be implimented in the subclasses
         """
         raise NotImplementedError()
+
+    def __str__(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
+        return self.__class__.__name__

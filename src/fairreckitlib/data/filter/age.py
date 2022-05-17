@@ -28,6 +28,14 @@ class AgeFilter(DataFilter):
             return self.dataset[df_filter]
         return self.dataset
 
+    def __str__(self):
+        """_summary_
+
+        Returns:
+            _type_: _description_
+        """
+        return self.__class__.__name__
+
 
 def create_age_filter(data_frame: pd.DataFrame) -> DataFilter:
     """
