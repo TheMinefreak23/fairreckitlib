@@ -1,4 +1,13 @@
-"""
+"""This module contains functionality for configuration param(s).
+
+Classes:
+
+    ConfigParam: base class for all parameters.
+    ConfigOptionParam: parameter that can be a value from a known list of options.
+    ConfigValueParam: parameter that can be a value between a minimum and maximum.
+    ConfigRandomParam: parameter that can be used to pick the (optional) random seed.
+    ConfigParameters: container that stores multiple ConfigParam's.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

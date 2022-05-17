@@ -1,4 +1,13 @@
-"""
+"""This module contains the base functionality for an object's configuration.
+
+Classes:
+
+    ObjectConfig: base class configuration for an object with a name and parameters.
+
+Functions:
+
+    object_config_list_to_yml_format: convert list of ObjectConfig's to a yml format.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
