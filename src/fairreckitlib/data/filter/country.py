@@ -11,7 +11,7 @@ class CountryFilter(DataFilter):
     """
     Filters the dataframe on country, if such column exists.
     """
-    def run(self, country: str) -> pd.DataFrame:
+    def run(self, country: str = None) -> pd.DataFrame:
         """
         Filters specific country of the dataframe.
 

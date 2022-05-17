@@ -13,6 +13,11 @@ FILTER_COUNTRY = 'country'
 FILTER_GENDER = 'gender'
 
 def get_filter():
+    """_summary_
+
+    Returns:
+        _type_: _description_
+    """
     return {
         FILTER_AGE: create_age_filter,
         FILTER_COUNTRY: create_country_filter,

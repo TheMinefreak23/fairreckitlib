@@ -9,7 +9,7 @@ from .base import DataFilter
 
 class GenderFilter(DataFilter):
     """Filters the dataframe on gender column f/m, if such a column exists."""
-    def run(self, gender) -> pd.DataFrame:
+    def run(self, gender: str = None) -> pd.DataFrame:
         """
         Filters specific gender of the dataframe.
 

@@ -33,7 +33,7 @@ class DataFilter(metaclass=ABCMeta):
         self.dataset = dataset
 
     @abstractmethod
-    def run(self, **kwargs):
+    def run(self):
         """
         Carry out the filtering
 
