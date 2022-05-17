@@ -1,4 +1,14 @@
-"""
+"""This module contains the Kullback-Leibler converter.
+
+Classes:
+
+    KLConverter: can convert ratings using the Kullback-Leibler formula.
+
+Functions:
+
+    create_kl_converter: create an instance of the class (factory creation compatible).
+    create_kl_converter_params: create kl converter config parameters.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -27,7 +37,7 @@ class KLConverter(RatingConverter):
         Returns:
             the converted dataframe and the type of rating, either 'explicit' or 'implicit'.
         """
-        method = self.params['method']
+        # method = self.params['method']
         # TODO apply kullback-leibler formula on the rating column. Needs APC/ALC arg.
         raise NotImplementedError()
 

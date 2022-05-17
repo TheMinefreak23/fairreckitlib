@@ -1,4 +1,11 @@
-"""
+"""This module contains the dataset table configuration and IO functionality.
+
+Functions:
+
+    create_table_config: create a dataset table configuration.
+    read_table: read a dataset table from a file.
+    write_table: write a dataset table to a file.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -10,7 +17,7 @@ from typing import Any, Dict, List, Union
 import pandas as pd
 
 from ..utility import load_table
-from .dataset_config import DATASET_FILE
+from .dataset_constants import DATASET_FILE
 
 
 def create_table_config(
@@ -37,6 +44,7 @@ def create_table_config(
     Returns:
         the resulting data table configuration.
     """
+    # TODO use a dataclass instead
     return {
         DATASET_FILE: file_name,
         'columns': columns,

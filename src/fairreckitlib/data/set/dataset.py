@@ -1,21 +1,27 @@
-"""
+"""This module contains a dataset definition for accessing a dataset and related data tables.
+
+Classes:
+
+    Dataset: class wrapper of the user-item matrix and related tables.
+
+Functions:
+
+    add_user_columns: add columns from the dataset user table to a dataframe.
+    add_item_columns: add columns from the dataset item table to a dataframe.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
 import os
-from typing import Any, Optional, List, Union
+from typing import Any, Dict, Optional, List, Union
 
 import pandas as pd
 
 from ..utility import load_array_from_hdf5
-from .dataset_config import DATASET_INDICES
-from .dataset_config import DATASET_ITEMS
-from .dataset_config import DATASET_MATRIX
-from .dataset_config import DATASET_TABLES
-from .dataset_config import DATASET_USERS
-from .dataset_table import DATASET_FILE
+from .dataset_constants import DATASET_FILE, DATASET_MATRIX, DATASET_TABLES
+from .dataset_constants import DATASET_INDICES, DATASET_ITEMS, DATASET_USERS
 from .dataset_table import read_table
 
 DATASET_RATINGS_EXPLICIT = 'explicit'
@@ -49,9 +55,27 @@ class Dataset:
     filter any rows based on various table header criteria.
     Any additional tables can be added for accessibility/compatibility with the FRK
     recommender system.
+
+    Public methods:
+
+    get_available_tables
+    get_available_user_item_columns
+    get_matrix_file_path
+    get_matrix_info
+    get_table_info
+    get_item_table_info
+    get_item_table_name
+    get_user_table_info
+    get_user_table_name
+    load_matrix_df
+    read_table
+    read_item_table
+    read_user_table
+    resolve_item_ids
+    resolve_user_ids
     """
 
-    def __init__(self, name: str, data_dir: str, config):
+    def __init__(self, name: str, data_dir: str, config: Dict[str, Any]):
         """Construct the dataset.
 
         Args:
@@ -76,32 +100,19 @@ class Dataset:
 
         return table_names
 
-    def get_available_user_item_columns(self):
+    def get_available_user_item_columns(self) -> Dict[str, Dict[str, Any]]:
         """Get the available user/item table column names of this dataset.
 
-        The resulting dictionary is split into three categories:
+        The resulting dictionary is split into two categories:
 
-        1) 'user_item': the column names related to a user-item pair, consisting of
-            at least a rating and optionally a timestamp.
-        2) 'user': the column names related to the user table or None when not available.
-        3) 'item': the column names related to the item table or None when not available.
+        1) 'user': the table name and column names related to the user table when available.
+        2) 'item': the table name and column names related to the item table when available.
 
         Returns:
-            (dict): containing for each category as the key another dict with:
-                'name': the name of the category.
-                'columns': the available columns for the category.
+            a dictionary with for each category another dict with the 'name' and 'columns' as keys.
 
         """
-        user_item_columns = ['rating']
-        if self.get_user_table_info('timestamp'):
-            user_item_columns.append('timestamp')
-
-        result = {
-            'user_item': {
-                'name': 'matrix',
-                'columns': user_item_columns
-            }
-        }
+        result = {}
 
         user_table_name = self.get_user_table_name()
         if user_table_name is not None:

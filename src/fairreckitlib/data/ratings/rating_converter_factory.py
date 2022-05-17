@@ -1,4 +1,9 @@
-"""
+"""This module contains functionality to create the rating converter factory.
+
+Functions:
+
+    create_rating_converter_factory: create a factory with rating converters.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

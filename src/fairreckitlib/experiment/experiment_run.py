@@ -14,7 +14,7 @@ from ..core.event_dispatcher import EventDispatcher
 from ..core.event_io import ON_MAKE_DIR
 from ..core.factories import GroupFactory
 from ..data.data_factory import KEY_DATASETS
-from ..data.pipeline.data_run import run_data_pipeline
+from ..data.pipeline.data_run import DataPipelineConfig, run_data_pipeline
 from ..data.set.dataset_registry import DataRegistry
 from ..evaluation.pipeline.evaluation_run import run_evaluation_pipelines
 from ..evaluation.evaluation_factory import KEY_EVALUATION
@@ -72,10 +72,12 @@ class Experiment:
         results, start_time = self.start_run(output_dir)
 
         data_result = run_data_pipeline(
-            output_dir,
-            self.data_registry,
-            self.experiment_factory.get_factory(KEY_DATASETS),
-            self.experiment_config.datasets,
+            DataPipelineConfig(
+                output_dir,
+                self.data_registry,
+                self.experiment_factory.get_factory(KEY_DATASETS),
+                self.experiment_config.datasets
+            ),
             self.event_dispatcher,
             is_running
         )
