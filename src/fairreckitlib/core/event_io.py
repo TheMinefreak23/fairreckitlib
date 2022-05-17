@@ -1,4 +1,19 @@
-"""
+"""This module contains all event ids and callback functions that are IO related.
+
+Constants:
+
+    ON_MAKE_DIR: id of the event that is used when a directory is created.
+    ON_REMOVE_DIR: id of the event that is used when a directory is removed.
+    ON_REMOVE_FILE: id of the event that is used when a file is removed.
+    ON_RENAME_FILE: id of the event that is used when a file is renamed.
+
+Functions:
+
+    on_make_dir: call when a directory is created.
+    on_remove_dir: call when a directory is removed.
+    on_remove_file: call when a file is removed.
+    on_rename_file: call when a file is renamed.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

@@ -1,4 +1,13 @@
-"""
+"""This module contains an event id and callback function used during parsing.
+
+Constants:
+
+    ON_PARSE: id of the event that is used when parsing fails.
+
+Functions:
+
+    on_parse: call when parsing fails.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -10,14 +19,14 @@ ON_PARSE = 'Config.on_parse'
 
 
 def on_parse(event_listener: Any, **kwargs) -> None:
-    """Call back function when parsing is executed.
+    """Call back function when parsing is executed and fails.
 
     Args:
         event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
-        msg(str): the message describing the parsing.
+        msg(str): the message describing the parsing failure.
         one_of_list(List[Any]): list of values that contains the expected value.
         expect(Type): the type that is expected to be parsed.
         actual(Type): the type that is attempted to be parsed.
