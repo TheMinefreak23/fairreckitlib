@@ -1,4 +1,25 @@
-"""
+"""This module tests the algorithms.
+
+Functions:
+
+    test_algorithm_subset: test if subset is sufficient for testing.
+    test_model_factory: test if created factories are correct.
+    test_algorithm_creation: test if algorithms and params are created correctly.
+    test_predictors: test predictor algorithms.
+    test_recommenders: test recommender algorithms.
+    assert_algorithm_training: assert train set.
+    assert_frame_headers: assert headers.
+    assert_predictor_interface: assert predictor.
+    assert_predictor_edge_cases: assert edge case returns.
+    assert_predictor_singular_user: assert prediction for single user.
+    assert_predictor_multi_users: assert prediction for multiple users.
+    assert_recommender_interface: assert recommender.
+    assert_recommender_edge_cases: assert edge case returns.
+    assert_recommender_singular_user: assert recommender for single user.
+    assert_recommender_multi_users: assert recommender for multiple users.
+    assert_single_user_recs: assert recommendations for single user.
+    assert_recs_are_deterministic: assert recommendations are deterministic.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -42,7 +63,7 @@ algo_kwargs = {
 }
 
 
-def test_algorithm_sub_set():
+def test_algorithm_subset():
     """Test if the generated subset is sufficient to verify the other algorithm tests."""
     assert len(sub_set['user'].unique()) > 1, 'expected more than one user for testing algorithms.'
     assert len(sub_set['item'].unique()) > 1, 'expected more than one item for testing algorithms.'

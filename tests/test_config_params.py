@@ -1,4 +1,12 @@
-"""
+"""This module tests configurations.
+
+Functions:
+
+    test_config_option_param: test ConfigOptionParam.
+    test_config_value_param: test ConfigValueParam.
+    test_config_random_param: test ConfigRandomParam.
+    test_config_parameters: test ConfigParameters.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

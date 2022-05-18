@@ -1,4 +1,16 @@
-"""
+"""This module tests the creation of factories.
+
+Functions:
+
+    create_dummy_obj: create dummy that returns function arguments.
+    create_dummy_params: create dummy config with parameter(s).
+    test_factory_add_and_available: test adding and checking objects in factory.
+    test_factory_create: test object creation with params and kwargs.
+    test_factory_create_params: test parameter creation.
+    test_factory_create_from_tuples: test creation from tuple list.
+    test_factory_name: check if names are correct.
+    test_group_factory_add_and_available: test adding and checking objects in group factory.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
