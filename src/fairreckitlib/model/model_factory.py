@@ -1,4 +1,12 @@
-"""
+"""This module contains functionality to create a model factory.
+
+Functions:
+
+    create_algorithm_pipeline_factory: wrap algorithm factory with pipeline creation.
+    create_model_factory: create factory with prediction/recommendation factories.
+    create_prediction_model_factory: create factory with predictor API factories.
+    create_recommendation_model_factory: create factory with recommender API factories.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -20,7 +28,7 @@ from .pipeline.recommendation_pipeline import RecommendationPipeline
 from .pipeline.recommendation_pipeline_elliot import RecommendationPipelineElliot
 
 
-def create_pipeline_factory(
+def create_algorithm_pipeline_factory(
         algo_factory: Factory,
         create_pipeline: Callable[[Factory, EventDispatcher], ModelPipeline]) -> Factory:
     """Create an algorithm pipeline factory.
@@ -61,12 +69,12 @@ def create_prediction_model_factory() -> GroupFactory:
     model_factory = GroupFactory(TYPE_PREDICTION)
 
     # lenskit predictors
-    model_factory.add_factory(create_pipeline_factory(
+    model_factory.add_factory(create_algorithm_pipeline_factory(
         lenskit_factory.create_predictor_factory(),
         PredictionPipeline
     ))
     # surprise predictors
-    model_factory.add_factory(create_pipeline_factory(
+    model_factory.add_factory(create_algorithm_pipeline_factory(
         surprise_factory.create_predictor_factory(),
         PredictionPipeline
     ))
@@ -89,22 +97,22 @@ def create_recommendation_model_factory() -> GroupFactory:
     model_factory = GroupFactory(TYPE_RECOMMENDATION)
 
     # elliot recommenders
-    model_factory.add_factory(create_pipeline_factory(
+    model_factory.add_factory(create_algorithm_pipeline_factory(
         elliot_factory.create_recommender_factory(),
         RecommendationPipelineElliot
     ))
     # lenskit recommenders
-    model_factory.add_factory(create_pipeline_factory(
+    model_factory.add_factory(create_algorithm_pipeline_factory(
         lenskit_factory.create_recommender_factory(),
         RecommendationPipeline
     ))
     # implicit recommenders
-    model_factory.add_factory(create_pipeline_factory(
+    model_factory.add_factory(create_algorithm_pipeline_factory(
         implicit_factory.create_recommender_factory(),
         RecommendationPipeline
     ))
     # surprise recommenders
-    model_factory.add_factory(create_pipeline_factory(
+    model_factory.add_factory(create_algorithm_pipeline_factory(
         surprise_factory.create_recommender_factory(),
         RecommendationPipeline
     ))

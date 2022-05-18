@@ -1,4 +1,36 @@
-"""
+"""This module contains all event ids and callback functions used in the data pipeline.
+
+Constants:
+
+    ON_BEGIN_DATA_PIPELINE: id of the event that is used when the data pipeline starts.
+    ON_BEGIN_FILTER_DATASET: id of the event that is used when dataset filtering starts.
+    ON_BEGIN_LOAD_DATASET: id of the event that is used when a dataset is being loaded.
+    ON_BEGIN_MODIFY_DATASET: id of the event that is used when dataset ratings are being modified.
+    ON_BEGIN_SAVE_SETS: id of the event that is used when the train and test sets are being saved.
+    ON_BEGIN_SPLIT_DATASET: id of the event that is used when a dataset is being split.
+    ON_END_DATA_PIPELINE: id of the event that is used when the data pipeline ends.
+    ON_END_FILTER_DATASET: id of the event that is used when dataset filtering finishes.
+    ON_END_LOAD_DATASET: id of the event that is used when a dataset has been loaded.
+    ON_END_MODIFY_DATASET: id of the event that is used when dataset ratings have been modified.
+    ON_END_SAVE_SETS: id of the event that is used when the train and test sets have been saved.
+    ON_END_SPLIT_DATASET: id of the event that is used when a dataset has been split.
+
+Functions:
+
+    get_data_events: get data pipeline events.
+    on_begin_data_pipeline: call when the data pipeline starts.
+    on_begin_filter_dataset: call when dataset filtering starts.
+    on_begin_load_dataset: call when a dataset is being loaded.
+    on_begin_modify_dataset: call when dataset ratings are being modified.
+    on_begin_save_set: call when the train and test sets are being saved.
+    on_begin_split_dataset: call when a dataset is being split.
+    on_end_data_pipeline: call when the data pipeline ends.
+    on_end_filter_dataset: call when dataset filtering finishes.
+    on_end_load_dataset: call when a dataset has been loaded.
+    on_end_modify_dataset: call when dataset ratings have been modified.
+    on_end_save_set: call when the train and test sets have been saved.
+    on_end_split_dataset: call when a dataset has been split.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

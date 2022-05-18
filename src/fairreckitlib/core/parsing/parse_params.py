@@ -1,4 +1,11 @@
-"""
+"""This module contains functionality to parse configuration parameter(s).
+
+Functions:
+
+    parse_config_parameters: parse multiple parameters.
+    parse_config_param: parse a single parameter.
+    trim_config_params: trim unnecessary params that are not present in the config parameters.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

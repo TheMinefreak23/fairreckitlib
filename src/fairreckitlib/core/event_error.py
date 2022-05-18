@@ -1,4 +1,14 @@
-"""
+"""This module contains all event ids and callback functions that are error related.
+
+Constants:
+
+    ON_FAILURE_ERROR: id of the event that is used when a failure occurs.
+    ON_RAISE_ERROR: id of the event that is used when an error was raised.
+
+Functions:
+
+    on_error: call when a failure happens or an error was raised.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

@@ -1,4 +1,9 @@
-"""
+"""This module contains a parser for the dataset rating conversion configuration.
+
+Functions:
+
+    parse_data_convert_config: parse convert configuration.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -84,7 +89,7 @@ def parse_data_convert_config(
     )
 
     # assert KEY_PARAMS is present
-    # skip when the splitter has no parameters at all
+    # skip when the converter has no parameters at all
     if convert_params.get_num_params() > 0 and assert_is_key_in_dict(
         KEY_PARAMS,
         convert_config,
@@ -93,7 +98,7 @@ def parse_data_convert_config(
         KEY_PARAMS + '\'',
         default=parsed_config.params
     ):
-        # parse the splitter parameters
+        # parse the converter parameters
         parsed_config.params = parse_config_parameters(
             convert_config[KEY_PARAMS],
             dataset.name,

@@ -1,4 +1,17 @@
-"""
+"""This module contains the lenskit predictor and creation functions.
+
+Classes:
+
+    LensKitPredictor: predictor implementation for lenskit.
+
+Functions:
+
+    create_biased_mf: create BiasedMF predictor (factory creation compatible).
+    create_implicit_mf: create ImplicitMF predictor (factory creation compatible).
+    create_item_item: create ItemItem predictor (factory creation compatible).
+    create_pop_score: create PopScore predictor (factory creation compatible).
+    create_user_user: create UserUser predictor (factory creation compatible).
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

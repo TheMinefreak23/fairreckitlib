@@ -1,4 +1,17 @@
-"""
+"""This module contains data utility functions.
+
+Functions:
+
+    convert_csr_to_coo: convert csr matrix to coo matrix.
+    convert_coo_to_df: convert coo matrix to dataframe.
+    load_array_from_hdf5: load array data from hdf5 file.
+    load_df_from_hdf5: load dataframe from hdf5 file.
+    load_table: load data table from file.
+    load_yml: load yml file.
+    save_array_to_hdf5: save array data to hdf5 file.
+    save_df_to_hdf5: save dataframe to hdf5 file.
+    save_yml: save yml file.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

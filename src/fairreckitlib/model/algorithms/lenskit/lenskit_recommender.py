@@ -1,4 +1,19 @@
-"""
+"""This module contains the lenskit recommender and creation functions.
+
+Classes:
+
+    LensKitRecommender: recommender implementation for lenskit.
+
+Functions:
+
+    create_candidate_selector: create CandidateSelector for a rated items filter.
+    create_biased_mf: create BiasedMF recommender (factory creation compatible).
+    create_implicit_mf: create ImplicitMF recommender (factory creation compatible).
+    create_item_item: create ItemItem recommender (factory creation compatible).
+    create_pop_score: create PopScore recommender (factory creation compatible).
+    create_random: create Random recommender (factory creation compatible).
+    create_user_user: create UserUser recommender (factory creation compatible).
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

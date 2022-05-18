@@ -1,4 +1,38 @@
-"""
+"""This module contains all event ids and callback functions used in the model pipeline.
+
+Constants:
+
+    ON_BEGIN_LOAD_TEST_SET: id of the event that is used when a test set is being loaded.
+    ON_BEGIN_LOAD_TRAIN_SET: id of the event that is used when a train set is being loaded.
+    ON_BEGIN_MODEL_PIPELINE: id of the event that is used when the model pipeline starts.
+    ON_BEGIN_TEST_MODEL: id of the event that is used when testing a model started.
+    ON_BEGIN_TRAIN_MODEL: id of the event that is used when training a model started.
+    ON_BEGIN_MODEL: id of the event that is used when a model computation started.
+    ON_END_LOAD_TEST_SET: id of the event that is used when a test set has been loaded.
+    ON_END_LOAD_TRAIN_SET: id of the event that is used when a train set has been loaded.
+    ON_END_MODEL_PIPELINE: id of the event that is used when the model pipeline ends.
+    ON_END_TEST_MODEL: id of the event that is used when testing a model finishes.
+    ON_END_TRAIN_MODEL: id of the event that is used when training a model finishes.
+    ON_END_MODE: id of the event that is used when a model computation finishes.
+    ON_SAVE_MODEL_SETTINGS: id of the event that is used when the model settings have been saved.
+
+Functions:
+
+    get_model_events: get model pipeline events.
+    on_begin_load_test_set: call when a test set is being loaded.
+    on_begin_load_train_set: call when a train set is being loaded.
+    on_begin_model_pipeline: call when the model pipeline starts.
+    on_begin_test_model: call when testing a model started.
+    on_begin_train_model: call when training a model started.
+    on_begin_model: call when a model computation started.
+    on_end_load_test_set: call when a test set has been loaded.
+    on_end_load_train_set: call when a train set has been loaded.
+    on_end_model_pipeline: call when the model pipeline ends.
+    on_end_test_model: call when testing a model finishes.
+    on_end_train_model: call when training a model finishes.
+    on_end_model: call when a model computation finishes.
+    on_save_model_settings: call when the model settings have been saved.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

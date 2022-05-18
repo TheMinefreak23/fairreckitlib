@@ -1,4 +1,21 @@
-"""
+"""This module contains the parameter creation functions for surprise predictors/recommenders.
+
+Functions:
+
+    add_baseline_als_params_to: add baseline config parameters that use ALS.
+    add_baseline_sgd_params_to: add baseline config parameters that use SGD.
+    create_params_baseline_only_als: create BaselineOnly config parameters with ALS.
+    create_params_baseline_only_sgd: create BaselineOnly config parameters with SGD.
+    create_params_co_clustering: create CoClustering config parameters.
+    create_params_knn: create KNN base config parameters.
+    create_params_knn_baseline: create KNNBaseline base config parameters.
+    create_params_knn_baseline_als: create KNNBaseline config parameters with ALS.
+    create_params_knn_baseline_sgd: create KNNBaseline config parameters with SGD.
+    create_params_knn_similarities: create KNN config parameters with similarities.
+    create_params_nmf: create NMF config parameters.
+    create_params_svd: create SVD config parameters.
+    create_params_svd_pp: create SVDpp config parameters.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -83,7 +100,7 @@ def create_params_knn() -> ConfigParameters:
     return params
 
 
-def create_params_knn_base_line() -> ConfigParameters:
+def create_params_knn_baseline() -> ConfigParameters:
     """Create the base parameters of both KNN Baseline algorithms.
 
     Returns:
@@ -94,23 +111,23 @@ def create_params_knn_base_line() -> ConfigParameters:
     return params
 
 
-def create_params_knn_base_line_als() -> ConfigParameters:
+def create_params_knn_baseline_als() -> ConfigParameters:
     """Create the parameters of the KNN Baseline algorithm with ALS.
 
     Returns:
         the configuration parameters of the algorithm.
     """
-    params = create_params_knn_base_line()
+    params = create_params_knn_baseline()
     return add_baseline_als_params_to(params)
 
 
-def create_params_knn_base_line_sgd() -> ConfigParameters:
+def create_params_knn_baseline_sgd() -> ConfigParameters:
     """Create the parameters of the KNN Baseline algorithm with SGD.
 
     Returns:
         the configuration parameters of the algorithm.
     """
-    params = create_params_knn_base_line()
+    params = create_params_knn_baseline()
     return add_baseline_sgd_params_to(params)
 
 

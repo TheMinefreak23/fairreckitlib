@@ -1,4 +1,11 @@
-"""
+"""This module contains the (base) factories that are used in other packages.
+
+Classes:
+
+    BaseFactory: base class for all factories.
+    Factory: class that instantiates new objects (a leaf).
+    GroupFactory: class that groups other factories (a branch).
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

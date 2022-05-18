@@ -1,4 +1,9 @@
-"""
+"""This module contains the base functionality shared by all processors.
+
+Classes:
+
+    DataProcessorBase: the base class for dataset processors.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -6,16 +11,11 @@ Utrecht University within the Software Project course.
 
 from abc import ABCMeta, abstractmethod
 import os
+from typing import Any, Dict, Optional, Tuple
 
-from ...utility import save_array_to_hdf5
-from ...utility import save_yml
-from ..dataset_config import DATASET_INDICES
-from ..dataset_config import DATASET_ITEMS
-from ..dataset_config import DATASET_MATRIX
-from ..dataset_config import DATASET_PREFIX
-from ..dataset_config import DATASET_TABLES
-from ..dataset_config import DATASET_USERS
-from ..dataset_table import DATASET_FILE
+from ...utility import save_array_to_hdf5, save_yml
+from ..dataset_constants import DATASET_PREFIX, DATASET_FILE, DATASET_MATRIX, DATASET_TABLES
+from ..dataset_constants import DATASET_INDICES, DATASET_ITEMS, DATASET_USERS
 from ..dataset_table import read_table, write_table
 
 
@@ -27,22 +27,36 @@ class DataProcessorBase(metaclass=ABCMeta):
     directory that stores the metadata for achieving this. For further information
     it is advised to take a look at the Dataset class.
 
-    Args:
-        dataset_name(str): name of the dataset (processor).
-        matrix_file(str): name of the dataset matrix file.
+    Abstract methods:
+
+    load_matrix
+    load_tables_config
+    load_user_table_config
+    load_item_table_config
+
+    Public methods:
+
+    run
     """
-    def __init__(self, dataset_name, matrix_file):
+
+    def __init__(self, dataset_name: str, matrix_file: str):
+        """Construct the base DataProcessor.
+
+        Args:
+            dataset_name: name of the dataset (processor).
+            matrix_file: name of the dataset matrix file.
+        """
         self.dataset_name = dataset_name
         self.matrix_file = matrix_file
-
+        # TODO get matrix/table files from a setup.ini instead of hard coded file paths
         # data buffers that are accessible during processing
         self.data_matrix = None
         self.user_list = None
         self.item_list = None
 
     @abstractmethod
-    def load_matrix(self, file_path):
-        """Loads the matrix of the dataset.
+    def load_matrix(self, file_path: str) -> Tuple[bool, str]:
+        """Load the matrix of the dataset.
 
         The matrix is expected to be of the desired standardized format,
         meaning a pandas.DataFrame as described in the Dataset class.
@@ -51,64 +65,66 @@ class DataProcessorBase(metaclass=ABCMeta):
         When the dataset requires indirection arrays for the user and/or item IDs, they
         should be stored in the self.user_list or self.item_list respectively before returning.
 
-        Arg:
-            file_path(str): the total path to the matrix file.
+        Args:
+            file_path: the path to the matrix file.
 
         Returns:
-            save_matrix(bool): whether the processed matrix needs to be stored.
-            rating_type(str): the rating type of the matrix, either 'explicit' or 'implicit'.
+            whether the matrix needs to be stored and the rating type ('explicit' or 'implicit').
         """
         raise NotImplementedError()
 
     @abstractmethod
-    def load_tables_config(self, dataset_dir, user_item_tables):
-        """Loads any other tables available for the dataset.
+    def load_tables_config(self, dataset_dir: str, user_item_tables: Dict[str, Dict[str, Any]]):
+        """Load any other tables available for the dataset.
 
         Args:
-            dataset_dir(str): directory where the dataset files are present.
-            user_item_tables(dict): dictionary containing the loaded user
+            dataset_dir: directory where the dataset files are present.
+            user_item_tables: dictionary containing the loaded user
                 and item table configurations.
+
+        Returns:
+            a dictionary with the user, item and any additional table configurations.
         """
         raise NotImplementedError()
 
     @abstractmethod
-    def load_user_table_config(self, dataset_dir):
-        """Loads the user table of the dataset.
+    def load_user_table_config(self, dataset_dir: str) \
+            -> Tuple[Optional[str], Optional[Dict[str, Any]]]:
+        """Load the user table of the dataset.
 
         Args:
-            dataset_dir(str): directory where the dataset files are present.
+            dataset_dir: directory where the dataset files are present.
 
         Returns:
-            user_table_name(str): name of the user table or None when not available.
-            user_table_config(dict): user table configuration or None when not available.
+            the name and configuration of the user table or None when not available.
         """
         raise NotImplementedError()
 
     @abstractmethod
-    def load_item_table_config(self, dataset_dir):
-        """Loads the item table of the dataset.
+    def load_item_table_config(self, dataset_dir: str) \
+            -> Tuple[Optional[str], Optional[Dict[str, Any]]]:
+        """Load the item table of the dataset.
 
         Args:
-            dataset_dir(str): directory where the dataset files are present.
+            dataset_dir: directory where the dataset files are present.
 
         Returns:
-            item_table_name(str): name of the item table or None when not available.
-            item_table_config(dict): item table configuration or None when not available.
+            the name and configuration of the item table or None when not available.
         """
         raise NotImplementedError()
 
-    def load_user_indices(self, dataset_dir):
-        """Loads the user indices of the dataset.
+    def load_user_indices(self, dataset_dir: str) -> Tuple[Optional[str], int]:
+        """Load the user indices of the dataset.
 
         This step happens at the end of processing and will save
         the self.user_list, when still present, to the dataset directory.
 
         Args:
-            dataset_dir(str): directory where the dataset files are present.
+            dataset_dir: directory where the dataset files are present.
 
         Returns:
-            file_name(str): the name to the user indices file or None when not present.
-            user_count(int): the total number of unique users.
+            the name to the user indices file or None when not present and
+            the total number of unique users.
         """
         file_name = None
         if not self.user_list is None:
@@ -125,18 +141,18 @@ class DataProcessorBase(metaclass=ABCMeta):
 
         return file_name, user_count
 
-    def load_item_indices(self, dataset_dir):
-        """Loads the item indices of the dataset.
+    def load_item_indices(self, dataset_dir: str) -> Tuple[Optional[str], int]:
+        """Load the item indices of the dataset.
 
         This step happens at the end of processing and will save
         the self.item_list, when still present, to the dataset directory.
 
         Args:
-            dataset_dir(str): directory where the dataset files are present.
+            dataset_dir: directory where the dataset files are present.
 
         Returns:
-            file_name(str): the name to the item indices file or None when not present.
-            item_count(int): the total number of unique items.
+            the name to the item indices file or None when not present and
+            the total number of unique items.
         """
         file_name = None
         if not self.item_list is None:
@@ -153,16 +169,16 @@ class DataProcessorBase(metaclass=ABCMeta):
 
         return file_name, item_count
 
-    def process_matrix(self, dataset_dir):
-        """Processes the matrix of the dataset.
+    def process_matrix(self, dataset_dir: str) -> str:
+        """Process the matrix of the dataset.
 
         Loads the matrix and stores it in the dataset directory when needed.
 
         Args:
-            dataset_dir(str): directory where the dataset files are present.
+            dataset_dir: directory where the dataset files are present.
 
         Returns:
-            rating_type(str): the rating type of the matrix, either 'explicit' or 'implicit'.
+            the rating type of the matrix, either 'explicit' or 'implicit'.
         """
         save_matrix, rating_type = self.load_matrix(os.path.join(dataset_dir, self.matrix_file))
 
@@ -177,8 +193,9 @@ class DataProcessorBase(metaclass=ABCMeta):
 
         return rating_type
 
-    def process_tables(self, dataset_dir):
-        """Processes the matrix of the dataset.
+    def process_tables(self, dataset_dir: str) \
+            -> Tuple[Optional[str], Optional[str], Dict[str, Dict[str, Any]]]:
+        """Process the tables of the dataset.
 
         Loads all the tables belonging to the dataset:
 
@@ -187,13 +204,11 @@ class DataProcessorBase(metaclass=ABCMeta):
         3) load other tables
 
         Args:
-            dataset_dir(str): directory where the dataset files are present.
+            dataset_dir: directory where the dataset files are present.
 
         Returns:
-            user_table_name(str): name of the user table or None when not present.
-            item_table_name(str): name of the item table or None when not present.
-            tables_config(dict): dictionary containing the total configuration of all
-                tables. The key is the name of the table, and the value is the configuration.
+            the name of the user and item table or None when not present and a dictionary
+            containing the total configuration of all tables.
         """
         # attempt to load the user table
         try:
@@ -241,17 +256,16 @@ class DataProcessorBase(metaclass=ABCMeta):
 
         return user_table_name, item_table_name, tables_config
 
-    def run(self, dataset_dir, config_file_name):
-        """Runs the processor over a stored dataset.
+    def run(self, dataset_dir: str, config_file_name: str) -> Optional[Dict[str, Any]]:
+        """Run the processor over a stored dataset.
 
         Args:
-            dataset_dir(str): directory where the dataset files are present.
-            config_file_name(str): name of the file to save the dataset
+            dataset_dir: directory where the dataset files are present.
+            config_file_name: name of the file to save the dataset
                 configuration to.
 
         Returns:
-            dataset_config(dict): the configuration of the dataset after processing
-                or None on failure.
+            the configuration of the dataset after processing or None on failure.
         """
         # attempt to process the matrix file
         try:

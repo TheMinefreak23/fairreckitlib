@@ -14,18 +14,24 @@ from ..core.event_dispatcher import EventDispatcher
 from ..core.event_io import ON_MAKE_DIR
 from ..core.factories import GroupFactory
 from ..data.data_factory import KEY_DATASETS
-from ..data.pipeline.data_run import run_data_pipeline
+from ..data.pipeline.data_run import DataPipelineConfig, run_data_pipeline
 from ..data.set.dataset_registry import DataRegistry
 from ..evaluation.pipeline.evaluation_run import run_evaluation_pipelines
 from ..evaluation.evaluation_factory import KEY_EVALUATION
-from ..model.pipeline.model_run import run_model_pipelines
+from ..model.pipeline.model_run import ModelPipelineConfig, run_model_pipelines
 from ..model.model_factory import KEY_MODELS
 from .experiment_config import PredictorExperimentConfig, RecommenderExperimentConfig
 from .experiment_event import ON_BEGIN_EXPERIMENT, ON_END_EXPERIMENT
 
 
 class Experiment:
-    """Experiment wrapper of the data, model and evaluation pipelines."""
+    """Experiment wrapper of the data, model and evaluation pipelines.
+
+    Public methods:
+
+    get_config
+    run
+    """
 
     def __init__(
             self,
@@ -36,8 +42,8 @@ class Experiment:
         """Construct the experiment.
 
         Args:
-            data_registry(DataRegistry): the registry with available datasets.
-            experiment_factory(GroupFactory): the factory containing all three pipeline factories.
+            data_registry: the registry with available datasets.
+            experiment_factory: the factory containing all three pipeline factories.
             experiment_config: the configuration of the experiment.
             event_dispatcher: to dispatch the experiment events.
         """
@@ -66,10 +72,12 @@ class Experiment:
         results, start_time = self.start_run(output_dir)
 
         data_result = run_data_pipeline(
-            output_dir,
-            self.data_registry,
-            self.experiment_factory.get_factory(KEY_DATASETS),
-            self.experiment_config.datasets,
+            DataPipelineConfig(
+                output_dir,
+                self.data_registry,
+                self.experiment_factory.get_factory(KEY_DATASETS),
+                self.experiment_config.datasets
+            ),
             self.event_dispatcher,
             is_running
         )
@@ -85,10 +93,12 @@ class Experiment:
 
             model_factory = self.experiment_factory.get_factory(KEY_MODELS)
             model_dirs = run_model_pipelines(
-                data_transition.output_dir,
-                data_transition,
-                model_factory.get_factory(self.experiment_config.type),
-                self.experiment_config.models,
+                ModelPipelineConfig(
+                    data_transition.output_dir,
+                    data_transition,
+                    model_factory.get_factory(self.experiment_config.type),
+                    self.experiment_config.models
+                ),
                 self.event_dispatcher,
                 is_running,
                 **kwargs

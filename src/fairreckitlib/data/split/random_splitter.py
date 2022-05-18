@@ -1,4 +1,14 @@
-"""
+"""This module contains random splitting functionality.
+
+Classes:
+
+    RandomSplitter: can split randomly.
+
+Functions:
+
+    create_random_splitter: create an instance of the class (factory creation compatible).
+
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -17,7 +27,7 @@ from .base_splitter import DataSplitter
 class RandomSplitter(DataSplitter):
     """Random Splitter.
 
-    Splits the dataframe into a train and test set randomly.
+    Splits the dataframe into a train and test set randomly user-by-user.
     """
 
     def run(self, dataframe: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
