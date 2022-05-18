@@ -11,7 +11,9 @@ import time
 import json
 import pandas as pd
 
+from ...core.event_dispatcher import EventDispatcher
 from ...core.event_io import ON_MAKE_DIR, ON_REMOVE_FILE
+from ...core.factories import Factory
 from ...evaluation.pipeline import evaluation_event
 from ..metrics.common import metric_matches_type
 from ..metrics.evaluator_lenskit import EvaluatorLenskit
@@ -24,20 +26,24 @@ class EvaluationPipeline:
     test_filter = False
     test_use_lenskit = True
 
-    def __init__(self, rec_result, profile_path, metrics, k, filters, event_dispatcher):
-        self.name = rec_result.name
-        self.train_path = rec_result.train_path
-        self.test_path = rec_result.test_path
-        self.recs_path = rec_result.recs_path
-        self.rec_type = rec_result.rec_type
+    def __init__(self, metric_factory: Factory, event_dispatcher: EventDispatcher):
+        self.metric_factory = metric_factory
+
+        self.train_path = None
+        self.test_path = None
+        self.recs_path = None
+
+        self.event_dispatcher = event_dispatcher
+
+    def run(self, data_paths, eval_config):
         self.profile_path = profile_path
         self.metrics = metrics
         self.k = k
         self.filters = filters
 
-        self.event_dispatcher = event_dispatcher
-
-    def run(self):
+        self.train_path = rec_result.train_path
+        self.test_path = rec_result.test_path
+        self.recs_path = rec_result.recs_path
         self.filter_all()
 
     def filter_all(self):

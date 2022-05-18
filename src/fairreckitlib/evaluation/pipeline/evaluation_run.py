@@ -31,18 +31,13 @@ def run_evaluation_pipelines(model_dirs, data_transition, metric_factory,
         num_items(int): the number of item recommendations to produce, only
             needed when running recommender pipelines.
     """
-    print('model_dirs:')
-    print(model_dirs)
+    print('model_dirs',model_dirs)
 
     for model_dir in model_dirs:
-        print('model_dir:')
-        print(model_dir)
-        dir_name = os.path.dirname(model_dir)
+        print('model_dir',model_dir)
 
-        # Create a test instance TODO refactor
-        test = Test(name=dir_name, train_path=data_transition.train_set_path, test_path=data_transition.test_set_path,
-                    recs_path=model_dir+'/ratings.tsv', rec_type=RecType.RECOMMENDATION)
-
-        pipeline = EvaluationPipeline(test, '', eval_config['metrics'], kwargs['num_items'], eval_config['filters'],
-                                      event_dispatcher)
-        pipeline.run()
+        for evaluations in eval_config:
+            api_factory = pipeline_config.model_factory.get_factory(api_name)
+            data_paths = (data_transition, model_dir+'/ratings.tsv')
+            pipeline =
+            pipeline.run(data_paths, eval_config, event_dispatcher)
