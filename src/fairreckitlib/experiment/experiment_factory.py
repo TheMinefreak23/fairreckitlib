@@ -1,4 +1,9 @@
-"""
+"""This module contains functionality to create an experiment factory.
+
+Functions:
+
+    create_experiment_factory: create factory with pipeline factories.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
