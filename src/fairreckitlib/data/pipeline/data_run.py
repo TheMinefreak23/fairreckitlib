@@ -1,8 +1,12 @@
 """This module contains functionality to run the data pipeline.
 
+Classes:
+
+    DataPipelineConfig: configuration class to run the data pipelines.
+
 Functions:
 
-    run_data_pipeline: run the pipeline using dataset configurations.
+    run_data_pipelines: run the pipeline using dataset configurations.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
@@ -30,7 +34,7 @@ class DataPipelineConfig:
     data_config: List[DatasetConfig]
 
 
-def run_data_pipeline(
+def run_data_pipelines(
         pipeline_config: DataPipelineConfig,
         event_dispatcher: EventDispatcher,
         is_running: Callable[[], bool]) -> List[DataTransition]:

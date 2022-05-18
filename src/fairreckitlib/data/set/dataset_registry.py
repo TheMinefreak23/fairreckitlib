@@ -51,8 +51,7 @@ class DataRegistry:
             data_dir: path to the directory that contains the datasets.
         """
         if not os.path.isdir(data_dir):
-            raise IOError('Failed to initialize DataRegistry: '
-                          'unknown data directory => ' + data_dir)
+            raise IOError()
 
         self.registry = {}
         self.processors = {
