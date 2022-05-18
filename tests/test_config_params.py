@@ -1,4 +1,4 @@
-"""This module tests configurations.
+"""This module tests the functionality of configuration param(s).
 
 Functions:
 

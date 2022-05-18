@@ -1,4 +1,4 @@
-"""This module tests the splitting functionality.
+"""This module tests the dataframe splitting functionality.
 
 Functions:
 

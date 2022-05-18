@@ -1,11 +1,11 @@
-"""This module tests rating conversion of dataframes.
+"""This module tests the dataframe rating conversion functionality.
 
 Functions:
 
     test_converter_factory: test if factories are created correctly.
     test_convert_classes: test if classes are created correctly.
     test_apc_alc: test is listen count <= play count.
-    test_to_explicit: test if ratings are converted correcty.
+    test_to_explicit: test if ratings are converted correctly.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
@@ -14,11 +14,11 @@ Utrecht University within the Software Project course.
 
 import pandas as pd
 import pytest
+
 from src.fairreckitlib.core.factories import Factory
 from src.fairreckitlib.data.ratings.base_converter import RatingConverter
 from src.fairreckitlib.data.ratings import count, rating_converter_factory, range_converter
 from src.fairreckitlib.data.set import dataset_registry
-from src.fairreckitlib.data.pipeline.data_pipeline import DataPipeline
 
 # sample of the first 1000 entries of the lfm-360k dataset
 # this already has headers
@@ -37,7 +37,6 @@ dfs = [('ml_100k', df_ml_100k)
 
 
 converter_factory = rating_converter_factory.create_rating_converter_factory()
-data_pipeline = DataPipeline(None, None)
 rating_modifiers = [1, 5, 10, 1000]
 
 

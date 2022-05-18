@@ -1,4 +1,4 @@
-"""This module tests the algorithms.
+"""This module tests the algorithm interface of predictors/recommenders.
 
 Functions:
 

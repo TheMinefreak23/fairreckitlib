@@ -1,4 +1,4 @@
-"""This module tests the creation of factories.
+"""This module tests the base functionality of all types of factories.
 
 Functions:
 
