@@ -24,3 +24,4 @@ def get_filter():
         FILTER_COUNTRY: create_country_filter,
         FILTER_GENDER: create_gender_filter
     }
+    
