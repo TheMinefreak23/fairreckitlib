@@ -22,8 +22,9 @@ class CountryFilter(DataFilter):
             a filtered dataframe from the given dataframe
         """
         if 'country' in self.dataset.columns:
-            df_filter = self.dataset.country.lower().eq(country.lower())
-            return self.dataset[df_filter]
+            df_filter = self.dataset.country.map(lambda x: x.lower() if x else x
+                                                ).eq(country.lower() if country else country)
+            return self.dataset[df_filter].reset_index(drop=True)
         return self.dataset
 
     def __str__(self):

@@ -25,7 +25,7 @@ class AgeFilter(DataFilter):
         """
         if 'age' in self.dataset.columns:
             df_filter = self.dataset.age.between(min_val, max_val, inclusive="both")
-            return self.dataset[df_filter]
+            return self.dataset[df_filter].reset_index(drop=True)
         return self.dataset
 
     def __str__(self):

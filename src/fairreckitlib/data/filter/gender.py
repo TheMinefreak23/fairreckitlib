@@ -23,13 +23,13 @@ class GenderFilter(DataFilter):
             df_filter = []
             gender = gender.lower()
             if gender in ['female', 'f']:
-                df_filter = (self.dataset.gender.lower().eq('f') |
-                             self.dataset.gender.lower().eq('female'))
+                df_filter = (self.dataset.gender.map(lambda x: x.lower() if x else x).eq('f') |
+                             self.dataset.gender.map(lambda x: x.lower() if x else x).eq('female'))
             elif gender in ['male', 'm']:
-                df_filter = (self.dataset.gender.lower().eq('male') |
-                             self.dataset.gender.lower().eq('m'))
+                df_filter = (self.dataset.gender.map(lambda x: x.lower() if x else x).eq('male') |
+                             self.dataset.gender.map(lambda x: x.lower() if x else x).eq('m'))
             else: return self.dataset
-            return self.dataset[df_filter]
+            return self.dataset[df_filter].reset_index(drop=True)
         return self.dataset
 
     def __str__(self):
