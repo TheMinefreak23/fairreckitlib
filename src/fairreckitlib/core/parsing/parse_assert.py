@@ -1,4 +1,12 @@
-"""
+"""This module contains parsing functionality for commonly used assertions.
+
+Functions:
+
+    assert_is_container_not_empty: assert a container to have entries.
+    assert_is_key_in_dict: assert a dictionary to have a key.
+    assert_is_one_of_list: assert a value to be one of the values of a list.
+    assert_is_type: assert a value to be of a certain type.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

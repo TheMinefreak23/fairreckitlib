@@ -24,6 +24,7 @@ def create_table_config(
         file_name: str,
         keys: List[str],
         columns: List[str],
+        *,
         header: bool=False,
         sep: str=None,
         encoding: str='utf-8') -> Dict[str, Any]:

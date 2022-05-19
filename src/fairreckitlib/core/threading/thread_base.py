@@ -1,4 +1,9 @@
-"""
+"""This module contains the base class for threads.
+
+Classes:
+
+    ThreadBase: base class that implements basic threading functionality.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -6,7 +11,7 @@ Utrecht University within the Software Project course.
 
 from abc import ABCMeta, abstractmethod
 from threading import Thread
-from typing import Any, Callable, Dict
+from typing import Any, Callable
 
 from ..event_dispatcher import EventDispatcher
 
@@ -35,13 +40,12 @@ class ThreadBase(metaclass=ABCMeta):
     stop
     """
 
-    def __init__(self, name: str, events: Dict[Any, Callable[[Any], None]],
-                 verbose: bool, **kwargs):
+    def __init__(self, name: str, verbose: bool, **kwargs):
         """Construct the BaseThread.
 
         Args:
             name the name of the thread.
-            events: events to dispatch for this thread
+            verbose: whether the thread should give verbose output.
 
         Keyword Args:
             varying: these are passed to the run function from step 2.
@@ -52,8 +56,6 @@ class ThreadBase(metaclass=ABCMeta):
 
         self.verbose = verbose
         self.event_dispatcher = EventDispatcher()
-        for (event_id, func_on_event) in events.items():
-            self.event_dispatcher.add_listener(event_id, self, func_on_event)
 
     def start(self, terminate_callback: Callable[[Any], None]) -> None:
         """Start running the thread.

@@ -1,8 +1,15 @@
-"""
+"""This module contains a processor that handles active threads.
+
+Classes:
+
+    ThreadProcessor: class that starts new and stops running threads.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
+
+from typing import List
 
 from .thread_base import ThreadBase
 
@@ -24,6 +31,13 @@ class ThreadProcessor:
     def __init__(self):
         """Construct the ThreadProcessor."""
         self.threads = {}
+
+    def get_active_threads(self) -> List[str]:
+        """Get the names of any active threads.
+
+        Returns:
+            a list of thread names that are currently running.
+        """
 
     def get_num_active(self) -> int:
         """Get the number of active threads for this processor.

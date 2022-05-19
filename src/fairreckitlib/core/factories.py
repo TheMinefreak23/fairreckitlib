@@ -1,4 +1,11 @@
-"""
+"""This module contains the (base) factories that are used in other packages.
+
+Classes:
+
+    BaseFactory: base class for all factories.
+    Factory: class that instantiates new objects (a leaf).
+    GroupFactory: class that groups other factories (a branch).
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -204,6 +211,7 @@ class GroupFactory(BaseFactory):
 
     add_factory
     get_factory
+    get_sub_availability
     """
 
     def add_factory(self, factory: BaseFactory) -> None:
@@ -251,6 +259,31 @@ class GroupFactory(BaseFactory):
             the requested factory or None when not available.
         """
         return self.factory.get(factory_name)
+
+    def get_sub_availability(
+            self,
+            sub_factory_name: str,
+            sub_type: str = None) -> Dict[str, Any]:
+        """Get the sub availability from the factory with the specified name (and type).
+
+        Args:
+            sub_factory_name: the name of the sub-factory to query for availability.
+            sub_type: the subtype of the sub-factory to query for availability or None
+                for the complete availability.
+
+        Returns:
+            a dictionary containing the availability of the sub-factory (type).
+        """
+        # TODO add unit test for this
+        sub_factory = self.get_factory(sub_factory_name)
+        if sub_type is None:
+            return sub_factory.get_available()
+
+        type_factory = sub_factory.get_factory(sub_type)
+        if type_factory is None:
+            return {}
+
+        return type_factory.get_available()
 
     def is_obj_available(self, obj_name: str) -> bool:
         """Is the object with the specified name available.
