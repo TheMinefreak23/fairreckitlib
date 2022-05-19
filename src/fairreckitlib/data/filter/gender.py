@@ -1,3 +1,4 @@
+
 """
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
@@ -9,9 +10,9 @@ from .base import DataFilter
 
 class GenderFilter(DataFilter):
     """Filters the dataframe on gender column f/m, if such a column exists."""
+    
     def run(self, gender: str = None) -> pd.DataFrame:
-        """
-        Filters specific gender of the dataframe.
+        """Filter specific gender of the dataframe.
 
         Args:
             country: the name of the country used in filtering
@@ -33,8 +34,7 @@ class GenderFilter(DataFilter):
         return self.dataset
 
     def __str__(self):
-        """
-        to string
+        """To string
 
         Returns:
             name of the class
@@ -42,8 +42,7 @@ class GenderFilter(DataFilter):
         return self.__class__.__name__
 
 def create_gender_filter(data_frame: pd.DataFrame) -> DataFilter:
-    """
-    Creates an instance of the class GenderFilter
+    """Create an instance of the class GenderFilter
 
     Args:
         data_frame: a pandas DataFrame being filtered

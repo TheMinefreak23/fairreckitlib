@@ -9,12 +9,11 @@ from .base import DataFilter
 
 
 class AgeFilter(DataFilter):
-    """
-    Filters the dataframe on user age, if such a column exists.
-    """
+    """Filters the dataframe on user age, if such a column exists."""
+
     def run(self, min_val: int = 0, max_val: int = 100) -> pd.DataFrame:
         """
-        Filters the dataframe based on age column in the range of min_val and max_val values.
+        Filter the dataframe based on age column in the range of min_val and max_val values.
 
         Args:
             min_val: minimum age (default 0)
@@ -29,8 +28,7 @@ class AgeFilter(DataFilter):
         return self.dataset
 
     def __str__(self):
-        """
-        to string
+        """To string
 
         Returns:
             name of the class
@@ -39,8 +37,7 @@ class AgeFilter(DataFilter):
 
 
 def create_age_filter(data_frame: pd.DataFrame) -> DataFilter:
-    """
-    Creates an instance of the class AgeFilter
+    """Create an instance of the class AgeFilter
 
     Args:
         data_frame: a pandas DataFrame being filtered

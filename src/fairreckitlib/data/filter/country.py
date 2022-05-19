@@ -8,12 +8,10 @@ import pandas as pd
 from .base import DataFilter
 
 class CountryFilter(DataFilter):
-    """
-    Filters the dataframe on country, if such column exists.
-    """
+    """Filters the dataframe on country, if such column exists."""
+
     def run(self, country: str = None) -> pd.DataFrame:
-        """
-        Filters specific country of the dataframe.
+        """Filter specific country of the dataframe.
 
         Args:
             country: the name of the country used in filtering
@@ -28,8 +26,7 @@ class CountryFilter(DataFilter):
         return self.dataset
 
     def __str__(self):
-        """
-        to string
+        """To string
 
         Returns:
             name of the class
@@ -37,8 +34,7 @@ class CountryFilter(DataFilter):
         return self.__class__.__name__
 
 def create_country_filter(data_frame: pd.DataFrame) -> DataFilter:
-    """
-    Creates an instance of the class CountryFilter
+    """Create an instance of the class CountryFilter
 
     Args:
         data_frame: a pandas DataFrame being filtered

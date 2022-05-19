@@ -13,12 +13,12 @@ FILTER_COUNTRY = 'country'
 FILTER_GENDER = 'gender'
 
 def get_filter():
-    """
-    to string
+    """To string
 
     Returns:
         name of the class
     """
+    
     return {
         FILTER_AGE: create_age_filter,
         FILTER_COUNTRY: create_country_filter,

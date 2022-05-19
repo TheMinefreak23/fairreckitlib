@@ -9,8 +9,7 @@ import pandas as pd
 
 
 class DataFilter(metaclass=ABCMeta):
-    """
-    Base class to filter a df (not a dataset in particular), as long as the df
+    """Base class to filter a df (not a dataset in particular), as long as the df
     contains a 'user' and 'item' column.
 
     Dataset class is not really necessary here, but when combined with the
@@ -27,15 +26,12 @@ class DataFilter(metaclass=ABCMeta):
     """
 
     def __init__(self, dataset: pd.DataFrame) -> None:
-        """
-        Constructor of the class.
-        """
+        """Make Constructor of the class"""
         self.dataset = dataset
 
     @abstractmethod
     def run(self):
-        """
-        Carry out the filtering
+        """Carry out the filtering
 
         Raises:
             NotImplementedError: this method should be implimented in the subclasses
@@ -43,8 +39,7 @@ class DataFilter(metaclass=ABCMeta):
         raise NotImplementedError()
 
     def __str__(self):
-        """
-        to string
+        """To string
 
         Returns:
             name of the class
