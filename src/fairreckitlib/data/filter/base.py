@@ -26,7 +26,7 @@ class DataFilter(metaclass=ABCMeta):
     """
 
     def __init__(self, dataset: pd.DataFrame) -> None:
-        """Make Constructor of the class"""
+        """Make Constructor of the class."""
         self.dataset = dataset
 
     @abstractmethod
