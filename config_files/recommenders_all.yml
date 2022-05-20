@@ -1,20 +1,15 @@
 datasets:
 - name: ML-100K
+  rating_converter:
+    name: range
+  splitting:
+    name: random
 evaluation:
 - name: NDCG@K
 - name: P@K
 - name: R@K
 - name: MRR
 models:
-  Elliot:
-  - name: FunkSVD
-  - name: ItemKNN
-  - name: MostPop
-  - name: MultiVAE
-  - name: PureSVD
-  - name: Random
-  - name: SVDpp
-  - name: UserKNN
   Implicit:
   - name: AlternatingLeastSquares
   - name: BayesianPersonalizedRanking
@@ -30,6 +25,11 @@ models:
   - name: BaselineOnlyALS
   - name: BaselineOnlySGD
   - name: CoClustering
+  - name: KNNBasic
+  - name: KNNBaselineALS
+  - name: KNNBaselineSGD
+  - name: KNNWithMeans
+  - name: KNNWithZScore
   - name: NMF
   - name: NormalPredictor
   - name: SlopeOne

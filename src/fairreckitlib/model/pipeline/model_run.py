@@ -1,22 +1,49 @@
-"""
+"""This module contains functionality that wraps running the model pipeline multiple times.
+
+Classes:
+
+    ModelPipelineConfig: configuration class to run the model pipelines.
+
+Functions:
+
+    run_model_pipelines: run (multiple) pipelines for specified model configurations.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from dataclasses import dataclass
+from typing import Callable, Dict, List
 
-def run_model_pipelines(output_dir, data_transition, model_factory,
-                        models_config, event_dispatcher, is_running, **kwargs):
-    """Runs several ModelPipeline's for the specified model configurations.
+from ...core.event_dispatcher import EventDispatcher
+from ...core.event_error import ON_FAILURE_ERROR
+from ...core.factories import GroupFactory
+from ...data.data_transition import DataTransition
+from .model_config import ModelConfig
+
+
+@dataclass
+class ModelPipelineConfig:
+    """ModelPipeline Configuration."""
+
+    output_dir: str
+    data_transition: DataTransition
+    model_factory: GroupFactory
+    models: Dict[str, List[ModelConfig]]
+
+
+def run_model_pipelines(
+        pipeline_config: ModelPipelineConfig,
+        event_dispatcher: EventDispatcher,
+        is_running: Callable[[], bool],
+        **kwargs) -> List[str]:
+    """Run several model pipelines according to the specified model pipeline configuration.
 
     Args:
-        output_dir(str): the path of the directory to store the output.
-        data_transition(DataTransition): data input.
-        model_factory(GroupFactory): the model factory with available algorithms.
-        models_config(dict): containing list of ModelConfig's keyed by API name.
-        event_dispatcher(EventDispatcher): used to dispatch model/IO events
-            when running the model pipelines.
-        is_running(func -> bool): function that returns whether the pipelines
+        pipeline_config: the configuration on how to run the model pipelines.
+        event_dispatcher: used to dispatch model/IO events when running the model pipelines.
+        is_running: function that returns whether the pipelines
             are still running. Stops early when False is returned.
 
     Keyword Args:
@@ -27,33 +54,34 @@ def run_model_pipelines(output_dir, data_transition, model_factory,
             producing item recommendations.
 
     Returns:
-        model_dirs(array like): list of directories where the computed model
-            ratings are stored.
+        list of directories where the computed model ratings are stored.
     """
     model_dirs = []
 
-    for api_name, models in models_config.items():
-        api_factory = model_factory.get_factory(api_name)
+    for api_name, models in pipeline_config.models.items():
+        api_factory = pipeline_config.model_factory.get_factory(api_name)
         if api_factory is None:
-            # TODO log this
+            event_dispatcher.dispatch(
+                ON_FAILURE_ERROR,
+                msg='Failure: to get algorithm API factory: ' + api_name
+            )
             continue
 
         try:
-            model_pipeline = api_factory.func_create_pipeline(api_factory, event_dispatcher)
+            model_pipeline = api_factory.create_pipeline(api_factory, event_dispatcher)
             dirs = model_pipeline.run(
-                output_dir,
-                data_transition,
+                pipeline_config.output_dir,
+                pipeline_config.data_transition,
                 models,
                 is_running,
                 **kwargs
             )
-        except MemoryError:
-            # TODO log this
+        except FileNotFoundError:
             continue
 
         model_dirs += dirs
 
         if not is_running():
-            return None
+            return model_dirs
 
     return model_dirs

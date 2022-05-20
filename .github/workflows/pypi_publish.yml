@@ -1,4 +1,5 @@
-name: Upload Python Package to PyPI
+# Uploads the library as a package to TestPyPI and PyPI
+name: Upload to PyPI
 
 on:
   workflow_dispatch:

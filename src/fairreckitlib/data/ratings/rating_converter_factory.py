@@ -1,53 +1,33 @@
-"""
+"""This module contains functionality to create the rating converter factory.
+
+Functions:
+
+    create_rating_converter_factory: create a factory with rating converters.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ...core.config_params import ConfigParameters
-from ...core.factories import create_factory_from_list
-from .range_converter import RangeConverter
-from .kl_converter import KLConverter
-
-KEY_RATING_CONVERTER = 'rating_converter'
-
-CONVERTER_RANGE = 'range'
-CONVERTER_KL = 'kl'
+from ...core.factories import Factory, create_factory_from_list
+from .convert_constants import KEY_RATING_CONVERTER, CONVERTER_KL, CONVERTER_RANGE
+from .range_converter import create_range_converter, create_range_converter_params
+from .kl_converter import create_kl_converter, create_kl_converter_params
 
 
-def create_rating_converter_factory():
+def create_rating_converter_factory() -> Factory:
+    """Create the rating converter factory.
+
+    Returns:
+        the factory with all available converters.
+    """
     return create_factory_from_list(KEY_RATING_CONVERTER, [
         (CONVERTER_KL,
-         _create_kl_converter,
-         _create_kl_converter_params
+         create_kl_converter,
+         create_kl_converter_params
          ),
         (CONVERTER_RANGE,
-         _create_range_converter,
-         _create_range_converter_params
+         create_range_converter,
+         create_range_converter_params
          )
     ])
-
-
-def _create_range_converter(name, params):
-    return RangeConverter(name, params)
-
-
-def _create_range_converter_params():
-    params = ConfigParameters()
-    params.add_value('upper_bound', float, 1.0, (1.0, 1000.0))
-    return params
-
-
-def _create_kl_converter(name, params):
-    return KLConverter(name, params)
-
-
-def _create_kl_converter_params():
-    methods = [
-        'APC',
-        'ALC'
-    ]
-
-    params = ConfigParameters()
-    params.add_option('method', str, methods[0], methods)
-    return params

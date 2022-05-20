@@ -1,8 +1,44 @@
-"""
+"""This module contains all event ids and callback functions used in the model pipeline.
+
+Constants:
+
+    ON_BEGIN_LOAD_TEST_SET: id of the event that is used when a test set is being loaded.
+    ON_BEGIN_LOAD_TRAIN_SET: id of the event that is used when a train set is being loaded.
+    ON_BEGIN_MODEL_PIPELINE: id of the event that is used when the model pipeline starts.
+    ON_BEGIN_TEST_MODEL: id of the event that is used when testing a model started.
+    ON_BEGIN_TRAIN_MODEL: id of the event that is used when training a model started.
+    ON_BEGIN_MODEL: id of the event that is used when a model computation started.
+    ON_END_LOAD_TEST_SET: id of the event that is used when a test set has been loaded.
+    ON_END_LOAD_TRAIN_SET: id of the event that is used when a train set has been loaded.
+    ON_END_MODEL_PIPELINE: id of the event that is used when the model pipeline ends.
+    ON_END_TEST_MODEL: id of the event that is used when testing a model finishes.
+    ON_END_TRAIN_MODEL: id of the event that is used when training a model finishes.
+    ON_END_MODE: id of the event that is used when a model computation finishes.
+    ON_SAVE_MODEL_SETTINGS: id of the event that is used when the model settings have been saved.
+
+Functions:
+
+    get_model_events: get model pipeline events.
+    on_begin_load_test_set: call when a test set is being loaded.
+    on_begin_load_train_set: call when a train set is being loaded.
+    on_begin_model_pipeline: call when the model pipeline starts.
+    on_begin_test_model: call when testing a model started.
+    on_begin_train_model: call when training a model started.
+    on_begin_model: call when a model computation started.
+    on_end_load_test_set: call when a test set has been loaded.
+    on_end_load_train_set: call when a train set has been loaded.
+    on_end_model_pipeline: call when the model pipeline ends.
+    on_end_test_model: call when testing a model finishes.
+    on_end_train_model: call when training a model finishes.
+    on_end_model: call when a model computation finishes.
+    on_save_model_settings: call when the model settings have been saved.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
+
+from typing import Any, Callable, List, Tuple
 
 ON_BEGIN_LOAD_TEST_SET = 'ModelPipeline.on_begin_load_test_set'
 ON_BEGIN_LOAD_TRAIN_SET = 'ModelPipeline.on_begin_load_train_set'
@@ -19,15 +55,15 @@ ON_END_MODEL = 'ModelPipeline.on_end_model'
 ON_SAVE_MODEL_SETTINGS = 'ModelPipeline.on_save_model_settings'
 
 
-def get_model_events():
-    """Gets all model pipeline events.
+def get_model_events() -> List[Tuple[str, Callable[[Any], None]]]:
+    """Get all model pipeline events.
 
-    The callback functions are specified below and serve as a default
+    The Call backs are specified below and serve as a default
     implementation for the RecommenderSystem class including the keyword arguments
     that are passed down by the model pipeline.
 
     Returns:
-        (array like) list of pairs in the format (event_id, func_on_event)
+        a list of pairs in the format (event_id, func_on_event)
     """
     return [
         (ON_BEGIN_LOAD_TEST_SET, on_begin_load_test_set),
@@ -46,11 +82,11 @@ def get_model_events():
     ]
 
 
-def on_begin_load_test_set(event_listener, **kwargs):
-    """Callback function when test set loading started.
+def on_begin_load_test_set(event_listener: Any, **kwargs) -> None:
+    """Call back when test set loading started.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -60,11 +96,11 @@ def on_begin_load_test_set(event_listener, **kwargs):
         print('Loading test set from', kwargs['test_set_path'])
 
 
-def on_begin_load_train_set(event_listener, **kwargs):
-    """Callback function when train set loading started.
+def on_begin_load_train_set(event_listener: Any, **kwargs) -> None:
+    """Call back when train set loading started.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -74,11 +110,11 @@ def on_begin_load_train_set(event_listener, **kwargs):
         print('Loading train set from', kwargs['train_set_path'])
 
 
-def on_begin_model(event_listener, **kwargs):
-    """Callback function when a model computation started.
+def on_begin_model(event_listener: Any, **kwargs) -> None:
+    """Call back when a model computation started.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -88,11 +124,11 @@ def on_begin_model(event_listener, **kwargs):
         print('Starting model:', kwargs['model_name'])
 
 
-def on_begin_model_pipeline(event_listener, **kwargs):
-    """Callback function when the model pipeline started.
+def on_begin_model_pipeline(event_listener: Any, **kwargs) -> None:
+    """Call back when the model pipeline started.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -104,11 +140,11 @@ def on_begin_model_pipeline(event_listener, **kwargs):
               'to process', kwargs['num_models'], 'model(s)')
 
 
-def on_begin_test_model(event_listener, **kwargs):
-    """Callback function when testing a model started.
+def on_begin_test_model(event_listener: Any, **kwargs) -> None:
+    """Call back when testing a model started.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -119,11 +155,11 @@ def on_begin_test_model(event_listener, **kwargs):
         print('Testing model:', kwargs['model'].get_name())
 
 
-def on_begin_train_model(event_listener, **kwargs):
-    """Callback function when training a model started.
+def on_begin_train_model(event_listener: Any, **kwargs) -> None:
+    """Call back when training a model started.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -134,11 +170,11 @@ def on_begin_train_model(event_listener, **kwargs):
         print('Training model:', kwargs['model'].get_name())
 
 
-def on_end_load_test_set(event_listener, **kwargs):
-    """Callback function when test set loading finished.
+def on_end_load_test_set(event_listener: Any, **kwargs) -> None:
+    """Call back when test set loading finished.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -152,11 +188,11 @@ def on_end_load_test_set(event_listener, **kwargs):
         print(f'Loaded test set in {elapsed_time:1.4f}s')
 
 
-def on_end_load_train_set(event_listener, **kwargs):
-    """Callback function when train set loading finished.
+def on_end_load_train_set(event_listener: Any, **kwargs) -> None:
+    """Call back when train set loading finished.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -170,11 +206,11 @@ def on_end_load_train_set(event_listener, **kwargs):
         print(f'Loaded train set in {elapsed_time:1.4f}s')
 
 
-def on_end_model(event_listener, **kwargs):
-    """Callback function when a model computation finished.
+def on_end_model(event_listener: Any, **kwargs) -> None:
+    """Call back when a model computation finished.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -187,11 +223,11 @@ def on_end_model(event_listener, **kwargs):
         print('Finished model:', kwargs['model'].get_name(), f'in {elapsed_time:1.4f}s')
 
 
-def on_end_model_pipeline(event_listener, **kwargs):
-    """Callback function when the model pipeline finished.
+def on_end_model_pipeline(event_listener: Any, **kwargs) -> None:
+    """Call back when the model pipeline finished.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -206,11 +242,11 @@ def on_end_model_pipeline(event_listener, **kwargs):
               f'in {elapsed_time:1.4f}s')
 
 
-def on_end_test_model(event_listener, **kwargs):
-    """Callback function when testing a model finished.
+def on_end_test_model(event_listener: Any, **kwargs) -> None:
+    """Call back when testing a model finished.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -224,11 +260,11 @@ def on_end_test_model(event_listener, **kwargs):
         print(f'Tested model in {elapsed_time:1.4f}s')
 
 
-def on_end_train_model(event_listener, **kwargs):
-    """Callback function when training a model finished.
+def on_end_train_model(event_listener: Any, **kwargs) -> None:
+    """Call back when training a model finished.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener(): the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -242,11 +278,11 @@ def on_end_train_model(event_listener, **kwargs):
         print(f'Trained model in {elapsed_time:1.4f}s')
 
 
-def on_save_model_settings(event_listener, **kwargs):
-    """Callback function when a model's settings are saved.
+def on_save_model_settings(event_listener: Any, **kwargs) -> None:
+    """Call back when a model's settings are saved.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:

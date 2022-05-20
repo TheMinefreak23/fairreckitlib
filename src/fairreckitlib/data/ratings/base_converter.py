@@ -1,46 +1,43 @@
-"""
+"""This module contains the base class for converting ratings.
+
+CLasses:
+
+    RatingConverter: the base class for converting ratings.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from abc import ABCMeta, abstractmethod
+from typing import Any, Dict, Tuple
+
+import pandas as pd
+
+from ..data_modifier import DataModifier
 
 
-class RatingConverter(metaclass=ABCMeta):
+class RatingConverter(DataModifier):
     """Base class for FairRecKit rating converters.
 
     A converter is used to convert ratings of a dataframe.
     """
-    def __init__(self, name, params):
-        self.__name = name
-        self.params = params
 
-    def get_name(self):
-        """Gets the name of the converter.
-
-        Returns:
-            (str) the converter name.
-        """
-        return self.__name
-
-    def get_params(self):
-        """Get the parameters of the converter.
-
-        Returns:
-            (dict) with the converter parameters.
-        """
-        return dict(self.params)
-
-    @abstractmethod
-    def run(self, dataframe):
-        """Runs the converter on the specified dataframe.
+    def __init__(self, name: str, params: Dict[str, Any]):
+        """Construct the Rating Converter.
 
         Args:
-            dataframe(pandas.DataFrame): with at least the 'rating' column.
+            name: the name of the converter.
+            params: the converter parameters.
+        """
+        DataModifier.__init__(self, name, params)
+
+    def run(self, dataframe: pd.DataFrame) -> Tuple[pd.DataFrame, str]:
+        """Run the converter on the specified dataframe.
+
+        Args:
+            dataframe: with at least the 'rating' column.
 
         Returns:
-            dataframe(pandas.DataFrame): the converter dataframe.
-            rating_type(str): the converted type of rating, either 'explicit' or 'implicit'.
+            the converted dataframe and the type of rating, either 'explicit' or 'implicit'.
         """
         raise NotImplementedError()

@@ -1,47 +1,57 @@
-"""
+"""This module contains the base class for data splitting.
+
+Classes:
+
+    DataSplitter: the base class for data splitting.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from abc import ABCMeta, abstractmethod
+from typing import Any, Dict, Tuple
+
+import pandas as pd
+
+from ..data_modifier import DataModifier
 
 
-class DataSplitter(metaclass=ABCMeta):
+class DataSplitter(DataModifier):
     """Base class for FairRecKit data splitters.
 
     A splitter is used to split a dataframe into a train and test set.
+
+    Public methods:
+
+    get_test_ratio
     """
-    def __init__(self, name, params):
-        self.__name = name
-        self.__params = params
 
-    def get_name(self):
-        """Gets the name of the splitter.
-
-        Returns:
-            (str) the splitter name.
-        """
-        return self.__name
-
-    def get_params(self):
-        """Get the parameters of the splitter.
-
-        Returns:
-            (dict) with the splitter parameters.
-        """
-        return dict(self.__params)
-
-    @abstractmethod
-    def run(self, dataframe, test_ratio):
-        """Runs the splitter on the specified dataframe.
+    def __init__(self, name: str, params: Dict[str, Any], test_ratio: float):
+        """Construct the base splitter.
 
         Args:
-            dataframe(pandas.DataFrame): with at least the 'user' column.
-            test_ratio(float): the fraction of users to use for testing.
+            name: the name of the splitter.
+            params: a dictionary containing the parameters for the splitter.
+            test_ratio: the fraction of users to use for testing.
+        """
+        DataModifier.__init__(self, name, params)
+        self.test_ratio = test_ratio
+
+    def get_test_ratio(self) -> float:
+        """Get the test ratio used by the splitter when run.
 
         Returns:
-            train_set(pandas.DataFrame): the train set of the split.
-            test_set(pandas.DataFrame): the test set of the split.
+            the test ratio
+        """
+        return self.test_ratio
+
+    def run(self, dataframe: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+        """Run the splitter on the specified dataframe.
+
+        Args:
+            dataframe: with at least the 'user' column.
+
+        Returns:
+            the train and test set dataframes of the split.
         """
         raise NotImplementedError()

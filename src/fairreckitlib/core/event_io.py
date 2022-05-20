@@ -1,8 +1,25 @@
-"""
+"""This module contains all event ids and callback functions that are IO related.
+
+Constants:
+
+    ON_MAKE_DIR: id of the event that is used when a directory is created.
+    ON_REMOVE_DIR: id of the event that is used when a directory is removed.
+    ON_REMOVE_FILE: id of the event that is used when a file is removed.
+    ON_RENAME_FILE: id of the event that is used when a file is renamed.
+
+Functions:
+
+    on_make_dir: call when a directory is created.
+    on_remove_dir: call when a directory is removed.
+    on_remove_file: call when a file is removed.
+    on_rename_file: call when a file is renamed.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
+
+from typing import Any, Callable, List, Tuple
 
 ON_MAKE_DIR = 'IO.on_make_dir'
 ON_REMOVE_DIR = 'IO.on_remove_dir'
@@ -10,15 +27,15 @@ ON_REMOVE_FILE = 'IO.on_remove_file'
 ON_RENAME_FILE = 'IO.on_rename_file'
 
 
-def get_io_events():
-    """Gets all IO events.
+def get_io_events() -> List[Tuple[str, Callable[[Any], None]]]:
+    """Get all IO events.
 
-    The callback functions are specified below and serve as a default
+    The Call backs are specified below and serve as a default
     implementation for the RecommenderSystem class including the keyword arguments
     that are available.
 
     Returns:
-        (array like) list of pairs in the format (event_id, func_on_event)
+        a list of pairs in the format (event_id, func_on_event)
     """
     return [
         (ON_MAKE_DIR, on_make_dir),
@@ -28,11 +45,11 @@ def get_io_events():
     ]
 
 
-def on_make_dir(event_listener, **kwargs):
-    """Callback function when a new directory is created.
+def on_make_dir(event_listener: Any, **kwargs) -> None:
+    """Call back when a new directory is created.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -42,11 +59,11 @@ def on_make_dir(event_listener, **kwargs):
         print('Creating directory:', kwargs['dir'])
 
 
-def on_remove_dir(event_listener, **kwargs):
-    """Callback function when an existing directory is removed.
+def on_remove_dir(event_listener: Any, **kwargs) -> None:
+    """Call back when an existing directory is removed.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -56,11 +73,11 @@ def on_remove_dir(event_listener, **kwargs):
         print('Removing directory:', kwargs['dir'])
 
 
-def on_remove_file(event_listener, **kwargs):
-    """Callback function when an existing file is removed.
+def on_remove_file(event_listener: Any, **kwargs) -> None:
+    """Call back when an existing file is removed.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:
@@ -70,11 +87,11 @@ def on_remove_file(event_listener, **kwargs):
         print('Removing file:', kwargs['file'])
 
 
-def on_rename_file(event_listener, **kwargs):
-    """Callback function when an existing file is renamed.
+def on_rename_file(event_listener: Any, **kwargs) -> None:
+    """Call back when an existing file is renamed.
 
     Args:
-        event_listener(object): the listener that is registered
+        event_listener: the listener that is registered
             in the event dispatcher with this callback.
 
     Keyword Args:

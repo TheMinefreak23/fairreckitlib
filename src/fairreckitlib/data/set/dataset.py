@@ -1,20 +1,27 @@
-"""
+"""This module contains a dataset definition for accessing a dataset and related data tables.
+
+Classes:
+
+    Dataset: class wrapper of the user-item matrix and related tables.
+
+Functions:
+
+    add_user_columns: add columns from the dataset user table to a dataframe.
+    add_item_columns: add columns from the dataset item table to a dataframe.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
 import os
+from typing import Any, Dict, Optional, List, Union
 
 import pandas as pd
 
 from ..utility import load_array_from_hdf5
-from .dataset_config import DATASET_INDICES
-from .dataset_config import DATASET_ITEMS
-from .dataset_config import DATASET_MATRIX
-from .dataset_config import DATASET_TABLES
-from .dataset_config import DATASET_USERS
-from .dataset_table import DATASET_FILE
+from .dataset_constants import DATASET_FILE, DATASET_MATRIX, DATASET_TABLES
+from .dataset_constants import DATASET_INDICES, DATASET_ITEMS, DATASET_USERS
 from .dataset_table import read_table
 
 DATASET_RATINGS_EXPLICIT = 'explicit'
@@ -49,21 +56,42 @@ class Dataset:
     Any additional tables can be added for accessibility/compatibility with the FRK
     recommender system.
 
-    Args:
-        name(str): name of the dataset.
-        data_dir(str): directory where the dataset is stored.
-        config(dict): data configuration dictionary.
+    Public methods:
+
+    get_available_tables
+    get_available_user_item_columns
+    get_matrix_file_path
+    get_matrix_info
+    get_table_info
+    get_item_table_info
+    get_item_table_name
+    get_user_table_info
+    get_user_table_name
+    load_matrix_df
+    read_table
+    read_item_table
+    read_user_table
+    resolve_item_ids
+    resolve_user_ids
     """
-    def __init__(self, name, data_dir, config):
+
+    def __init__(self, name: str, data_dir: str, config: Dict[str, Any]):
+        """Construct the dataset.
+
+        Args:
+            name: name of the dataset.
+            data_dir: directory where the dataset is stored.
+            config: data configuration dictionary.
+        """
         self.name = name
         self.data_dir = data_dir
         self.config = config
 
-    def get_available_tables(self):
-        """Gets the available table names in the dataset.
+    def get_available_tables(self) -> List[str]:
+        """Get the available table names in the dataset.
 
         Returns:
-            table_names(array like): list of table names.
+            a list of table names.
         """
         table_names = []
 
@@ -72,32 +100,19 @@ class Dataset:
 
         return table_names
 
-    def get_available_user_item_columns(self):
-        """Gets the available user/item table column names of this dataset.
+    def get_available_user_item_columns(self) -> Dict[str, Dict[str, Any]]:
+        """Get the available user/item table column names of this dataset.
 
-        The resulting dictionary is split into three categories:
+        The resulting dictionary is split into two categories:
 
-        1) 'user_item': the column names related to a user-item pair, consisting of
-            at least a rating and optionally a timestamp.
-        2) 'user': the column names related to the user table or None when not available.
-        3) 'item': the column names related to the item table or None when not available.
+        1) 'user': the table name and column names related to the user table when available.
+        2) 'item': the table name and column names related to the item table when available.
 
         Returns:
-            (dict): containing for each category as the key another dict with:
-                'name': the name of the category.
-                'columns': the available columns for the category.
+            a dictionary with for each category another dict with the 'name' and 'columns' as keys.
 
         """
-        user_item_columns = ['rating']
-        if self.get_user_table_info('timestamp'):
-            user_item_columns.append('timestamp')
-
-        result = {
-            'user_item': {
-                'name': 'matrix',
-                'columns': user_item_columns
-            }
-        }
+        result = {}
 
         user_table_name = self.get_user_table_name()
         if user_table_name is not None:
@@ -115,19 +130,19 @@ class Dataset:
 
         return result
 
-    def get_matrix_file_path(self):
-        """Gets the file path where the matrix is stored.
+    def get_matrix_file_path(self) -> str:
+        """Get the file path where the matrix is stored.
 
         Returns:
-            (str): the path of the dataset matrix file.
+            the path of the dataset matrix file.
         """
         return os.path.join(
             self.data_dir,
             self.get_matrix_info(DATASET_FILE)
         )
 
-    def get_matrix_info(self, key=None):
-        """Gets information of the dataset matrix.
+    def get_matrix_info(self, key: str=None) -> Any:
+        """Get information of the dataset matrix.
 
         The total dictionary that is available includes:
 
@@ -141,27 +156,27 @@ class Dataset:
         timestamp(bool): whether a timestamp is available.
 
         Args:
-            key(str): the specific matrix information or None for all.
+            key: the specific matrix information or None for all.
 
         Returns:
-            (Any): the corresponding value to the key when specified or
-                a dictionary with all information. When the key is not
-                found None is returned.
+            the corresponding value to the key when specified or
+            a dictionary with all information. When the key is not
+            found None is returned.
         """
         if key is not None:
             return self.config[DATASET_MATRIX].get(key)
 
         return dict(self.config[DATASET_MATRIX])
 
-    def get_table_info(self, table_name, key=None):
-        """Gets information of the dataset table with the specified name.
+    def get_table_info(self, table_name: str, key: str=None) -> Any:
+        """Get information of the dataset table with the specified name.
 
         The total dictionary that is available includes:
 
         file(str): the name of the table file including extension.
-        keys(array like): list of strings that make up the keys of the table.
+        keys(List[str]): a list of strings that make up the keys of the table.
             Concatenated before the 'columns' to get all available names.
-        columns(array like): list of strings that make up the other available
+        columns(List[str]): a list of strings that make up the other available
             columns in the table. Concatenated after the 'keys' to get all available names.
         encoding(str): the encoding of the table contents.
         header(bool): whether the table contains a header on the first line.
@@ -169,13 +184,13 @@ class Dataset:
         sep(str): the delimiter that is used in the table or None for a tab separator.
 
         Args:
-            table_name(str): name of the table to retrieve information from.
-            key(str): the specific table information or None for all.
+            table_name: name of the table to retrieve information from.
+            key: the specific table information or None for all.
 
         Returns:
-            (Any): the corresponding value to the key when specified or
-                a dictionary with all information. When the key or table is not
-                found None is returned.
+            the corresponding value to the key when specified or
+            a dictionary with all information. When the key or table is not
+            found None is returned.
         """
         if not table_name or table_name not in self.config[DATASET_TABLES]:
             return None
@@ -185,65 +200,65 @@ class Dataset:
 
         return dict(self.config[DATASET_TABLES][table_name])
 
-    def get_item_table_info(self, key=None):
-        """Gets information of the dataset item table.
+    def get_item_table_info(self, key: str=None) -> Any:
+        """Get information of the dataset item table.
 
         The total dictionary that is available is the same as
         specified in the get_table_info function.
 
         Args:
-            key(str): the specific table information or None for all.
+            key: the specific table information or None for all.
 
         Returns:
-            (Any): the corresponding value to the key when specified or
-                a dictionary with all information. When the key is not found or
-                there is no item table None is returned.
+            the corresponding value to the key when specified or
+            a dictionary with all information. When the key is not found or
+            there is no item table None is returned.
         """
         return self.get_table_info(
             self.get_item_table_name(),
             key
         )
 
-    def get_item_table_name(self):
-        """Gets the name of the item table.
+    def get_item_table_name(self) -> Optional[str]:
+        """Get the name of the item table.
 
         Returns:
-            (str): the item table name.
+            the item table name.
         """
         return self.config[DATASET_ITEMS]['table']
 
-    def get_user_table_info(self, key=None):
-        """Gets information of the dataset user table.
+    def get_user_table_info(self, key: str=None) -> Any:
+        """Get information of the dataset user table.
 
         The total dictionary that is available is the same as
         specified in the get_table_info function.
 
         Args:
-            key(str): the specific table information or None for all.
+            key: the specific table information or None for all.
 
         Returns:
-            (Any): the corresponding value to the key when specified or
-                a dictionary with all information. When the key is not found or
-                there is no user table None is returned.
+            the corresponding value to the key when specified or
+            a dictionary with all information. When the key is not found or
+            there is no user table None is returned.
         """
         return self.get_table_info(
             self.get_user_table_name(),
             key
         )
 
-    def get_user_table_name(self):
-        """Gets the name of the user table.
+    def get_user_table_name(self) -> Optional[str]:
+        """Get the name of the user table.
 
         Returns:
-            (str): the user table name.
+            the user table name.
         """
         return self.config[DATASET_USERS]['table']
 
-    def load_matrix_df(self):
-        """Loads the matrix dataframe.
+    def load_matrix_df(self) -> pd.DataFrame:
+        """Load the matrix dataframe.
 
         Returns:
-            (pandas.DataFrame): the loaded matrix.
+            the loaded matrix dataframe.
         """
         names = ['user', 'item', 'rating']
         if self.config[DATASET_MATRIX]['timestamp']:
@@ -257,14 +272,14 @@ class Dataset:
             names=names
         )
 
-    def load_item_indices(self):
-        """Loads the item indices.
+    def load_item_indices(self) -> Optional[List[int]]:
+        """Load the item indices.
 
         Optional indirection array of the item IDs that do not match up in
         the corresponding data table.
 
         Returns:
-            (array like): the indirection array or None when not needed.
+            the indirection array or None when not needed.
         """
         item_idx_file = self.config[DATASET_ITEMS][DATASET_FILE]
         if not item_idx_file:
@@ -276,14 +291,14 @@ class Dataset:
             DATASET_INDICES
         )
 
-    def load_user_indices(self):
-        """Loads the user indices.
+    def load_user_indices(self) -> Optional[List[int]]:
+        """Load the user indices.
 
         Optional indirection array of the user IDs that do not match up in
         the corresponding data table.
 
         Returns:
-            (array like): the indirection array or None when not needed.
+            the indirection array or None when not needed.
         """
         user_idx_file = self.config[DATASET_USERS][DATASET_FILE]
         if not user_idx_file:
@@ -295,19 +310,23 @@ class Dataset:
             DATASET_INDICES
         )
 
-    def read_table(self, table_name, columns=None, chunk_size=None):
-        """Reads the table with the specified name from the dataset.
+    def read_table(
+            self,
+            table_name: str,
+            columns: List[Union[int,str]]=None,
+            chunk_size: int=None) -> Optional[pd.DataFrame]:
+        """Read the table with the specified name from the dataset.
 
         Args:
-            table_name(str): name of the table to read.
-            columns(array like): subset list of columns to load or None to load all.
+            table_name: name of the table to read.
+            columns: subset list of columns to load or None to load all.
                 All elements must either be integer indices or
                 strings that correspond to the one of the available table columns.
-            chunk_size(int): reads the table in chunks as an iterator or
+            chunk_size: reads the table in chunks as an iterator or
                 the entire table when None.
 
         Returns:
-            (pandas.DataFrame): the resulting data table (iterator).
+            the resulting data table (iterator).
         """
         table_info = self.get_table_info(table_name)
         if not table_info:
@@ -321,18 +340,21 @@ class Dataset:
             chunk_size=chunk_size
         )
 
-    def read_item_table(self, columns=None, chunk_size=None):
-        """Reads the item table from the dataset.
+    def read_item_table(
+            self,
+            columns: List[Union[int,str]]=None,
+            chunk_size: int=None) -> Optional[pd.DataFrame]:
+        """Read the item table from the dataset.
 
         Args:
-            columns(array like): subset list of columns to load or None to load all.
+            columns: subset list of columns to load or None to load all.
                 All elements must either be integer indices or
                 strings that correspond to the one of the available table columns.
-            chunk_size(int): reads the table in chunks as an iterator or
+            chunk_size: reads the table in chunks as an iterator or
                 the entire table when None.
 
         Returns:
-            (pandas.DataFrame): the resulting item table (iterator).
+            the resulting item table (iterator).
         """
         return self.read_table(
             self.get_item_table_name(),
@@ -340,18 +362,21 @@ class Dataset:
             chunk_size=chunk_size
         )
 
-    def read_user_table(self, columns=None, chunk_size=None):
-        """Reads the user table from the dataset.
+    def read_user_table(
+            self,
+            columns: List[Union[int,str]]=None,
+            chunk_size: int=None) -> Optional[pd.DataFrame]:
+        """Read the user table from the dataset.
 
         Args:
-            columns(array like): subset list of columns to load or None to load all.
+            columns: subset list of columns to load or None to load all.
                 All elements must either be integer indices or
                 strings that correspond to the one of the available table columns.
-            chunk_size(int): reads the table in chunks as an iterator or
+            chunk_size: reads the table in chunks as an iterator or
                 the entire table when None.
 
         Returns:
-            (pandas.DataFrame): the resulting user table (iterator).
+            the resulting user table (iterator).
         """
         return self.read_table(
             self.get_user_table_name(),
@@ -359,17 +384,17 @@ class Dataset:
             chunk_size=chunk_size
         )
 
-    def resolve_item_ids(self, items):
-        """Resolves the specified item ID(s).
+    def resolve_item_ids(self, items: Union[int,List[int]]) -> Union[int,List[int]]:
+        """Resolve the specified item ID(s).
 
         The item ID(s) of a dataset need to be resolved when it contains
         an indirection array, otherwise ID(s) are returned unchanged.
 
         Args:
-            items(int or array like): source ID(s) to convert.
+            items: source ID(s) to convert.
 
         Returns:
-            (int or array like): the resolved item ID(s).
+            the resolved item ID(s).
         """
         item_indices = self.load_item_indices()
         if item_indices is None:
@@ -377,17 +402,17 @@ class Dataset:
 
         return item_indices[items]
 
-    def resolve_user_ids(self, users):
-        """Resolves the specified user ID(s).
+    def resolve_user_ids(self, users: Union[int,List[int]]) -> Union[int,List[int]]:
+        """Resolve the specified user ID(s).
 
         The user ID(s) of a dataset need to be resolved when it contains
         an indirection array, otherwise ID(s) are returned unchanged.
 
         Args:
-            users(int or array like): source ID(s) to convert.
+            users: source ID(s) to convert.
 
         Returns:
-            (int or array like): the resolved user ID(s).
+            the resolved user ID(s).
         """
         user_indices = self.load_user_indices()
         if user_indices is None:
@@ -396,36 +421,22 @@ class Dataset:
         return user_indices[users]
 
 
-def add_matrix_columns(dataset, dataframe, column_names):
-    """Adds the specified matrix columns to the dataframe.
+def add_user_columns(
+        dataset: Dataset,
+        dataframe: pd.DataFrame,
+        column_names: List[str]) -> pd.DataFrame:
+    """Add the specified user columns to the dataframe.
 
     Args:
-        dataset(Dataset): the set related to the dataframe.
-        dataframe(pandas.DataFrame): with at least the 'user' and 'item' columns.
-        column_names(array like): list of strings to indicate which
-            matrix columns need to be added. Any values that are not
-            present in the matrix are ignored.
-
-    Returns:
-        (pandas.DataFrame): the resulting dataframe with the added columns.
-    """
-    # TODO get 'rating' and/or 'timestamp' from the original matrix
-    raise NotImplementedError()
-
-
-def add_user_columns(dataset, dataframe, column_names):
-    """Adds the specified user columns to the dataframe.
-
-    Args:
-        dataset(Dataset): the set related to the dataframe.
-        dataframe(pandas.DataFrame): with at least the 'user' column.
-        column_names(array like): list of strings to indicate which
+        dataset: the set related to the dataframe.
+        dataframe: with at least the 'user' column.
+        column_names: a list of strings to indicate which
             user columns need to be added. Any values that are not
             present in the user table are ignored.
 
     Returns:
-        (pandas.DataFrame): the resulting dataframe with the added columns or
-            when the user table does not exist the unchanged dataframe.
+        the resulting dataframe with the added columns or
+        when the user table does not exist the unchanged dataframe.
     """
     key = dataset.get_user_table_info('keys')
     if key is None:
@@ -443,19 +454,22 @@ def add_user_columns(dataset, dataframe, column_names):
     return dataframe.drop(key, axis=1)
 
 
-def add_item_columns(dataset, dataframe, column_names):
-    """Adds the specified item columns to the dataframe.
+def add_item_columns(
+        dataset: Dataset,
+        dataframe: pd.DataFrame,
+        column_names: List[str]) -> pd.DataFrame:
+    """Add the specified item columns to the dataframe.
 
     Args:
-        dataset(Dataset): the set related to the dataframe.
-        dataframe(pandas.DataFrame): with at least the 'item' column.
-        column_names(array like): list of strings to indicate which
+        dataset: the set related to the dataframe.
+        dataframe: with at least the 'item' column.
+        column_names: a list of strings to indicate which
             item columns need to be added. Any values that are not
             present in the item table are ignored.
 
     Returns:
-        (pandas.DataFrame): the resulting dataframe with the added columns or
-            when the item table does not exist the unchanged dataframe.
+        the resulting dataframe with the added columns or
+        when the item table does not exist the unchanged dataframe.
     """
     key = dataset.get_item_table_info('keys')
     if key is None:

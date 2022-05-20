@@ -4,25 +4,33 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from typing import Any, Dict, List, Optional, Tuple
+
 from ...core.config_constants import KEY_NAME, KEY_PARAMS, KEY_TOP_K
+from ...core.event_dispatcher import EventDispatcher
+from ...core.factories import GroupFactory
 from ...core.parsing.parse_assert import assert_is_type, assert_is_container_not_empty
 from ...core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
 from ...core.parsing.parse_event import ON_PARSE
 from ...core.parsing.parse_params import parse_config_parameters
+from ..evaluation_factory import KEY_EVALUATION
 from ..metrics.metric_factory import KEY_METRIC_PARAM_K, resolve_metric_factory
-from .evaluation_config import MetricConfig, KEY_EVALUATION
+from .evaluation_config import MetricConfig
 
 
-def parse_evaluation_config(experiment_config, metric_category_factory, event_dispatcher):
-    """Parses all metric configurations.
+def parse_evaluation_config(
+        experiment_config: Dict[str, Any],
+        metric_category_factory: GroupFactory,
+        event_dispatcher: EventDispatcher) -> List[MetricConfig]:
+    """Parse all metric configurations.
 
     Args:
-        experiment_config(dict): the experiment's total configuration.
-        metric_category_factory(GroupFactory): the metric factory containing grouped available metrics.
-        event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
+        experiment_config: the experiment's total configuration.
+        metric_category_factory: the metric factory containing grouped available metrics.
+        event_dispatcher: to dispatch the parse event on failure.
 
     Returns:
-        parsed_config(array like): list of parsed MetricConfig's.
+        a list of parsed MetricConfig's which is possibly empty.
     """
     parsed_config = []
 
@@ -70,18 +78,22 @@ def parse_evaluation_config(experiment_config, metric_category_factory, event_di
 
     return parsed_config
 
-def parse_metric_config(metric_config, metric_category_factory, top_k, event_dispatcher):
-    """Parses a metric configuration.
+
+def parse_metric_config(
+        metric_config: Dict[str, Any],
+        metric_category_factory: GroupFactory,
+        top_k: int,
+        event_dispatcher: EventDispatcher) -> Tuple[Optional[MetricConfig], Optional[str]]:
+    """Parse a metric configuration.
 
     Args:
-        metric_config(dict): the metrics configuration.
-        metric_category_factory(GroupFactory): the metric factory containing grouped available metrics.
-        top_k(int): the top_K value for recommendation and None for prediction.
-        event_dispatcher(EventDispatcher): to dispatch the parse event on failure.
+        metric_config: the metrics configuration.
+        metric_category_factory: the metric factory containing grouped available metrics.
+        top_k: the top_K value for recommendation and None for prediction.
+        event_dispatcher: to dispatch the parse event on failure.
 
     Returns:
-        parsed_config(MetricConfig): the parsed configuration or None on failure.
-        metric_name(str): the name of the parsed metric or None on failure.
+        the parsed configuration and the metric name or None on failure.
     """
     # assert dataset_config is a dict
     if not assert_is_type(

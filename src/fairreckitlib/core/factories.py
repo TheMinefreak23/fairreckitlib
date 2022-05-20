@@ -1,4 +1,11 @@
-"""
+"""This module contains the (base) factories that are used in other packages.
+
+Classes:
+
+    BaseFactory: base class for all factories.
+    Factory: class that instantiates new objects (a leaf).
+    GroupFactory: class that groups other factories (a branch).
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -99,7 +106,7 @@ class Factory(BaseFactory):
 
     def add_obj(self,
                 obj_name: str,
-                func_create_obj: Callable[[str, ConfigParameters, Dict[str, Any]], Any],
+                func_create_obj: Callable[[str, Dict[str, Any]], Any],
                 func_create_obj_params: Callable[[], ConfigParameters]=None
                 ) -> None:
         """Add object with associated parameter creation to the factory.
@@ -184,6 +191,16 @@ class Factory(BaseFactory):
         return obj_list
 
     def is_obj_available(self, obj_name: str) -> bool:
+        """Is the object with the specified name available.
+
+        Checks the object for existing in this factory.
+
+        Args:
+            obj_name: the name of the object to query for availability.
+
+        Returns:
+            whether the object is available.
+        """
         return obj_name in self.factory is not None
 
 
@@ -194,6 +211,7 @@ class GroupFactory(BaseFactory):
 
     add_factory
     get_factory
+    get_sub_availability
     """
 
     def add_factory(self, factory: BaseFactory) -> None:
@@ -242,7 +260,42 @@ class GroupFactory(BaseFactory):
         """
         return self.factory.get(factory_name)
 
+    def get_sub_availability(
+            self,
+            sub_factory_name: str,
+            sub_type: str = None) -> Dict[str, Any]:
+        """Get the sub availability from the factory with the specified name (and type).
+
+        Args:
+            sub_factory_name: the name of the sub-factory to query for availability.
+            sub_type: the subtype of the sub-factory to query for availability or None
+                for the complete availability.
+
+        Returns:
+            a dictionary containing the availability of the sub-factory (type).
+        """
+        # TODO add unit test for this
+        sub_factory = self.get_factory(sub_factory_name)
+        if sub_type is None:
+            return sub_factory.get_available()
+
+        type_factory = sub_factory.get_factory(sub_type)
+        if type_factory is None:
+            return {}
+
+        return type_factory.get_available()
+
     def is_obj_available(self, obj_name: str) -> bool:
+        """Is the object with the specified name available.
+
+        Checks the object for existing in any of the child factories.
+
+        Args:
+            obj_name: the name of the object to query for availability.
+
+        Returns:
+            whether the object is available.
+        """
         for _, factory in self.factory.items():
             if factory.is_obj_available(obj_name):
                 return True
@@ -254,7 +307,7 @@ def create_factory_from_list(
         factory_name: str,
         obj_tuple_list: List[Tuple[
             str,
-            Callable[[str, ConfigParameters, Dict[str, Any]], Any],
+            Callable[[str, Dict[str, Any]], Any],
             Callable[[], ConfigParameters]
         ]]) -> Factory:
     """Create and return the factory with the specified tuple entries.
