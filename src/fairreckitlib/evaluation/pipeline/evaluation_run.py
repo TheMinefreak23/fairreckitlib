@@ -5,14 +5,47 @@ Utrecht University within the Software Project course.
 """
 
 import os
+from dataclasses import dataclass
+from typing import List
 
-from ..metrics.common import RecType
+from .evaluation_config import MetricConfig
+from ..metrics.common import RecType, Metric
 from ..metrics.common import Test
 from .evaluation_pipeline import EvaluationPipeline
+from ...core.apis import LENSKIT_API, REXMEX_API
+from ...core.factories import GroupFactory
+from ...data.data_transition import DataTransition
 
 
-def run_evaluation_pipelines(model_dirs, data_transition, metric_factory,
-                             eval_config, event_dispatcher, is_running, **kwargs):
+@dataclass
+class EvaluationPipelineConfig:
+    """Evaluation Pipeline Configuration."""
+    model_dirs: str
+    data_transition: DataTransition
+    evaluation_factory: GroupFactory
+    evaluation: List[MetricConfig]
+
+
+preferred_api_dict = {
+    LENSKIT_API: [Metric.NDCG,
+                  Metric.PRECISION,
+                  Metric.RECALL,
+                  Metric.MRR,
+                  Metric.RMSE,
+                  Metric.MAE
+                  ],
+    REXMEX_API: [Metric.ITEM_COVERAGE,
+                 Metric.USER_COVERAGE,
+                 Metric.INTRA_LIST_SIMILARITY,
+                 Metric.NOVELTY]
+}
+
+
+def run_evaluation_pipelines(
+        pipeline_config: EvaluationPipelineConfig,
+        event_dispatcher,
+        is_running,
+        **kwargs):
     """Runs several ModelPipeline's for the specified model configurations.
 
     Args:
@@ -31,13 +64,21 @@ def run_evaluation_pipelines(model_dirs, data_transition, metric_factory,
         num_items(int): the number of item recommendations to produce, only
             needed when running recommender pipelines.
     """
-    print('model_dirs',model_dirs)
+    print('model_dirs', pipeline_config.model_dirs)
 
-    for model_dir in model_dirs:
+    for model_dir in pipeline_config.model_dirs:
         print('model_dir',model_dir)
 
-        for evaluations in eval_config:
-            api_factory = pipeline_config.model_factory.get_factory(api_name)
-            data_paths = (data_transition, model_dir+'/ratings.tsv')
-            pipeline =
-            pipeline.run(data_paths, eval_config, event_dispatcher)
+        for evaluation in pipeline_config.eval_config:
+            api_factory = evaluation.evaluation_factory.get_factory(evaluation)
+            pipeline = api_factory.create_pipeline(api_factory, event_dispatcher)
+            pipeline.run(
+                model_dir + '/ratings.tsv',
+                pipeline_config.data_transition,
+                pipeline_config.eval_config,
+                is_running,
+                **kwargs)
+        #pipeline = pipeline_config.evaluation_factory.get_factory()
+
+
+

@@ -16,7 +16,7 @@ from ..core.factories import GroupFactory
 from ..data.data_factory import KEY_DATASETS
 from ..data.pipeline.data_run import DataPipelineConfig, run_data_pipeline
 from ..data.set.dataset_registry import DataRegistry
-from ..evaluation.pipeline.evaluation_run import run_evaluation_pipelines
+from ..evaluation.pipeline.evaluation_run import run_evaluation_pipelines, EvaluationPipelineConfig
 from ..evaluation.evaluation_factory import KEY_EVALUATION
 from ..model.pipeline.model_run import ModelPipelineConfig, run_model_pipelines
 from ..model.model_factory import KEY_MODELS
@@ -109,10 +109,12 @@ class Experiment:
             if len(self.experiment_config.evaluation) > 0:
                 evaluation_factory = self.experiment_factory.get_factory(KEY_EVALUATION)
                 run_evaluation_pipelines(
+                    EvaluationPipelineConfig(
                     model_dirs,
                     data_transition,
                     evaluation_factory.get_factory(self.experiment_config.type),
-                    self.experiment_config.evaluation,
+                    self.experiment_config.evaluation
+                    ),
                     self.event_dispatcher,
                     is_running,
                     **kwargs

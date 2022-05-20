@@ -35,15 +35,16 @@ class EvaluationPipeline:
 
         self.event_dispatcher = event_dispatcher
 
-    def run(self, data_paths, eval_config):
-        self.profile_path = profile_path
-        self.metrics = metrics
-        self.k = k
-        self.filters = filters
+    def run(self, recs_path, data_transition, eval_config, is_running):
+        #self.profile_path = profile_path
+        #self.metrics = metrics
+        #self.k = k
+        #self.filters = filters
 
-        self.train_path = rec_result.train_path
-        self.test_path = rec_result.test_path
-        self.recs_path = rec_result.recs_path
+        self.train_path = data_transition.train_path
+        self.test_path = data_transition.test_path
+        self.dataset = data_transition.dataset
+        self.recs_path = recs_path
         self.filter_all()
 
     def filter_all(self):
