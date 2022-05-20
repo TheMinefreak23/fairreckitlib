@@ -7,6 +7,10 @@ Utrecht University within the Software Project course.
 from pandas import DataFrame
 from pandas.testing import assert_frame_equal
 from src.fairreckitlib.data.filter.gender import GenderFilter
+<<<<<<< HEAD
+=======
+
+>>>>>>> 911fb2e3a9e9a3014c8737e3368d9b7f3cb478cd
 
 class TestFilterGender:
     """Create a filter object and a dummy data frame to test gender filter."""
