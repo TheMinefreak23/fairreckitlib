@@ -1,73 +1,72 @@
-"""
+"""This module contains functionality to execute the experiment pipelines on a thread.
+
+Classes:
+
+    ThreadExperiment: class that runs the experiment pipelines on a (closable) thread.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-import os
 import time
+from typing import Any, Callable, Dict
 
-from ..core.event_io import ON_MAKE_DIR
 from ..core.threading.thread_base import ThreadBase
-from ..data.utility import save_yml
-from .experiment_event import ON_BEGIN_THREAD_EXPERIMENT, ON_END_THREAD_EXPERIMENT
-from .experiment_run import Experiment
+from .experiment_event import get_experiment_events
+from .experiment_event import ON_BEGIN_EXPERIMENT_THREAD, ON_END_EXPERIMENT_THREAD
+from .experiment_run import run_experiment_pipelines
 
 
 class ThreadExperiment(ThreadBase):
     """Thread that runs the same experiment one or more times."""
 
-    def on_run(self, **kwargs):
-        """Run the experiment.
+    def __init__(
+            self,
+            name: str,
+            events: Dict[Any, Callable[[Any], None]],
+            verbose: bool,
+            **kwargs):
+        """Construct the ExperimentThread.
+
+        Args:
+            name the name of the thread.
+            events: events to dispatch for this thread.
+            verbose: whether the thread should give verbose output.
 
         Keyword Args:
-            output_dir(str): the path of the directory to store the output.
-            start_run(int): the initial run index.
-            num_runs(int): the number of runs to conduct the experiment.
-            registry(DataRegistry): the registry with available datasets.
-            factory(GroupFactory): the factory containing all three pipeline factories.
-            config(ExperimentConfig): the configuration of the experiment.
-            num_threads(int): the max number of threads the experiment can use.
+            pipeline_config(ExperimentPipelineConfig): configuration of the experiment pipeline.
         """
-        output_dir = kwargs['output_dir']
-        start_run = kwargs['start_run']
-        num_runs = kwargs['num_runs']
-        config = kwargs['config']
+        ThreadBase.__init__(self, name, verbose, **kwargs)
+        # Add external events.
+        for (event_id, on_event) in get_experiment_events():
+            func_on_event = (on_event, events.get(event_id))
+            self.event_dispatcher.add_listener(event_id, self, func_on_event)
 
-        # Create result output directory
-        if not os.path.isdir(output_dir):
-            os.mkdir(output_dir)
-            self.event_dispatcher.dispatch(
-                ON_MAKE_DIR,
-                dir=output_dir
-            )
+    def on_run(self, **kwargs):
+        """Run the experiment pipeline.
 
-            save_yml(os.path.join(output_dir, 'config.yml'), config.to_yml_format())
-
-        start_time = time.time()
-        self.event_dispatcher.dispatch(
-            ON_BEGIN_THREAD_EXPERIMENT,
-            num_runs=num_runs,
-            experiment_name=config.name
-        )
-
-        experiment = Experiment(
-            kwargs['registry'],
-            kwargs['factory'],
-            config,
-            self.event_dispatcher
-        )
-
-        for run in range(start_run, start_run + num_runs):
-            experiment.run(
-                os.path.join(output_dir, 'run_' + str(run)),
-                kwargs['num_threads'],
-                self.is_running
-            )
+        Keyword Args:
+            pipeline_config(ExperimentPipelineConfig): configuration of the experiment pipeline.
+        """
+        pipeline_config = kwargs['pipeline_config']
 
         self.event_dispatcher.dispatch(
-            ON_END_THREAD_EXPERIMENT,
-            num_runs=num_runs,
-            experiment_name=config.name,
-            elapsed_time=time.time()-start_time,
+            ON_BEGIN_EXPERIMENT_THREAD,
+            num_runs=pipeline_config.num_runs,
+            experiment_name=pipeline_config.experiment_config.name
+        )
+
+        start = time.time()
+
+        run_experiment_pipelines(pipeline_config, self.event_dispatcher, self.is_running)
+
+        end = time.time()
+
+        self.event_dispatcher.dispatch(
+            ON_END_EXPERIMENT_THREAD,
+            num_runs=pipeline_config.num_runs,
+            aborted=self.is_running(),
+            experiment_name=pipeline_config.experiment_config.name,
+            elapsed_time=end-start,
         )

@@ -1,4 +1,9 @@
-"""
+"""This module contains a parser for the experiment configuration.
+
+Classes:
+
+    Parser: parse an experiment configuration from a dictionary or yml.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -40,7 +45,7 @@ class Parser:
         """Construct the Parser.
 
         Args:
-            verbose:
+            verbose: whether the parser should give verbose output.
         """
         self.verbose = verbose
         self.event_dispatcher = EventDispatcher()
@@ -119,6 +124,7 @@ class Parser:
                 experiment_type
             )
         elif experiment_type == TYPE_RECOMMENDATION:
+            # parse top k
             _, experiment_top_k = parse_config_param(
                 experiment_config,
                 'recommender experiment',
@@ -131,6 +137,7 @@ class Parser:
                 self.event_dispatcher
             )
 
+            # parse rated items filter
             _, experiment_rated_items_filter = parse_config_param(
                 experiment_config,
                 'recommender experiment',

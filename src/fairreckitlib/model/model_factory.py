@@ -7,6 +7,20 @@ Functions:
     create_prediction_model_factory: create factory with predictor API factories.
     create_recommendation_model_factory: create factory with recommender API factories.
 
+Deprecated:
+
+from .algorithms.elliot import elliot_factory
+from .pipeline.recommendation_pipeline_elliot import RecommendationPipelineElliot
+
+def create_recommendation_model_factory() -> GroupFactory:
+    ...
+    # elliot recommenders
+    model_factory.add_factory(create_algorithm_pipeline_factory(
+        elliot_factory.create_recommender_factory(),
+        RecommendationPipelineElliot
+    ))
+    ...
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -17,7 +31,6 @@ from typing import Callable
 from ..core.config_constants import TYPE_PREDICTION, TYPE_RECOMMENDATION
 from ..core.event_dispatcher import EventDispatcher
 from ..core.factories import Factory, GroupFactory
-from .algorithms.elliot import elliot_factory
 from .algorithms.implicit import implicit_factory
 from .algorithms.lenskit import lenskit_factory
 from .algorithms.surprise import surprise_factory
@@ -25,7 +38,6 @@ from .pipeline.model_config import KEY_MODELS
 from .pipeline.model_pipeline import ModelPipeline
 from .pipeline.prediction_pipeline import PredictionPipeline
 from .pipeline.recommendation_pipeline import RecommendationPipeline
-from .pipeline.recommendation_pipeline_elliot import RecommendationPipelineElliot
 
 
 def create_algorithm_pipeline_factory(
@@ -86,21 +98,15 @@ def create_recommendation_model_factory() -> GroupFactory:
     """Create a model factory with all recommender algorithms.
 
     Consists of algorithms from four APIs:
-        1) Elliot recommender algorithms.
-        2) LensKit recommender algorithms.
-        3) Implicit recommender algorithms.
-        4) Surprise recommender algorithms.
+        1) LensKit recommender algorithms.
+        2) Implicit recommender algorithms.
+        3) Surprise recommender algorithms.
 
     Returns:
         the group factory with all recommenders.
     """
     model_factory = GroupFactory(TYPE_RECOMMENDATION)
 
-    # elliot recommenders
-    model_factory.add_factory(create_algorithm_pipeline_factory(
-        elliot_factory.create_recommender_factory(),
-        RecommendationPipelineElliot
-    ))
     # lenskit recommenders
     model_factory.add_factory(create_algorithm_pipeline_factory(
         lenskit_factory.create_recommender_factory(),

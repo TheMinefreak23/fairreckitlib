@@ -4,6 +4,27 @@ Classes:
 
     RecommendationPipelineElliot: can batch recommendations from multiple elliot models.
 
+Deprecated:
+
+from elliot.run import run_experiment
+
+class RecommendationPipelineElliot(RecommendationPipeline):
+    ...
+    def train_and_test_model(
+            self,
+            model: ElliotRecommender,
+            model_dir: str,
+            is_running: Callable[[], bool],
+            **kwargs) -> str:
+        ...
+        save_yml(yml_path, data)
+
+        run_experiment(yml_path)
+
+        self.clear_temp_dir(temp_dir)
+        ...
+    ...
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -50,11 +71,12 @@ class RecommendationPipelineElliot(RecommendationPipeline):
         self.train_set_path = train_set_path
         self.test_set_path = test_set_path
 
-    def train_and_test_model(self,
-                             model: ElliotRecommender,
-                             model_dir: str,
-                             is_running: Callable[[], bool],
-                             **kwargs) -> str:
+    def train_and_test_model(
+            self,
+            model: ElliotRecommender,
+            model_dir: str,
+            is_running: Callable[[], bool],
+            **kwargs) -> str:
         """Train and test the specified model.
 
         Convert the model configuration into a yml file that is accepted by the framework.
@@ -104,9 +126,7 @@ class RecommendationPipelineElliot(RecommendationPipeline):
 
         save_yml(yml_path, data)
 
-        # stops the logo from being spammed to the console
-        from elliot.run import run_experiment
-        run_experiment(yml_path)
+        # run_experiment(yml_path)
 
         self.clear_temp_dir(temp_dir)
         if params.get('epochs'):
