@@ -98,7 +98,7 @@ class RecommenderSystem:
             self,
             config: Union[PredictorExperimentConfig, RecommenderExperimentConfig],
             *,
-            events: Dict[str, Callable[[Any], None]] = {},
+            events: Dict[str, Callable[[Any], None]] = None,
             num_threads: int = 0,
             verbose: bool = True,
             validate_config: bool = True) -> bool:
@@ -160,7 +160,7 @@ class RecommenderSystem:
             self,
             file_path: str,
             *,
-            events: Dict[str, Callable[[Any], None]] = {},
+            events: Dict[str, Callable[[Any], None]] = None,
             num_threads: int = 0,
             verbose: bool = True) -> bool:
         """Run an experiment from a yml file.
@@ -206,7 +206,7 @@ class RecommenderSystem:
             result_dir: str,
             num_runs: int,
             *,
-            events: Dict[str, Callable[[Any], None]] = {},
+            events: Dict[str, Callable[[Any], None]] = None,
             num_threads: int = 0,
             verbose: bool = True) -> bool:
         """Validate an experiment for an additional number of runs.
