@@ -10,15 +10,6 @@ evaluation:
 - name: R@K
 - name: MRR
 models:
-  Elliot:
-  - name: FunkSVD
-  - name: ItemKNN
-  - name: MostPop
-  - name: MultiVAE
-  - name: PureSVD
-  - name: Random
-  - name: SVDpp
-  - name: UserKNN
   Implicit:
   - name: AlternatingLeastSquares
   - name: BayesianPersonalizedRanking
