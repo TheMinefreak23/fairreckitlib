@@ -4,22 +4,42 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+import pandas as pd
 from .base import DataFilter
 
-
 class CountryFilter(DataFilter):
-    """Filters the dataframe on country, if such a column exists."""
-    def __init__(self, df):
-        self.df = df
-    
-    def run(self, df, country):
-        """Country == name of the country that you want to filter on. 
-        All other countries get filtered out.
-        """
-        if 'country' in df.columns:
-            filter = df['country'] == country
-            return df.loc[filter]
-        else: return df
+    """Filters the dataframe on country, if such column exists."""
 
-def create_country_filter():
-    return CountryFilter()
+    def run(self, country: str = None) -> pd.DataFrame:
+        """Filter specific country of the dataframe.
+
+        Args:
+            country: the name of the country used in filtering
+
+        Returns:
+            a filtered dataframe from the given dataframe
+        """
+        if 'country' in self.dataset.columns:
+            df_filter = self.dataset.country.map(lambda x: x.lower() if x else x
+                                                ).eq(country.lower() if country else country)
+            return self.dataset[df_filter].reset_index(drop=True)
+        return self.dataset
+
+    def __str__(self):
+        """To string
+
+        Returns:
+            name of the class
+        """
+        return self.__class__.__name__
+
+def create_country_filter(data_frame: pd.DataFrame) -> DataFilter:
+    """Create an instance of the class CountryFilter
+
+    Args:
+        data_frame: a pandas DataFrame being filtered
+
+    Returns:
+        an instance of the CountryFilter class
+    """
+    return CountryFilter(data_frame)
