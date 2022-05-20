@@ -219,7 +219,9 @@ def write_storage_file(output_dir: str, results: List[Dict[str, str]]) -> None:
         results: the result overview containing completed computations.
     """
     formatted_results = map(lambda result: {
-        'name': result['dataset'] + '_' + result['model'],
+        'name': result['dataset'] + ' - ' + result['model'],
+        'dataset': result['dataset'],
+        'recommender_system': result['model'],
         'evaluation_path': result['dir'] + '\\evaluations.json',
         'ratings_path': result['dir'] + '\\ratings.tsv',
         'ratings_settings_path': result['dir'] + '\\settings.json'
