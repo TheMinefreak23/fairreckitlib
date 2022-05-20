@@ -3,11 +3,10 @@ This program has been developed by students from the bachelor Computer Science a
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
-
-from src.fairreckitlib.data.filter.country import CountryFilter
-from pandas.testing import assert_frame_equal
 from pandas import DataFrame
+from pandas.testing import assert_frame_equal
 from numpy import int64
+from src.fairreckitlib.data.filter.country import CountryFilter
 
 class TestFilterCountry:
     """Create a filter object and a dummy data frame to test country filter."""
@@ -22,22 +21,22 @@ class TestFilterCountry:
         df_expected.id = df_expected.id.astype(int64)
         df_expected.country = df_expected.country.astype(str)
         assert_frame_equal(df_result, df_expected)
-        
-    def test_run_no_param(self):
+
+    def test_run_no_param_found(self):
         """Test run with nof fount parameter."""
         df_result = self.filter_obj.run('Belgium')
         df_expected = DataFrame({"id": [], "country": []})
         df_expected.id = df_expected.id.astype(int64)
         df_expected.country = df_expected.country.astype(str)
         assert_frame_equal(df_result, df_expected)
-        
+
     def test_run_with_param(self):
         """Test run with given parameters."""
         df_result = self.filter_obj.run('Iran')
         df_expected = DataFrame({"id": [1], "country": ['Iran']})
         assert_frame_equal(df_result, df_expected)
-
-    def test_run_no_country(self):
+    @classmethod
+    def test_run_no_country(cls):
         """Test a given dataframe with no country column."""
         df_given = DataFrame({"id": [1, 2, 3, 4, 5], "play_count": [24, 0, -1, 45, 102]})
         filter_obj = CountryFilter(df_given)
