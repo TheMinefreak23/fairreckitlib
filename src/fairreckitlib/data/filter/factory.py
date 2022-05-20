@@ -18,7 +18,7 @@ def get_filter():
     Returns:
         name of the class
     """
-    
+
     return {
         FILTER_AGE: create_age_filter,
         FILTER_COUNTRY: create_country_filter,
