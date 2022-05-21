@@ -24,8 +24,8 @@ class ThreadExperiment(ThreadBase):
     def __init__(
             self,
             name: str,
-            events: Dict[Any, Callable[[Any], None]],
-            verbose: bool,
+            events: Dict[Any, Callable[[Any], None]]=None,
+            verbose: bool=False,
             **kwargs):
         """Construct the ExperimentThread.
 
@@ -38,6 +38,10 @@ class ThreadExperiment(ThreadBase):
             pipeline_config(ExperimentPipelineConfig): configuration of the experiment pipeline.
         """
         ThreadBase.__init__(self, name, verbose, **kwargs)
+        # no external events specified
+        if events is None:
+            events = {}
+
         # Add external events.
         for (event_id, on_event) in get_experiment_events():
             func_on_event = (on_event, events.get(event_id))
