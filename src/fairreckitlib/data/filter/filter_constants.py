@@ -4,4 +4,9 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+FILTER_AGE = 'UserAge'
+FILTER_GENDER = 'UserGender'
+FILTER_COUNTRY = 'UserCountry'
+FILTER_USER_COUNTRY_THRESHOLD = 'UserCountryThreshold'
+
 KEY_DATA_FILTERS = 'filters'

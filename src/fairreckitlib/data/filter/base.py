@@ -5,14 +5,15 @@ Utrecht University within the Software Project course.
 """
 
 from abc import ABCMeta, abstractmethod
+from typing import Any, Dict
 import pandas as pd
 
 
 class DataFilter(metaclass=ABCMeta):
-    """Base class to filter a df (not a dataset in particular), as long as the df
+    """Base class to filter a df (not a dataframe in particular), as long as the df
     contains a 'user' and 'item' column.
 
-    Dataset class is not really necessary here, but when combined with the
+    Dataframe class is not really necessary here, but when combined with the
     data.format module it needs to know about them to construct them.
 
     Together with a factory pattern similar to the data.split module
@@ -25,12 +26,13 @@ class DataFilter(metaclass=ABCMeta):
         run
     """
 
-    def __init__(self, dataset: pd.DataFrame) -> None:
+    def __init__(self, name: str, params: Dict[str, Any]) -> None:
         """Make Constructor of the class."""
-        self.dataset = dataset
+        self.name = name
+        self.params = params
 
     @abstractmethod
-    def run(self):
+    def run(self, dataframe: pd.DataFrame):
         """Carry out the filtering
 
         Raises:

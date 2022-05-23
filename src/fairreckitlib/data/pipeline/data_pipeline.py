@@ -22,6 +22,7 @@ from ...core.event_io import ON_MAKE_DIR
 from ...core.factories import GroupFactory
 from ..data_transition import DataTransition
 from ..set.dataset import Dataset
+from ..filter.filter_constants import KEY_DATA_FILTERS
 from ..split.split_config import SplitConfig
 from ..split.split_constants import KEY_SPLITTING, KEY_SPLIT_TEST_RATIO
 from ..ratings.convert_config import ConvertConfig
@@ -227,6 +228,14 @@ class DataPipeline(metaclass=ABCMeta):
 
         start = time.time()
         # TODO aggregated the set using the given filters
+
+        filter_factory = self.data_factory.get_factory(KEY_DATA_FILTERS)
+
+        for prefilter in prefilters:
+            filterer = filter_factory.create(prefilter.name, prefilter.value)
+            dataframe = filterer.run(dataframe)
+
+
         end = time.time()
 
         self.event_dispatcher.dispatch(

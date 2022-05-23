@@ -10,6 +10,7 @@ Utrecht University within the Software Project course.
 """
 
 from ..core.factories import GroupFactory
+from .filter.filter_factory import create_filter_factory
 from .ratings.rating_converter_factory import create_rating_converter_factory
 from .split.split_factory import create_split_factory
 
@@ -27,6 +28,7 @@ def create_data_factory() -> GroupFactory:
         the group factory with available data modifier factories.
     """
     data_factory = GroupFactory(KEY_DATASETS)
+    data_factory.add_factory(create_filter_factory())
     data_factory.add_factory(create_rating_converter_factory())
     data_factory.add_factory(create_split_factory())
     return data_factory

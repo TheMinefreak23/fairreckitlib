@@ -4,13 +4,14 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from typing import Any, Dict
 import pandas as pd
 from .base import DataFilter
 
 class CountryFilter(DataFilter):
     """Filters the dataframe on country, if such column exists."""
 
-    def run(self, country: str = None) -> pd.DataFrame:
+    def run(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Filter specific country of the dataframe.
 
         Args:
@@ -19,11 +20,12 @@ class CountryFilter(DataFilter):
         Returns:
             a filtered dataframe from the given dataframe
         """
-        if 'country' in self.dataset.columns:
-            df_filter = self.dataset.country.map(lambda x: x.lower() if x else x
+        if 'country' in dataframe.columns:
+            country = self.params['country']
+            df_filter = dataframe.country.map(lambda x: x.lower() if x else x
                                                 ).eq(country.lower() if country else country)
-            return self.dataset[df_filter].reset_index(drop=True)
-        return self.dataset
+            return dataframe[df_filter].reset_index(drop=True)
+        return dataframe
 
     def __str__(self):
         """To string
@@ -33,13 +35,17 @@ class CountryFilter(DataFilter):
         """
         return self.__class__.__name__
 
-def create_country_filter(data_frame: pd.DataFrame) -> DataFilter:
+def create_country_filter(name: str, 
+                          params: Dict[str, Any], 
+                          **kwargs) -> DataFilter:
     """Create an instance of the class CountryFilter
 
     Args:
-        data_frame: a pandas DataFrame being filtered
+        name: UserCountry
+        params: Dictionary with only one key: 'country'.
+        **kwargs (Optional): Not used.
 
     Returns:
         an instance of the CountryFilter class
     """
-    return CountryFilter(data_frame)
+    return CountryFilter(name, params)

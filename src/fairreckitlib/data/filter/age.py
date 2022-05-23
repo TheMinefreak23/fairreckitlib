@@ -4,6 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from typing import Any, Dict
 import pandas as pd
 from .base import DataFilter
 
@@ -11,7 +12,7 @@ from .base import DataFilter
 class AgeFilter(DataFilter):
     """Filters the dataframe on user age, if such a column exists."""
 
-    def run(self, min_val: int = 0, max_val: int = 100) -> pd.DataFrame:
+    def run(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """
         Filter the dataframe based on age column in the range of min_val and max_val values.
 
@@ -22,10 +23,10 @@ class AgeFilter(DataFilter):
         Returns:
             a filtered dataframe from the given dataframe
         """
-        if 'age' in self.dataset.columns:
-            df_filter = self.dataset.age.between(min_val, max_val, inclusive="both")
-            return self.dataset[df_filter].reset_index(drop=True)
-        return self.dataset
+        if 'age' in dataframe.columns:
+            df_filter = dataframe.age.between(self.params["min"], self.params["max"], inclusive="both")
+            return dataframe[df_filter].reset_index(drop=True)
+        return dataframe
 
     def __str__(self):
         """To string
@@ -36,13 +37,20 @@ class AgeFilter(DataFilter):
         return self.__class__.__name__
 
 
-def create_age_filter(data_frame: pd.DataFrame) -> DataFilter:
+def create_age_filter(name: str, 
+                      params: Dict[str, Any], 
+                      **kwargs) -> DataFilter:
     """Create an instance of the class AgeFilter
 
     Args:
-        data_frame: a pandas DataFrame being filtered
+        name: UserAge
+        params: Dictionary with 'min' and 'max'.
+        **kwargs (Optional): Not used.
 
     Returns:
         an instance of the AgeFilter class
     """
-    return AgeFilter(data_frame)
+    # If params == None, thus no param in factory.create() has been given.
+    if not params:  # Default value
+        params = {"min": 0, "max": 100}
+    return AgeFilter(name, params)
