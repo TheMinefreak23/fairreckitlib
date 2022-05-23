@@ -13,7 +13,7 @@ class DataFilter(metaclass=ABCMeta):
     """Base class to filter a df (not a dataframe in particular), as long as the df
     contains a 'user' and 'item' column.
 
-    Dataframe class is not really necessary here, but when combined with the
+    Dataset class is not really necessary here, but when combined with the
     data.format module it needs to know about them to construct them.
 
     Together with a factory pattern similar to the data.split module
