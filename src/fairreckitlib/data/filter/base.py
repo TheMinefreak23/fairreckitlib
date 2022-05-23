@@ -8,6 +8,8 @@ from abc import ABCMeta, abstractmethod
 from typing import Any, Dict
 import pandas as pd
 
+from fairreckitlib.data.set.dataset import Dataset, add_user_columns
+
 
 class DataFilter(metaclass=ABCMeta):
     """Base class to filter a df (not a dataframe in particular), as long as the df
@@ -26,19 +28,34 @@ class DataFilter(metaclass=ABCMeta):
         run
     """
 
-    def __init__(self, name: str, params: Dict[str, Any]) -> None:
+    def __init__(self, name: str, params: Dict[str, Any], **kwargs) -> None:
         """Make Constructor of the class."""
         self.name = name
         self.params = params
+        self.kwargs = kwargs
 
     @abstractmethod
     def run(self, dataframe: pd.DataFrame):
         """Carry out the filtering
 
         Raises:
-            NotImplementedError: this method should be implimented in the subclasses
+            NotImplementedError: this method should be implemented in the subclasses
         """
         raise NotImplementedError()
+
+    def __add_missing_column(self, dataset: Dataset, dataframe: pd.DataFrame):
+        # self.params["table"]
+        info = self.name.split('_')
+        table = info[0]
+        category = info[1]
+
+        if (table == 'user'):
+            columns = dataset.get_available_user_item_columns()[table].keys()
+            for col in columns:
+                if category in col:
+                    add_user_columns(dataset, dataframe, [col])
+        # TODO other table
+        #  kwargs
 
     def __str__(self):
         """To string

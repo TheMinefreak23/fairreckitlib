@@ -8,15 +8,14 @@ evaluation:
   params:
     K: 10
   prefilters:
-    - name: UserGender
+    - name: user_gender
       value: {'gender': male}
-    - name: UserAge
+    - name: user_age
       value: {'min': 1, 'max': 100}
-    - name: UserCountry
+    - name: user_country
       value: {'country': NL}
-    - name: UserCountryThreshold
+    - name: user_country_threshold
       value: {'threshold': 1}
-models:
   Implicit:
   - name: AlternatingLeastSquares
 name: Dev
