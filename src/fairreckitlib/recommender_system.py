@@ -14,7 +14,7 @@ import os
 from typing import Any, Dict, Callable, List, Union
 
 from .core.threading.thread_processor import ThreadProcessor
-from .data.data_factory import KEY_DATASETS
+from .data.data_factory import KEY_DATA
 from .data.filter.filter_constants import KEY_DATA_FILTERS
 from .data.set.dataset_registry import DataRegistry
 from .data.ratings.rating_converter_factory import KEY_RATING_CONVERTER
@@ -303,7 +303,7 @@ class RecommenderSystem:
         """
         # TODO the data filter factory does not exist
         return self.experiment_factory.get_sub_availability(
-            KEY_DATASETS,
+            KEY_DATA,
             sub_type=KEY_DATA_FILTERS
         )
 
@@ -329,7 +329,7 @@ class RecommenderSystem:
             a dictionary with the availability of rating converters.
         """
         return self.experiment_factory.get_sub_availability(
-            KEY_DATASETS,
+            KEY_DATA,
             sub_type=KEY_RATING_CONVERTER
         )
 
@@ -340,6 +340,6 @@ class RecommenderSystem:
             a dictionary with the availability of data splitters.
         """
         return self.experiment_factory.get_sub_availability(
-            KEY_DATASETS,
+            KEY_DATA,
             sub_type=KEY_SPLITTING
         )

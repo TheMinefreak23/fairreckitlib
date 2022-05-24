@@ -17,7 +17,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 
 import h5py
 import numpy as np
@@ -96,43 +96,6 @@ def load_df_from_hdf5(file_path: str) -> pd.DataFrame:
             dataframe[key] = values
 
         return dataframe
-
-
-def load_table(
-        file_path: str,
-        names: List[str],
-        columns: List[Union[int,str]]=None,
-        header: bool=False,
-        sep: str=None,
-        encoding: str='utf-8',
-        chunk_size: int=None) -> pd.DataFrame:
-    """Load a table from a file.
-
-    Args:
-        file_path: path to where the table file is stored.
-        names: list of all column names in the table.
-        columns: subset list of columns to load or None to load all.
-            All elements must either be integer indices or
-            strings that correspond to the 'names' argument.
-        header(bool): whether the table file contains a header on the first line.
-        sep: the delimiter that is used in the table or None for a tab separator.
-        encoding: the encoding to use for reading the table contents.
-        chunk_size: loads the table in chunks as an iterator or
-            the entire table when None.
-
-    Returns:
-        the resulting table (iterator).
-    """
-    return pd.read_table(
-        file_path,
-        header=0 if header else None,
-        sep=sep if sep else '\t',
-        names=names,
-        usecols=columns,
-        encoding=encoding,
-        chunksize=chunk_size,
-        iterator=bool(chunk_size)
-    )
 
 
 def load_yml(file_path: str, encoding: str='utf-8') -> Dict:

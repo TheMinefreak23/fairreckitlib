@@ -20,7 +20,7 @@ import json
 from ..core.event_dispatcher import EventDispatcher
 from ..core.event_io import ON_MAKE_DIR
 from ..core.factories import GroupFactory
-from ..data.data_factory import KEY_DATASETS
+from ..data.data_factory import KEY_DATA
 from ..data.pipeline.data_run import DataPipelineConfig, run_data_pipelines
 from ..data.set.dataset_registry import DataRegistry
 from ..evaluation.pipeline.evaluation_run import run_evaluation_pipelines
@@ -85,7 +85,7 @@ class ExperimentPipeline:
             DataPipelineConfig(
                 output_dir,
                 self.data_registry,
-                self.experiment_factory.get_factory(KEY_DATASETS),
+                self.experiment_factory.get_factory(KEY_DATA),
                 experiment_config.datasets
             ),
             self.event_dispatcher,
