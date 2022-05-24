@@ -21,7 +21,7 @@ from ..core.parsing.parse_assert import assert_is_type
 from ..core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
 from ..core.parsing.parse_event import ON_PARSE, on_parse
 from ..core.parsing.parse_params import parse_config_param
-from ..data.data_factory import KEY_DATASETS
+from ..data.data_factory import KEY_DATA
 from ..data.pipeline.data_config_parsing import parse_data_config
 from ..data.set.dataset_registry import DataRegistry
 from ..data.utility import load_yml
@@ -89,7 +89,7 @@ class Parser:
         experiment_datasets = parse_data_config(
             experiment_config,
             data_registry,
-            experiment_factory.get_factory(KEY_DATASETS),
+            experiment_factory.get_factory(KEY_DATA),
             self.event_dispatcher
         )
         # experiment requires datasets

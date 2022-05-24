@@ -26,6 +26,7 @@ from .convert_constants import KEY_RATING_CONVERTER
 def parse_data_convert_config(
         dataset_config: Dict[str, Any],
         dataset: Dataset,
+        matrix_name: str,
         converter_factory: Factory,
         event_dispatcher: EventDispatcher) -> Optional[ConvertConfig]:
     """Parse a dataset rating converter configuration.
@@ -33,6 +34,7 @@ def parse_data_convert_config(
     Args:
         dataset_config: the dataset's total configuration.
         dataset: the dataset related to the converter configuration.
+        matrix_name: the dataset's matrix name to use.
         converter_factory: the converter factory containing available converters.
         event_dispatcher: to dispatch the parse event on failure.
 
@@ -45,7 +47,7 @@ def parse_data_convert_config(
     if KEY_RATING_CONVERTER not in dataset_config:
         event_dispatcher.dispatch(
             ON_PARSE,
-            msg='PARSE WARNING: dataset ' + dataset.name + ' missing key \'' +
+            msg='PARSE WARNING: dataset ' + dataset.get_name() + ' missing key \'' +
                 KEY_RATING_CONVERTER + '\'',
             default=parsed_config
         )
@@ -58,14 +60,14 @@ def parse_data_convert_config(
         convert_config,
         dict,
         event_dispatcher,
-        'PARSE WARNING: dataset ' + dataset.name + ' invalid rating conversion value',
+        'PARSE WARNING: dataset ' + dataset.get_name() + ' invalid rating conversion value',
         default=parsed_config
     ): return parsed_config
 
     # parse converter name
     success, converter_name = parse_config_param(
         convert_config,
-        dataset.name + ' ' + KEY_RATING_CONVERTER,
+        dataset.get_name() + ' ' + KEY_RATING_CONVERTER,
         ConfigOptionParam(
             KEY_NAME,
             str,
@@ -81,7 +83,7 @@ def parse_data_convert_config(
     upper_bound = convert_params.get_param('upper_bound')
     if upper_bound is not None:
         # update upper_bound param's default value to match the dataset's max rating
-        upper_bound.default_value = dataset.get_matrix_info('rating_max')
+        upper_bound.default_value = dataset.get_matrix_config(matrix_name).rating_max
 
     parsed_config = ConvertConfig(
         converter_name,
@@ -94,14 +96,14 @@ def parse_data_convert_config(
         KEY_PARAMS,
         convert_config,
         event_dispatcher,
-        'PARSE WARNING: dataset ' + dataset.name + ' ' + KEY_RATING_CONVERTER + ' missing key \'' +
-        KEY_PARAMS + '\'',
+        'PARSE WARNING: dataset ' + dataset.get_name() + ' ' + KEY_RATING_CONVERTER +
+        ' missing key \'' + KEY_PARAMS + '\'',
         default=parsed_config.params
     ):
         # parse the converter parameters
         parsed_config.params = parse_config_parameters(
             convert_config[KEY_PARAMS],
-            dataset.name,
+            dataset.get_name(),
             convert_params,
             event_dispatcher
         )
