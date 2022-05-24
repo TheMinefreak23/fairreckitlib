@@ -16,8 +16,8 @@ from rexmex.metrics.coverage import item_coverage
 from rexmex.metrics.coverage import user_coverage
 from rexmex.metrics import intra_list_similarity, novelty
 
-from .evaluator import Evaluator
-from .common import Metric
+from src.fairreckitlib.evaluation.metrics.evaluator import Evaluator
+from src.fairreckitlib.evaluation.metrics.common import Metric
 
 
 class EvaluatorRexmex(Evaluator):

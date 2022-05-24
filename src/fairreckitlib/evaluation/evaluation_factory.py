@@ -61,27 +61,34 @@ def create_evaluation_factory() -> GroupFactory:
 
     # rexmex recommenders
     """recommendation_factory.add_factory(create_metric_pipeline_factory(
-        rexmex_factory.create_predictor_factory(),
+        rexmex_factory.create_recommender_factory(),
         EvaluationPipeline
     ))"""
     """
-    # lenskit recommenders
-    recommendation_factory.add_factory(create_metric_pipeline_factory(
-        lenskit_factory.create_predictor_factory(),
-        EvaluationPipeline
-    ))"""
-
-    recommendation_factory.add_factory(create_accuracy_metric_factory())
+        # lenskit recommenders
+        recommendation_factory.add_factory(create_metric_pipeline_factory(
+            lenskit_factory.create_recommender_factory(),
+            EvaluationPipeline
+        ))
+    """
+    recommendation_factory.add_factory(
+        create_metric_pipeline_factory(create_accuracy_metric_factory(),
+                                       EvaluationPipeline)
+    )
 
     # TODO document this (shared factory pointers)
     for _, func_create in enumerate(shared_categories):
         category_factory = func_create()
-        prediction_factory.add_factory(category_factory)
-        recommendation_factory.add_factory(category_factory)
+        prediction_factory.add_factory(
+            create_metric_pipeline_factory(category_factory, EvaluationPipeline)
+        )
+        recommendation_factory.add_factory(
+            create_metric_pipeline_factory(category_factory, EvaluationPipeline)
+        )
 
     evaluation_factory = GroupFactory(KEY_EVALUATION)
 
     #evaluation_factory.add_factory(factory)
-    #evaluation_factory.add_factory(prediction_factory)
-    #evaluation_factory.add_factory(recommendation_factory)
+    evaluation_factory.add_factory(prediction_factory)
+    evaluation_factory.add_factory(recommendation_factory)
     return evaluation_factory

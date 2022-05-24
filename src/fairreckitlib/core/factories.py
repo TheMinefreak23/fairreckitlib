@@ -258,6 +258,9 @@ class GroupFactory(BaseFactory):
         Returns:
             the requested factory or None when not available.
         """
+        print('factory name', factory_name)
+        print('factory',self.factory)
+        print('factory get', self.factory.get(factory_name))
         return self.factory.get(factory_name)
 
     def get_sub_availability(

@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from typing import List
 
 from .evaluation_config import MetricConfig
-from ..metrics.common import RecType, Metric
+from ..metrics.common import RecType, Metric, metric_category_dict
 from ..metrics.common import Test
 from .evaluation_pipeline import EvaluationPipeline
 from ...core.apis import LENSKIT_API, REXMEX_API
@@ -26,6 +26,7 @@ class EvaluationPipelineConfig:
     evaluation: List[MetricConfig]
 
 
+"""
 preferred_api_dict = {
     LENSKIT_API: [Metric.NDCG,
                   Metric.PRECISION,
@@ -38,6 +39,19 @@ preferred_api_dict = {
                  Metric.USER_COVERAGE,
                  Metric.INTRA_LIST_SIMILARITY,
                  Metric.NOVELTY]
+}"""
+
+preferred_api_dict = {
+    Metric.NDCG.value: LENSKIT_API,
+    Metric.PRECISION.value: LENSKIT_API,
+    Metric.RECALL.value: LENSKIT_API,
+    Metric.MRR.value: LENSKIT_API,
+    Metric.RMSE.value: LENSKIT_API,
+    Metric.MAE.value: LENSKIT_API,
+    Metric.ITEM_COVERAGE.value: REXMEX_API,
+    Metric.USER_COVERAGE.value: REXMEX_API,
+    Metric.INTRA_LIST_SIMILARITY.value: REXMEX_API,
+    Metric.NOVELTY.value: REXMEX_API
 }
 
 
@@ -67,18 +81,25 @@ def run_evaluation_pipelines(
     print('model_dirs', pipeline_config.model_dirs)
 
     for model_dir in pipeline_config.model_dirs:
-        print('model_dir',model_dir)
+        print('model_dir', model_dir)
 
-        for evaluation in pipeline_config.eval_config:
-            api_factory = evaluation.evaluation_factory.get_factory(evaluation)
-            pipeline = api_factory.create_pipeline(api_factory, event_dispatcher)
+        for evaluation in pipeline_config.evaluation:
+            print(evaluation)
+            #api_name = preferred_api_dict[evaluation.name]
+            #api_factory = pipeline_config.evaluation_factory.get_factory(api_name)
+            #pipeline = api_factory.create_pipeline(api_factory, event_dispatcher)
+            pipeline = None
+            # Find category for the metric
+            for category, metrics in metric_category_dict.items():
+                if evaluation.name in [metric.value for metric in metrics]:
+                    print(category, metrics)
+                    category_factory = pipeline_config.evaluation_factory.get_factory(category.value)
+                    print('DEV line 95 evaluation_run', category_factory)
+                    pipeline = category_factory.create_pipeline(category_factory, event_dispatcher)
             pipeline.run(
                 model_dir + '/ratings.tsv',
                 pipeline_config.data_transition,
-                pipeline_config.eval_config,
+                pipeline_config.evaluation,
                 is_running,
                 **kwargs)
-        #pipeline = pipeline_config.evaluation_factory.get_factory()
-
-
-
+        # pipeline = pipeline_config.evaluation_factory.get_factory()

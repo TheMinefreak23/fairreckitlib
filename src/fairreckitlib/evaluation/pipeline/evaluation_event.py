@@ -103,10 +103,10 @@ def on_begin_eval(event_listener, **kwargs):
             in the event dispatcher with this callback.
 
     Keyword Args:
-        metric(Metric): metric
+        metric_name(str): metric name
     """
     if event_listener.verbose:
-        print('Starting evaluation with metric', kwargs['metric'].value)
+        print('Starting evaluation with metric', kwargs['metric_name'])
 
 
 def on_end_load_test_set(event_listener, **kwargs):
@@ -153,13 +153,13 @@ def on_end_eval(event_listener, **kwargs):
                 in the event dispatcher with this callback.
 
         Keyword Args:
-            metric(Metric): the metric that was used in the computation.
+            metric_name(str): the metric name that was used in the computation.
             elapsed_time(float): the time that has passed since the evaluation
                 computation started, expressed in seconds.
     """
     if event_listener.verbose:
         elapsed_time = kwargs['elapsed_time']
-        print('Finished metric', kwargs['metric'].value, f'in {elapsed_time:1.4f}s')
+        print('Finished metric', kwargs['metric_name'], f'in {elapsed_time:1.4f}s')
 
 
 def on_begin_eval_pipeline(event_listener, **kwargs):
@@ -174,7 +174,8 @@ def on_begin_eval_pipeline(event_listener, **kwargs):
     """
 
     if event_listener.verbose:
-        print('\nStarting Evaluation Pipeline to process', kwargs['num_metrics'], 'metric(s)')
+        print('Starting evaluation pipeline TODO num_metrics?')
+        #print('\nStarting Evaluation Pipeline to process', kwargs['num_metrics'], 'metric(s)')
 
 
 def on_end_eval_pipeline(event_listener, **kwargs):
@@ -191,8 +192,8 @@ def on_end_eval_pipeline(event_listener, **kwargs):
     """
     if event_listener.verbose:
         elapsed_time = kwargs['elapsed_time']
-        print(f'Finished Evaluation Pipeline on', kwargs['num_metrics'], 'metrics',
-              f'in {elapsed_time:1.4f}s')
+        #print(f'Finished Evaluation Pipeline on', kwargs['num_metrics'], 'metrics',
+        #      f'in {elapsed_time:1.4f}s')
 
 
 def on_begin_filter(event_listener, **kwargs):

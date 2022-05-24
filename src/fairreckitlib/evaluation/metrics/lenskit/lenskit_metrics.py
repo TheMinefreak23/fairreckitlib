@@ -24,12 +24,14 @@ from lenskit.algorithms.item_knn import ItemItem
 from lenskit.algorithms.user_knn import UserUser
 from seedbank import numpy_rng
 
-BIASED_MF = 'BiasedMF'
-IMPLICIT_MF = 'ImplicitMF'
-ITEM_ITEM = 'ItemItem'
-POP_SCORE = 'PopScore'
-RANDOM = 'Random'
-USER_USER = 'UserUser'
+from src.fairreckitlib.evaluation.metrics.common import Metric
+
+NDCG = Metric.NDCG.value
+PRECISION = Metric.PRECISION.value
+RECALL = Metric.RECALL.value
+MRR = Metric.MRR.value
+RMSE = Metric.RMSE.value
+MAE = Metric.MAE.value
 
 
 def create_biased_mf(params: Dict[str, Any]) -> BiasedMF:

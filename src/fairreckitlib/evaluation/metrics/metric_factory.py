@@ -3,12 +3,13 @@ This program has been developed by students from the bachelor Computer Science a
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
-
+from .lenskit.lenskit_predictor import LensKitPredictionEvaluator
 from ...core.config_params import ConfigParameters
 from ...core.factories import create_factory_from_list
 from .common import Metric, MetricCategory
 
 KEY_METRIC_PARAM_K = 'K'
+
 
 
 def create_accuracy_metric_factory():
@@ -83,8 +84,32 @@ def create_metric_params_k():
 
 
 def create_metric(name, params, **kwargs):
-    # TODO metric connection
-    raise NotImplementedError()
+    # TODO refactor
+    from lenskit import topn
+    from lenskit.metrics import predict
+    from rexmex.metrics import item_coverage, user_coverage, intra_list_similarity, novelty
+    from src.fairreckitlib.evaluation.metrics.lenskit.lenskit_recommender import LensKitRecommendationEvaluator
+    print('DEV line 92 metric_factory', name, params)
+    metric_dict = {
+        Metric.NDCG.value: (LensKitRecommendationEvaluator, topn.ndcg, 'ndcg'),
+        Metric.PRECISION.value: (LensKitRecommendationEvaluator, topn.precision, 'precision'),
+        Metric.RECALL.value: (LensKitRecommendationEvaluator, topn.recall, 'recall'),
+        Metric.MRR.value: (LensKitRecommendationEvaluator, topn.recip_rank, 'recip_rank'),
+
+        Metric.RMSE.value: (LensKitPredictionEvaluator, predict.rmse, 'rmse'),
+        Metric.MAE.value: (LensKitPredictionEvaluator, predict.mae, 'mae'),
+
+        Metric.ITEM_COVERAGE.value: (LensKitPredictionEvaluator, item_coverage),
+        Metric.USER_COVERAGE.value: (LensKitPredictionEvaluator, user_coverage),
+        Metric.INTRA_LIST_SIMILARITY.value: (LensKitPredictionEvaluator, intra_list_similarity),
+        Metric.NOVELTY.value: (LensKitPredictionEvaluator, novelty)
+    }
+
+    evaluator, eval_func, group = metric_dict[name]
+    # Add group for LensKit
+    if group:
+        kwargs['group'] = group
+    return evaluator(eval_func, params, **kwargs)
 
 
 def resolve_metric_factory(metric_name, metric_category_factory):

@@ -9,11 +9,11 @@ import pandas as pd
 from lenskit import topn
 from lenskit.metrics import predict
 
-from .evaluator import Evaluator
-from .common import Metric
+from src.fairreckitlib.evaluation.metrics.evaluator import Evaluator
+from src.fairreckitlib.evaluation.metrics.common import Metric
 
 
-class EvaluatorLenskit(Evaluator):
+class LensKitEvaluator(Evaluator):
     """
     Evaluates results using LensKit library metrics
     """
@@ -58,14 +58,14 @@ class EvaluatorLenskit(Evaluator):
         # for metric in self.metrics:
         # TODO refactor self.metrics to metric?
         (metric, k) = self.metrics[0]
-        eval_func = EvaluatorLenskit.metric_dict[metric]
+        eval_func = LensKitEvaluator.metric_dict[metric]
         print(eval_func)
-        if metric in EvaluatorLenskit.topn_metrics:
+        if metric in LensKitEvaluator.topn_metrics:
             analysis = topn.RecListAnalysis()
             analysis.add_metric(eval_func, k=k)
             results = analysis.compute(self.recs, self.test).head()
 
-            group_name = EvaluatorLenskit.group_dict[metric]
+            group_name = LensKitEvaluator.group_dict[metric]
             evaluation = results.groupby('Algorithm')[group_name].mean()[0]
         else:
             # TODO USER VS GLOBAL

@@ -59,6 +59,7 @@ def parse_evaluation_config(
 
     # parse eval_config list entries
     for _, metric_config in enumerate(eval_config):
+        print(metric_config)
         metric, metric_name = parse_metric_config(
             metric_config,
             metric_category_factory,
@@ -112,6 +113,7 @@ def parse_metric_config(
     ): return None, None
 
     metric_name = metric_config[KEY_NAME]
+    print(metric_name, metric_category_factory)
     metric_factory = resolve_metric_factory(metric_name, metric_category_factory)
 
     # assert metric name is available in the metric factory
