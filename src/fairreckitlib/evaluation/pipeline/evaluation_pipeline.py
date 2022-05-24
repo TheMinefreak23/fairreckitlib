@@ -19,7 +19,6 @@ from .evaluation_event import ON_BEGIN_LOAD_TRAIN_SET, ON_END_LOAD_TRAIN_SET, ON
 from ..metrics.evaluator import Evaluator
 from ...core.event_dispatcher import EventDispatcher
 from ...core.event_error import ON_RAISE_ERROR
-from ...core.event_io import ON_MAKE_DIR, ON_REMOVE_FILE
 from ...core.factories import Factory
 from ...evaluation.pipeline import evaluation_event
 

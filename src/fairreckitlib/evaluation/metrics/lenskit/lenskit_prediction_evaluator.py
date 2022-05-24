@@ -22,7 +22,7 @@ class LensKitPredictionEvaluator(Evaluator):
         # Merge on user ID
         scores = pd.merge(test_set, recs, how='left', on=['user', 'item'])
         scores.rename(columns={'score': 'prediction'}, inplace=True)
-        print(scores)
+        #print(scores)
         evaluation = predict.user_metric(scores, metric=self.eval_func)
 
         return evaluation

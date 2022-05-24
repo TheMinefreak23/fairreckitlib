@@ -179,7 +179,6 @@ class Parser:
             the parsed configuration or None on failure.
         """
         experiment_config = load_yml(file_path + '.yml')
-        print(experiment_config)
         return self.parse_experiment_config(experiment_config, data_registry, experiment_factory)
 
     def parse_experiment_name(self, experiment_config: Dict[str, Any]) -> Optional[str]:

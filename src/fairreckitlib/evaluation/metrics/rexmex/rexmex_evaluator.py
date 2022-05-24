@@ -51,8 +51,8 @@ class RexmexEvaluator(Evaluator):
         """
         # Convert recommended user, item columns to list of tuples.
         tuple_recs = [tuple(r) for r in recs[['user', 'item']].to_numpy()]
-        print(tuple_recs[0:10])
+        #print(tuple_recs[0:10])
         # The possible users and items are in the train set
         possible_users_items = (train_set['user'], train_set['item'])
-        print(possible_users_items)
+        #print(possible_users_items)
         return possible_users_items, tuple_recs

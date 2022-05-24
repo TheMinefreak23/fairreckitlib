@@ -78,7 +78,7 @@ def create_evaluation_factory() -> GroupFactory:
     # TODO document this (shared factory pointers)
     for _, func_create in enumerate(shared_categories):
         category_factory = func_create()
-        print('category factory', category_factory)
+        #print('category factory', category_factory)
         prediction_factory.add_factory(
             create_metric_pipeline_factory(category_factory, EvaluationPipeline)
         )

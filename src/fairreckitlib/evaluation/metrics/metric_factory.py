@@ -60,10 +60,10 @@ def prepare_for_coverage(self):
     """
     # Convert recommended user, item columns to list of tuples.
     tuple_recs = [tuple(r) for r in self.recs[['source_id', 'target_id']].to_numpy()]
-    print(tuple_recs[0:10])
+    #print(tuple_recs[0:10])
     # The possible users and items are in the train set
     possible_users_items = (self.train['source_id'], self.train['target_id'])
-    print(possible_users_items)
+    #print(possible_users_items)
     return possible_users_items, tuple_recs
 
 
