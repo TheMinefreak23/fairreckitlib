@@ -3,13 +3,15 @@ This program has been developed by students from the bachelor Computer Science a
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
+from lenskit import topn
+from lenskit.metrics import predict
+from rexmex.metrics import item_coverage, user_coverage, intra_list_similarity, novelty
 from .lenskit.lenskit_prediction_evaluator import LensKitPredictionEvaluator
+from .lenskit.lenskit_recommendation_evaluator import LensKitRecommendationEvaluator
 from .rexmex.rexmex_evaluator import RexmexEvaluator
 from ...core.config_params import ConfigParameters
 from ...core.factories import create_factory_from_list
-from .common import Metric, MetricCategory
-
-KEY_METRIC_PARAM_K = 'K'
+from .common import Metric, MetricCategory, KEY_METRIC_PARAM_K
 
 
 def create_accuracy_metric_factory():
@@ -104,11 +106,7 @@ def create_metric_params_k():
 
 def create_metric(name, params, **kwargs):
     # TODO refactor
-    from lenskit import topn
-    from lenskit.metrics import predict
-    from rexmex.metrics import item_coverage, user_coverage, intra_list_similarity, novelty
-    from src.fairreckitlib.evaluation.metrics.lenskit.lenskit_recommendation_evaluator import LensKitRecommendationEvaluator
-    print('DEV metric name and params', name, params)
+    #print('DEV metric name and params', name, params)
     metric_dict = {
         Metric.NDCG.value: (LensKitRecommendationEvaluator, topn.ndcg, 'ndcg'),
         Metric.PRECISION.value: (LensKitRecommendationEvaluator, topn.precision, 'precision'),

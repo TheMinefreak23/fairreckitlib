@@ -7,8 +7,8 @@ from typing import Any, Dict
 
 from lenskit import topn
 
+from src.fairreckitlib.evaluation.metrics.common import KEY_METRIC_PARAM_K
 from src.fairreckitlib.evaluation.metrics.evaluator import Evaluator
-from src.fairreckitlib.evaluation.metrics.metric_factory import KEY_METRIC_PARAM_K
 
 
 class LensKitRecommendationEvaluator(Evaluator):
@@ -20,8 +20,8 @@ class LensKitRecommendationEvaluator(Evaluator):
         self.group = kwargs['group']
 
     def evaluate(self, train_set, test_set, recs):
-        print(test_set.head())
-        print(recs.head())
+        #print(test_set.head())
+        #print(recs.head())
         analysis = topn.RecListAnalysis()
         k = self.params.get(KEY_METRIC_PARAM_K)
         if k:

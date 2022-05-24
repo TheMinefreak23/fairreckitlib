@@ -6,6 +6,7 @@ Utrecht University within the Software Project course.
 
 from typing import Any, Dict, List, Optional, Tuple
 
+from ..metrics.common import KEY_METRIC_PARAM_K
 from ...core.config_constants import KEY_NAME, KEY_PARAMS, KEY_TOP_K
 from ...core.event_dispatcher import EventDispatcher
 from ...core.factories import GroupFactory
@@ -14,7 +15,7 @@ from ...core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of
 from ...core.parsing.parse_event import ON_PARSE
 from ...core.parsing.parse_params import parse_config_parameters
 from ..evaluation_factory import KEY_EVALUATION
-from ..metrics.metric_factory import KEY_METRIC_PARAM_K, resolve_metric_factory
+from ..metrics.metric_factory import resolve_metric_factory
 from .evaluation_config import MetricConfig
 
 

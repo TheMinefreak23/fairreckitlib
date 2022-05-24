@@ -7,16 +7,7 @@ Utrecht University within the Software Project course.
 import enum
 
 
-class Test:
-    """
-    DEV ONLY
-    """
-    def __init__(self, name, recs_path, test_path, train_path, rec_type):
-        self.name = name
-        self.recs_path = recs_path
-        self.test_path = test_path
-        self.train_path = train_path
-        self.rec_type = rec_type
+KEY_METRIC_PARAM_K = 'K'
 
 
 class RecType(enum.Enum):

@@ -9,10 +9,7 @@ from dataclasses import dataclass
 from typing import List, Callable
 
 from .evaluation_config import MetricConfig
-from ..metrics.common import RecType, Metric, metric_category_dict
-from ..metrics.common import Test
-from .evaluation_pipeline import EvaluationPipeline
-from ...core.apis import LENSKIT_API, REXMEX_API
+from ..metrics.common import metric_category_dict
 from ...core.event_dispatcher import EventDispatcher
 from ...core.event_io import ON_MAKE_DIR
 from ...core.factories import GroupFactory
