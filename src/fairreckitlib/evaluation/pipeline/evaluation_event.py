@@ -174,8 +174,7 @@ def on_begin_eval_pipeline(event_listener, **kwargs):
     """
 
     if event_listener.verbose:
-        print('Starting evaluation pipeline TODO num_metrics?')
-        #print('\nStarting Evaluation Pipeline to process', kwargs['num_metrics'], 'metric(s)')
+        print('\nStarting Evaluation Pipeline to process', kwargs['num_metrics'], 'metric(s)')
 
 
 def on_end_eval_pipeline(event_listener, **kwargs):
@@ -192,8 +191,8 @@ def on_end_eval_pipeline(event_listener, **kwargs):
     """
     if event_listener.verbose:
         elapsed_time = kwargs['elapsed_time']
-        #print(f'Finished Evaluation Pipeline on', kwargs['num_metrics'], 'metrics',
-        #      f'in {elapsed_time:1.4f}s')
+        print(f'Finished Evaluation Pipeline on', kwargs['num_metrics'], 'metrics',
+              f'in {elapsed_time:1.4f}s')
 
 
 def on_begin_filter(event_listener, **kwargs):

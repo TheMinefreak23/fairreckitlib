@@ -19,7 +19,7 @@ class Evaluator(ABC):
         self.params = params
 
     @abstractmethod
-    def evaluate(self, test_set, recs):
+    def evaluate(self, train_set, test_set, recs):
         """Run analysis based on metric"""
         raise NotImplementedError()
 

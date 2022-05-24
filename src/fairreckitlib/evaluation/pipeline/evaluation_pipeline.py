@@ -22,10 +22,6 @@ from ...core.event_error import ON_RAISE_ERROR
 from ...core.event_io import ON_MAKE_DIR, ON_REMOVE_FILE
 from ...core.factories import Factory
 from ...evaluation.pipeline import evaluation_event
-from ..metrics.common import metric_matches_type
-from src.fairreckitlib.evaluation.metrics.lenskit.lenskit_evaluator import LensKitEvaluator
-from src.fairreckitlib.evaluation.metrics.rexmex.rexmex_evaluator import EvaluatorRexmex
-from ..metrics.filter import filter_data
 
 
 class EvaluationPipeline:
@@ -36,49 +32,41 @@ class EvaluationPipeline:
     def __init__(self, metric_factory: Factory, event_dispatcher: EventDispatcher):
         self.metric_factory = metric_factory
 
-        # self.train_set = None
-        # self.test = None
-        # self.recs = None
-
         self.event_dispatcher = event_dispatcher
 
-    def run(self, recs_path, data_transition, eval_config, is_running, **kwargs):
-        # self.profile_path = profile_path
-        # self.metrics = metrics
-        # self.k = k
-        # self.filters = filters
-
+    def run(self, out_path: str, recs_path: str, data_transition, metrics, is_running, **kwargs):
         self.event_dispatcher.dispatch(
             evaluation_event.ON_BEGIN_EVAL_PIPELINE,
-            # num_metrics=len(self.metrics)
+            num_metrics=len(metrics)
         )
         start = time.time()
-        print('eval_config', eval_config)
-        for metric in eval_config:
+
+        for metric in metrics:
+            #print('metric',metric)
             evaluator = self.metric_factory.create(
                 metric.name,
                 metric.params,
                 **kwargs
             )
-            print('data_transition', data_transition)
-            self.filter(evaluator, metric, data_transition.train_set_path, data_transition.test_set_path, recs_path)
+            #print('data_transition', data_transition)
+            self.filter(evaluator, metric, data_transition.train_set_path,
+                        data_transition.test_set_path, recs_path, out_path)
 
         self.event_dispatcher.dispatch(
             evaluation_event.ON_END_EVAL_PIPELINE,
-            # num_metrics=len(self.metrics),
+            num_metrics=len(metrics),
             elapsed_time=time.time() - start
         )
 
-    def filter(self, evaluator, eval_config, train_path, test_path, recs_path, profile_path=""):
+    def filter(self, evaluator, metrics, train_path, test_path, recs_path, out_path, profile_path=""):
 
         # Run evaluation globally
         train_set, test_set, recs_set = self.load_data(train_path, test_path, recs_path)
-        self.run_evaluation(evaluator, eval_config, train_set, test_set, recs_set, recs_path)
+        self.run_evaluation(evaluator, metrics, train_set, test_set, recs_set, recs_path, out_path)
 
         if self.test_filter:
             self.event_dispatcher.dispatch(
-                evaluation_event.ON_BEGIN_FILTER,
-                # num_metrics=len(self.metrics)
+                evaluation_event.ON_BEGIN_FILTER
             )
             filter_start = time.time()
             print('TODO: filter data per evaluation')
@@ -123,63 +111,21 @@ class EvaluationPipeline:
             )
 
     # TODO refactor so it take dataframes instead of path?
-    def run_evaluation(self, evaluator: Evaluator, eval_config: MetricConfig, train_set, test_set, recs, recs_path):
+    def run_evaluation(self, evaluator: Evaluator, eval_config: MetricConfig, train_set, test_set, recs, recs_path, out_path):
 
         self.event_dispatcher.dispatch(
             evaluation_event.ON_BEGIN_EVAL,
             metric_name=eval_config.name
         )
         start = time.time()
-        evaluation = evaluator.evaluate(test_set, recs)
+        evaluation = evaluator.evaluate(train_set, test_set, recs)
         self.event_dispatcher.dispatch(
             evaluation_event.ON_END_EVAL,
             metric_name=eval_config.name,
             elapsed_time=time.time() - start
         )
 
-        # Create evaluations file.
-        file_path = os.path.dirname(recs_path) + "/evaluations.json"
-        with open(file_path, mode='w', encoding='utf-8') as out_file:
-            json.dump({'evaluations': []}, out_file, indent=4)
-
-        self.event_dispatcher.dispatch(
-            ON_MAKE_DIR,
-            dir=file_path
-        )
-
-        """
-        evaluations = []
-
-        for metric in self.metrics:
-            if not metric_matches_type(metric,self.rec_type):
-                print('Debug | WARNING: Type of metric ' + metric.value + ' doesn\'t match type of data, skipping..')
-                continue
-            if self.test_use_lenskit and metric in LensKitEvaluator.metric_dict.keys():
-                print('Debug | Lenskit:') # TODO CALLBACK
-                evaluator = LensKitEvaluator(train_path=train_path,
-                                             test_path=test_path,
-                                             recs_path=recs_path,
-                                             metrics=[(metric, self.k)],
-                                             event_dispatcher=self.event_dispatcher)
-            elif metric in EvaluatorRexmex.metric_dict.keys():
-                print('Debug | Rexmex:') # TODO CALLBACK
-                evaluator = EvaluatorRexmex(train_path=train_path,
-                                            test_path=test_path,
-                                            recs_path=recs_path,
-                                            metrics=[(metric, self.k)],
-                                            event_dispatcher=self.event_dispatcher)
-            else:
-                print('Debug | Metric not supported.')
-                continue
-
-            evaluation = evaluator.evaluate_process()
-            print(evaluation)
-            evaluations.append({metric.value: evaluation})
-
-        #print(evaluations)
-        """
-
-        self.add_evaluation_to_file(file_path, evaluation, eval_config)
+        self.add_evaluation_to_file(out_path, evaluation, eval_config)
 
     def add_evaluation_to_file(self, file_path, evaluation_value, eval_config):
         # TODO filters
@@ -192,6 +138,7 @@ class EvaluationPipeline:
             evaluations = json.load(out_file)
 
         evaluations['evaluations'].append(evaluation)
+        #print(json.dumps(evaluations, indent=4))
 
         with open(file_path, mode='w') as out_file:
             json.dump(evaluations, out_file, indent=4)

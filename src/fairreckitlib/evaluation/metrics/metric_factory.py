@@ -3,13 +3,13 @@ This program has been developed by students from the bachelor Computer Science a
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
-from .lenskit.lenskit_predictor import LensKitPredictionEvaluator
+from .lenskit.lenskit_prediction_evaluator import LensKitPredictionEvaluator
+from .rexmex.rexmex_evaluator import RexmexEvaluator
 from ...core.config_params import ConfigParameters
 from ...core.factories import create_factory_from_list
 from .common import Metric, MetricCategory
 
 KEY_METRIC_PARAM_K = 'K'
-
 
 
 def create_accuracy_metric_factory():
@@ -44,6 +44,25 @@ def create_coverage_metric_factory():
          None
          )
     ])
+
+
+def prepare_for_coverage(self):
+    """
+    Uses the train set and recommendations set to
+    create a tuple that describes the possible user-item pairs in the train set
+    and the user-item pairs in the result
+
+    :return: a tuple containing (A,B) where
+        a is a tuple (List,List) of possible users and items in the train set and
+        b is a list of user-item tuples in the recommendations
+    """
+    # Convert recommended user, item columns to list of tuples.
+    tuple_recs = [tuple(r) for r in self.recs[['source_id', 'target_id']].to_numpy()]
+    print(tuple_recs[0:10])
+    # The possible users and items are in the train set
+    possible_users_items = (self.train['source_id'], self.train['target_id'])
+    print(possible_users_items)
+    return possible_users_items, tuple_recs
 
 
 def create_diversity_metric_factory():
@@ -88,8 +107,8 @@ def create_metric(name, params, **kwargs):
     from lenskit import topn
     from lenskit.metrics import predict
     from rexmex.metrics import item_coverage, user_coverage, intra_list_similarity, novelty
-    from src.fairreckitlib.evaluation.metrics.lenskit.lenskit_recommender import LensKitRecommendationEvaluator
-    print('DEV line 92 metric_factory', name, params)
+    from src.fairreckitlib.evaluation.metrics.lenskit.lenskit_recommendation_evaluator import LensKitRecommendationEvaluator
+    print('DEV metric name and params', name, params)
     metric_dict = {
         Metric.NDCG.value: (LensKitRecommendationEvaluator, topn.ndcg, 'ndcg'),
         Metric.PRECISION.value: (LensKitRecommendationEvaluator, topn.precision, 'precision'),
@@ -99,10 +118,10 @@ def create_metric(name, params, **kwargs):
         Metric.RMSE.value: (LensKitPredictionEvaluator, predict.rmse, 'rmse'),
         Metric.MAE.value: (LensKitPredictionEvaluator, predict.mae, 'mae'),
 
-        Metric.ITEM_COVERAGE.value: (LensKitPredictionEvaluator, item_coverage),
-        Metric.USER_COVERAGE.value: (LensKitPredictionEvaluator, user_coverage),
-        Metric.INTRA_LIST_SIMILARITY.value: (LensKitPredictionEvaluator, intra_list_similarity),
-        Metric.NOVELTY.value: (LensKitPredictionEvaluator, novelty)
+        Metric.ITEM_COVERAGE.value: (RexmexEvaluator, item_coverage, None),
+        Metric.USER_COVERAGE.value: (RexmexEvaluator, user_coverage, None),
+        Metric.INTRA_LIST_SIMILARITY.value: (RexmexEvaluator, intra_list_similarity, None),
+        Metric.NOVELTY.value: (RexmexEvaluator, novelty, None)
     }
 
     evaluator, eval_func, group = metric_dict[name]

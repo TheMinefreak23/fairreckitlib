@@ -5,7 +5,6 @@ Utrecht University within the Software Project course.
 """
 from typing import Callable
 
-from .metrics.lenskit import lenskit_factory
 from .pipeline.evaluation_pipeline import EvaluationPipeline
 from ..core.config_constants import TYPE_PREDICTION, TYPE_RECOMMENDATION
 from ..core.event_dispatcher import EventDispatcher
@@ -79,6 +78,7 @@ def create_evaluation_factory() -> GroupFactory:
     # TODO document this (shared factory pointers)
     for _, func_create in enumerate(shared_categories):
         category_factory = func_create()
+        print('category factory', category_factory)
         prediction_factory.add_factory(
             create_metric_pipeline_factory(category_factory, EvaluationPipeline)
         )

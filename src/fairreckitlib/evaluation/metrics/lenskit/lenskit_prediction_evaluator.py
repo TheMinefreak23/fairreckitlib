@@ -15,10 +15,10 @@ class LensKitPredictionEvaluator(Evaluator):
     """Predictor implementation for the LensKit framework."""
 
     # TODO eval_func is a function
-    def __init__(self, eval_func: Any, params: Dict[str, Any]):
-        Evaluator.__init__(self, eval_func, params)
+    def __init__(self, eval_func: Any, params: Dict[str, Any], **kwargs):
+        Evaluator.__init__(self, eval_func, params, **kwargs)
 
-    def evaluate(self, test_set, recs):
+    def evaluate(self, train_set, test_set, recs):
         # Merge on user ID
         scores = pd.merge(test_set, recs, how='left', on=['user', 'item'])
         scores.rename(columns={'score': 'prediction'}, inplace=True)

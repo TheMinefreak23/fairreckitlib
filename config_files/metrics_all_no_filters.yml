@@ -1,0 +1,23 @@
+datasets:
+- name: ML-100K
+  splitting:
+    test_ratio: 0.2
+    type: random
+evaluation:
+- name: NDCG@K
+- name: P@K
+- name: R@K
+- name: MRR
+- name: RMSE
+- name: MAE
+- name: Item Coverage
+- name: User Coverage
+#- name: Intra-List Similarity
+#- name: Novelty
+
+models:
+  Implicit:
+  - name: AlternatingLeastSquares
+name: Dev
+top_K: 10
+type: recommendation
