@@ -21,7 +21,15 @@ KEY_EVALUATION = 'evaluation'
 def create_metric_pipeline_factory(
         metric_factory: Factory,
         create_pipeline: Callable[[Factory, EventDispatcher], EvaluationPipeline]) -> Factory:
-    
+    """Create a metric pipeline factory.
+
+    Args:
+        metric_factory: the factory with available metrics.
+        create_pipeline: the pipeline creation function associated with the factory.
+
+    Returns
+        the metric pipeline factory.
+    """
     metric_factory.create_pipeline = create_pipeline
     return metric_factory
 
@@ -42,34 +50,8 @@ def create_evaluation_factory() -> GroupFactory:
 
     prediction_factory = GroupFactory(TYPE_PREDICTION)
 
-    # rexmex predictors
-    """
-    prediction_factory.add_factory(create_metric_pipeline_factory(
-        rexmex_factory.create_predictor_factory(),
-        EvaluationPipeline
-    ))"""
-    """
-    # lenskit predictors
-    prediction_factory.add_factory(create_metric_pipeline_factory(
-        lenskit_factory.create_predictor_factory(),
-        EvaluationPipeline
-    ))
-    """
-
     recommendation_factory = GroupFactory(TYPE_RECOMMENDATION)
 
-    # rexmex recommenders
-    """recommendation_factory.add_factory(create_metric_pipeline_factory(
-        rexmex_factory.create_recommender_factory(),
-        EvaluationPipeline
-    ))"""
-    """
-        # lenskit recommenders
-        recommendation_factory.add_factory(create_metric_pipeline_factory(
-            lenskit_factory.create_recommender_factory(),
-            EvaluationPipeline
-        ))
-    """
     recommendation_factory.add_factory(
         create_metric_pipeline_factory(create_accuracy_metric_factory(),
                                        EvaluationPipeline)

@@ -19,6 +19,11 @@ ON_END_FILTER = 'EvaluationPipeline.on_end_filter'
 
 
 def get_evaluation_events():
+    """Get all evaluation pipeline events.
+
+    Returns:
+        a list of pairs in the format (event_id, func_on_event)
+    """
     return [
         (ON_BEGIN_LOAD_TEST_SET, on_begin_load_test_set),
         (ON_END_LOAD_TEST_SET, on_end_load_test_set),
@@ -191,7 +196,7 @@ def on_end_eval_pipeline(event_listener, **kwargs):
     """
     if event_listener.verbose:
         elapsed_time = kwargs['elapsed_time']
-        print(f'Finished Evaluation Pipeline on', kwargs['num_metrics'], 'metrics',
+        print('Finished Evaluation Pipeline on', kwargs['num_metrics'], 'metrics',
               f'in {elapsed_time:1.4f}s')
 
 

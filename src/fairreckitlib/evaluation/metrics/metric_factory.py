@@ -3,9 +3,13 @@ This program has been developed by students from the bachelor Computer Science a
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
+from typing import Any, Dict
+
 from lenskit import topn
 from lenskit.metrics import predict
 from rexmex.metrics import item_coverage, user_coverage, intra_list_similarity, novelty
+
+from .evaluator import Evaluator
 from .lenskit.lenskit_prediction_evaluator import LensKitPredictionEvaluator
 from .lenskit.lenskit_recommendation_evaluator import LensKitRecommendationEvaluator
 from .rexmex.rexmex_evaluator import RexmexEvaluator
@@ -15,6 +19,11 @@ from .common import Metric, MetricCategory, KEY_METRIC_PARAM_K
 
 
 def create_accuracy_metric_factory():
+    """Create the factory with Accuracy metrics.
+
+    Returns:
+        the factory with all available metrics.
+    """
     return create_factory_from_list(MetricCategory.ACCURACY.value, [
         (Metric.NDCG.value,
          create_metric,
@@ -36,6 +45,11 @@ def create_accuracy_metric_factory():
 
 
 def create_coverage_metric_factory():
+    """Create the factory with Coverage metrics.
+
+        Returns:
+            the factory with all available metrics.
+        """
     return create_factory_from_list(MetricCategory.COVERAGE.value, [
         (Metric.ITEM_COVERAGE.value,
          create_metric,
@@ -68,6 +82,11 @@ def prepare_for_coverage(self):
 
 
 def create_diversity_metric_factory():
+    """Create the factory with Diversity metrics.
+
+        Returns:
+            the factory with all available metrics.
+    """
     return create_factory_from_list(MetricCategory.DIVERSITY.value, [
         (Metric.INTRA_LIST_SIMILARITY.value,
          create_metric,
@@ -77,6 +96,11 @@ def create_diversity_metric_factory():
 
 
 def create_novelty_metric_factory():
+    """Create the factory with Novelty metrics.
+
+        Returns:
+            the factory with all available metrics.
+    """
     return create_factory_from_list(MetricCategory.NOVELTY.value, [
         (Metric.NOVELTY.value,
          create_metric,
@@ -86,6 +110,11 @@ def create_novelty_metric_factory():
 
 
 def create_rating_metric_factory():
+    """Create the factory with Rating metrics.
+
+        Returns:
+            the factory with all available metrics.
+    """
     return create_factory_from_list(MetricCategory.RATING.value, [
         (Metric.RMSE.value,
          create_metric,
@@ -99,12 +128,25 @@ def create_rating_metric_factory():
 
 
 def create_metric_params_k():
+    """Create the K param for K metrics
+
+    Returns:
+        the configuration parameters of the metric.
+    """
     params = ConfigParameters()
     params.add_value(KEY_METRIC_PARAM_K, int, None, (1, None))
     return params
 
 
-def create_metric(name, params, **kwargs):
+def create_metric(name: str, params: Dict[str, Any], **kwargs) -> Evaluator:
+    """Create a metric.
+
+        Args:
+            name: the name of the metric.
+            params: parameters for the metric
+        Returns:
+            an Evaluator that uses the metric function corresponding to the name.
+    """
     # TODO refactor
     #print('DEV metric name and params', name, params)
     metric_dict = {
@@ -130,6 +172,15 @@ def create_metric(name, params, **kwargs):
 
 
 def resolve_metric_factory(metric_name, metric_category_factory):
+    """Get metric factory from name and category factory.
+
+    Args:
+        metric_name: name of the metric
+        metric_category_factory: factory of the metric category
+
+    Returns:
+        the metric factory.
+    """
     for _, factory_name in enumerate(metric_category_factory.get_available_names()):
         metric_factory = metric_category_factory.get_factory(factory_name)
         if metric_factory.is_obj_available(metric_name):

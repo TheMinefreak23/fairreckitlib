@@ -4,7 +4,6 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from datetime import datetime
 import os
 import time
 
@@ -14,26 +13,43 @@ from typing import Tuple
 import pandas as pd
 
 from .evaluation_config import MetricConfig
-from .evaluation_event import ON_BEGIN_LOAD_TRAIN_SET, ON_END_LOAD_TRAIN_SET, ON_BEGIN_LOAD_TEST_SET, \
+from .evaluation_event import ON_BEGIN_LOAD_TRAIN_SET, \
+    ON_END_LOAD_TRAIN_SET, ON_BEGIN_LOAD_TEST_SET, \
     ON_END_LOAD_TEST_SET, ON_BEGIN_LOAD_RECS_SET, ON_END_LOAD_RECS_SET
 from ..metrics.evaluator import Evaluator
+from ..metrics.filter import filter_data
 from ...core.event_dispatcher import EventDispatcher
 from ...core.event_error import ON_RAISE_ERROR
+from ...core.event_io import ON_REMOVE_FILE
 from ...core.factories import Factory
 from ...evaluation.pipeline import evaluation_event
 
+FILTER_SUFFIX = 'filtered'
+# TODO DEV
+USE_FILTER = False
+
 
 class EvaluationPipeline:
-    # test
-    test_filter = False
-    test_use_lenskit = True
+    """Evaluation Pipeline to run evaluations from a specific metric category."""
 
     def __init__(self, metric_factory: Factory, event_dispatcher: EventDispatcher):
         self.metric_factory = metric_factory
+        self.filters = []  # TODO
 
         self.event_dispatcher = event_dispatcher
 
+    # TODO documentation
     def run(self, out_path: str, recs_path: str, data_transition, metrics, is_running, **kwargs):
+        """
+
+        Args:
+            out_path:
+            recs_path:
+            data_transition:
+            metrics:
+            is_running:
+            kwargs:
+        """
         self.event_dispatcher.dispatch(
             evaluation_event.ON_BEGIN_EVAL_PIPELINE,
             num_metrics=len(metrics)
@@ -41,15 +57,20 @@ class EvaluationPipeline:
         start = time.time()
 
         for metric in metrics:
-            #print('metric',metric)
+            # print('metric',metric)
             evaluator = self.metric_factory.create(
                 metric.name,
                 metric.params,
                 **kwargs
             )
-            #print('data_transition', data_transition)
-            self.filter(evaluator, metric, data_transition.train_set_path,
-                        data_transition.test_set_path, recs_path, out_path)
+            # print('data_transition', data_transition)
+            self.filter(evaluator,
+                        metric,
+                        train_path=data_transition.train_set_path,
+                        test_path=data_transition.test_set_path,
+                        recs_path=recs_path,
+                        out_path=out_path,
+                        profile=data_transition.dataset)
 
         self.event_dispatcher.dispatch(
             evaluation_event.ON_END_EVAL_PIPELINE,
@@ -57,61 +78,86 @@ class EvaluationPipeline:
             elapsed_time=time.time() - start
         )
 
-    def filter(self, evaluator, metrics, train_path, test_path, recs_path, out_path, profile_path=""):
-
+    # TODO documentation
+    def filter(self, evaluator, metric, *, train_path, test_path, recs_path, out_path, profile):
+        """Run the evaluation on the non-filtered and filtered data
+            Args:
+        """
         # Run evaluation globally
         train_set, test_set, recs_set = self.load_data(train_path, test_path, recs_path)
-        self.run_evaluation(evaluator, metrics, train_set, test_set, recs_set, recs_path, out_path)
+        self.run_evaluation(evaluator,
+                            metric,
+                            train_set=train_set,
+                            test_set=test_set,
+                            recs=recs_set,
+                            out_path=out_path
+                            )
 
-        if self.test_filter:
-            self.event_dispatcher.dispatch(
-                evaluation_event.ON_BEGIN_FILTER
-            )
-            filter_start = time.time()
-            print('TODO: filter data per evaluation')
+        self.event_dispatcher.dispatch(
+            evaluation_event.ON_BEGIN_FILTER
+        )
+        filter_start = time.time()
+        print('TODO: filter data per evaluation')
 
-            # TODO
-            """
-            suffix = 'filtered'
+        # TODO filter
+        if USE_FILTER:
             for filter_passes in self.filters:
-                # Make temporary filtered data
-                filtered_paths = []
-                for path in [train_path, test_path, recs_path]:
-                    df = pd.read_csv(path, header=None, sep='\t', names=['user', 'item', 'rating'])  # TODO refactor
-                    profile = pd.read_csv(profile_path, header=None, sep='\t',
-                                          names=['user', 'gender', 'age', 'country', 'date'])
-                    merged = df.merge(df, profile, on=['user'])
-                    print(merged.head())
-                    df = filter_data(merged, filter_passes)['user', 'item', 'rating']
-                    print(df.head())
-                    filtered_path = path + suffix
-                    filtered_paths.append(filtered_path)
-                    pd.write_csv(df, filtered_path, header=None, sep='\t')
+                filtered_paths = filter_pass(train_path,
+                                             test_path,
+                                             recs_path,
+                                             profile,
+                                             filter_passes
+                                             )
 
-                filtered_train_set, filtered_test_set, filtered_recs = self.load_data(train_path + suffix,
-                                                                                      test_path + suffix,
-                                                                                      recs_path + suffix)   # TODO perhaps no need to filter the train/recs, but might be faster
+                filtered_train_set, filtered_test_set, filtered_recs = self.load_data(
+                    train_path + FILTER_SUFFIX,
+                    test_path + FILTER_SUFFIX,
+                    recs_path + FILTER_SUFFIX)
 
                 # Run evaluation per filtered result
-                self.run_evaluation(filtered_train_set, filtered_test_set, filtered_recs)
+                self.run_evaluation(evaluator,
+                                    metric,
+                                    train_set=filtered_train_set,
+                                    test_set=filtered_test_set,
+                                    recs=filtered_recs,
+                                    out_path=out_path)
 
                 # Remove filtered data
-                for path in filtered_path:
+                for path in filtered_paths:
                     os.remove(path)
 
                     self.event_dispatcher.dispatch(
                         ON_REMOVE_FILE,
                         file=path
                     )
-"""
+
             self.event_dispatcher.dispatch(
                 evaluation_event.ON_END_FILTER,
                 elapsed_time=time.time() - filter_start
             )
 
-    # TODO refactor so it take dataframes instead of path?
-    def run_evaluation(self, evaluator: Evaluator, eval_config: MetricConfig, train_set, test_set, recs, recs_path, out_path):
+    # TODO documentation
+    def run_evaluation(self,
+                       evaluator: Evaluator,
+                       eval_config: MetricConfig,
+                       *,
+                       train_set,
+                       test_set,
+                       recs,
+                       out_path):
+        """Run the evaluation for the specified metric configuration.
 
+        Args:
+           evaluator:
+           eval_config:
+
+        Keyword Args:
+            train_set:
+            test_set:
+            recs:
+            out_path:
+
+        """
         self.event_dispatcher.dispatch(
             evaluation_event.ON_BEGIN_EVAL,
             metric_name=eval_config.name
@@ -124,31 +170,23 @@ class EvaluationPipeline:
             elapsed_time=time.time() - start
         )
 
-        self.add_evaluation_to_file(out_path, evaluation, eval_config)
-
-    def add_evaluation_to_file(self, file_path, evaluation_value, eval_config):
-        # TODO filters
-        evaluation = {'name': eval_config.name,
-                      'params': eval_config.params,
-                      'evaluation': {'global': evaluation_value, 'filtered': []}}
-
-        # TODO refactor
-        with open(file_path) as out_file:
-            evaluations = json.load(out_file)
-
-        evaluations['evaluations'].append(evaluation)
-        #print(json.dumps(evaluations, indent=4))
-
-        with open(file_path, mode='w') as out_file:
-            json.dump(evaluations, out_file, indent=4)
+        add_evaluation_to_file(out_path, evaluation, eval_config)
 
     def load_data(self, train_set_path: str, test_set_path: str, recs_path: str) -> Tuple[
         pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-        return self.load_train_set(train_set_path), self.load_test_set(test_set_path), self.load_recs(recs_path)
+        """Load the train and test set, as well as the model recommendations/predictions.
+
+        Returns:
+            the train set, test set and model results set (DataFrames)
+        """
+        train_set = self.load_train_set(train_set_path)
+        test_set = self.load_test_set(test_set_path)
+        recs = self.load_recs(recs_path)
+        return train_set, test_set, recs
 
     # TODO EXCEPT FOR RETURN VALUE THIS IS A COPY PASTE FROM MODEL PIPELINE!!!!!!!!!
     def load_train_set(self, train_set_path: str) -> pd.DataFrame:
-        """Load the train set that all models can use for training.
+        """Load the train set that the models used for training.
 
         Args:
             train_set_path: path to where the train set is stored.
@@ -188,7 +226,7 @@ class EvaluationPipeline:
         return train_set
 
     def load_test_set(self, test_set_path: str) -> pd.DataFrame:
-        """Load the test set that all models can use for testing.
+        """Load the test set that the models used for testing.
 
         Args:
             test_set_path: path to where the test set is stored.
@@ -241,14 +279,6 @@ class EvaluationPipeline:
         start = time.time()
 
         try:
-            """
-            recs = pd.read_csv(
-                recs_path,
-                sep='\t',
-                header=None,
-                names=['user', 'item', 'rating']
-            )
-            """
             # recs = pd.read_csv(recs_path, header=None, sep='\t', names=['user', 'item', 'score'])
             # recs['rank'] = recs.groupby('user')['score'].rank()
             recs = pd.read_csv(recs_path, sep='\t')
@@ -257,7 +287,8 @@ class EvaluationPipeline:
             recs = recs[['item', 'score', 'user', 'rank']]
 
             # LensKit needs this column, TODO refactor?
-            # It is a bit redundant because there is only one approach during the evaluation pipeline
+            # It is a bit redundant because
+            # there is only one approach during the evaluation pipeline
             recs['Algorithm'] = 'APPROACHNAME'
 
         except FileNotFoundError as err:
@@ -279,3 +310,59 @@ class EvaluationPipeline:
         )
 
         return recs
+
+
+def add_evaluation_to_file(file_path, evaluation_value, eval_config):
+    """Add an evaluation result to the list in the overview file.
+
+    Args:
+        file_path: the path to the evaluations overview file
+        evaluation_value: the evaluation result
+        eval_config: the metric configuration used for the evaluation
+    """
+    # TODO filters
+    evaluation = {'name': eval_config.name,
+                  'params': eval_config.params,
+                  'evaluation': {'global': evaluation_value, 'filtered': []}}
+
+    # TODO refactor
+    with open(file_path, encoding='utf-8') as out_file:
+        evaluations = json.load(out_file)
+
+    evaluations['evaluations'].append(evaluation)
+    # print(json.dumps(evaluations, indent=4))
+
+    with open(file_path, mode='w', encoding='utf-8') as out_file:
+        json.dump(evaluations, out_file, indent=4)
+
+
+def filter_pass(train_path, test_path, recs_path, profile, filter_passes):
+    """Make temporary filtered data
+
+    Args:
+        train_path: path to the train set
+        test_path: path to the test set
+        recs_path: path to the model result
+        profile: additional dataset information for filtering
+        filter_passes: list of filter passes to perform
+
+    Returns:
+        the paths of the filtered data.
+    """
+    filtered_paths = []
+    for path in [train_path, test_path, recs_path]:
+        raw_df = pd.read_csv(
+            path,
+            header=None,
+            sep='\t',
+            names=['user', 'item', 'rating']
+        )
+        merged = raw_df.merge(raw_df, profile, on=['user'])
+        print(merged.head())
+        filtered_df = filter_data(merged, filter_passes)['user', 'item', 'rating']
+        print(filtered_df.head())
+        filtered_path = path + FILTER_SUFFIX
+        filtered_paths.append(filtered_path)
+        pd.write_csv(filtered_df, filtered_path, header=None, sep='\t')
+
+    return filtered_paths

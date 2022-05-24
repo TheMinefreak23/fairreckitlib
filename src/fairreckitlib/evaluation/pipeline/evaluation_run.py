@@ -29,7 +29,8 @@ def run_evaluation_pipelines(
         event_dispatcher: EventDispatcher,
         is_running: Callable[[], bool],
         **kwargs) -> List[str]:
-    """Run several evaluation pipelines according to the specified evaluation pipeline configuration.
+    """Run several evaluation pipelines
+    according to the specified evaluation pipeline configuration.
 
     Args:
         pipeline_config: the configuration on how to run the evaluation pipelines.
@@ -68,7 +69,8 @@ def run_evaluation_pipelines(
             #print('==DEV CATEGORY METRICS==', category, metrics)
             # Get category metrics
             metrics_names = [metric.value for metric in metrics]
-            metrics = [metric for metric in pipeline_config.evaluation if metric.name in metrics_names]
+            metrics = [metric for metric in pipeline_config.evaluation
+                       if metric.name in metrics_names]
             category_factory = pipeline_config.evaluation_factory.get_factory(category.value)
             pipeline = category_factory.create_pipeline(category_factory, event_dispatcher)
             if not pipeline:

@@ -4,10 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-import time
 from abc import ABC, abstractmethod
-
-from ..pipeline import evaluation_event
 
 
 class Evaluator(ABC):
@@ -22,4 +19,3 @@ class Evaluator(ABC):
     def evaluate(self, train_set, test_set, recs):
         """Run analysis based on metric"""
         raise NotImplementedError()
-
