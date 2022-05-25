@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Optional
 
 from ..utility import load_yml, save_yml
 from .dataset_config_parsing import parse_dataset_config
-from .dataset_constants import TABLE_FILE_PREFIX
+from .dataset_constants import DATASET_CONFIG_FILE
 from .dataset import Dataset
 from .processor.dataset_processor_lfm1b import DatasetProcessorLFM1B
 from .processor.dataset_processor_lfm2b import DatasetProcessorLFM2B
@@ -70,8 +70,7 @@ class DataRegistry:
             if not os.path.isdir(dataset_dir):
                 continue
 
-            config_file_name = TABLE_FILE_PREFIX + 'dataset_config.yml'
-            config_file_path = os.path.join(dataset_dir, config_file_name)
+            config_file_path = os.path.join(dataset_dir, DATASET_CONFIG_FILE)
             if not os.path.isfile(config_file_path):
                 if self.processors.get(file_name) is None:
                     print('Unknown dataset processor:', file_name)

@@ -18,7 +18,6 @@ from typing import Any, Dict, Optional, List, Union
 
 import pandas as pd
 
-from ..utility import load_array_from_hdf5
 from .dataset_config import DatasetConfig, DatasetMatrixConfig, DatasetTableConfig
 
 
@@ -189,16 +188,20 @@ class Dataset:
 
         return info
 
-    def load_matrix(
-            self,
-            matrix_name: str,
-            chunk_size: int = None) -> Optional[pd.DataFrame]:
-        """TODO"""
+    def load_matrix(self, matrix_name: str) -> Optional[pd.DataFrame]:
+        """Load the standardized user-item matrix of the dataset.
+
+        Args:
+            matrix_name: the name of the matrix to load.
+
+        Returns:
+            the loaded user-item matrix or None when not available.
+        """
         matrix_config = self.get_matrix_config(matrix_name)
         if matrix_config is None:
             return None
 
-        return matrix_config.load_matrix(self.data_dir, chunk_size=chunk_size)
+        return matrix_config.load_matrix(self.data_dir)
 
     def load_item_indices(self, matrix_name: str) -> Optional[List[int]]:
         """Load the item indices.
@@ -216,14 +219,7 @@ class Dataset:
         if not matrix:
             return None
 
-        item_idx_file = matrix.item.file_name
-        if not item_idx_file:
-            return None
-
-        return load_array_from_hdf5(
-            os.path.join(self.data_dir, item_idx_file),
-            'indices'
-        )
+        return matrix.item.load_indices(self.data_dir)
 
     def load_user_indices(self, matrix_name: str) -> Optional[List[int]]:
         """Load the user indices.
@@ -241,14 +237,7 @@ class Dataset:
         if not matrix:
             return None
 
-        user_idx_file = matrix.user.file_name
-        if not user_idx_file:
-            return None
-
-        return load_array_from_hdf5(
-            os.path.join(self.data_dir, user_idx_file),
-            'indices'
-        )
+        return matrix.user.load_indices(self.data_dir)
 
     def read_matrix(
             self,

@@ -2,10 +2,12 @@
 
 Modules:
 
-    dataset: class definition for accessing a dataset and related data tables.
+    dataset: class wrapper for accessing a dataset and related data tables.
+    dataset_config: configuration structs that define the matrix/tables.
+    dataset_config_parsing: parse dataset configuration structs.
     dataset_constants: constants to be used in other modules.
     dataset_registry: registry for available datasets and processing them into a standard format.
-    dataset_table: dataset table configuration and IO functionality.
+    dataset_sampling: create a sample of an existing dataset.
 
 Packages:
 
