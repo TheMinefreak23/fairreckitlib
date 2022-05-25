@@ -19,7 +19,7 @@ from typing import Any, Dict, Tuple
 import pandas as pd
 
 from ...core.config_params import ConfigParameters
-from ..set.dataset import DATASET_RATINGS_EXPLICIT, DATASET_RATINGS_IMPLICIT
+from ..set.dataset_config import DATASET_RATINGS_EXPLICIT, DATASET_RATINGS_IMPLICIT
 from .base_converter import RatingConverter
 from .convert_constants import RATING_TYPE_THRESHOLD
 

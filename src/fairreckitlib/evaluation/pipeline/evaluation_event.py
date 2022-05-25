@@ -19,6 +19,11 @@ ON_END_FILTER = 'EvaluationPipeline.on_end_filter'
 
 
 def get_evaluation_events():
+    """Get all evaluation pipeline events.
+
+    Returns:
+        a list of pairs in the format (event_id, func_on_event)
+    """
     return [
         (ON_BEGIN_LOAD_TEST_SET, on_begin_load_test_set),
         (ON_END_LOAD_TEST_SET, on_end_load_test_set),
@@ -103,10 +108,10 @@ def on_begin_eval(event_listener, **kwargs):
             in the event dispatcher with this callback.
 
     Keyword Args:
-        metric(Metric): metric
+        metric_name(str): metric name
     """
     if event_listener.verbose:
-        print('Starting evaluation with metric', kwargs['metric'].value)
+        print('Starting evaluation with metric', kwargs['metric_name'])
 
 
 def on_end_load_test_set(event_listener, **kwargs):
@@ -153,13 +158,13 @@ def on_end_eval(event_listener, **kwargs):
                 in the event dispatcher with this callback.
 
         Keyword Args:
-            metric(Metric): the metric that was used in the computation.
+            metric_name(str): the metric name that was used in the computation.
             elapsed_time(float): the time that has passed since the evaluation
                 computation started, expressed in seconds.
     """
     if event_listener.verbose:
         elapsed_time = kwargs['elapsed_time']
-        print('Finished metric', kwargs['metric'].value, f'in {elapsed_time:1.4f}s')
+        print('Finished metric', kwargs['metric_name'], f'in {elapsed_time:1.4f}s')
 
 
 def on_begin_eval_pipeline(event_listener, **kwargs):
@@ -191,7 +196,7 @@ def on_end_eval_pipeline(event_listener, **kwargs):
     """
     if event_listener.verbose:
         elapsed_time = kwargs['elapsed_time']
-        print(f'Finished Evaluation Pipeline on', kwargs['num_metrics'], 'metrics',
+        print('Finished Evaluation Pipeline on', kwargs['num_metrics'], 'metrics',
               f'in {elapsed_time:1.4f}s')
 
 
@@ -206,7 +211,7 @@ def on_begin_filter(event_listener, **kwargs):
         filter_name(str): name of the filter.
     """
     if event_listener.verbose:
-        print('Starting filter:', kwargs['filter_name'].value)
+        print('Starting filter:', kwargs['filter_name'])
 
 
 def on_end_filter(event_listener, **kwargs):
