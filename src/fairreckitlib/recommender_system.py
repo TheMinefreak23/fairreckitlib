@@ -14,7 +14,7 @@ import os
 from typing import Any, Dict, Callable, List, Union
 
 from .core.threading.thread_processor import ThreadProcessor
-from .data.data_factory import KEY_DATASETS
+from .data.data_factory import KEY_DATA
 from .data.filter.filter_constants import KEY_DATA_FILTERS
 from .data.set.dataset_registry import DataRegistry
 from .data.ratings.rating_converter_factory import KEY_RATING_CONVERTER
@@ -96,12 +96,12 @@ class RecommenderSystem:
 
     def run_experiment(
             self,
-            events: Dict[str, Callable[[Any], None]],
             config: Union[PredictorExperimentConfig, RecommenderExperimentConfig],
             *,
-            num_threads: int=0,
-            verbose: bool=True,
-            validate_config: bool=True) -> bool:
+            events: Dict[str, Callable[[Any], None]] = None,
+            num_threads: int = 0,
+            verbose: bool = True,
+            validate_config: bool = True) -> bool:
         """Run an experiment with the specified configuration.
 
         It is advised to validate the configuration (default) before running the
@@ -158,11 +158,11 @@ class RecommenderSystem:
 
     def run_experiment_from_yml(
             self,
-            events: Dict[str, Callable[[Any], None]],
             file_path: str,
             *,
-            num_threads: int=0,
-            verbose: bool=True) -> bool:
+            events: Dict[str, Callable[[Any], None]] = None,
+            num_threads: int = 0,
+            verbose: bool = True) -> bool:
         """Run an experiment from a yml file.
 
         The configuration in the file is validated before starting the experiment.
@@ -194,8 +194,8 @@ class RecommenderSystem:
             raise FileNotFoundError(errno.ENOENT, 'Config file not found', file_path) from err
 
         return self.run_experiment(
-            events,
             config,
+            events=events,
             num_threads=num_threads,
             verbose=verbose,
             validate_config=False
@@ -203,12 +203,12 @@ class RecommenderSystem:
 
     def validate_experiment(
             self,
-            events: Dict[str, Callable[[Any], None]],
             result_dir: str,
             num_runs: int,
             *,
-            num_threads: int=0,
-            verbose: bool=True) -> bool:
+            events: Dict[str, Callable[[Any], None]] = None,
+            num_threads: int = 0,
+            verbose: bool = True) -> bool:
         """Validate an experiment for an additional number of runs.
 
         The configuration file is expected to be stored in the specified result directory.
@@ -271,7 +271,7 @@ class RecommenderSystem:
         """
         return self.thread_processor.get_active_threads()
 
-    def get_available_algorithms(self, model_type: str=None):
+    def get_available_algorithms(self, model_type: str = None):
         """Get the available algorithms of the recommender system.
 
         Args:
@@ -285,7 +285,6 @@ class RecommenderSystem:
             KEY_MODELS,
             sub_type=model_type
         )
-
 
     def get_available_datasets(self) -> Dict[str, Any]:
         """Get the available datasets of the recommender system.
@@ -304,11 +303,11 @@ class RecommenderSystem:
         """
         # TODO the data filter factory does not exist
         return self.experiment_factory.get_sub_availability(
-            KEY_DATASETS,
+            KEY_DATA,
             sub_type=KEY_DATA_FILTERS
         )
 
-    def get_available_metrics(self, eval_type: str=None) -> Dict[str, Any]:
+    def get_available_metrics(self, eval_type: str = None) -> Dict[str, Any]:
         """Get the available metrics of the recommender system.
 
         Args:
@@ -330,7 +329,7 @@ class RecommenderSystem:
             a dictionary with the availability of rating converters.
         """
         return self.experiment_factory.get_sub_availability(
-            KEY_DATASETS,
+            KEY_DATA,
             sub_type=KEY_RATING_CONVERTER
         )
 
@@ -341,6 +340,6 @@ class RecommenderSystem:
             a dictionary with the availability of data splitters.
         """
         return self.experiment_factory.get_sub_availability(
-            KEY_DATASETS,
+            KEY_DATA,
             sub_type=KEY_SPLITTING
         )

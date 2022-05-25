@@ -26,7 +26,7 @@ from ..split.split_config import SplitConfig
 from ..split.split_constants import KEY_SPLITTING, KEY_SPLIT_TEST_RATIO
 from ..ratings.convert_config import ConvertConfig
 from ..ratings.rating_converter_factory import KEY_RATING_CONVERTER
-from .data_config import DatasetConfig
+from .data_config import DataMatrixConfig
 from .data_event import ON_BEGIN_DATA_PIPELINE, ON_END_DATA_PIPELINE
 from .data_event import ON_BEGIN_LOAD_DATASET, ON_END_LOAD_DATASET
 from .data_event import ON_BEGIN_FILTER_DATASET, ON_END_FILTER_DATASET
@@ -69,7 +69,7 @@ class DataPipeline(metaclass=ABCMeta):
     def run(self,
             output_dir: str,
             dataset: Dataset,
-            data_config: DatasetConfig,
+            data_config: DataMatrixConfig,
             is_running: Callable[[], bool]) -> Optional[DataTransition]:
         """Run the entire data pipeline from beginning to end.
 
@@ -95,10 +95,10 @@ class DataPipeline(metaclass=ABCMeta):
         start = time.time()
 
         # step 1
-        data_dir = self.create_data_output_dir(output_dir, dataset)
+        data_dir = self.create_data_output_dir(output_dir, data_config)
 
         # step 2
-        dataframe = self.load_from_dataset(dataset)
+        dataframe = self.load_from_dataset(dataset, data_config.matrix)
         if not is_running():
             return None
 
@@ -108,7 +108,10 @@ class DataPipeline(metaclass=ABCMeta):
             return None
 
         # step 4
-        dataframe, rating_type = self.convert_ratings(dataset, dataframe, data_config.converter)
+        dataframe, rating_type = self.convert_ratings(dataset,
+                                                      data_config.matrix,
+                                                      dataframe,
+                                                      data_config.converter)
         if not is_running():
             return None
 
@@ -139,23 +142,24 @@ class DataPipeline(metaclass=ABCMeta):
 
         return data_output
 
-    def create_data_output_dir(self, output_dir: str, dataset: Dataset) -> str:
+    def create_data_output_dir(self, output_dir: str, data_config: DataMatrixConfig) -> str:
         """Create the data output directory for a dataset.
 
         Args:
             output_dir: the path of the directory to store the output.
-            dataset: the dataset to create a directory for.
+            data_config: the dataset matrix configuration to create a directory for.
 
         Returns:
             the path of the directory where the output data can be stored.
         """
-        if not self.split_datasets.get(dataset.name):
-            self.split_datasets[dataset.name] = 0
+        dataset_matrix_name = data_config.dataset + '_' + data_config.matrix
+        if not self.split_datasets.get(dataset_matrix_name):
+            self.split_datasets[dataset_matrix_name] = 0
 
-        index = self.split_datasets[dataset.name]
-        self.split_datasets[dataset.name] += 1
+        index = self.split_datasets[dataset_matrix_name]
+        self.split_datasets[dataset_matrix_name] += 1
 
-        data_dir = os.path.join(output_dir, dataset.name + '_' + str(index))
+        data_dir = os.path.join(output_dir, dataset_matrix_name + '_' + str(index))
         os.mkdir(data_dir)
         self.event_dispatcher.dispatch(
             ON_MAKE_DIR,
@@ -164,13 +168,14 @@ class DataPipeline(metaclass=ABCMeta):
 
         return data_dir
 
-    def load_from_dataset(self, dataset: Dataset) -> pd.DataFrame:
+    def load_from_dataset(self, dataset: Dataset, matrix_name: str) -> pd.DataFrame:
         """Load in the desired dataset matrix into a dataframe.
 
         It raises a FileNotFoundError when the dataset matrix file does not exist.
 
         Args:
-            dataset: the dataset to load the matrix dataframe from.
+            dataset: the dataset to load a matrix dataframe from.
+            matrix_name: the name of the matrix to load from the dataset.
 
         Returns:
             dataframe: belonging to the specified dataset. The
@@ -180,17 +185,18 @@ class DataPipeline(metaclass=ABCMeta):
         """
         self.event_dispatcher.dispatch(
             ON_BEGIN_LOAD_DATASET,
-            dataset=dataset
+            dataset=dataset,
+            matrix=matrix_name
         )
 
         start = time.time()
 
         try:
-            dataframe = dataset.load_matrix_df()
+            dataframe = dataset.load_matrix(matrix_name)
         except FileNotFoundError as err:
             self.event_dispatcher.dispatch(
                 ON_FAILURE_ERROR,
-                msg='Failure: to load dataset matrix ' + dataset.name
+                msg='Failure: to load dataset matrix ' + dataset.get_name() + '_' + matrix_name
             )
             # raise again so the data run aborts
             raise err
@@ -239,6 +245,7 @@ class DataPipeline(metaclass=ABCMeta):
 
     def convert_ratings(self,
                         dataset: Dataset,
+                        matrix_name: str,
                         dataframe: pd.DataFrame,
                         convert_config: ConvertConfig) -> Tuple[pd.DataFrame, str]:
         """Convert the ratings in the dataframe with the specified rating modifier.
@@ -247,6 +254,7 @@ class DataPipeline(metaclass=ABCMeta):
 
         Args:
             dataset: the dataset to load the matrix and rating_type from.
+            matrix_name: the name of the dataset matrix.
             dataframe: the dataframe to convert the ratings of.
                 At the least a 'rating' column is expected to be present.
             convert_config: the configuration of the converter to apply to the 'rating' column.
@@ -255,7 +263,7 @@ class DataPipeline(metaclass=ABCMeta):
             the converted dataframe and the type of rating, either 'explicit' or 'implicit'.
         """
         if convert_config is None:
-            return dataframe, dataset.get_matrix_info('rating_type')
+            return dataframe, dataset.get_matrix_config(matrix_name).rating_type
 
         self.event_dispatcher.dispatch(
             ON_BEGIN_MODIFY_DATASET,

@@ -1,5 +1,6 @@
-datasets:
-- name: ML-100K
+data:
+- dataset: ML-100K
+  matrix: user-movie-rating
   rating_converter:
     name: range
   splitting:
@@ -10,15 +11,6 @@ evaluation:
 - name: R@K
 - name: MRR
 models:
-  Elliot:
-  - name: FunkSVD
-  - name: ItemKNN
-  - name: MostPop
-  - name: MultiVAE
-  - name: PureSVD
-  - name: Random
-  - name: SVDpp
-  - name: UserKNN
   Implicit:
   - name: AlternatingLeastSquares
   - name: BayesianPersonalizedRanking

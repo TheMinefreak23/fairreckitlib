@@ -12,19 +12,21 @@ Utrecht University within the Software Project course.
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
-from ...core.config_constants import KEY_NAME
 from ..filter.filter_constants import KEY_DATA_FILTERS
 from ..ratings.convert_constants import KEY_RATING_CONVERTER
 from ..ratings.convert_config import ConvertConfig
+from ..set.dataset_constants import KEY_DATASET, KEY_MATRIX
 from ..split.split_constants import KEY_SPLITTING
 from ..split.split_config import SplitConfig
 
 
 @dataclass
-class DatasetConfig:
-    """Dataset Configuration."""
+class DataMatrixConfig:
+    """Data Matrix Configuration."""
 
-    name: str
+    dataset: str
+    matrix: str
+
     prefilters: []
     converter: Optional[ConvertConfig]
     splitting: SplitConfig
@@ -36,7 +38,8 @@ class DatasetConfig:
             a dictionary containing the dataset configuration.
         """
         yml_format = {
-            KEY_NAME: self.name,
+            KEY_DATASET: self.dataset,
+            KEY_MATRIX: self.matrix,
             KEY_SPLITTING: self.splitting.to_yml_format()
         }
 

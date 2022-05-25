@@ -1,5 +1,6 @@
-datasets:
-- name: ML-100K
+data:
+- dataset: ML-100K
+  matrix: user-movie-rating
   splitting:
     name: random
     test_ratio: 0.2

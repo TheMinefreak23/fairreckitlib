@@ -13,7 +13,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-ELLIOT_API = 'Elliot'
+ELLIOT_API = 'Elliot' # no longer supported
 IMPLICIT_API = 'Implicit'
 LENSKIT_API = 'LensKit'
 REXMEX_API = 'Rexmex'
