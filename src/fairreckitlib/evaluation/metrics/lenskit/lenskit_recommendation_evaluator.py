@@ -7,9 +7,9 @@ from typing import Any, Dict
 
 from lenskit import topn
 
-from src.fairreckitlib.core.apis import LENSKIT_API
-from src.fairreckitlib.evaluation.metrics.common import KEY_METRIC_PARAM_K
-from src.fairreckitlib.evaluation.metrics.evaluator import Evaluator
+from ....core.apis import LENSKIT_API
+from ..common import KEY_METRIC_PARAM_K
+from ..evaluator import Evaluator
 
 
 class LensKitRecommendationEvaluator(Evaluator):

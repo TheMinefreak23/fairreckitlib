@@ -5,8 +5,8 @@ Utrecht University within the Software Project course.
 """
 from typing import Any, Dict
 
-from src.fairreckitlib.core.apis import REXMEX_API
-from src.fairreckitlib.evaluation.metrics.evaluator import Evaluator
+from ....core.apis import REXMEX_API
+from ..evaluator import Evaluator
 
 
 class RexmexEvaluator(Evaluator):
