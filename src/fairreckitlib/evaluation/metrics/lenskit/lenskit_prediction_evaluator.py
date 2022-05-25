@@ -8,6 +8,7 @@ from typing import Any, Dict
 import pandas as pd
 from lenskit.metrics import predict
 
+from src.fairreckitlib.core.apis import LENSKIT_API
 from src.fairreckitlib.evaluation.metrics.evaluator import Evaluator
 
 
@@ -26,3 +27,6 @@ class LensKitPredictionEvaluator(Evaluator):
         evaluation = predict.user_metric(scores, metric=self.eval_func)
 
         return evaluation
+
+    def get_api_name(self):
+        return LENSKIT_API

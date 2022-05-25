@@ -5,6 +5,7 @@ Utrecht University within the Software Project course.
 """
 from typing import Any, Dict
 
+from src.fairreckitlib.core.apis import REXMEX_API
 from src.fairreckitlib.evaluation.metrics.evaluator import Evaluator
 
 
@@ -22,6 +23,9 @@ class RexmexEvaluator(Evaluator):
 
         # TODO novelty, intra list similarity
         return evaluation
+
+    def get_api_name(self):
+        return REXMEX_API
 
 
 def prepare_for_coverage(train_set, recs):

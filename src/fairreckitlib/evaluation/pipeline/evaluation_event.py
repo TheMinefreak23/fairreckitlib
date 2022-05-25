@@ -211,7 +211,7 @@ def on_begin_filter(event_listener, **kwargs):
         filter_name(str): name of the filter.
     """
     if event_listener.verbose:
-        print('Starting filter:', kwargs['filter_name'].value)
+        print('Starting filter:', kwargs['filter_name'])
 
 
 def on_end_filter(event_listener, **kwargs):

@@ -75,10 +75,12 @@ def run_evaluation_pipelines(
             pipeline = category_factory.create_pipeline(category_factory, event_dispatcher)
             if not pipeline:
                 raise Exception('Category not found')
+
+            kwargs['is_running'] = is_running
+
             pipeline.run(
                 out_path,
                 recs_path,
                 pipeline_config.data_transition,
                 metrics,
-                is_running,
                 **kwargs)

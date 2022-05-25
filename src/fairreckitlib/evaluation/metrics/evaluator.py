@@ -14,8 +14,14 @@ class Evaluator(ABC):
     def __init__(self, eval_func, params, **kwargs):
         self.eval_func = eval_func
         self.params = params
+        print(kwargs['num_threads'])
 
     @abstractmethod
     def evaluate(self, train_set, test_set, recs):
         """Run analysis based on metric"""
+        raise NotImplementedError()
+
+    @abstractmethod
+    def get_api_name(self):
+        """Return the evaluator API name"""
         raise NotImplementedError()

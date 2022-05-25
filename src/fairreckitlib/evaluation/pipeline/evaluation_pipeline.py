@@ -39,7 +39,7 @@ class EvaluationPipeline:
         self.event_dispatcher = event_dispatcher
 
     # TODO documentation
-    def run(self, out_path: str, recs_path: str, data_transition, metrics, is_running, **kwargs):
+    def run(self, out_path: str, recs_path: str, data_transition, metrics, **kwargs):
         """
 
         Args:
@@ -47,7 +47,6 @@ class EvaluationPipeline:
             recs_path:
             data_transition:
             metrics:
-            is_running:
             kwargs:
         """
         self.event_dispatcher.dispatch(
@@ -66,9 +65,9 @@ class EvaluationPipeline:
             # print('data_transition', data_transition)
             self.filter(evaluator,
                         metric,
-                        train_path=data_transition.train_set_path,
-                        test_path=data_transition.test_set_path,
-                        recs_path=recs_path,
+                        set_paths=(data_transition.train_set_path,
+                                   data_transition.test_set_path,
+                                   recs_path),
                         out_path=out_path,
                         profile=data_transition.dataset)
 
@@ -79,22 +78,21 @@ class EvaluationPipeline:
         )
 
     # TODO documentation
-    def filter(self, evaluator, metric, *, train_path, test_path, recs_path, out_path, profile):
+    def filter(self, evaluator, metric, *, set_paths, out_path, profile):
         """Run the evaluation on the non-filtered and filtered data
             Args:
         """
         # Run evaluation globally
-        train_set, test_set, recs_set = self.load_data(train_path, test_path, recs_path)
+        sets = self.load_data(set_paths)
         self.run_evaluation(evaluator,
                             metric,
-                            train_set=train_set,
-                            test_set=test_set,
-                            recs=recs_set,
+                            sets=sets,
                             out_path=out_path
                             )
 
         self.event_dispatcher.dispatch(
-            evaluation_event.ON_BEGIN_FILTER
+            evaluation_event.ON_BEGIN_FILTER,
+            filter_name=''#TODO
         )
         filter_start = time.time()
         print('TODO: filter data per evaluation')
@@ -102,24 +100,17 @@ class EvaluationPipeline:
         # TODO filter
         if USE_FILTER:
             for filter_passes in self.filters:
-                filtered_paths = filter_pass(train_path,
-                                             test_path,
-                                             recs_path,
+                filtered_paths = filter_pass(set_paths,
                                              profile,
                                              filter_passes
                                              )
 
-                filtered_train_set, filtered_test_set, filtered_recs = self.load_data(
-                    train_path + FILTER_SUFFIX,
-                    test_path + FILTER_SUFFIX,
-                    recs_path + FILTER_SUFFIX)
+                sets = self.load_data(set_paths, use_filter=True)
 
                 # Run evaluation per filtered result
                 self.run_evaluation(evaluator,
                                     metric,
-                                    train_set=filtered_train_set,
-                                    test_set=filtered_test_set,
-                                    recs=filtered_recs,
+                                    sets=sets,
                                     out_path=out_path)
 
                 # Remove filtered data
@@ -133,7 +124,8 @@ class EvaluationPipeline:
 
             self.event_dispatcher.dispatch(
                 evaluation_event.ON_END_FILTER,
-                elapsed_time=time.time() - filter_start
+                elapsed_time=time.time() - filter_start,
+                filter_name=''#TODO
             )
 
     # TODO documentation
@@ -141,9 +133,7 @@ class EvaluationPipeline:
                        evaluator: Evaluator,
                        eval_config: MetricConfig,
                        *,
-                       train_set,
-                       test_set,
-                       recs,
+                       sets,
                        out_path):
         """Run the evaluation for the specified metric configuration.
 
@@ -152,9 +142,7 @@ class EvaluationPipeline:
            eval_config:
 
         Keyword Args:
-            train_set:
-            test_set:
-            recs:
+            sets:
             out_path:
 
         """
@@ -163,6 +151,7 @@ class EvaluationPipeline:
             metric_name=eval_config.name
         )
         start = time.time()
+        train_set, test_set, recs = sets
         evaluation = evaluator.evaluate(train_set, test_set, recs)
         self.event_dispatcher.dispatch(
             evaluation_event.ON_END_EVAL,
@@ -172,13 +161,16 @@ class EvaluationPipeline:
 
         add_evaluation_to_file(out_path, evaluation, eval_config)
 
-    def load_data(self, train_set_path: str, test_set_path: str, recs_path: str) -> Tuple[
+    def load_data(self, set_paths: Tuple[str,str,str], *, use_filter=False) -> Tuple[
         pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """Load the train and test set, as well as the model recommendations/predictions.
 
         Returns:
             the train set, test set and model results set (DataFrames)
         """
+        if use_filter: # Append filter suffix to path for temporary filtered data storage
+            set_paths = [path + FILTER_SUFFIX for path in set_paths]
+        train_set_path, test_set_path, recs_path = set_paths
         train_set = self.load_train_set(train_set_path)
         test_set = self.load_test_set(test_set_path)
         recs = self.load_recs(recs_path)
@@ -336,13 +328,11 @@ def add_evaluation_to_file(file_path, evaluation_value, eval_config):
         json.dump(evaluations, out_file, indent=4)
 
 
-def filter_pass(train_path, test_path, recs_path, profile, filter_passes):
+def filter_pass(set_paths, profile, filter_passes):
     """Make temporary filtered data
 
     Args:
-        train_path: path to the train set
-        test_path: path to the test set
-        recs_path: path to the model result
+        set_paths: paths to the train and test set and model result
         profile: additional dataset information for filtering
         filter_passes: list of filter passes to perform
 
@@ -350,7 +340,7 @@ def filter_pass(train_path, test_path, recs_path, profile, filter_passes):
         the paths of the filtered data.
     """
     filtered_paths = []
-    for path in [train_path, test_path, recs_path]:
+    for path in set_paths:
         raw_df = pd.read_csv(
             path,
             header=None,
