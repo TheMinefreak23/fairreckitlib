@@ -1,5 +1,12 @@
 """This module contains counting functionality.
 
+Both APC and ALC can be used in the Kullback-Leibler formula,
+for which the module is also in this package.
+As of now, they don't specifically count the 'artist'
+play and listen count, but just whatever is in the 'item' column.
+If you pass a dataframe for which the 'item' column contains artists,
+it should work correctly, otherwise it will require changes to work properly.
+
 Functions:
 
     get_item_dict: return dict with unique items.

@@ -31,7 +31,6 @@ import pytest
 import numpy as np
 import pandas as pd
 
-from src.fairreckitlib.core.apis import ELLIOT_API
 from src.fairreckitlib.core.config_constants import KEY_RATED_ITEMS_FILTER
 from src.fairreckitlib.core.config_constants import TYPE_PREDICTION, TYPE_RECOMMENDATION
 from src.fairreckitlib.core.factories import Factory, GroupFactory
@@ -45,7 +44,7 @@ from src.fairreckitlib.model.model_factory import create_model_factory
 
 data_registry = DataRegistry('tests/datasets')
 dataset = data_registry.get_set('ML-100K')
-sub_set = dataset.load_matrix_df().sort_values(by=['user'], axis=0)[:1000]
+sub_set = dataset.load_matrix('user-movie-rating').sort_values(by=['user'], axis=0)[:1000]
 
 model_factory = create_model_factory()
 NUM_THREADS = 1
@@ -57,7 +56,7 @@ non_deterministic_algos = [lenskit_algorithms.RANDOM, surprise_algorithms.NORMAL
 top_k = [1, 5, 10]
 
 algo_kwargs = {
-    'rating_scale': (dataset.get_matrix_info('rating_min'), dataset.get_matrix_info('rating_max')),
+    'rating_scale': (sub_set['rating'].min(), sub_set['rating'].max()),
     KEY_RATED_ITEMS_FILTER: True, # recommenders only
     'num_threads': NUM_THREADS
 }
@@ -150,10 +149,6 @@ def test_recommenders():
     recommender_factory = model_factory.get_factory(TYPE_RECOMMENDATION)
 
     for algo_api_name in recommender_factory.get_available_names():
-        # testing Elliot is impossible, because it is not a procedural API
-        if algo_api_name == ELLIOT_API:
-            continue
-
         algo_api_factory = recommender_factory.get_factory(algo_api_name)
 
         for recommender_name in algo_api_factory.get_available_names():

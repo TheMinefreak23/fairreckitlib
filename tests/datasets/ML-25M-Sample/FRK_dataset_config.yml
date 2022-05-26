@@ -1,0 +1,41 @@
+dataset: ML-25M
+matrices:
+  user-movie-rating:
+    idx_item:
+      file: user-movie-rating_item_indices.hdf5
+      key: movie_id
+      num_records: 10000
+    idx_user:
+      file: user-movie-rating_user_indices.hdf5
+      key: user_id
+      num_records: 1000
+    matrix:
+      columns:
+      - matrix_rating
+      - matrix_timestamp
+      file:
+        compression: bz2
+        name: ML-25M_user-movie-rating.tsv.bz2
+      foreign_keys:
+      - user_id
+      - movie_id
+      num_records: 141379
+      primary_key:
+      - user_id
+      - movie_id
+    rating_max: 5.0
+    rating_min: 0.5
+    rating_type: explicit
+tables:
+  movie:
+    columns:
+    - movie_title
+    - movie_genres
+    - movie_imdbID
+    - movie_tmdbID
+    file:
+      compression: bz2
+      name: ML-25M_movie.tsv.bz2
+    num_records: 10000
+    primary_key:
+    - movie_id

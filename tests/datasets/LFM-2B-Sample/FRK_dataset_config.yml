@@ -1,0 +1,93 @@
+dataset: LFM-2B
+matrices:
+  user-artist-count:
+    idx_item:
+      file: user-artist-count_item_indices.hdf5
+      key: artist_id
+      num_records: 10000
+    idx_user:
+      file: user-artist-count_user_indices.hdf5
+      key: user_id
+      num_records: 1000
+    matrix:
+      columns:
+      - matrix_count
+      file:
+        compression: bz2
+        name: LFM-2B_user-artist-count.tsv.bz2
+      foreign_keys:
+      - user_id
+      - artist_id
+      num_records: 21517
+      primary_key:
+      - user_id
+      - artist_id
+    rating_max: 4216
+    rating_min: 1
+    rating_type: implicit
+  user-track-count:
+    idx_item:
+      file: user-track-count_item_indices.hdf5
+      key: track_id
+      num_records: 10000
+    idx_user:
+      file: user-track-count_user_indices.hdf5
+      key: user_id
+      num_records: 1000
+    matrix:
+      columns:
+      - matrix_count
+      file:
+        compression: bz2
+        name: LFM-2B_user-track-count.tsv.bz2
+      foreign_keys:
+      - user_id
+      - track_id
+      num_records: 225210
+      primary_key:
+      - user_id
+      - track_id
+    rating_max: 1317
+    rating_min: 1
+    rating_type: implicit
+tables:
+  artist:
+    columns:
+    - artist_name
+    file:
+      compression: bz2
+      name: LFM-2B_artist.tsv.bz2
+    num_records: 9984
+    primary_key:
+    - artist_id
+  spotify:
+    columns:
+    - track_spotify-uri
+    file:
+      compression: bz2
+      name: LFM-2B_spotify.tsv.bz2
+    num_records: 7023
+    primary_key:
+    - track_id
+  track:
+    columns:
+    - artist_name
+    - track_name
+    file:
+      compression: bz2
+      name: LFM-2B_track.tsv.bz2
+    num_records: 10000
+    primary_key:
+    - track_id
+  user:
+    columns:
+    - user_country
+    - user_age
+    - user_gender
+    - user_creation time
+    file:
+      compression: bz2
+      name: LFM-2B_user.tsv.bz2
+    num_records: 1990
+    primary_key:
+    - user_id

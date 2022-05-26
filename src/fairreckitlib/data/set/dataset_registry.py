@@ -12,14 +12,15 @@ Utrecht University within the Software Project course.
 import os
 from typing import Any, Dict, List, Optional
 
-from ..utility import load_yml
-from .dataset_constants import DATASET_CONFIG_FILE, DATASET_PREFIX
+from ..utility import load_yml, save_yml
+from .dataset_config_parsing import parse_dataset_config
+from .dataset_constants import DATASET_CONFIG_FILE
 from .dataset import Dataset
-from .processor.processor_lfm_1b import DataProcessorLFM1B
-from .processor.processor_lfm_2b import DataProcessorLFM2B
-from .processor.processor_lfm_360k import DataProcessorLFM360K
-from .processor.processor_ml_100k import DataProcessorML100K
-from .processor.processor_ml_25m import DataProcessorML25M
+from .processor.dataset_processor_lfm1b import DatasetProcessorLFM1B
+from .processor.dataset_processor_lfm2b import DatasetProcessorLFM2B
+from .processor.dataset_processor_lfm360k import DatasetProcessorLFM360K
+from .processor.dataset_processor_ml100k import DatasetProcessorML100K
+from .processor.dataset_processor_ml25m import DatasetProcessorML25M
 
 DATASET_LFM_1B = 'LFM-1B'
 DATASET_LFM_2B = 'LFM-2B'
@@ -55,11 +56,11 @@ class DataRegistry:
 
         self.registry = {}
         self.processors = {
-            DATASET_LFM_1B: DataProcessorLFM1B,
-            DATASET_LFM_2B: DataProcessorLFM2B,
-            DATASET_LFM_360K: DataProcessorLFM360K,
-            DATASET_ML_100K: DataProcessorML100K,
-            DATASET_ML_25M: DataProcessorML25M
+            DATASET_LFM_1B: DatasetProcessorLFM1B,
+            DATASET_LFM_2B: DatasetProcessorLFM2B,
+            DATASET_LFM_360K: DatasetProcessorLFM360K,
+            DATASET_ML_100K: DatasetProcessorML100K,
+            DATASET_ML_25M: DatasetProcessorML25M
         }
 
         for file in os.listdir(data_dir):
@@ -69,18 +70,25 @@ class DataRegistry:
             if not os.path.isdir(dataset_dir):
                 continue
 
-            config_file_name = DATASET_PREFIX + file_name + DATASET_CONFIG_FILE
-            config_file_path = os.path.join(dataset_dir, config_file_name)
+            config_file_path = os.path.join(dataset_dir, DATASET_CONFIG_FILE)
             if not os.path.isfile(config_file_path):
                 if self.processors.get(file_name) is None:
-                    print('Unknown data processor:', file_name)
+                    print('Unknown dataset processor:', file_name)
                     continue
 
-                config = self.processors[file_name](file_name).run(dataset_dir, config_file_name)
-            else:
-                config = load_yml(config_file_path)
+                config = self.processors[file_name](dataset_dir, file_name).run()
+                if config is None:
+                    print('Processing dataset failed:', file_name)
+                    continue
 
-            self.registry[file_name] = Dataset(file_name, dataset_dir, config)
+                save_yml(config_file_path, config.to_yml_format())
+            else:
+                config = parse_dataset_config(load_yml(config_file_path))
+                if config is None:
+                    print('Parsing dataset configuration failed:', file_name)
+                    continue
+
+            self.registry[config.dataset_name] = Dataset(dataset_dir, config)
 
     def get_available_processors(self) -> List[str]:
         """Get the names of the available processors in the registry.
@@ -109,16 +117,16 @@ class DataRegistry:
         return dataset_names
 
     def get_info(self) -> Dict[str, Dict[str, Any]]:
-        """Get the matrix information for each available dataset.
+        """Get the matrices' information for each available dataset.
 
         Returns:
             a dictionary where the key corresponds to the dataset name and
-                the value corresponds to the matrix information dictionary.
+                the value corresponds to the matrices' information dictionary.
         """
         info = {}
 
         for dataset_name, dataset in self.registry.items():
-            info[dataset_name] = dataset.get_matrix_info()
+            info[dataset_name] = dataset.get_matrices_info()
 
         return info
 

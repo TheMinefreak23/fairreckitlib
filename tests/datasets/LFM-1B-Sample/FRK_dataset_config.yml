@@ -1,0 +1,158 @@
+dataset: LFM-1B
+matrices:
+  user-artist-count:
+    idx_item:
+      file: user-artist-count_item_indices.hdf5
+      key: artist_id
+      num_records: 10000
+    idx_user:
+      file: user-artist-count_user_indices.hdf5
+      key: user_id
+      num_records: 1000
+    matrix:
+      columns:
+      - matrix_count
+      file:
+        compression: bz2
+        name: LFM-1B_user-artist-count.tsv.bz2
+      foreign_keys:
+      - user_id
+      - artist_id
+      num_records: 525134
+      primary_key:
+      - user_id
+      - artist_id
+    rating_max: 90301.0
+    rating_min: 1.0
+    rating_type: implicit
+tables:
+  artist:
+    columns:
+    - artist_name
+    - artist_gender
+    - artist_genres
+    file:
+      compression: bz2
+      name: LFM-1B_artist.tsv.bz2
+    num_records: 10000
+    primary_key:
+    - artist_id
+  user:
+    columns:
+    - user_country
+    - user_age
+    - user_gender
+    - user_plays
+    - user_registered
+    file:
+      compression: bz2
+      name: LFM-1B_user.tsv.bz2
+    num_records: 1000
+    primary_key:
+    - user_id
+  user additional:
+    columns:
+    - user_novelty artist avg month
+    - user_novelty artist avg 6months
+    - user_novelty artist avg year
+    - user_mainstreaminess avg month
+    - user_mainstreaminess avg 6months
+    - user_mainstreaminess avg year
+    - user_mainstreaminess global
+    - user_count LEs
+    - user_count distinct tracks
+    - user_count distinct artists
+    - user_count LEs per week
+    - user_relative LE per weekday1
+    - user_relative LE per weekday2
+    - user_relative LE per weekday3
+    - user_relative LE per weekday4
+    - user_relative LE per weekday5
+    - user_relative LE per weekday6
+    - user_relative LE per weekday7
+    - user_relative LE per hour0
+    - user_relative LE per hour1
+    - user_relative LE per hour2
+    - user_relative LE per hour3
+    - user_relative LE per hour4
+    - user_relative LE per hour5
+    - user_relative LE per hour6
+    - user_relative LE per hour7
+    - user_relative LE per hour8
+    - user_relative LE per hour9
+    - user_relative LE per hour10
+    - user_relative LE per hour11
+    - user_relative LE per hour12
+    - user_relative LE per hour13
+    - user_relative LE per hour14
+    - user_relative LE per hour15
+    - user_relative LE per hour16
+    - user_relative LE per hour17
+    - user_relative LE per hour18
+    - user_relative LE per hour19
+    - user_relative LE per hour20
+    - user_relative LE per hour21
+    - user_relative LE per hour22
+    - user_relative LE per hour23
+    file:
+      compression: bz2
+      name: LFM-1B_user additional.tsv.bz2
+    num_records: 1000
+    primary_key:
+    - user_id
+  user allmusic noPC:
+    columns:
+    - noPC_rnb
+    - noPC_rap
+    - noPC_electronic
+    - noPC_rock
+    - noPC_new age
+    - noPC_classical
+    - noPC_reggae
+    - noPC_blues
+    - noPC_country
+    - noPC_world
+    - noPC_folk
+    - noPC_easy listening
+    - noPC_jazz
+    - noPC_vocal
+    - noPC_children's
+    - noPC_punk
+    - noPC_alternative
+    - noPC_spoken_word
+    - noPC_pop
+    - noPC_heavy metal
+    file:
+      compression: bz2
+      name: LFM-1B_user allmusic noPC.tsv.bz2
+    num_records: 1000
+    primary_key:
+    - user_id
+  user allmusic weightedPC:
+    columns:
+    - weightedPC_rnb
+    - weightedPC_rap
+    - weightedPC_electronic
+    - weightedPC_rock
+    - weightedPC_new age
+    - weightedPC_classical
+    - weightedPC_reggae
+    - weightedPC_blues
+    - weightedPC_country
+    - weightedPC_world
+    - weightedPC_folk
+    - weightedPC_easy listening
+    - weightedPC_jazz
+    - weightedPC_vocal
+    - weightedPC_children's
+    - weightedPC_punk
+    - weightedPC_alternative
+    - weightedPC_spoken_word
+    - weightedPC_pop
+    - weightedPC_heavy metal
+    file:
+      compression: bz2
+      name: LFM-1B_user allmusic weightedPC.tsv.bz2
+    num_records: 1000
+    primary_key:
+    - user_id

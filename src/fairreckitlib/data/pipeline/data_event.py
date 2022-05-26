@@ -89,7 +89,7 @@ def on_begin_data_pipeline(event_listener: Any, **kwargs) -> None:
         dataset(Dataset): the dataset that is being processed by the pipeline.
     """
     if event_listener.verbose:
-        print('\nStarting Data Pipeline:', kwargs['dataset'].name)
+        print('\nStarting Data Pipeline:', kwargs['dataset'].get_name())
 
 
 def on_begin_filter_dataset(event_listener: Any, **kwargs) -> None:
@@ -117,7 +117,7 @@ def on_begin_load_dataset(event_listener: Any, **kwargs) -> None:
         dataset(Dataset): the dataset that is being loaded.
     """
     if event_listener.verbose:
-        print('Loading dataset from', kwargs['dataset'].get_matrix_file_path())
+        print('Loading dataset from', kwargs['dataset'].get_matrix_file_path(kwargs['matrix']))
 
 
 def on_begin_modify_dataset(event_listener: Any, **kwargs) -> None:
@@ -183,7 +183,7 @@ def on_end_data_pipeline(event_listener: Any, **kwargs) -> None:
     """
     if event_listener.verbose:
         elapsed_time = kwargs['elapsed_time']
-        print('Finished Data Pipeline:', kwargs['dataset'].name,
+        print('Finished Data Pipeline:', kwargs['dataset'].get_name(),
               f'in {elapsed_time:1.4f}s')
 
 

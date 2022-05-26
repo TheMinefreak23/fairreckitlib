@@ -28,7 +28,7 @@ df_lfm360k_sample = pd.read_csv(
 
 datasets = dataset_registry.DataRegistry('tests/datasets')
 set_ml_100k = datasets.get_set('ML-100K')
-df_ml_100k = set_ml_100k.load_matrix_df()
+df_ml_100k = set_ml_100k.load_matrix('user-movie-rating')
 
 dfs = [('ml_100k', df_ml_100k)
     ,  ('df_lfm360k_sample', df_lfm360k_sample)
