@@ -11,7 +11,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ....core.config_params import ConfigParameters
+from ....core.params.config_parameters import ConfigParameters
 
 
 def create_params_als() -> ConfigParameters:
@@ -21,9 +21,9 @@ def create_params_als() -> ConfigParameters:
         the configuration parameters of the algorithm.
     """
     params = ConfigParameters()
-    params.add_value('factors', int, 100, (1, 100))
-    params.add_value('iterations', int, 15, (1, 50))
-    params.add_value('regularization', float, 0.01, (0.0001, 1.0))
+    params.add_number('factors', int, 100, (1, 100))
+    params.add_number('iterations', int, 15, (1, 50))
+    params.add_number('regularization', float, 0.01, (0.0001, 1.0))
     params.add_random_seed('random_seed')
     params.add_bool('calculate_training_loss', False)
     params.add_bool('use_cg', True)
@@ -38,10 +38,10 @@ def create_params_bpr() -> ConfigParameters:
         the configuration parameters of the algorithm.
     """
     params = ConfigParameters()
-    params.add_value('factors', int, 100, (1, 100))
-    params.add_value('iterations', int, 100, (1, 1000))
-    params.add_value('regularization', float, 0.01, (0.0001, 1.0))
-    params.add_value('learning_rate', float, 0.01, (0.0001, 1.0))
+    params.add_number('factors', int, 100, (1, 100))
+    params.add_number('iterations', int, 100, (1, 1000))
+    params.add_number('regularization', float, 0.01, (0.0001, 1.0))
+    params.add_number('learning_rate', float, 0.01, (0.0001, 1.0))
     params.add_random_seed('random_seed')
     params.add_bool('verify_negative_samples', True)
     return params
@@ -54,10 +54,10 @@ def create_params_lmf() -> ConfigParameters:
         the configuration parameters of the algorithm.
     """
     params = ConfigParameters()
-    params.add_value('factors', int, 30, (1, 100))
-    params.add_value('iterations', int, 30, (1, 100))
-    params.add_value('regularization', float, 0.6, (0.0001, 1.0))
-    params.add_value('learning_rate', float, 1.0, (0.0001, 1.0))
-    params.add_value('neg_prop', int, 30, (1, 50))
+    params.add_number('factors', int, 30, (1, 100))
+    params.add_number('iterations', int, 30, (1, 100))
+    params.add_number('regularization', float, 0.6, (0.0001, 1.0))
+    params.add_number('learning_rate', float, 1.0, (0.0001, 1.0))
+    params.add_number('neg_prop', int, 30, (1, 50))
     params.add_random_seed('random_seed')
     return params

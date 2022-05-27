@@ -13,7 +13,7 @@ from .evaluator import Evaluator
 from .lenskit.lenskit_prediction_evaluator import LensKitPredictionEvaluator
 from .lenskit.lenskit_recommendation_evaluator import LensKitRecommendationEvaluator
 from .rexmex.rexmex_evaluator import RexmexEvaluator
-from ...core.config_params import ConfigParameters
+from ...core.params.config_parameters import ConfigParameters
 from ...core.factories import create_factory_from_list
 from .common import Metric, MetricCategory, KEY_METRIC_PARAM_K
 
@@ -134,7 +134,7 @@ def create_metric_params_k():
         the configuration parameters of the metric.
     """
     params = ConfigParameters()
-    params.add_value(KEY_METRIC_PARAM_K, int, None, (1, None))
+    params.add_number(KEY_METRIC_PARAM_K, int, None, (1, None))
     return params
 
 

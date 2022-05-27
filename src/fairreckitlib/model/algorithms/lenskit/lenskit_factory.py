@@ -11,7 +11,7 @@ Utrecht University within the Software Project course.
 """
 
 from ....core.apis import LENSKIT_API
-from ....core.config_params import create_params_random_seed
+from ....core.params.config_parameters import create_params_random_seed
 from ....core.factories import Factory, create_factory_from_list
 from . import lenskit_algorithms
 from . import lenskit_params

@@ -9,7 +9,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ...core.config_params import create_params_random_seed
+from ...core.params.config_parameters import create_params_random_seed
 from ...core.factories import Factory, create_factory_from_list
 from .random_splitter import create_random_splitter
 from .split_constants import KEY_SPLITTING, SPLIT_RANDOM, SPLIT_TEMPORAL
