@@ -19,8 +19,9 @@ Utrecht University within the Software Project course.
 import pytest
 
 from src.fairreckitlib.core.config_constants import KEY_NAME, KEY_PARAMS
-from src.fairreckitlib.core.config_params import ConfigParameters, create_empty_parameters
 from src.fairreckitlib.core.factories import Factory, GroupFactory, create_factory_from_list
+from src.fairreckitlib.core.params.config_parameters import \
+    ConfigParameters, create_empty_parameters
 
 dummy_names = ['dummy_a', 'dummy_b', 'dummy_c']
 

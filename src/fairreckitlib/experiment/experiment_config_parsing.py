@@ -14,7 +14,8 @@ from typing import Any, Dict, Optional, Union
 from ..core.config_constants import KEY_TYPE, TYPE_PREDICTION, TYPE_RECOMMENDATION, VALID_TYPES
 from ..core.config_constants import KEY_NAME, KEY_TOP_K, DEFAULT_TOP_K
 from ..core.config_constants import KEY_RATED_ITEMS_FILTER, DEFAULT_RATED_ITEMS_FILTER
-from ..core.config_params import ConfigOptionParam, ConfigValueParam
+from ..core.params.config_option_param import ConfigSingleOptionParam
+from ..core.params.config_value_param import ConfigNumberParam
 from ..core.event_dispatcher import EventDispatcher
 from ..core.factories import GroupFactory
 from ..core.parsing.parse_assert import assert_is_type
@@ -128,7 +129,7 @@ class Parser:
             _, experiment_top_k = parse_config_param(
                 experiment_config,
                 'recommender experiment',
-                ConfigValueParam(
+                ConfigNumberParam(
                     KEY_TOP_K,
                     int,
                     DEFAULT_TOP_K,
@@ -141,7 +142,7 @@ class Parser:
             _, experiment_rated_items_filter = parse_config_param(
                 experiment_config,
                 'recommender experiment',
-                ConfigOptionParam(
+                ConfigSingleOptionParam(
                     KEY_RATED_ITEMS_FILTER,
                     bool,
                     DEFAULT_RATED_ITEMS_FILTER,
