@@ -28,7 +28,7 @@ from typing import Any, Dict, Tuple
 
 import pandas as pd
 
-from ...core.config_params import ConfigParameters
+from ...core.params.config_parameters import ConfigParameters
 from .base_converter import RatingConverter
 
 
@@ -84,5 +84,5 @@ def create_kl_converter_params() -> ConfigParameters:
     methods = ['APC', 'ALC']
 
     params = ConfigParameters()
-    params.add_option('method', str, methods[0], methods)
+    params.add_single_option('method', str, methods[0], methods)
     return params

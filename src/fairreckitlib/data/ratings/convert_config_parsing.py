@@ -12,9 +12,9 @@ Utrecht University within the Software Project course.
 from typing import Any, Dict, Optional
 
 from ...core.config_constants import KEY_NAME, KEY_PARAMS
-from ...core.config_params import ConfigOptionParam
 from ...core.event_dispatcher import EventDispatcher
 from ...core.factories import Factory
+from ...core.params.config_option_param import ConfigSingleOptionParam
 from ...core.parsing.parse_assert import assert_is_type, assert_is_key_in_dict
 from ...core.parsing.parse_event import ON_PARSE
 from ...core.parsing.parse_params import parse_config_param, parse_config_parameters
@@ -68,7 +68,7 @@ def parse_data_convert_config(
     success, converter_name = parse_config_param(
         convert_config,
         dataset.get_name() + ' ' + KEY_RATING_CONVERTER,
-        ConfigOptionParam(
+        ConfigSingleOptionParam(
             KEY_NAME,
             str,
             'None',

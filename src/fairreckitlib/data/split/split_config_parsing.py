@@ -12,9 +12,10 @@ Utrecht University within the Software Project course.
 from typing import Any, Dict
 
 from ...core.config_constants import KEY_NAME, KEY_PARAMS
-from ...core.config_params import ConfigOptionParam, ConfigValueParam
 from ...core.event_dispatcher import EventDispatcher
 from ...core.factories import Factory
+from ...core.params.config_option_param import ConfigSingleOptionParam
+from ...core.params.config_value_param import ConfigNumberParam
 from ...core.parsing.parse_assert import assert_is_type, assert_is_key_in_dict
 from ...core.parsing.parse_event import ON_PARSE
 from ...core.parsing.parse_params import parse_config_param, parse_config_parameters
@@ -71,7 +72,7 @@ def parse_data_split_config(
     success, test_ratio = parse_config_param(
         split_config,
         dataset.get_name() + ' ' + KEY_SPLITTING,
-        ConfigValueParam(
+        ConfigNumberParam(
             KEY_SPLIT_TEST_RATIO,
             float,
             DEFAULT_SPLIT_TEST_RATIO,
@@ -86,7 +87,7 @@ def parse_data_split_config(
     success, split_name = parse_config_param(
         split_config,
         dataset.get_name() + ' ' + KEY_SPLITTING,
-        ConfigOptionParam(
+        ConfigSingleOptionParam(
             KEY_NAME,
             str,
             DEFAULT_SPLIT_NAME,
