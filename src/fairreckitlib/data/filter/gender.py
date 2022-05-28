@@ -15,7 +15,7 @@ class GenderFilter(DataFilter):
         """Filter specific gender of the dataframe.
 
         Args:
-            country: the name of the country used in filtering
+            gender: the name of the gender used in filtering
 
         Returns:
             a filtered dataframe from the given dataframe
