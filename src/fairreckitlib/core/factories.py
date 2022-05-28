@@ -274,7 +274,6 @@ class GroupFactory(BaseFactory):
         Returns:
             a dictionary containing the availability of the sub-factory (type).
         """
-        # TODO add unit test for this
         sub_factory = self.get_factory(sub_factory_name)
         if sub_type is None:
             return sub_factory.get_available()
