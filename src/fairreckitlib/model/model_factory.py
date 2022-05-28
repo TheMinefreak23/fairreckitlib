@@ -1,5 +1,9 @@
 """This module contains functionality to create a model factory.
 
+Constants:
+
+    KEY_MODELS: key that is used to identify models.
+
 Functions:
 
     create_algorithm_pipeline_factory: wrap algorithm factory with pipeline creation.
@@ -29,15 +33,16 @@ Utrecht University within the Software Project course.
 from typing import Callable
 
 from ..core.config_constants import TYPE_PREDICTION, TYPE_RECOMMENDATION
-from ..core.event_dispatcher import EventDispatcher
+from ..core.events.event_dispatcher import EventDispatcher
 from ..core.factories import Factory, GroupFactory
 from .algorithms.implicit import implicit_factory
 from .algorithms.lenskit import lenskit_factory
 from .algorithms.surprise import surprise_factory
-from .pipeline.model_config import KEY_MODELS
 from .pipeline.model_pipeline import ModelPipeline
 from .pipeline.prediction_pipeline import PredictionPipeline
 from .pipeline.recommendation_pipeline import RecommendationPipeline
+
+KEY_MODELS = 'models'
 
 
 def create_algorithm_pipeline_factory(

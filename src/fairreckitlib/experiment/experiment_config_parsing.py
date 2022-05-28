@@ -14,13 +14,13 @@ from typing import Any, Dict, Optional, Union
 from ..core.config_constants import KEY_TYPE, TYPE_PREDICTION, TYPE_RECOMMENDATION, VALID_TYPES
 from ..core.config_constants import KEY_NAME, KEY_TOP_K, DEFAULT_TOP_K
 from ..core.config_constants import KEY_RATED_ITEMS_FILTER, DEFAULT_RATED_ITEMS_FILTER
+from ..core.events.event_dispatcher import EventDispatcher
 from ..core.params.config_option_param import ConfigSingleOptionParam
 from ..core.params.config_value_param import ConfigNumberParam
-from ..core.event_dispatcher import EventDispatcher
 from ..core.factories import GroupFactory
 from ..core.parsing.parse_assert import assert_is_type
 from ..core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
-from ..core.parsing.parse_event import ON_PARSE, on_parse
+from ..core.parsing.parse_event import ON_PARSE, print_parse_event
 from ..core.parsing.parse_params import parse_config_param
 from ..data.data_factory import KEY_DATA
 from ..data.pipeline.data_config_parsing import parse_data_config
@@ -48,9 +48,12 @@ class Parser:
         Args:
             verbose: whether the parser should give verbose output.
         """
+        handle_parse_event = lambda parser, args: \
+            print_parse_event(args) if parser.verbose else None
+
         self.verbose = verbose
         self.event_dispatcher = EventDispatcher()
-        self.event_dispatcher.add_listener(ON_PARSE, self, (on_parse, None))
+        self.event_dispatcher.add_listener(ON_PARSE, self, (handle_parse_event, None))
 
     def parse_experiment_config(
             self,

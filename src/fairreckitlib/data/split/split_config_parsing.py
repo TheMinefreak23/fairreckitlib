@@ -12,7 +12,7 @@ Utrecht University within the Software Project course.
 from typing import Any, Dict
 
 from ...core.config_constants import KEY_NAME, KEY_PARAMS
-from ...core.event_dispatcher import EventDispatcher
+from ...core.events.event_dispatcher import EventDispatcher
 from ...core.factories import Factory
 from ...core.params.config_option_param import ConfigSingleOptionParam
 from ...core.params.config_value_param import ConfigNumberParam
@@ -65,7 +65,7 @@ def parse_data_split_config(
         dict,
         event_dispatcher,
         'PARSE WARNING: dataset ' + dataset.get_name() + ' invalid splitting value',
-        default=parsed_config
+        default_value=parsed_config
     ): return parsed_config
 
     # parse splitting test ratio
@@ -109,7 +109,7 @@ def parse_data_split_config(
         event_dispatcher,
         'PARSE WARNING: dataset ' + dataset.get_name() + ' ' + KEY_SPLITTING + ' missing key \'' +
         KEY_PARAMS + '\'',
-        default=parsed_config.params
+        default_value=parsed_config.params
     ):
         # parse the splitter parameters
         parsed_config.params = parse_config_parameters(

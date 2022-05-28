@@ -22,10 +22,11 @@ import json
 import pandas as pd
 
 from ...core.config_constants import MODEL_RATINGS_FILE, MODEL_USER_BATCH_SIZE
+from ...core.events.event_io import ON_CREATE_FILE, FileEventArgs
+from ...core.events.event_dispatcher import EventDispatcher
+from ...core.events.event_io import ON_MAKE_DIR, DirEventArgs, DataframeEventArgs
+from ...core.events.event_error import ON_FAILURE_ERROR, ON_RAISE_ERROR, ErrorEventArgs
 from ...core.factories import Factory
-from ...core.event_dispatcher import EventDispatcher
-from ...core.event_io import ON_MAKE_DIR
-from ...core.event_error import ON_FAILURE_ERROR, ON_RAISE_ERROR
 from ...data.data_transition import DataTransition
 from ..algorithms.base_algorithm import BaseAlgorithm
 from .model_config import ModelConfig
@@ -35,7 +36,7 @@ from .model_event import ON_BEGIN_MODEL_PIPELINE, ON_END_MODEL_PIPELINE
 from .model_event import ON_BEGIN_TEST_MODEL, ON_END_TEST_MODEL
 from .model_event import ON_BEGIN_TRAIN_MODEL, ON_END_TRAIN_MODEL
 from .model_event import ON_BEGIN_MODEL, ON_END_MODEL
-from .model_event import ON_SAVE_MODEL_SETTINGS
+from .model_event import ModelPipelineEventArgs, ModelEventArgs
 
 
 class ModelPipeline(metaclass=ABCMeta):
@@ -111,11 +112,11 @@ class ModelPipeline(metaclass=ABCMeta):
         if not is_running():
             return result_dirs
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(ModelPipelineEventArgs(
             ON_BEGIN_MODEL_PIPELINE,
-            api_name=self.algo_factory.get_name(),
-            num_models=len(models_config)
-        )
+            self.algo_factory.get_name(),
+            models_config
+        ))
 
         start = time.time()
 
@@ -127,13 +128,13 @@ class ModelPipeline(metaclass=ABCMeta):
         if not is_running():
             return result_dirs
 
-        for _, model in enumerate(models_config):
+        for model in models_config:
             if not self.algo_factory.is_obj_available(model.name):
-                self.event_dispatcher.dispatch(
+                self.event_dispatcher.dispatch(ErrorEventArgs(
                     ON_FAILURE_ERROR,
-                    msg='Failure: algorithm is not available: ' +
-                        self.algo_factory.get_name() + ' ' + model.name
-                )
+                    'Failure: algorithm is not available: ' +
+                    self.algo_factory.get_name() + ' ' + model.name
+                ))
                 continue
 
             try:
@@ -145,25 +146,25 @@ class ModelPipeline(metaclass=ABCMeta):
                     **kwargs
                 )
             except ArithmeticError:
-                self.event_dispatcher.dispatch(
+                self.event_dispatcher.dispatch(ErrorEventArgs(
                     ON_RAISE_ERROR,
-                    msg='ArithmeticError: trying to run model ' +
-                        self.algo_factory.get_name() + ' ' + model.name
-                )
+                    'ArithmeticError: trying to run model ' +
+                    self.algo_factory.get_name() + ' ' + model.name
+                ))
                 continue
             except MemoryError:
-                self.event_dispatcher.dispatch(
+                self.event_dispatcher.dispatch(ErrorEventArgs(
                     ON_RAISE_ERROR,
-                    msg='MemoryError: trying to run model ' +
-                        self.algo_factory.get_name() + ' ' + model.name
-                )
+                    'MemoryError: trying to run model ' +
+                    self.algo_factory.get_name() + ' ' + model.name
+                ))
                 continue
             except RuntimeError:
-                self.event_dispatcher.dispatch(
+                self.event_dispatcher.dispatch(ErrorEventArgs(
                     ON_RAISE_ERROR,
-                    msg='RuntimeError: trying to run model ' +
-                        self.algo_factory.get_name() + ' ' + model.name
-                )
+                    'RuntimeError: trying to run model ' +
+                    self.algo_factory.get_name() + ' ' + model.name
+                ))
                 continue
 
             result_dirs.append(model_dir)
@@ -172,21 +173,21 @@ class ModelPipeline(metaclass=ABCMeta):
 
         end = time.time()
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(ModelPipelineEventArgs(
             ON_END_MODEL_PIPELINE,
-            api_name=self.algo_factory.get_name(),
-            num_models=len(models_config),
-            elapsed_time=end - start
-        )
+            self.algo_factory.get_name(),
+            models_config
+        ), elapsed_time=end - start)
 
         return result_dirs
 
-    def run_model(self,
-                  output_dir: str,
-                  data_transition: DataTransition,
-                  model_config: ModelConfig,
-                  is_running: Callable[[], bool],
-                  **kwargs) -> str:
+    def run_model(
+            self,
+            output_dir: str,
+            data_transition: DataTransition,
+            model_config: ModelConfig,
+            is_running: Callable[[], bool],
+            **kwargs) -> str:
         """Run the model computation for the specified model configuration.
 
         Several possible errors can be raised during the model computation run:
@@ -233,11 +234,12 @@ class ModelPipeline(metaclass=ABCMeta):
 
         return model_dir
 
-    def begin_model(self,
-                    model_name: str,
-                    model_params: Dict[str, Any],
-                    output_dir: str,
-                    **kwargs) -> Tuple[str, BaseAlgorithm, float]:
+    def begin_model(
+            self,
+            model_name: str,
+            model_params: Dict[str, Any],
+            output_dir: str,
+            **kwargs) -> Tuple[str, BaseAlgorithm, float]:
         """Prepare the model computation.
 
         Resolves the output directory to create for the model computation,
@@ -264,10 +266,11 @@ class ModelPipeline(metaclass=ABCMeta):
 
         start = time.time()
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(ModelEventArgs(
             ON_BEGIN_MODEL,
-            model_name=model_name
-        )
+            model_name,
+            model_params
+        ))
 
         model_dir = self.create_model_output_dir(
             output_dir,
@@ -281,11 +284,11 @@ class ModelPipeline(metaclass=ABCMeta):
                 **kwargs
             )
         except RuntimeError as err:
-            self.event_dispatcher.dispatch(
+            self.event_dispatcher.dispatch(ErrorEventArgs(
                 ON_RAISE_ERROR,
-                msg='RuntimeError: trying to create model ' +
-                    self.algo_factory.get_name() + ' ' + model_name + ' => ' + str(err)
-            )
+                'RuntimeError: trying to create model ' +
+                self.algo_factory.get_name() + ' ' + model_name + ' => ' + str(err)
+            ))
             raise err
 
         self.write_settings_file(model_dir, model.get_params())
@@ -306,11 +309,8 @@ class ModelPipeline(metaclass=ABCMeta):
         model_dir = os.path.join(output_dir, self.algo_factory.get_name() +
                                  '_' + model_name + '_' + str(index))
         if not os.path.isdir(model_dir):
-            self.event_dispatcher.dispatch(
-                ON_MAKE_DIR,
-                dir=model_dir
-            )
             os.mkdir(model_dir)
+            self.event_dispatcher.dispatch(DirEventArgs(ON_MAKE_DIR, model_dir))
 
         return model_dir
 
@@ -328,11 +328,11 @@ class ModelPipeline(metaclass=ABCMeta):
 
         end = time.time()
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(ModelEventArgs(
             ON_END_MODEL,
-            model=model,
-            elapsed_time=end - start
-        )
+            model.get_name(),
+            model.get_params()
+        ), elapsed_time=end - start)
 
     @abstractmethod
     def get_ratings_dataframe(self) -> pd.DataFrame:
@@ -349,10 +349,11 @@ class ModelPipeline(metaclass=ABCMeta):
         Args:
             test_set_path: path to where the test set is stored.
         """
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(DataframeEventArgs(
             ON_BEGIN_LOAD_TEST_SET,
-            test_set_path=test_set_path
-        )
+            test_set_path,
+            'test set'
+        ))
 
         start = time.time()
 
@@ -364,22 +365,21 @@ class ModelPipeline(metaclass=ABCMeta):
                 names=['user', 'item', 'rating']
             )
         except FileNotFoundError as err:
-            self.event_dispatcher.dispatch(
+            self.event_dispatcher.dispatch(ErrorEventArgs(
                 ON_RAISE_ERROR,
-                msg='FileNotFoundError: raised while trying to load the test set from ' +
-                    test_set_path
-            )
+                'FileNotFoundError: raised while trying to load the test set from ' +
+                test_set_path
+            ))
             # raise again so that the pipeline aborts
             raise err
 
         end = time.time()
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(DataframeEventArgs(
             ON_END_LOAD_TEST_SET,
-            test_set_path=test_set_path,
-            test_set=self.test_set,
-            elapsed_time=end - start
-        )
+            test_set_path,
+            'test set'
+        ), elapsed_time=end - start)
 
     def load_train_set(self, train_set_path: str) -> None:
         """Load the train set that all models can use for training.
@@ -387,10 +387,11 @@ class ModelPipeline(metaclass=ABCMeta):
         Args:
             train_set_path: path to where the train set is stored.
         """
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(DataframeEventArgs(
             ON_BEGIN_LOAD_TRAIN_SET,
-            train_set_path=train_set_path
-        )
+            train_set_path,
+            'train set'
+        ))
 
         start = time.time()
 
@@ -402,22 +403,21 @@ class ModelPipeline(metaclass=ABCMeta):
                 names=['user', 'item', 'rating']
             )
         except FileNotFoundError as err:
-            self.event_dispatcher.dispatch(
+            self.event_dispatcher.dispatch(ErrorEventArgs(
                 ON_RAISE_ERROR,
-                msg='FileNotFoundError: raised while trying to load the train set from ' +
-                    train_set_path
-            )
+                'FileNotFoundError: raised while trying to load the train set from ' +
+                train_set_path
+            ))
             # raise again so that the pipeline aborts
             raise err
 
         end = time.time()
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(DataframeEventArgs(
             ON_END_LOAD_TRAIN_SET,
-            train_set_path=train_set_path,
-            train_set=self.train_set,
-            elapsed_time=end - start
-        )
+            train_set_path,
+            'train set'
+        ), elapsed_time=end - start)
 
     def load_train_and_test_set(self, train_set_path: str, test_set_path: str) -> None:
         """Load the train and test set that all models can use.
@@ -451,17 +451,17 @@ class ModelPipeline(metaclass=ABCMeta):
         with open(settings_path, 'w', encoding='utf-8') as file:
             json.dump(model_params, file, indent=4)
 
-        self.event_dispatcher.dispatch(
-            ON_SAVE_MODEL_SETTINGS,
-            settings_path=settings_path,
-            model_params=model_params
-        )
+        self.event_dispatcher.dispatch(FileEventArgs(
+            ON_CREATE_FILE,
+            settings_path
+        ))
 
-    def test_model(self,
-                   model: BaseAlgorithm,
-                   model_dir: str,
-                   is_running: Callable[[], bool],
-                   **kwargs) -> str:
+    def test_model(
+            self,
+            model: BaseAlgorithm,
+            model_dir: str,
+            is_running: Callable[[], bool],
+            **kwargs) -> str:
         """Test the specified model using the test set.
 
         This function wraps the event dispatching and functionality
@@ -478,11 +478,11 @@ class ModelPipeline(metaclass=ABCMeta):
         Returns:
             the path to the file where the model's computed ratings are stored.
         """
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(ModelEventArgs(
             ON_BEGIN_TEST_MODEL,
-            model=model,
-            test_set=self.test_set
-        )
+            model.get_name(),
+            model.get_params()
+        ))
 
         start = time.time()
 
@@ -497,22 +497,22 @@ class ModelPipeline(metaclass=ABCMeta):
 
         end = time.time()
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(ModelEventArgs(
             ON_END_TEST_MODEL,
-            model=model,
-            test_set=self.test_set,
-            elapsed_time=end - start
-        )
+            model.get_name(),
+            model.get_params()
+        ), elapsed_time=end - start)
 
         return result_file_path
 
     @abstractmethod
-    def test_model_ratings(self,
-                           model: BaseAlgorithm,
-                           output_path: str,
-                           batch_size: int,
-                           is_running: Callable[[], bool],
-                           **kwargs) -> None:
+    def test_model_ratings(
+            self,
+            model: BaseAlgorithm,
+            output_path: str,
+            batch_size: int,
+            is_running: Callable[[], bool],
+            **kwargs) -> None:
         """Test the specified model for rating predictions or recommendations.
 
         Args:
@@ -534,28 +534,28 @@ class ModelPipeline(metaclass=ABCMeta):
         Args:
             model: the model that needs to be trained.
         """
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(ModelEventArgs(
             ON_BEGIN_TRAIN_MODEL,
-            model=model,
-            train_set=self.train_set
-        )
+            model.get_name(),
+            model.get_params()
+        ))
 
         start = time.time()
         model.train(self.train_set)
         end = time.time()
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(ModelEventArgs(
             ON_END_TRAIN_MODEL,
-            model=model,
-            train_set=self.train_set,
-            elapsed_time=end - start
-        )
+            model.get_name(),
+            model.get_params()
+        ), elapsed_time=end - start)
 
-    def train_and_test_model(self,
-                             model: BaseAlgorithm,
-                             model_dir: str,
-                             is_running: Callable[[], bool],
-                             **kwargs) -> str:
+    def train_and_test_model(
+            self,
+            model: BaseAlgorithm,
+            model_dir: str,
+            is_running: Callable[[], bool],
+            **kwargs) -> str:
         """Train and test the specified model.
 
         Several possible errors can be raised during the executing of both training and
@@ -577,35 +577,46 @@ class ModelPipeline(metaclass=ABCMeta):
         try:
             self.train_model(model)
         except (ArithmeticError, MemoryError, RuntimeError) as err:
-            self.event_dispatcher.dispatch(
+            self.event_dispatcher.dispatch(ErrorEventArgs(
                 ON_RAISE_ERROR,
-                msg='Error: raised while training model ' +
-                    self.algo_factory.get_name() + ' ' + model.get_name()
-            )
+                'Error: raised while training model ' +
+                self.algo_factory.get_name() + ' ' + model.get_name()
+            ))
             # raise again so the model run aborts
             raise err
 
         try:
             result_file_path = self.test_model(model, model_dir, is_running, **kwargs)
         except (ArithmeticError, MemoryError, RuntimeError) as err:
-            self.event_dispatcher.dispatch(
+            self.event_dispatcher.dispatch(ErrorEventArgs(
                 ON_RAISE_ERROR,
-                msg='Error: raised while testing model ' +
-                    self.algo_factory.get_name() + ' ' + model.get_name()
-            )
+                'Error: raised while testing model ' +
+                self.algo_factory.get_name() + ' ' + model.get_name()
+            ))
             # raise again so the model run aborts
             raise err
 
         return result_file_path
 
 
-def write_computed_ratings(output_path: str, ratings: pd.DataFrame, header: bool) -> None:
+def write_computed_ratings(
+        event_dispatcher: EventDispatcher,
+        output_path: str,
+        ratings: pd.DataFrame,
+        header: bool) -> None:
     """Append the ratings to the file specified by the output path.
 
     Args:
+        event_dispatcher: used to dispatch create file IO event.
         output_path: path to the file where the ratings are appended to.
         ratings: the computed ratings dataframe that needs to be appended.
         header: whether to write the header as the first line.
 
     """
     ratings.to_csv(output_path, mode='a', sep='\t', header=header, index=False)
+    # header is the first line meaning the file has just been created
+    if header:
+        event_dispatcher.dispatch(FileEventArgs(
+            ON_CREATE_FILE,
+            output_path
+        ))

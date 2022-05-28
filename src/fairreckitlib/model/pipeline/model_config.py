@@ -18,12 +18,14 @@ from typing import Any, Dict, List
 
 from ...core.config_object import ObjectConfig, format_yml_config_list
 
-KEY_MODELS = 'models'
-
 
 @dataclass
 class ModelConfig(ObjectConfig):
-    """Model Configuration."""
+    """Model Configuration.
+
+    name: the name of the model.
+    params: the parameters of the model.
+    """
 
 
 def api_models_to_yml_format(

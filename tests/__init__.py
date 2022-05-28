@@ -5,6 +5,7 @@ Modules:
     test_algorithms: test the algorithm interface of predictors/recommenders.
     test_config_params: test the configuration param(s) functionality.
     test_converting: test the dataframe rating conversion functionality.
+    test_events: test the event dispatching/listening functionality.
     test_factories: test the base functionality of all types of factories.
     test_splitting: test the dataframe splitting functionality.
 

@@ -16,23 +16,26 @@ from typing import Any, Callable, List, Optional, Tuple
 
 import pandas as pd
 
-from ...core.event_dispatcher import EventDispatcher
-from ...core.event_error import ON_FAILURE_ERROR
-from ...core.event_io import ON_MAKE_DIR
+from ...core.events.event_dispatcher import EventDispatcher
+from ...core.events.event_error import ON_FAILURE_ERROR, ErrorEventArgs
+from ...core.events.event_io import ON_MAKE_DIR, DirEventArgs
 from ...core.factories import GroupFactory
 from ..data_transition import DataTransition
+from ..filter.filter_event import FilterDataframeEventArgs
+from ..ratings.convert_config import ConvertConfig
+from ..ratings.convert_event import ConvertRatingsEventArgs
+from ..ratings.rating_converter_factory import KEY_RATING_CONVERTER
 from ..set.dataset import Dataset
 from ..split.split_config import SplitConfig
 from ..split.split_constants import KEY_SPLITTING, KEY_SPLIT_TEST_RATIO
-from ..ratings.convert_config import ConvertConfig
-from ..ratings.rating_converter_factory import KEY_RATING_CONVERTER
+from ..split.split_event import SplitDataframeEventArgs
 from .data_config import DataMatrixConfig
-from .data_event import ON_BEGIN_DATA_PIPELINE, ON_END_DATA_PIPELINE
-from .data_event import ON_BEGIN_LOAD_DATASET, ON_END_LOAD_DATASET
+from .data_event import ON_BEGIN_DATA_PIPELINE, ON_END_DATA_PIPELINE, DatasetEventArgs
+from .data_event import ON_BEGIN_LOAD_DATASET, ON_END_LOAD_DATASET, DatasetMatrixEventArgs
 from .data_event import ON_BEGIN_FILTER_DATASET, ON_END_FILTER_DATASET
-from .data_event import ON_BEGIN_MODIFY_DATASET, ON_END_MODIFY_DATASET
+from .data_event import ON_BEGIN_CONVERT_RATINGS, ON_END_CONVERT_RATINGS
 from .data_event import ON_BEGIN_SPLIT_DATASET, ON_END_SPLIT_DATASET
-from .data_event import ON_BEGIN_SAVE_SETS, ON_END_SAVE_SETS
+from .data_event import ON_BEGIN_SAVE_SETS, ON_END_SAVE_SETS, SaveSetsEventArgs
 
 
 class DataPipeline(metaclass=ABCMeta):
@@ -80,17 +83,17 @@ class DataPipeline(metaclass=ABCMeta):
         Args:
             output_dir: the path of the directory to store the output.
             dataset: the dataset to run the pipeline on.
-            data_config: the dataset configuration.
+            data_config: the dataset matrix configurations.
             is_running: function that returns whether the pipeline
                 is still running. Stops early when False is returned.
 
         Returns:
             the data transition output of the pipeline.
         """
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(DatasetEventArgs(
             ON_BEGIN_DATA_PIPELINE,
-            dataset=dataset
-        )
+            dataset.get_name()
+        ))
 
         start = time.time()
 
@@ -125,11 +128,10 @@ class DataPipeline(metaclass=ABCMeta):
 
         end = time.time()
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(DatasetEventArgs(
             ON_END_DATA_PIPELINE,
-            dataset=dataset,
-            elapsed_time=end - start
-        )
+            dataset.get_name()
+        ), elapsed_time=end - start)
 
         data_output = DataTransition(
             dataset,
@@ -161,10 +163,7 @@ class DataPipeline(metaclass=ABCMeta):
 
         data_dir = os.path.join(output_dir, dataset_matrix_name + '_' + str(index))
         os.mkdir(data_dir)
-        self.event_dispatcher.dispatch(
-            ON_MAKE_DIR,
-            dir=data_dir
-        )
+        self.event_dispatcher.dispatch(DirEventArgs(ON_MAKE_DIR, data_dir))
 
         return data_dir
 
@@ -183,31 +182,33 @@ class DataPipeline(metaclass=ABCMeta):
                 In addition, the 'timestamp' column can be present when
                 available in the specified dataset.
         """
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(DatasetMatrixEventArgs(
             ON_BEGIN_LOAD_DATASET,
-            dataset=dataset,
-            matrix=matrix_name
-        )
+            dataset.get_name(),
+            matrix_name,
+            dataset.get_matrix_file_path(matrix_name)
+        ))
 
         start = time.time()
 
         try:
             dataframe = dataset.load_matrix(matrix_name)
         except FileNotFoundError as err:
-            self.event_dispatcher.dispatch(
+            self.event_dispatcher.dispatch(ErrorEventArgs(
                 ON_FAILURE_ERROR,
-                msg='Failure: to load dataset matrix ' + dataset.get_name() + '_' + matrix_name
-            )
+                'Failure: to load dataset matrix ' + dataset.get_name() + '_' + matrix_name
+            ))
             # raise again so the data run aborts
             raise err
 
         end = time.time()
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(DatasetMatrixEventArgs(
             ON_END_LOAD_DATASET,
-            dataset=dataset,
-            elapsed_time=end - start
-        )
+            dataset.get_name(),
+            matrix_name,
+            dataset.get_matrix_file_path(matrix_name)
+        ), elapsed_time=end - start)
 
         return dataframe
 
@@ -226,20 +227,19 @@ class DataPipeline(metaclass=ABCMeta):
         if len(prefilters) == 0:
             return dataframe
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(FilterDataframeEventArgs(
             ON_BEGIN_FILTER_DATASET,
-            prefilters=prefilters
-        )
+            prefilters
+        ))
 
         start = time.time()
         # TODO aggregated the set using the given filters
         end = time.time()
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(FilterDataframeEventArgs(
             ON_END_FILTER_DATASET,
-            prefilters=prefilters,
-            elapsed_time=end - start
-        )
+            prefilters
+        ), elapsed_time=end - start)
 
         return dataframe
 
@@ -265,30 +265,29 @@ class DataPipeline(metaclass=ABCMeta):
         if convert_config is None:
             return dataframe, dataset.get_matrix_config(matrix_name).rating_type
 
-        self.event_dispatcher.dispatch(
-            ON_BEGIN_MODIFY_DATASET,
-            rating_converter=convert_config.name
-        )
+        self.event_dispatcher.dispatch(ConvertRatingsEventArgs(
+            ON_BEGIN_CONVERT_RATINGS,
+            convert_config
+        ))
 
         start = time.time()
         convert_factory = self.data_factory.get_factory(KEY_RATING_CONVERTER)
         converter = convert_factory.create(convert_config.name, convert_config.params)
         if converter is None:
-            self.event_dispatcher.dispatch(
+            self.event_dispatcher.dispatch(ErrorEventArgs(
                 ON_FAILURE_ERROR,
-                msg='Failure: to get converter from factory: ' + convert_config.name
-            )
+                'Failure: to get converter from factory: ' + convert_config.name
+            ))
             # raise error so the data run aborts
             raise RuntimeError()
 
         dataframe, rating_type = converter.run(dataframe)
         end = time.time()
 
-        self.event_dispatcher.dispatch(
-            ON_END_MODIFY_DATASET,
-            rating_converter=convert_config.name,
-            elapsed_time=end - start
-        )
+        self.event_dispatcher.dispatch(ConvertRatingsEventArgs(
+            ON_END_CONVERT_RATINGS,
+            convert_config
+        ), elapsed_time=end - start)
 
         return dataframe, rating_type
 
@@ -310,33 +309,30 @@ class DataPipeline(metaclass=ABCMeta):
             train_set: the train set split of the specified dataframe.
             test_set: the test set split of the specified dataframe.
         """
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(SplitDataframeEventArgs(
             ON_BEGIN_SPLIT_DATASET,
-            split_name=split_config.name,
-            test_ratio=split_config.test_ratio
-        )
+            split_config
+        ))
 
         start = time.time()
         split_kwargs = {KEY_SPLIT_TEST_RATIO: split_config.test_ratio}
         split_factory = self.data_factory.get_factory(KEY_SPLITTING)
         splitter = split_factory.create(split_config.name, split_config.params, **split_kwargs)
         if splitter is None:
-            self.event_dispatcher.dispatch(
+            self.event_dispatcher.dispatch(ErrorEventArgs(
                 ON_FAILURE_ERROR,
-                msg='Failure: to get splitter from factory: ' + split_config.name
-            )
+                'Failure: to get splitter from factory: ' + split_config.name
+            ))
             # raise error so the data run aborts
             raise RuntimeError()
 
         train_set, test_set = splitter.run(dataframe)
         end = time.time()
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(SplitDataframeEventArgs(
             ON_END_SPLIT_DATASET,
-            split_name=split_config.name,
-            test_ratio=split_config.test_ratio,
-            elapsed_time=end - start
-        )
+            split_config
+        ), elapsed_time=end - start)
 
         return train_set, test_set
 
@@ -364,22 +360,21 @@ class DataPipeline(metaclass=ABCMeta):
         train_set_path = os.path.join(output_dir, 'train_set.tsv')
         test_set_path = os.path.join(output_dir, 'test_set.tsv')
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(SaveSetsEventArgs(
             ON_BEGIN_SAVE_SETS,
-            train_set_path=train_set_path,
-            test_set_path=test_set_path
-        )
+            train_set_path,
+            test_set_path
+        ))
 
         start = time.time()
         train_set.to_csv(train_set_path, sep='\t', header=False, index=False)
         test_set.to_csv(test_set_path, sep='\t', header=False, index=False)
         end = time.time()
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(SaveSetsEventArgs(
             ON_END_SAVE_SETS,
-            train_set_path=train_set_path,
-            test_set_path=test_set_path,
-            elapsed_time=end - start
-        )
+            train_set_path,
+            test_set_path
+        ), elapsed_time=end - start)
 
         return train_set_path, test_set_path
