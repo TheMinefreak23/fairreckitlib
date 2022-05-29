@@ -30,7 +30,7 @@ class DataFilter(metaclass=ABCMeta):
         self.dataset = dataset
 
     @abstractmethod
-    def run(self):
+    def run(self, col_name):
         """Carry out the filtering
 
         Raises:
