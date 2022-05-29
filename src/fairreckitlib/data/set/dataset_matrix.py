@@ -47,7 +47,7 @@ def create_matrix(le_path: str, item_type: str='track') -> pd.DataFrame:
         chunk = pd.read_csv('chunks/chunk'+str(n)+'.tsv', delimiter='\t')
         matrix = matrix.append(chunk, ignore_index=True)
         # this needs to be changed to a sum instead of count for final ratings
-        matrix = eval('create_', item_type, '_matrix(matrix)')
+        matrix = matrix.groupby(['user','track','rating'], as_index=False).sum()
 
     matrix.to_csv('chunks/1matrix.tsv', index=False, sep='\t')
     return matrix
