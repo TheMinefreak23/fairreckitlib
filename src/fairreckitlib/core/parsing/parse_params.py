@@ -22,7 +22,7 @@ from .parse_event import ON_PARSE, ParseEventArgs
 
 
 def parse_config_parameters(
-        params_config: Dict[str, Any],
+        params_config: Any,
         parent_name: str,
         parameters: ConfigParameters,
         event_dispatcher: EventDispatcher) -> Dict[str, Any]:
@@ -117,7 +117,7 @@ def parse_config_param(
             ON_PARSE,
             'PARSE WARNING: ' + parent_name + ' invalid param \'' + param.name + '\'' +
             '\n\t' + error_msg,
-            actual_type=config_value,
+            actual_type=type(config_value),
             default_value=value
         ))
     # validation succeeded but extra info is available
@@ -126,7 +126,7 @@ def parse_config_param(
             ON_PARSE,
             'PARSE WARNING: ' + parent_name + ' modified param \'' + param.name + '\'' +
             '\n\t' + error_msg,
-            actual_type=config_value
+            actual_type=type(config_value)
         ))
 
     return success, value
