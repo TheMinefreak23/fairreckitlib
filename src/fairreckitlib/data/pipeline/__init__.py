@@ -4,7 +4,7 @@ Modules:
 
     data_config: dataset configuration class.
     data_config_parsing: parse dataset configuration.
-    data_event: callback functions to be used in the data pipeline.
+    data_event: event ids, event args and a print switch for the data pipeline.
     data_pipeline: the data pipeline class.
     data_run: run (multiple) data pipelines.
 

@@ -64,5 +64,6 @@ class RecommendationPipeline(ModelPipeline):
             if not is_running():
                 return
 
-            write_computed_ratings(output_path, recommendations, start_index==0)
+            write_computed_ratings(self.event_dispatcher, output_path, recommendations,
+                start_index == 0)
             start_index += batch_size

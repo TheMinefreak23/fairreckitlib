@@ -6,6 +6,7 @@ Modules:
     convert_config: converter configuration class.
     convert_config_parsing: parse converter configuration.
     convert_constants: constants to be used in other modules.
+    convert_event: event args and a print function for a converter event.
     count: count apc/alc.
     kl_converter: class for converting with kullback-leibler.
     range_converter: class for converting with a scalar.

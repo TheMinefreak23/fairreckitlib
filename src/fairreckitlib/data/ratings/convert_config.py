@@ -16,4 +16,8 @@ from ...core.config_object import ObjectConfig
 
 @dataclass
 class ConvertConfig(ObjectConfig):
-    """Dataset rating conversion Configuration."""
+    """Dataset rating conversion Configuration.
+
+    name: the name of the rating converter.
+    params: the parameters of the rating converter.
+    """

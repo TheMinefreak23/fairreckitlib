@@ -34,7 +34,11 @@ class YmlConfig:
 
 @dataclass
 class ObjectConfig(YmlConfig):
-    """Base Object Configuration."""
+    """Base Object Configuration.
+
+    name: the name of the object.
+    params: the parameters of the object.
+    """
 
     name: str
     params: Dict[str, Any]

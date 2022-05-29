@@ -1,4 +1,14 @@
-"""
+"""This module contains functionality to create an evaluation factory.
+
+Constants:
+
+    KEY_EVALUATION: key that is used to identify evaluation.
+
+Functions:
+
+    create_metric_pipeline_factory: wrap metric factory with pipeline creation.
+    create_evaluation_factory: create factory with prediction/recommendation factories.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -7,7 +17,7 @@ from typing import Callable
 
 from .pipeline.evaluation_pipeline import EvaluationPipeline
 from ..core.config_constants import TYPE_PREDICTION, TYPE_RECOMMENDATION
-from ..core.event_dispatcher import EventDispatcher
+from ..core.events.event_dispatcher import EventDispatcher
 from ..core.factories import GroupFactory, Factory
 from .metrics.metric_factory import create_accuracy_metric_factory
 from .metrics.metric_factory import create_coverage_metric_factory
@@ -40,7 +50,6 @@ def create_evaluation_factory() -> GroupFactory:
     Returns:
         the group factory with available predictor and recommender factories.
     """
-
     shared_categories = [
         create_coverage_metric_factory,
         create_diversity_metric_factory,
