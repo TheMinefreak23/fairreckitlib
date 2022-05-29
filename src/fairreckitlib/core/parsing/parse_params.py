@@ -13,11 +13,12 @@ Utrecht University within the Software Project course.
 
 from typing import Any, Dict, Tuple
 
-from ..config_params import ConfigParameters, ConfigParam
-from ..event_dispatcher import EventDispatcher
+from ..events.event_dispatcher import EventDispatcher
+from ..params.config_base_param import ConfigParam
+from ..params.config_parameters import ConfigParameters
 from .parse_assert import assert_is_container_not_empty, assert_is_type
 from .parse_assert import assert_is_key_in_dict, assert_is_one_of_list
-from .parse_event import ON_PARSE
+from .parse_event import ON_PARSE, ParseEventArgs
 
 
 def parse_config_parameters(
@@ -45,7 +46,7 @@ def parse_config_parameters(
         dict,
         event_dispatcher,
         'PARSE WARNING: ' + parent_name + ' invalid params value',
-        default=parsed_params
+        default_value=parsed_params
     ): return parsed_params
 
     # remove unnecessary parameters from configuration
@@ -61,7 +62,7 @@ def parse_config_parameters(
         params_config,
         event_dispatcher,
         'PARSE WARNING: ' + parent_name + ' params is empty',
-        default=parsed_params
+        default_value=parsed_params
     ): return parsed_params
 
     # parse params_config entries
@@ -104,7 +105,7 @@ def parse_config_param(
         params_config,
         event_dispatcher,
         'PARSE WARNING: ' + parent_name + ' missing param for \'' + param.name + '\'',
-        default=param_default
+        default_value=param_default
     ): return False, param_default
 
     config_value = params_config[param.name]
@@ -112,21 +113,21 @@ def parse_config_param(
     success, value, error_msg = param.validate_value(config_value)
 
     if not success:
-        event_dispatcher.dispatch(
+        event_dispatcher.dispatch(ParseEventArgs(
             ON_PARSE,
-            msg='PARSE WARNING: ' + parent_name + ' invalid param \'' + param.name + '\'' +
-                '\n\t' + error_msg,
-            actual=config_value,
-            default=value
-        )
+            'PARSE WARNING: ' + parent_name + ' invalid param \'' + param.name + '\'' +
+            '\n\t' + error_msg,
+            actual_type=config_value,
+            default_value=value
+        ))
     # validation succeeded but extra info is available
     elif len(error_msg) > 0:
-        event_dispatcher.dispatch(
+        event_dispatcher.dispatch(ParseEventArgs(
             ON_PARSE,
-            msg='PARSE WARNING: ' + parent_name + ' modified param \'' + param.name + '\'' +
-                '\n\t' + error_msg,
-            actual=config_value
-        )
+            'PARSE WARNING: ' + parent_name + ' modified param \'' + param.name + '\'' +
+            '\n\t' + error_msg,
+            actual_type=config_value
+        ))
 
     return success, value
 

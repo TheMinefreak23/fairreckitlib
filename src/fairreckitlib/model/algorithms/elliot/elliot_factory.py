@@ -10,8 +10,8 @@ Utrecht University within the Software Project course.
 """
 
 from ....core.apis import ELLIOT_API
-from ....core.config_params import create_params_random_seed
 from ....core.factories import Factory, create_factory_from_list
+from ....core.params.config_parameters import create_params_random_seed
 from . import elliot_algorithms
 from . import elliot_params
 from . import elliot_recommender

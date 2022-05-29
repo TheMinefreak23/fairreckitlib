@@ -12,26 +12,26 @@ Utrecht University within the Software Project course.
 
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from ...core.config_constants import KEY_NAME
-from ...core.event_dispatcher import EventDispatcher
+from ...core.events.event_dispatcher import EventDispatcher
 from ...core.factories import GroupFactory
 from ...core.parsing.parse_assert import assert_is_type, assert_is_container_not_empty
 from ...core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
 from ...core.parsing.parse_event import ON_PARSE
-from ..data_factory import KEY_DATASETS
+from ..data_factory import KEY_DATA
 from ..ratings.convert_constants import KEY_RATING_CONVERTER
 from ..ratings.convert_config_parsing import parse_data_convert_config
+from ..set.dataset_constants import KEY_DATASET, KEY_MATRIX
 from ..set.dataset_registry import DataRegistry
 from ..split.split_constants import KEY_SPLITTING
 from ..split.split_config_parsing import parse_data_split_config
-from .data_config import DatasetConfig
+from .data_config import DataMatrixConfig
 
 
 def parse_data_config(
         experiment_config: Dict[str, Any],
         data_registry: DataRegistry,
         data_factory: GroupFactory,
-        event_dispatcher: EventDispatcher) -> Optional[List[DatasetConfig]]:
+        event_dispatcher: EventDispatcher) -> Optional[List[DataMatrixConfig]]:
     """Parse all dataset configurations.
 
     Args:
@@ -43,35 +43,32 @@ def parse_data_config(
     Returns:
         a list of parsed DatasetConfig's or None when empty.
     """
-    parsed_config = []
-
     # assert KEY_DATASETS is present
     if not assert_is_key_in_dict(
-        KEY_DATASETS,
+        KEY_DATA,
         experiment_config,
         event_dispatcher,
-        'PARSE ERROR: missing experiment key \'' + KEY_DATASETS + '\' (required)',
-        default=parsed_config
-    ): return parsed_config
+        'PARSE ERROR: missing experiment key \'' + KEY_DATA + '\' (required)'
+    ): return None
 
-    datasets_config = experiment_config[KEY_DATASETS]
+    datasets_config = experiment_config[KEY_DATA]
 
     # assert datasets_config is a list
     if not assert_is_type(
         datasets_config,
         list,
         event_dispatcher,
-        'PARSE ERROR: invalid experiment value for key \'' + KEY_DATASETS + '\'',
-        default=parsed_config
-    ): return parsed_config
+        'PARSE ERROR: invalid experiment value for key \'' + KEY_DATA + '\''
+    ): return None
 
     # assert datasets_config has list entries
     if not assert_is_container_not_empty(
         datasets_config,
         event_dispatcher,
-        'PARSE ERROR: experiment \'' + KEY_DATASETS + '\' is empty',
-        default=parsed_config
-    ): return parsed_config
+        'PARSE ERROR: experiment \'' + KEY_DATA + '\' is empty'
+    ): return None
+
+    parsed_config = []
 
     # parse datasets_config list entries
     for _, dataset_config in enumerate(datasets_config):
@@ -95,7 +92,7 @@ def parse_data_config(
     if not assert_is_container_not_empty(
         parsed_config,
         event_dispatcher,
-        'PARSE ERROR: no experiment ' + KEY_DATASETS + ' specified'
+        'PARSE ERROR: no experiment ' + KEY_DATA + ' specified'
     ): return None
 
     return parsed_config
@@ -105,7 +102,7 @@ def parse_dataset_config(
         dataset_config: Dict[str, Any],
         data_registry: DataRegistry,
         data_factory: GroupFactory,
-        event_dispatcher: EventDispatcher) -> Union[Tuple[DatasetConfig, str],Tuple[None, None]]:
+        event_dispatcher: EventDispatcher) -> Union[Tuple[DataMatrixConfig, str],Tuple[None, None]]:
     """Parse a dataset configuration.
 
     Args:
@@ -128,13 +125,13 @@ def parse_dataset_config(
 
     # assert dataset name is present
     if not assert_is_key_in_dict(
-        KEY_NAME,
+        KEY_DATASET,
         dataset_config,
         event_dispatcher,
-        'PARSE ERROR: missing dataset key \'' + KEY_NAME + '\' (required)'
+        'PARSE ERROR: missing key \'' + KEY_DATASET + '\' (required)'
     ): return None, None
 
-    dataset_name = dataset_config[KEY_NAME]
+    dataset_name = dataset_config[KEY_DATASET]
 
     # assert dataset name is available in the data registry
     if not assert_is_one_of_list(
@@ -146,6 +143,24 @@ def parse_dataset_config(
 
     dataset = data_registry.get_set(dataset_name)
 
+    # assert matrix name is present
+    if not assert_is_key_in_dict(
+        KEY_MATRIX,
+        dataset_config,
+        event_dispatcher,
+        'PARSE ERROR: missing key \'' + KEY_MATRIX + '\' (required)'
+    ): return None, dataset_name
+
+    dataset_matrix = dataset_config[KEY_MATRIX]
+
+    # assert matrix name is available in the dataset
+    if not assert_is_one_of_list(
+        dataset_matrix,
+        dataset.get_available_matrices(),
+        event_dispatcher,
+        'PARSE ERROR: unknown dataset matrix \'' + str(dataset_matrix) + '\''
+    ): return None, dataset_name
+
     # TODO parse this
     dataset_prefilters = []
 
@@ -153,6 +168,7 @@ def parse_dataset_config(
     dataset_rating_modifier = parse_data_convert_config(
         dataset_config,
         dataset,
+        dataset_matrix,
         data_factory.get_factory(KEY_RATING_CONVERTER),
         event_dispatcher
     )
@@ -165,8 +181,9 @@ def parse_dataset_config(
         event_dispatcher
     )
 
-    parsed_config = DatasetConfig(
+    parsed_config = DataMatrixConfig(
         dataset_name,
+        dataset_matrix,
         dataset_prefilters,
         dataset_rating_modifier,
         dataset_splitting

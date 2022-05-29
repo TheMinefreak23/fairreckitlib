@@ -16,22 +16,28 @@ Utrecht University within the Software Project course.
 from dataclasses import dataclass
 from typing import Callable, List
 
-from ...core.event_dispatcher import EventDispatcher
-from ...core.event_error import ON_FAILURE_ERROR
+from ...core.events.event_dispatcher import EventDispatcher
+from ...core.events.event_error import ON_FAILURE_ERROR, ErrorEventArgs
 from ...core.factories import GroupFactory
 from ..set.dataset_registry import DataRegistry
-from .data_config import DatasetConfig
+from .data_config import DataMatrixConfig
 from .data_pipeline import DataPipeline, DataTransition
 
 
 @dataclass
 class DataPipelineConfig:
-    """DataPipeline Configuration."""
+    """Data Pipeline Configuration.
+
+    output_dir: the directory to store the output.
+    data_registry: the registry with available datasets.
+    data_factory: the factory with available data modifier factories.
+    data_config: the dataset matrix configurations to compute.
+    """
 
     output_dir: str
     data_registry: DataRegistry
     data_factory: GroupFactory
-    data_config: List[DatasetConfig]
+    data_config: List[DataMatrixConfig]
 
 
 def run_data_pipelines(
@@ -52,13 +58,20 @@ def run_data_pipelines(
     data_result = []
 
     data_pipeline = DataPipeline(pipeline_config.data_factory, event_dispatcher)
-    for _, data_config in enumerate(pipeline_config.data_config):
-        dataset = pipeline_config.data_registry.get_set(data_config.name)
+    for data_config in pipeline_config.data_config:
+        dataset = pipeline_config.data_registry.get_set(data_config.dataset)
         if dataset is None:
-            event_dispatcher.dispatch(
+            event_dispatcher.dispatch(ErrorEventArgs(
                 ON_FAILURE_ERROR,
-                msg='Failure: to get dataset ' + data_config.name + ' from registry'
-            )
+                'Failure: to get dataset ' + data_config.dataset + ' from registry'
+            ))
+            continue
+
+        if data_config.matrix not in dataset.get_available_matrices():
+            event_dispatcher.dispatch(ErrorEventArgs(
+                ON_FAILURE_ERROR,
+                'Failure: to get matrix ' + data_config.matrix + ' from ' + data_config.dataset
+            ))
             continue
 
         try:

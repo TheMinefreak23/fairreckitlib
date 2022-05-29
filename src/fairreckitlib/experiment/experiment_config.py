@@ -16,9 +16,9 @@ from typing import Any, Dict, List
 
 from ..core.config_constants import KEY_NAME, KEY_TYPE
 from ..core.config_constants import KEY_TOP_K, KEY_RATED_ITEMS_FILTER
-from ..core.config_object import object_config_list_to_yml_format
-from ..data.data_factory import KEY_DATASETS
-from ..data.pipeline.data_config import DatasetConfig
+from ..core.config_object import format_yml_config_list
+from ..data.data_factory import KEY_DATA
+from ..data.pipeline.data_config import DataMatrixConfig
 from ..evaluation.evaluation_factory import KEY_EVALUATION
 from ..evaluation.pipeline.evaluation_config import MetricConfig
 from ..model.model_factory import KEY_MODELS
@@ -29,7 +29,7 @@ from ..model.pipeline.model_config import ModelConfig, api_models_to_yml_format
 class ExperimentConfig:
     """Base Experiment Configuration."""
 
-    datasets: [DatasetConfig]
+    datasets: [DataMatrixConfig]
     models: Dict[str, List[ModelConfig]]
     evaluation: [MetricConfig]
     name: str
@@ -44,13 +44,13 @@ class ExperimentConfig:
         yml_format = {
             KEY_NAME: self.name,
             KEY_TYPE: self.type,
-            KEY_DATASETS: object_config_list_to_yml_format(self.datasets),
+            KEY_DATA: format_yml_config_list(self.datasets),
             KEY_MODELS: api_models_to_yml_format(self.models)
         }
 
         # only include evaluation if it is present
         if len(self.evaluation) > 0:
-            yml_format[KEY_EVALUATION] = object_config_list_to_yml_format(self.evaluation)
+            yml_format[KEY_EVALUATION] = format_yml_config_list(self.evaluation)
 
         return yml_format
 

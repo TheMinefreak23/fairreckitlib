@@ -37,8 +37,9 @@ import numpy as np
 import pandas as pd
 
 from ...core.config_constants import MODEL_RATINGS_FILE
-from ...core.event_dispatcher import EventDispatcher
-from ...core.event_io import ON_MAKE_DIR, ON_REMOVE_DIR, ON_RENAME_FILE, ON_REMOVE_FILE
+from ...core.events.event_dispatcher import EventDispatcher
+from ...core.events.event_io import ON_MAKE_DIR, ON_REMOVE_DIR, ON_RENAME_FILE, ON_REMOVE_FILE
+from ...core.events.event_io import DirEventArgs, FileEventArgs, RenameFileEventArgs
 from ...core.factories import Factory
 from ...data.utility import save_yml
 from ..algorithms.elliot.elliot_recommender import ElliotRecommender
@@ -159,10 +160,10 @@ class RecommendationPipelineElliot(RecommendationPipeline):
         temp_dir = os.path.join(model_dir, 'temp')
         if not os.path.isdir(temp_dir):
             os.mkdir(temp_dir)
-            self.event_dispatcher.dispatch(
+            self.event_dispatcher.dispatch(DirEventArgs(
                 ON_MAKE_DIR,
-                dir=temp_dir
-            )
+                temp_dir
+            ))
 
         return temp_dir
 
@@ -177,16 +178,16 @@ class RecommendationPipelineElliot(RecommendationPipeline):
             file_path = os.path.join(temp_dir, file_name)
             if os.path.isdir(file_path):
                 os.rmdir(file_path)
-                self.event_dispatcher.dispatch(
+                self.event_dispatcher.dispatch(DirEventArgs(
                     ON_REMOVE_DIR,
-                    dir=temp_dir
-                )
+                    temp_dir
+                ))
             else:
                 os.remove(file_path)
-                self.event_dispatcher.dispatch(
+                self.event_dispatcher.dispatch(FileEventArgs(
                     ON_REMOVE_FILE,
-                    file=file_path
-                )
+                    file_path
+                ))
 
         os.rmdir(temp_dir)
 
@@ -211,10 +212,10 @@ class RecommendationPipelineElliot(RecommendationPipeline):
 
             if used_epoch not in file_name:
                 os.remove(file_path)
-                self.event_dispatcher.dispatch(
+                self.event_dispatcher.dispatch(FileEventArgs(
                     ON_REMOVE_FILE,
-                    file=file_path
-                )
+                    file_path
+                ))
 
     def reconstruct_rank_column(self, model_dir: str, top_k: int) -> str:
         """Reconstruct the rank column in the result file that the framework generated.
@@ -273,10 +274,10 @@ class RecommendationPipelineElliot(RecommendationPipeline):
             dst_path = os.path.join(model_dir, MODEL_RATINGS_FILE)
 
             os.rename(src_path, dst_path)
-            self.event_dispatcher.dispatch(
+            self.event_dispatcher.dispatch(RenameFileEventArgs(
                 ON_RENAME_FILE,
-                src_file=src_path,
-                dst_file=dst_path
-            )
+                src_path,
+                dst_path
+            ))
 
             return dst_path

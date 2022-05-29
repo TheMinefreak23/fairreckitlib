@@ -1,15 +1,33 @@
-"""This module contains dataset constants that are used in other modules.
+"""This module contains dataset (configuration) constants that are used in other modules.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-DATASET_CONFIG_FILE = '_config.yml'
-DATASET_FILE = 'file'
-DATASET_PREFIX = 'FRK_'
-DATASET_INDICES = 'indices'
-DATASET_MATRIX = 'data_set'
-DATASET_USERS = 'data_set_users'
-DATASET_ITEMS = 'data_set_items'
-DATASET_TABLES = 'data_tables'
+TABLE_FILE_PREFIX = 'FRK_'
+TABLE_FILE = 'file'
+TABLE_PRIMARY_KEY = 'primary_key'
+TABLE_FOREIGN_KEYS = 'foreign_keys'
+TABLE_KEY = 'key'
+TABLE_COLUMNS = 'columns'
+TABLE_COMPRESSION = 'compression'
+TABLE_ENCODING = 'encoding'
+TABLE_HEADER = 'header'
+TABLE_INDEXED = 'indexed'
+TABLE_NUM_RECORDS = 'num_records'
+TABLE_SEP = 'sep'
+
+DATASET_CONFIG_FILE = TABLE_FILE_PREFIX + 'dataset_config.yml'
+
+KEY_MATRIX = 'matrix'
+KEY_IDX_ITEM = 'idx_item'
+KEY_IDX_USER = 'idx_user'
+KEY_RATING_MIN = 'rating_min'
+KEY_RATING_MAX = 'rating_max'
+KEY_RATING_TYPE = 'rating_type'
+
+KEY_DATASET = 'dataset'
+KEY_EVENTS = 'events'
+KEY_MATRICES = 'matrices'
+KEY_TABLES = 'tables'

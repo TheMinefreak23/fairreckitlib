@@ -16,14 +16,16 @@ Utrecht University within the Software Project course.
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
-from ...core.config_object import ObjectConfig, object_config_list_to_yml_format
-
-KEY_MODELS = 'models'
+from ...core.config_object import ObjectConfig, format_yml_config_list
 
 
 @dataclass
 class ModelConfig(ObjectConfig):
-    """Model Configuration."""
+    """Model Configuration.
+
+    name: the name of the model.
+    params: the parameters of the model.
+    """
 
 
 def api_models_to_yml_format(
@@ -36,6 +38,6 @@ def api_models_to_yml_format(
     yml_format = {}
 
     for api_name, models in api_models.items():
-        yml_format[api_name] = object_config_list_to_yml_format(models)
+        yml_format[api_name] = format_yml_config_list(models)
 
     return yml_format

@@ -17,19 +17,20 @@ from typing import Dict, Callable, List, Tuple, Union
 
 import json
 
-from ..core.event_dispatcher import EventDispatcher
-from ..core.event_io import ON_MAKE_DIR
+from ..core.events.event_dispatcher import EventDispatcher
+from ..core.events.event_io import ON_MAKE_DIR, DirEventArgs
 from ..core.factories import GroupFactory
-from ..data.data_factory import KEY_DATASETS
+from ..data.data_factory import KEY_DATA
 from ..data.pipeline.data_run import DataPipelineConfig, run_data_pipelines
 from ..data.set.dataset_registry import DataRegistry
-from ..evaluation.pipeline.evaluation_run import run_evaluation_pipelines
+from ..evaluation.pipeline.evaluation_run import run_evaluation_pipelines, EvaluationPipelineConfig
 from ..evaluation.evaluation_factory import KEY_EVALUATION
 from ..model.pipeline.model_run import ModelPipelineConfig, run_model_pipelines
 from ..model.model_factory import KEY_MODELS
 from .experiment_config import ExperimentConfig
 from .experiment_config import PredictorExperimentConfig, RecommenderExperimentConfig
-from .experiment_event import ON_BEGIN_EXPERIMENT_PIPELINE, ON_END_EXPERIMENT_PIPELINE
+from .experiment_event import ON_BEGIN_EXPERIMENT_PIPELINE, ExperimentEventArgs
+from .experiment_event import ON_END_EXPERIMENT_PIPELINE
 
 
 class ExperimentPipeline:
@@ -85,7 +86,7 @@ class ExperimentPipeline:
             DataPipelineConfig(
                 output_dir,
                 self.data_registry,
-                self.experiment_factory.get_factory(KEY_DATASETS),
+                self.experiment_factory.get_factory(KEY_DATA),
                 experiment_config.datasets
             ),
             self.event_dispatcher,
@@ -122,10 +123,12 @@ class ExperimentPipeline:
             if len(experiment_config.evaluation) > 0:
                 evaluation_factory = self.experiment_factory.get_factory(KEY_EVALUATION)
                 run_evaluation_pipelines(
-                    model_dirs,
-                    data_transition,
-                    evaluation_factory.get_factory(experiment_config.type),
-                    experiment_config.evaluation,
+                    EvaluationPipelineConfig(
+                        model_dirs,
+                        data_transition,
+                        evaluation_factory.get_factory(experiment_config.type),
+                        experiment_config.evaluation
+                    ),
                     self.event_dispatcher,
                     is_running,
                     **kwargs
@@ -151,16 +154,13 @@ class ExperimentPipeline:
             the initial results list and the time the experiment started.
         """
         start_time = time.time()
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(ExperimentEventArgs(
             ON_BEGIN_EXPERIMENT_PIPELINE,
-            experiment_name=experiment_config.name
-        )
+            experiment_config.name
+        ))
 
         os.mkdir(output_dir)
-        self.event_dispatcher.dispatch(
-            ON_MAKE_DIR,
-            dir=output_dir
-        )
+        self.event_dispatcher.dispatch(DirEventArgs(ON_MAKE_DIR, output_dir))
 
         return [], start_time
 
@@ -180,11 +180,10 @@ class ExperimentPipeline:
         """
         write_storage_file(output_dir, results)
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(ExperimentEventArgs(
             ON_END_EXPERIMENT_PIPELINE,
-            experiment_name=experiment_config.name,
-            elapsed_time=time.time()-start_time
-        )
+            experiment_config.name
+        ), elapsed_time=time.time() - start_time)
 
 
 def add_result_to_overview(

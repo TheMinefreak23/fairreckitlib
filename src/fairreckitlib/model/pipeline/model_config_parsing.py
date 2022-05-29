@@ -14,7 +14,7 @@ Utrecht University within the Software Project course.
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from ...core.config_constants import KEY_NAME, KEY_PARAMS
-from ...core.event_dispatcher import EventDispatcher
+from ...core.events.event_dispatcher import EventDispatcher
 from ...core.factories import Factory, GroupFactory
 from ...core.parsing.parse_assert import assert_is_type, assert_is_container_not_empty
 from ...core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
@@ -46,7 +46,7 @@ def parse_models_config(
         experiment_config,
         event_dispatcher,
         'PARSE ERROR: missing experiment key \'' + KEY_MODELS + '\' (required)',
-        default=parsed_config
+        default_value=parsed_config
     ): return parsed_config
 
     models_config = experiment_config[KEY_MODELS]
@@ -57,7 +57,7 @@ def parse_models_config(
         dict,
         event_dispatcher,
         'PARSE ERROR: invalid experiment value for key \'' + KEY_MODELS + '\'',
-        default=parsed_config
+        default_value=parsed_config
     ): return parsed_config
 
     # assert models_config has entries
@@ -65,7 +65,7 @@ def parse_models_config(
         models_config,
         event_dispatcher,
         'PARSE ERROR: experiment \'' + KEY_MODELS + '\' is empty',
-        default=parsed_config
+        default_value=parsed_config
     ): return parsed_config
 
     # parse models_config entries
@@ -128,7 +128,7 @@ def parse_api_models(
         list,
         event_dispatcher,
         'PARSE WARNING: invalid models value for API \'' + api_name + '\'',
-        default=parsed_models
+        default_value=parsed_models
     ): return parsed_models
 
     # assert models has list entries
@@ -211,7 +211,7 @@ def parse_model(
         model_config,
         event_dispatcher,
         'PARSE WARNING: model ' + model_name + ' missing key \'' + KEY_PARAMS + '\'',
-        default=model_params
+        default_value=model_params
     ):
         # parse the model parameters
         model_params = parse_config_parameters(

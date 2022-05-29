@@ -1,48 +1,103 @@
-""""
+"""This module contains functionality that wraps running the evaluation pipeline multiple times.
+
+Classes:
+
+    EvaluationPipelineConfig: configuration class to run the evaluation pipelines.
+
+Functions:
+
+    run_evaluation_pipelines: run (multiple) pipelines for specified metric configurations.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from dataclasses import dataclass
 import os
+from typing import List, Callable
 
-from ..metrics.common import RecType
-from ..metrics.common import Test
-from .evaluation_pipeline import EvaluationPipeline
+import json
+
+from ...core.config_constants import MODEL_RATINGS_FILE
+from ...core.events.event_dispatcher import EventDispatcher
+from ...core.events.event_io import ON_CREATE_FILE, FileEventArgs
+from ...core.factories import GroupFactory
+from ...data.data_transition import DataTransition
+from ..metrics.common import metric_category_dict
+from .evaluation_config import MetricConfig
 
 
-def run_evaluation_pipelines(model_dirs, data_transition, metric_factory,
-                             eval_config, event_dispatcher, is_running, **kwargs):
-    """Runs several ModelPipeline's for the specified model configurations.
+@dataclass
+class EvaluationPipelineConfig:
+    """Evaluation Pipeline Configuration.
+
+    output_dir: the directory to store the output.
+    data_transition: data input.
+    evaluation_factory: the factory with available group metric factories.
+    evaluation: list of metric configurations to compute.
+    """
+
+    model_dirs: List[str]
+    data_transition: DataTransition
+    evaluation_factory: GroupFactory
+    evaluation: List[MetricConfig]
+
+
+def run_evaluation_pipelines(
+        pipeline_config: EvaluationPipelineConfig,
+        event_dispatcher: EventDispatcher,
+        is_running: Callable[[], bool],
+        **kwargs) -> None:
+    """Run several evaluation pipelines according to the specified eval pipeline configuration.
 
     Args:
-        model_dirs(array like): list of directories where the computed model
-            ratings are stored.
-        data_transition(DataTransition): data input.
-        metric_factory(GroupFactory): the metric factory with available metrics.
-        eval_config(array like): containing list of MetricConfig's.
-        event_dispatcher(EventDispatcher): used to dispatch evaluation/IO events
-            when running the evaluation pipelines.
-        is_running(func -> bool): function that returns whether the pipelines
+        pipeline_config: the configuration on how to run the evaluation pipelines.
+        event_dispatcher: used to dispatch eval/IO events when running the evaluation pipelines.
+        is_running: function that returns whether the pipelines
             are still running. Stops early when False is returned.
 
     Keyword Args:
-        num_threads(int): the max number of threads the evaluation can use.
+        num_threads(int): the max number of threads an evaluation can use.
         num_items(int): the number of item recommendations to produce, only
             needed when running recommender pipelines.
     """
-    print('model_dirs:')
-    print(model_dirs)
+    for model_dir in pipeline_config.model_dirs:
+        #print('evaluation', pipeline_config.evaluation)
+        #api_name = preferred_api_dict[evaluation.name]
+        #api_factory = pipeline_config.evaluation_factory.get_factory(api_name)
+        #pipeline = api_factory.create_pipeline(api_factory, event_dispatcher)
 
-    for model_dir in model_dirs:
-        print('model_dir:')
-        print(model_dir)
-        dir_name = os.path.dirname(model_dir)
+        recs_path = os.path.join(model_dir, MODEL_RATINGS_FILE)
 
-        # Create a test instance TODO refactor
-        test = Test(name=dir_name, train_path=data_transition.train_set_path, test_path=data_transition.test_set_path,
-                    recs_path=model_dir+'/ratings.tsv', rec_type=RecType.RECOMMENDATION)
+        # Create evaluations file
+        out_path = os.path.join(model_dir, 'evaluations.json')
+        with open(out_path, mode='w', encoding='utf-8') as out_file:
+            json.dump({'evaluations': []}, out_file, indent=4)
 
-        pipeline = EvaluationPipeline(test, '', eval_config['metrics'], kwargs['num_items'], eval_config['filters'],
-                                      event_dispatcher)
-        pipeline.run()
+        event_dispatcher.dispatch(FileEventArgs(
+            ON_CREATE_FILE,
+            out_path
+        ))
+
+        for category, metrics in metric_category_dict.items():
+            #print('==DEV CATEGORY METRICS==', category, metrics)
+            # Get category metrics
+            metrics_names = [metric.value for metric in metrics]
+            metrics = [metric for metric in pipeline_config.evaluation
+                       if metric.name in metrics_names]
+            category_factory = pipeline_config.evaluation_factory.get_factory(category.value)
+            pipeline = category_factory.create_pipeline(category_factory, event_dispatcher)
+            if not pipeline:
+                raise Exception('Category not found')
+            if len(metrics) == 0:
+                continue
+
+            kwargs['is_running'] = is_running
+
+            pipeline.run(
+                out_path,
+                recs_path,
+                pipeline_config.data_transition,
+                metrics,
+                **kwargs)

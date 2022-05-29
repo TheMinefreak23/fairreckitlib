@@ -4,7 +4,7 @@ Modules:
 
     experiment_config: experiment configuration classes.
     experiment_config_parsing: parse experiment configurations.
-    experiment_event: callback functions to be used in the experiment pipeline.
+    experiment_event: event ids, event args and a print switch for the experiment pipeline/thread.
     experiment_pipeline: the experiment pipeline class.
     experiment_run: run (multiple) experiment pipelines.
     experiment_thread: execute the experiment pipelines on a thread.

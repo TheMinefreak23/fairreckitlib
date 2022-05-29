@@ -18,8 +18,8 @@ from typing import Any, Dict, Tuple
 
 import pandas as pd
 
-from ...core.config_params import ConfigParameters
-from ..set.dataset import DATASET_RATINGS_EXPLICIT, DATASET_RATINGS_IMPLICIT
+from ...core.params.config_parameters import ConfigParameters
+from ..set.dataset_config import DATASET_RATINGS_EXPLICIT, DATASET_RATINGS_IMPLICIT
 from .base_converter import RatingConverter
 from .convert_constants import RATING_TYPE_THRESHOLD
 
@@ -78,5 +78,5 @@ def create_range_converter_params() -> ConfigParameters:
         the configuration parameters of the converter.
     """
     params = ConfigParameters()
-    params.add_value('upper_bound', float, 1.0, (1.0, 1000000.0))
+    params.add_number('upper_bound', float, 1.0, (1.0, 1000000.0))
     return params

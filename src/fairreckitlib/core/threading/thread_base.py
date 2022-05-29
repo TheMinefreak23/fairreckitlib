@@ -13,7 +13,7 @@ from abc import ABCMeta, abstractmethod
 from threading import Thread
 from typing import Any, Callable
 
-from ..event_dispatcher import EventDispatcher
+from ..events.event_dispatcher import EventDispatcher
 
 
 class ThreadBase(metaclass=ABCMeta):
