@@ -12,11 +12,11 @@ Utrecht University within the Software Project course.
 from typing import Any, Dict, Optional
 
 from ...core.config_constants import KEY_NAME, KEY_PARAMS
-from ...core.event_dispatcher import EventDispatcher
+from ...core.events.event_dispatcher import EventDispatcher
 from ...core.factories import Factory
 from ...core.params.config_option_param import ConfigSingleOptionParam
 from ...core.parsing.parse_assert import assert_is_type, assert_is_key_in_dict
-from ...core.parsing.parse_event import ON_PARSE
+from ...core.parsing.parse_event import ON_PARSE, ParseEventArgs
 from ...core.parsing.parse_params import parse_config_param, parse_config_parameters
 from ..set.dataset import Dataset
 from .convert_config import ConvertConfig
@@ -45,12 +45,12 @@ def parse_data_convert_config(
 
     # dataset rating conversion is optional
     if KEY_RATING_CONVERTER not in dataset_config:
-        event_dispatcher.dispatch(
+        event_dispatcher.dispatch(ParseEventArgs(
             ON_PARSE,
-            msg='PARSE WARNING: dataset ' + dataset.get_name() + ' missing key \'' +
-                KEY_RATING_CONVERTER + '\'',
-            default=parsed_config
-        )
+            'PARSE WARNING: dataset ' + dataset.get_name() + ' missing key \'' +
+            KEY_RATING_CONVERTER + '\'',
+            default_value=parsed_config
+        ))
         return parsed_config
 
     convert_config = dataset_config[KEY_RATING_CONVERTER]
@@ -61,7 +61,7 @@ def parse_data_convert_config(
         dict,
         event_dispatcher,
         'PARSE WARNING: dataset ' + dataset.get_name() + ' invalid rating conversion value',
-        default=parsed_config
+        default_value=parsed_config
     ): return parsed_config
 
     # parse converter name
@@ -98,7 +98,7 @@ def parse_data_convert_config(
         event_dispatcher,
         'PARSE WARNING: dataset ' + dataset.get_name() + ' ' + KEY_RATING_CONVERTER +
         ' missing key \'' + KEY_PARAMS + '\'',
-        default=parsed_config.params
+        default_value=parsed_config.params
     ):
         # parse the converter parameters
         parsed_config.params = parse_config_parameters(

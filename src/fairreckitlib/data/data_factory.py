@@ -1,5 +1,9 @@
 """This module contains functionality to create a data factory.
 
+Constants:
+
+    KEY_DATA: key that is used to identify data.
+
 Functions:
 
     create_data_factory: create factory with data modifier factories.

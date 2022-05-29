@@ -12,7 +12,7 @@ Utrecht University within the Software Project course.
 
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from ...core.event_dispatcher import EventDispatcher
+from ...core.events.event_dispatcher import EventDispatcher
 from ...core.factories import GroupFactory
 from ...core.parsing.parse_assert import assert_is_type, assert_is_container_not_empty
 from ...core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
