@@ -23,6 +23,8 @@ class EventDispatcher:
     Public methods:
 
     add_listener
+    get_num_listeners
+    get_num_listeners_total
     remove_listener
     dispatch
     """
