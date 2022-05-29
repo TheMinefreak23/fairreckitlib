@@ -22,13 +22,8 @@ class TestFilterCountry:
         df_expected.country = df_expected.country.astype(str)
         assert_frame_equal(df_result, df_expected)
 
-<<<<<<< HEAD
-    def test_run_no_param_found(self):
-        """Test run with nof fount parameter."""
-=======
     def test_run_no_found_param(self):
         """Test run with no found parameter."""
->>>>>>> 911fb2e3a9e9a3014c8737e3368d9b7f3cb478cd
         df_result = self.filter_obj.run('Belgium')
         df_expected = DataFrame({"id": [], "country": []})
         df_expected.id = df_expected.id.astype(int64)
@@ -40,15 +35,7 @@ class TestFilterCountry:
         df_result = self.filter_obj.run('Iran')
         df_expected = DataFrame({"id": [1], "country": ['Iran']})
         assert_frame_equal(df_result, df_expected)
-<<<<<<< HEAD
-    @classmethod
-    def test_run_no_country(cls):
-        """Test a given dataframe with no country column."""
-        df_given = DataFrame({"id": [1, 2, 3, 4, 5], "play_count": [24, 0, -1, 45, 102]})
-        filter_obj = CountryFilter(df_given)
-        df_result = filter_obj.run('Sweden')
-        assert_frame_equal(df_result, df_given)
-=======
+
 
 def test_run_no_country():
     """Test a given dataframe with no country column."""
@@ -56,4 +43,3 @@ def test_run_no_country():
     filter_obj = CountryFilter(df_given)
     df_result = filter_obj.run('Sweden')
     assert_frame_equal(df_result, df_given)
->>>>>>> 911fb2e3a9e9a3014c8737e3368d9b7f3cb478cd
