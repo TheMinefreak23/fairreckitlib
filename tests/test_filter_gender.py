@@ -17,7 +17,7 @@ class TestFilterGender:
 
     def test_run_no_filter_param(self):
         """Test run with no given parameter."""
-        df_result = self.filter_obj.run("user_gender", [])
+        df_result = self.filter_obj.run("user_gender")
         assert_frame_equal(df_result, self.df_source)
 
     def test_run_with_one_filter(self):

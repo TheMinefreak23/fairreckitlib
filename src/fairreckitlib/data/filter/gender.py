@@ -24,7 +24,7 @@ class GenderFilter(DataFilter):
         Returns:
             a filtered dataframe from the given dataframe
         """
-        if col_name in self.dataset.columns:
+        if col_name in self.dataset.columns and genders:
             df_filter = []
             for gender in genders:
                 gender = gender.lower()
