@@ -26,13 +26,17 @@ class DataFilter(metaclass=ABCMeta):
     """
 
     def __init__(self, name: str, params: Dict[str, Any], **kwargs) -> None:
-        """Make Constructor of the class."""
+        """Make Constructor of the class.
+        
+        Args:
+            name: Configuration name of the filter.
+            params: Configuration parameters.
+
+        """
         self.name = name
         self.params = params
-        self.column_name = params['name']  # needs verification..
+        # self.column_name = params['name']  # not needed but! needs verification..
         self.kwargs = kwargs
-        self.dataset = kwargs['dataset']
-        self.matrix_name = kwargs['matrix_name']
 
     def run(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Carry out the filtering."""
@@ -40,10 +44,10 @@ class DataFilter(metaclass=ABCMeta):
 
     @abstractmethod
     def __filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
-        """Basic filter functionality. Widely applicable.
+        """Basic filter functionality used in the data pipeline.
 
         Raises:
-            NotImplementedError: this method should be implemented in the subclasses
+            NotImplementedError: This method should be implemented in the subclasses.
         """
         raise NotImplementedError()
 
@@ -51,16 +55,16 @@ class DataFilter(metaclass=ABCMeta):
         """When filter needs a column from some dataset table located elsewhere.
         
         Args:
-            dataframe: the dataset to be filtered.
+            dataframe: The dataset to be filtered.
         
         Returns:
-            dataframe
+            A filtered dataframe.
         """ 
         #  kwargs
 
         # Add required columns
         og_cols = dataframe.columns()
-        new_dataframe = add_dataset_columns(self.dataset, self.matrix_name, dataframe, [self.column_name])
+        new_dataframe = add_dataset_columns(self.kwargs['dataset'], self.kwargs['matrix_name'], dataframe, [self.params['name']])
         new_cols = new_dataframe.columns()
         
         self.__filter(dataframe)
@@ -72,9 +76,9 @@ class DataFilter(metaclass=ABCMeta):
         return new_dataframe
 
     def __str__(self):
-        """To string
+        """To string.
 
         Returns:
-            name of the class
+            The name of the class.
         """
         return self.__class__.__name__

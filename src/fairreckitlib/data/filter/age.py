@@ -9,40 +9,44 @@ import pandas as pd
 from .base import DataFilter
 
 
-class AgeFilter(DataFilter):
-    """Filters the dataframe on user age, if such a column exists."""
+class NumericalFilter(DataFilter):
+    """Filters the dataframe on numerical data, such as age or rating.
+    
+    Public method:
+        filter
+    """
 
-    def __filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
-        """
-        Filter the dataframe based on age column in the range of min_val and max_val values.
+    def filter(self, dataframe: pd.DataFrame, column_name: str, min, max) -> pd.DataFrame:
+        """Filters the dataframe on values in the range of min and max.
 
         Args:
-            min_val: minimum age (default 0)
-            max_val: maximum age (default 0)
+            dataframe: Dataframe to be filtered on.
+            column_name: Name of the column where the conditions need to be met.
+            min: Minimal number.
+            max: Maximum number.
 
         Returns:
-            a filtered dataframe from the given dataframe
+            A filtered dataframe.
         """
-        if 'age' in dataframe.columns:
-            df_filter = dataframe.age.between(self.params["min"], self.params["max"], inclusive="both")
-            return dataframe[df_filter].reset_index(drop=True)
-        return dataframe
+        df_filter = dataframe[column_name].between(min, max, inclusive="both")
+        return dataframe[df_filter].reset_index(drop=True)
+
+    def __filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        """Private filter used in run(). Requires configuration file."""
+        return self.filter(dataframe, self.params['name'], self.params["min"], self.params["max"])
 
 
-def create_age_filter(name: str, 
+def create_numerical_filter(name: str, 
                       params: Dict[str, Any], 
                       **kwargs) -> DataFilter:
-    """Create an instance of the class AgeFilter
+    """Create an instance of the class NumericalFilter.
 
     Args:
-        name: UserAge
-        params: Dictionary with 'min' and 'max'.
-        **kwargs (Optional): Not used.
+        name: Name of the filter.
+        params: Configuration file.
+        **kwargs: Contains dataset and matrix_name.
 
     Returns:
-        an instance of the AgeFilter class
+        An instance of the NumericalFilter class.
     """
-    # If params == None, thus no param in factory.create() has been given.
-    if not params:  # Default value
-        params = {"min": 0, "max": 100}
-    return AgeFilter(name, params, kwargs)
+    return NumericalFilter(name, params, kwargs)

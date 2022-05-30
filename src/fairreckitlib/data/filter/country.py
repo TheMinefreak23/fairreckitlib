@@ -4,41 +4,46 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, List
 import pandas as pd
 from .base import DataFilter
 
-class CountryFilter(DataFilter):
-    """Filters the dataframe on country, if such column exists."""
+class CategoricalFilter(DataFilter):
+    """Filters the dataframe on categorical data, such as country or gender.
+    
+    Public method:
+        filter
+    """
 
-    def __filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
-        """Filter specific country of the dataframe.
+    def filter(self, dataframe: pd.DataFrame, column_name: str, conditions: List[Any]) -> pd.DataFrame:
+        """Filters on a list of categories.
 
         Args:
-            country: the name of the country used in filtering
-
+            dataframe: Dataframe to be filtered.
+            column_name: Name of the column where the conditions need to be met.
+            conditions: A list of values, where values of the column_name in the resulting dataframe meet some condition.
+            
         Returns:
-            a filtered dataframe from the given dataframe
+            A filtered dataframe.
         """
-        if 'country' in dataframe.columns:
-            country = self.params['country']
-            df_filter = dataframe.country.map(lambda x: x.lower() if x else x
-                                                ).eq(country.lower() if country else country)
-            return dataframe[df_filter].reset_index(drop=True)
-        return dataframe
+        df_filter = dataframe[column_name].isin(conditions).any(axis='columns')
+        return dataframe[df_filter].reset_index(drop=True)
+
+    def __filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        """Private filter used in run(). Requires configuration file."""
+        return self.filter(dataframe, self.params['name'], self.params['values'])
 
 
-def create_country_filter(name: str, 
-                          params: Dict[str, Any], 
-                          **kwargs) -> DataFilter:
-    """Create an instance of the class CountryFilter
+
+def create_categorical_filter(name: str, params: Dict[str, Any], **kwargs) -> DataFilter:
+    """Create an instance of the class CategoricalFilter
 
     Args:
-        name: UserCountry
-        params: Dictionary with only one key: 'country'.
-        **kwargs (Optional): Not used.
+        name: Name of the filter.
+        params: Configuration file.
+        **kwargs: Contains dataset and matrix_name.
 
     Returns:
-        an instance of the CountryFilter class
+        An instance of the CategoricalFilter class.
     """
-    return CountryFilter(name, params, kwargs)
+    return CategoricalFilter(name, params, kwargs)
