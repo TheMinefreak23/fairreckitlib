@@ -18,9 +18,9 @@ from dataclasses import dataclass
 import os
 from typing import Callable, Union
 
+from ..core.config.config_factories import GroupFactory
 from ..core.events.event_dispatcher import EventDispatcher
 from ..core.events.event_io import ON_MAKE_DIR, DirEventArgs
-from ..core.factories import GroupFactory
 from ..data.set.dataset_registry import DataRegistry
 from ..data.utility import save_yml
 from .experiment_config import PredictorExperimentConfig, RecommenderExperimentConfig

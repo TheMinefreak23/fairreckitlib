@@ -17,9 +17,9 @@ from typing import Dict, Callable, List, Tuple, Union
 
 import json
 
+from ..core.config.config_factories import GroupFactory
 from ..core.events.event_dispatcher import EventDispatcher
 from ..core.events.event_io import ON_MAKE_DIR, DirEventArgs
-from ..core.factories import GroupFactory
 from ..data.data_factory import KEY_DATA
 from ..data.pipeline.data_run import DataPipelineConfig, run_data_pipelines
 from ..data.set.dataset_registry import DataRegistry

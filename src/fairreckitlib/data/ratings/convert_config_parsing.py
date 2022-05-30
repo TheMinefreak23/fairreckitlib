@@ -11,13 +11,13 @@ Utrecht University within the Software Project course.
 
 from typing import Any, Dict, Optional
 
-from ...core.config_constants import KEY_NAME, KEY_PARAMS
+from ...core.config.config_factories import Factory
+from ...core.config.config_option_param import ConfigSingleOptionParam
+from ...core.core_constants import KEY_NAME, KEY_PARAMS
 from ...core.events.event_dispatcher import EventDispatcher
-from ...core.factories import Factory
-from ...core.params.config_option_param import ConfigSingleOptionParam
 from ...core.parsing.parse_assert import assert_is_type, assert_is_key_in_dict
+from ...core.parsing.parse_config_params import parse_config_param, parse_config_parameters
 from ...core.parsing.parse_event import ON_PARSE, ParseEventArgs
-from ...core.parsing.parse_params import parse_config_param, parse_config_parameters
 from ..set.dataset import Dataset
 from .convert_config import ConvertConfig
 from .convert_constants import KEY_RATING_CONVERTER

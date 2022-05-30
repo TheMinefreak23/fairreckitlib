@@ -15,7 +15,7 @@ Utrecht University within the Software Project course.
 
 from typing import Any, Dict, Optional
 
-from ...core.config_constants import KEY_NAME
+from ...core.core_constants import KEY_NAME
 from .dataset_constants import KEY_DATASET, KEY_EVENTS, KEY_MATRICES, KEY_TABLES
 from .dataset_constants import KEY_MATRIX, KEY_IDX_ITEM, KEY_IDX_USER
 from .dataset_constants import KEY_RATING_MIN, KEY_RATING_MAX, KEY_RATING_TYPE

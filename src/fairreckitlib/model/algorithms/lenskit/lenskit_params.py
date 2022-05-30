@@ -12,7 +12,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ....core.params.config_parameters import ConfigParameters
+from ....core.config.config_parameters import ConfigParameters
 
 
 def create_params_biased_mf() -> ConfigParameters:

@@ -16,9 +16,9 @@ Utrecht University within the Software Project course.
 from dataclasses import dataclass
 from typing import Callable, Dict, List
 
+from ...core.config.config_factories import GroupFactory
 from ...core.events.event_dispatcher import EventDispatcher
 from ...core.events.event_error import ON_FAILURE_ERROR
-from ...core.factories import GroupFactory
 from ...data.data_transition import DataTransition
 from .model_config import ModelConfig
 
