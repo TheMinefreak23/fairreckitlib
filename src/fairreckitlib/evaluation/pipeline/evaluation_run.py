@@ -19,10 +19,10 @@ from typing import List, Callable
 
 import json
 
-from ...core.config_constants import MODEL_RATINGS_FILE
+from ...core.config.config_factories import GroupFactory
+from ...core.core_constants import MODEL_RATINGS_FILE
 from ...core.events.event_dispatcher import EventDispatcher
 from ...core.events.event_io import ON_CREATE_FILE, FileEventArgs
-from ...core.factories import GroupFactory
 from ...data.data_transition import DataTransition
 from ..metrics.common import metric_category_dict
 from .evaluation_config import MetricConfig

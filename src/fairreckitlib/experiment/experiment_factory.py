@@ -9,7 +9,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ..core.factories import GroupFactory
+from ..core.config.config_factories import GroupFactory
 from ..data.data_factory import create_data_factory
 from ..evaluation.evaluation_factory import create_evaluation_factory
 from ..model.model_factory import create_model_factory

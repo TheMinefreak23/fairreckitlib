@@ -11,7 +11,7 @@ Utrecht University within the Software Project course.
 
 from dataclasses import dataclass
 
-from ...core.config_object import ObjectConfig
+from ...core.config.config_object import ObjectConfig
 
 
 @dataclass

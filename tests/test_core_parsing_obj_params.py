@@ -1,30 +1,29 @@
-"""This module tests the core parsing functionality.
+"""This module tests the object (parameters) parsing functionality.
 
 Functions:
 
-    test_parse_assert_empty_container: test assertion of (non) empty containers.
-    test_parse_assert_key_in_dict_and_one_of_list: test assertion of key/value in container.
-    test_parse_assert_is_type: test assertion for value to be of a certain type.
     test_trim_config_params: test trimming of (unused) configuration parameters.
     test_parse_config_param: test parsing of a single configuration parameter.
     test_parse_config_parameters: test parsing of the configuration parameters as a whole.
+    test_parse_config_obj: test parsing of an object name and parameters configuration.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from typing import Dict, List, Union
+from typing import Any, Dict, Tuple
 
 import pytest
 
+from src.fairreckitlib.core.core_constants import KEY_NAME, KEY_PARAMS
 from src.fairreckitlib.core.events.event_dispatcher import EventDispatcher
-from src.fairreckitlib.core.params.config_parameters import ConfigParameters
-from src.fairreckitlib.core.parsing.parse_assert import \
-    assert_is_container_not_empty, assert_is_key_in_dict, assert_is_one_of_list, assert_is_type
-from src.fairreckitlib.core.parsing.parse_event import ON_PARSE, print_parse_event
-from src.fairreckitlib.core.parsing.parse_params import \
+from src.fairreckitlib.core.config.config_factories import Factory
+from src.fairreckitlib.core.config.config_parameters import ConfigParameters
+from src.fairreckitlib.core.parsing.parse_config_object import parse_config_object
+from src.fairreckitlib.core.parsing.parse_config_params import \
     parse_config_parameters, parse_config_param, trim_config_params
+from src.fairreckitlib.core.parsing.parse_event import ON_PARSE, print_parse_event
 
 BOOL_PARAM_NAME = 'bool'
 INT_PARAM_NAME = 'int'
@@ -32,71 +31,27 @@ FLOAT_PARAM_NAME = 'float'
 SEED_PARAM_NAME = 'seed'
 UNKNOWN_PARAM_NAME = 'unknown'
 
-config_params = ConfigParameters()
-config_params.add_random_seed(SEED_PARAM_NAME)
-config_params.add_bool(BOOL_PARAM_NAME, True)
-config_params.add_number(INT_PARAM_NAME, int, 10, (0, 100))
-config_params.add_number(FLOAT_PARAM_NAME, float, 10.0, (0.0, 100.0))
-config_params.add_range('int_range', int, (1, 2), (0, 3))
-config_params.add_range('float_range', float, (1.0, 2.0), (0.0, 3.0))
-config_params.add_single_option('single', str, 'a', ['a', 'b', 'c'])
-config_params.add_multi_option('multi', ['a', 'c'], ['a', 'b', 'c'])
+INVALID_DICT_TYPES = [None, True, False, 0, 0.0, 'a', [], {UNKNOWN_PARAM_NAME: 'dict'}, {'set'}]
 
 
-@pytest.mark.parametrize('container', [{}, [], {'0':0}, [0]])
-def test_parse_assert_empty_container(container: Union[Dict, List]) -> None:
-    """Test the assertion for (non) empty containers.
-
-    Args:
-        container: the container to assert
-    """
-    event_dispatcher = EventDispatcher()
-
-    if len(container) == 0:
-        assert not assert_is_container_not_empty(container, event_dispatcher, ''), \
-            'expected container to be empty'
-    else:
-        assert assert_is_container_not_empty(container, event_dispatcher, ''), \
-            'expected container to have entries'
-
-
-def test_parse_assert_key_in_dict_and_one_of_list() -> None:
-    """Test the assertion of a key present in a dictionary or a value present in a list."""
-    event_dispatcher = EventDispatcher()
-
-    for i in list(range(0, 100)):
-        # keys are assumed to be strings, value can be Any
-        key = str(i)
-        assert assert_is_key_in_dict(key, {key:i}, event_dispatcher, ''), \
-            'expected key to be in the dictionary.'
-        assert not assert_is_key_in_dict(key, {}, event_dispatcher, ''), \
-            'did not expect key in the dictionary.'
-
-        assert assert_is_one_of_list(i, [i], event_dispatcher, ''), \
-            'expected key to be in the list.'
-        assert not assert_is_one_of_list(i, [], event_dispatcher, ''), \
-            'did not expect key to be in the list.'
-
-
-def test_parse_assert_is_type() -> None:
-    """Test the assertion of various primitive types and containers."""
-    event_dispatcher = EventDispatcher()
-    types = [None, True, False, 0, 0.0, 'a', [], {'dict':0}, {'set'}]
-    for expected_type in types:
-        expected_type = type(expected_type)
-
-        for value in types:
-            if isinstance(value, expected_type):
-                assert assert_is_type(value, expected_type, event_dispatcher, ''), \
-                    'expected types to be the same.'
-            else:
-                assert not assert_is_type(value, expected_type, event_dispatcher, ''), \
-                    'expected types to be different.'
+def create_dummy_config_params() -> ConfigParameters:
+    """Create dummy configuration parameters to use for testing."""
+    config_params = ConfigParameters()
+    config_params.add_random_seed(SEED_PARAM_NAME)
+    config_params.add_bool(BOOL_PARAM_NAME, True)
+    config_params.add_number(INT_PARAM_NAME, int, 10, (0, 100))
+    config_params.add_number(FLOAT_PARAM_NAME, float, 10.0, (0.0, 100.0))
+    config_params.add_range('int_range', int, (1, 2), (0, 3))
+    config_params.add_range('float_range', float, (1.0, 2.0), (0.0, 3.0))
+    config_params.add_single_option('single', str, 'a', ['a', 'b', 'c'])
+    config_params.add_multi_option('multi', ['a', 'c'], ['a', 'b', 'c'])
+    return config_params
 
 
 def test_trim_config_params() -> None:
     """Test config parameter trimming with and without an unknown parameter."""
     event_dispatcher = EventDispatcher()
+    config_params = create_dummy_config_params()
     param_defaults = config_params.get_defaults()
 
     # test trimming without an unknown parameter.
@@ -122,6 +77,7 @@ def test_parse_config_param() -> None:
     """Test parsing of a single configuration parameter."""
     event_dispatcher = EventDispatcher()
     event_dispatcher.add_listener(ON_PARSE, None, (lambda _, args: print_parse_event(args), None))
+    config_params = create_dummy_config_params()
 
     for param_name in config_params.get_param_names():
         params = config_params.get_defaults()
@@ -162,9 +118,10 @@ def test_parse_config_parameters() -> None:
     """Test parsing of the configuration parameters as a whole."""
     event_dispatcher = EventDispatcher()
     event_dispatcher.add_listener(ON_PARSE, None, (lambda _, args: print_parse_event(args), None))
+    config_params = create_dummy_config_params()
 
     # test failure for parsing various types, including a dict that will be empty after trimming
-    for params in [None, True, False, 0, 0.0, 'a', [], {UNKNOWN_PARAM_NAME: 'dict'}, {'set'}]:
+    for params in INVALID_DICT_TYPES:
         params = parse_config_parameters(params, str(params), config_params, event_dispatcher)
         assert params == config_params.get_defaults(), \
             'expected config parameters parsing to fail and return the defaults'
@@ -179,3 +136,62 @@ def test_parse_config_parameters() -> None:
         'expected config parameters parsing to succeed and not be the same as the defaults.'
     assert params[BOOL_PARAM_NAME] == (not default_bool_param), \
         'expected the boolean config parameter value to be flipped.'
+
+
+def test_parse_config_obj() -> None:
+    """Test parsing of an object name and parameters configuration."""
+    event_dispatcher = EventDispatcher()
+    event_dispatcher.add_listener(ON_PARSE, None, (lambda _, args: print_parse_event(args), None))
+
+    def create_dummy_obj(name: str, params: Dict[str, Any]) -> Tuple[str, Dict[str, Any]]:
+        """Create dummy object function not used, only to initialize the object factory."""
+        return name, params
+
+    obj_type_name = 'test_obj'
+    obj_name_unknown = 'unknown_obj'
+    obj_name = 'obj'
+    obj_factory = Factory('obj_factory')
+    obj_factory.add_obj(obj_name, create_dummy_obj, create_dummy_config_params)
+
+    # test failure on incorrect types, including an invalid dictionary
+    for obj_config in INVALID_DICT_TYPES:
+        parsed_config, parsed_obj_name = parse_config_object(
+            obj_type_name,
+            obj_config,
+            obj_factory,
+            event_dispatcher
+        )
+        assert parsed_config is None, 'did not expect parsed obj configuration on failure'
+        assert parsed_obj_name is None, 'did not expect parsed obj name on failure'
+
+    # test failure on dictionary with an object name that is not known in the factory
+    obj_config = {KEY_NAME: obj_name_unknown}
+    parsed_config, parsed_obj_name = parse_config_object(
+        obj_type_name,
+        obj_config,
+        obj_factory,
+        event_dispatcher
+    )
+    assert parsed_config is None, 'did not expect parsed obj configuration for an unknown object'
+    assert parsed_obj_name == obj_name_unknown, 'expected parsed obj name to be the same as input'
+
+    obj_param_defaults = create_dummy_config_params().get_defaults()
+    obj_config[KEY_NAME] = obj_name
+    # test success on correct dictionary with and without provided params
+    for i in range(0, 2):
+        if i == 1:
+            # add params on second iteration to see if the parsing still succeeds
+            obj_config[KEY_PARAMS] = obj_param_defaults
+
+        parsed_config, parsed_obj_name = parse_config_object(
+            obj_type_name,
+            obj_config,
+            obj_factory,
+            event_dispatcher
+        )
+        assert parsed_obj_name == obj_name, \
+            'expected parsed obj name to be the same as the known object name'
+        assert parsed_config.name == obj_name, \
+            'expected the parsed config obj name to be the same as the known object name'
+        assert parsed_config.params == obj_param_defaults, \
+            'expected the parsed config params to be the same as the defaults'

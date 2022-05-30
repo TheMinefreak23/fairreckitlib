@@ -11,10 +11,10 @@ from typing import Tuple
 import json
 import pandas as pd
 
+from ...core.config.config_factories import Factory
 from ...core.events.event_dispatcher import EventDispatcher
 from ...core.events.event_error import ON_RAISE_ERROR, ErrorEventArgs
 from ...core.events.event_io import ON_REMOVE_FILE, DataframeEventArgs, FileEventArgs
-from ...core.factories import Factory
 from ...data.filter.filter_event import FilterDataframeEventArgs
 from .evaluation_config import MetricConfig
 from .evaluation_event import EvaluationPipelineEventArgs, MetricEventArgs

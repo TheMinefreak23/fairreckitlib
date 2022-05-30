@@ -13,8 +13,8 @@ from .evaluator import Evaluator
 from .lenskit.lenskit_prediction_evaluator import LensKitPredictionEvaluator
 from .lenskit.lenskit_recommendation_evaluator import LensKitRecommendationEvaluator
 from .rexmex.rexmex_evaluator import RexmexEvaluator
-from ...core.params.config_parameters import ConfigParameters
-from ...core.factories import create_factory_from_list
+from ...core.config.config_factories import create_factory_from_list
+from ...core.config.config_parameters import ConfigParameters
 from .common import Metric, MetricCategory, KEY_METRIC_PARAM_K
 
 

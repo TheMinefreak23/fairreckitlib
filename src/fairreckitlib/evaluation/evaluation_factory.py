@@ -16,9 +16,9 @@ Utrecht University within the Software Project course.
 from typing import Callable
 
 from .pipeline.evaluation_pipeline import EvaluationPipeline
-from ..core.config_constants import TYPE_PREDICTION, TYPE_RECOMMENDATION
+from ..core.config.config_factories import GroupFactory, Factory
+from ..core.core_constants import TYPE_PREDICTION, TYPE_RECOMMENDATION
 from ..core.events.event_dispatcher import EventDispatcher
-from ..core.factories import GroupFactory, Factory
 from .metrics.metric_factory import create_accuracy_metric_factory
 from .metrics.metric_factory import create_coverage_metric_factory
 from .metrics.metric_factory import create_diversity_metric_factory

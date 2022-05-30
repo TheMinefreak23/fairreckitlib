@@ -15,7 +15,7 @@ Utrecht University within the Software Project course.
 import pandas as pd
 import pytest
 
-from src.fairreckitlib.core.factories import Factory
+from src.fairreckitlib.core.config.config_factories import Factory
 from src.fairreckitlib.data.split.split_constants import DEFAULT_SPLIT_TEST_RATIO
 from src.fairreckitlib.data.split.split_constants import KEY_SPLIT_TEST_RATIO
 from src.fairreckitlib.data.split.split_constants import SPLIT_RANDOM, SPLIT_TEMPORAL

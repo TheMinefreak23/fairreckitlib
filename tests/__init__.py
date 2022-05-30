@@ -3,11 +3,13 @@
 Modules:
 
     test_algorithms: test the algorithm interface of predictors/recommenders.
-    test_config_params: test the configuration param(s) functionality.
     test_converting: test the dataframe rating conversion functionality.
-    test_core_parsing: test the core parsing functionality.
-    test_events: test the event dispatching/listening functionality.
-    test_factories: test the base functionality of all types of factories.
+    test_core_config_factories: test the functionality of all (base) types of config factories.
+    test_core_config_params: test the configuration parameters functionality.
+    test_core_config_yml_obj: test the yml and object configuration functionality.
+    test_core_events: test the core event dispatching/listening functionality.
+    test_core_parsing_assert: test the assertion parsing functionality.
+    test_core_parsing_obj_params: test the object (parameters) parsing functionality.
     test_splitting: test the dataframe splitting functionality.
 
 This program has been developed by students from the bachelor Computer Science at

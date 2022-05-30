@@ -18,7 +18,7 @@ from typing import Any, Dict, Tuple
 
 import pandas as pd
 
-from ...core.params.config_parameters import ConfigParameters
+from ...core.config.config_parameters import ConfigParameters
 from ..set.dataset_config import DATASET_RATINGS_EXPLICIT, DATASET_RATINGS_IMPLICIT
 from .base_converter import RatingConverter
 from .convert_constants import RATING_TYPE_THRESHOLD

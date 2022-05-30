@@ -13,13 +13,13 @@ Utrecht University within the Software Project course.
 
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from ...core.config_constants import KEY_NAME, KEY_PARAMS
+from ...core.config.config_factories import Factory, GroupFactory
+from ...core.core_constants import KEY_NAME, KEY_PARAMS
 from ...core.events.event_dispatcher import EventDispatcher
-from ...core.factories import Factory, GroupFactory
 from ...core.parsing.parse_assert import assert_is_type, assert_is_container_not_empty
 from ...core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
+from ...core.parsing.parse_config_params import parse_config_parameters
 from ...core.parsing.parse_event import ON_PARSE
-from ...core.parsing.parse_params import parse_config_parameters
 from ..model_factory import KEY_MODELS
 from .model_config import ModelConfig
 

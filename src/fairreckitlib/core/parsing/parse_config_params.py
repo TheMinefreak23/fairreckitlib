@@ -13,9 +13,9 @@ Utrecht University within the Software Project course.
 
 from typing import Any, Dict, Tuple
 
+from ..config.config_base_param import ConfigParam
+from ..config.config_parameters import ConfigParameters
 from ..events.event_dispatcher import EventDispatcher
-from ..params.config_base_param import ConfigParam
-from ..params.config_parameters import ConfigParameters
 from .parse_assert import assert_is_container_not_empty, assert_is_type
 from .parse_assert import assert_is_key_in_dict, assert_is_one_of_list
 from .parse_event import ON_PARSE, ParseEventArgs

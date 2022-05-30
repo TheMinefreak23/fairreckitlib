@@ -28,7 +28,7 @@ from typing import Any, Dict, Tuple
 
 import pandas as pd
 
-from ...core.params.config_parameters import ConfigParameters
+from ...core.config.config_parameters import ConfigParameters
 from .base_converter import RatingConverter
 
 

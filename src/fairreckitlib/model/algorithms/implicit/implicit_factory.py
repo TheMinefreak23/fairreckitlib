@@ -10,8 +10,8 @@ Utrecht University within the Software Project course.
 """
 
 
-from ....core.apis import IMPLICIT_API
-from ....core.factories import Factory, create_factory_from_list
+from ....core.config.config_factories import Factory, create_factory_from_list
+from ....core.core_constants import IMPLICIT_API
 from . import implicit_algorithms
 from . import implicit_recommender
 from . import implicit_params

@@ -11,14 +11,14 @@ Utrecht University within the Software Project course.
 
 from typing import Any, Dict
 
-from ...core.config_constants import KEY_NAME, KEY_PARAMS
+from ...core.config.config_factories import Factory
+from ...core.config.config_option_param import ConfigSingleOptionParam
+from ...core.config.config_value_param import ConfigNumberParam
+from ...core.core_constants import KEY_NAME, KEY_PARAMS
 from ...core.events.event_dispatcher import EventDispatcher
-from ...core.factories import Factory
-from ...core.params.config_option_param import ConfigSingleOptionParam
-from ...core.params.config_value_param import ConfigNumberParam
 from ...core.parsing.parse_assert import assert_is_type, assert_is_key_in_dict
+from ...core.parsing.parse_config_params import parse_config_param, parse_config_parameters
 from ...core.parsing.parse_event import ON_PARSE
-from ...core.parsing.parse_params import parse_config_param, parse_config_parameters
 from ..set.dataset import Dataset
 from .split_config import SplitConfig
 from .split_constants import KEY_SPLITTING, KEY_SPLIT_TEST_RATIO
