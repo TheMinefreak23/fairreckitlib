@@ -12,7 +12,7 @@ from .base import DataFilter
 class GenderFilter(DataFilter):
     """Filters the dataframe on gender column f/m, if such a column exists."""
 
-    def run(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+    def __filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Filter specific gender of the dataframe.
 
         Args:
@@ -21,6 +21,7 @@ class GenderFilter(DataFilter):
         Returns:
             a filtered dataframe from the given dataframe
         """
+        #incorrect use of self.params
         if 'gender' in dataframe.columns:
             df_filter = []
             gender = self.params['gender'].lower()
@@ -34,13 +35,6 @@ class GenderFilter(DataFilter):
             return dataframe[df_filter].reset_index(drop=True)
         return dataframe
 
-    def __str__(self):
-        """To string
-
-        Returns:
-            name of the class
-        """
-        return self.__class__.__name__
 
 def create_gender_filter(name: str, 
                          params: Dict[str, Any], 
@@ -55,4 +49,4 @@ def create_gender_filter(name: str,
     Returns:
         an instance of the GenderFilter class
     """
-    return GenderFilter(name, params)
+    return GenderFilter(name, params, kwargs)

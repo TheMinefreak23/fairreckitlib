@@ -23,14 +23,14 @@ def create_filter_factory() -> Factory:
     return create_factory_from_list(KEY_DATA_FILTERS, [
         (FILTER_AGE,
          create_age_filter,
-         None
+         None  # numerical params
          ),
         (FILTER_GENDER,
          create_gender_filter,
-         None
+         None # catergorical params
          ),
         (FILTER_COUNTRY,
-         create_country_filter,
-         None
+         create_country_filter, # count categorical params (country)
+         None # count
          )
     ])

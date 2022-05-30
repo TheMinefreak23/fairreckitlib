@@ -11,7 +11,7 @@ from .base import DataFilter
 class CountryFilter(DataFilter):
     """Filters the dataframe on country, if such column exists."""
 
-    def run(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+    def __filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Filter specific country of the dataframe.
 
         Args:
@@ -27,13 +27,6 @@ class CountryFilter(DataFilter):
             return dataframe[df_filter].reset_index(drop=True)
         return dataframe
 
-    def __str__(self):
-        """To string
-
-        Returns:
-            name of the class
-        """
-        return self.__class__.__name__
 
 def create_country_filter(name: str, 
                           params: Dict[str, Any], 
@@ -48,4 +41,4 @@ def create_country_filter(name: str,
     Returns:
         an instance of the CountryFilter class
     """
-    return CountryFilter(name, params)
+    return CountryFilter(name, params, kwargs)

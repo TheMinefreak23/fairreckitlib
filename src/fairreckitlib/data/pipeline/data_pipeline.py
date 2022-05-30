@@ -107,7 +107,10 @@ class DataPipeline(metaclass=ABCMeta):
             return None
 
         # step 3
-        dataframe = self.filter_rows(dataframe, data_config.prefilters)
+        dataframe = self.filter_rows(dataset,
+                                     data_config.matrix,
+                                     dataframe,
+                                     data_config.converter)
         if not is_running():
             return None
 
@@ -213,7 +216,11 @@ class DataPipeline(metaclass=ABCMeta):
 
         return dataframe
 
-    def filter_rows(self, dataframe: pd.DataFrame, prefilters: List[Any]) -> pd.DataFrame:
+    def filter_rows(self,
+                    dataset: Dataset,
+                    matrix_name: str,
+                    dataframe: pd.DataFrame,
+                    filter_config: FilterConfig) -> pd.DataFrame:
         """Apply the specified filters to the dataframe.
 
         Args:
@@ -235,12 +242,13 @@ class DataPipeline(metaclass=ABCMeta):
 
         start = time.time()
         # TODO aggregated the set using the given filters
+        # use parameters. also params
 
         filter_factory = self.data_factory.get_factory(KEY_DATA_FILTERS)
 
-        for prefilter in prefilters:
-            filterer = filter_factory.create(prefilter.name, prefilter.value)
-            dataframe = filterer.run(dataframe)
+        # for prefilter in filter_config.params.:
+        #     filterer = filter_factory.create(prefilter.name, prefilter.value)
+        #     dataframe = filterer.run(dataframe)
 
 
         end = time.time()

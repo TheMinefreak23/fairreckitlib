@@ -12,7 +12,7 @@ from .base import DataFilter
 class AgeFilter(DataFilter):
     """Filters the dataframe on user age, if such a column exists."""
 
-    def run(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+    def __filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """
         Filter the dataframe based on age column in the range of min_val and max_val values.
 
@@ -27,14 +27,6 @@ class AgeFilter(DataFilter):
             df_filter = dataframe.age.between(self.params["min"], self.params["max"], inclusive="both")
             return dataframe[df_filter].reset_index(drop=True)
         return dataframe
-
-    def __str__(self):
-        """To string
-
-        Returns:
-            name of the class
-        """
-        return self.__class__.__name__
 
 
 def create_age_filter(name: str, 
@@ -53,4 +45,4 @@ def create_age_filter(name: str,
     # If params == None, thus no param in factory.create() has been given.
     if not params:  # Default value
         params = {"min": 0, "max": 100}
-    return AgeFilter(name, params)
+    return AgeFilter(name, params, kwargs)
