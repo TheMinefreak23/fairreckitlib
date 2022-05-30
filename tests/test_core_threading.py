@@ -21,7 +21,7 @@ import pytest
 from src.fairreckitlib.core.threading.thread_base import ThreadBase
 from src.fairreckitlib.core.threading.thread_processor import ThreadProcessor
 
-dummy_thread_name = 'dummy_thread'
+DUMMY_THREAD_NAME = 'dummy_thread'
 
 
 class DummyThread(ThreadBase):
@@ -33,7 +33,7 @@ class DummyThread(ThreadBase):
 
     def __init__(self, **kwargs):
         """Construct the dummy thread."""
-        ThreadBase.__init__(self, dummy_thread_name, True, **kwargs)
+        ThreadBase.__init__(self, DUMMY_THREAD_NAME, True, **kwargs)
         self.initialized = False
         self.terminated = False
 
@@ -42,6 +42,7 @@ class DummyThread(ThreadBase):
         ThreadBase.on_initialize(self)
         assert self.is_running(), 'expected thread to be running before initializing'
         self.initialized = True
+        print(self.get_name() + ' initialized')
 
     def on_run(self, **kwargs) -> None:
         """Run the dummy thread."""
@@ -54,6 +55,7 @@ class DummyThread(ThreadBase):
     def on_terminate(self) -> None:
         """Terminate the dummy thread."""
         self.terminated = True
+        print(self.get_name() + ' terminated')
         ThreadBase.on_terminate(self)
 
 
@@ -63,7 +65,7 @@ def test_thread_base() -> None:
 
     assert not dummy_thread.is_running(), \
         'did not expect a thread to be running after construction'
-    assert dummy_thread.get_name() == dummy_thread_name, \
+    assert dummy_thread.get_name() == DUMMY_THREAD_NAME, \
         'expected the thread name to be the same after construction'
 
     def on_dummy_thread_terminate(thread: DummyThread) -> None:
@@ -72,12 +74,8 @@ def test_thread_base() -> None:
 
     assert dummy_thread.start(on_dummy_thread_terminate), \
         'expected thread to have started'
-    assert dummy_thread.terminate_callback == on_dummy_thread_terminate, \
-        'expected thread terminate callback to be the same after starting'
-    assert not dummy_thread.start(lambda _: None), \
+    assert not dummy_thread.start(on_dummy_thread_terminate), \
         'did not expect thread to start gain while it is already running'
-    assert dummy_thread.terminate_callback == on_dummy_thread_terminate, \
-        'did not expect thread terminate callback to be updated after start failure'
 
     # simulate active thread for a short amount of time
     time.sleep(1)
