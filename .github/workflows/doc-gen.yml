@@ -21,10 +21,10 @@ jobs:
       # ADJUST THIS: install all dependencies (including pdoc)
       - run: pip install pdoc
       # ADJUST THIS: build your documentation into docs/.
-      - run: pdoc -o .github/docs/ ./src/fairreckitlib  
+      - run: pdoc -o docs/ ./src/fairreckitlib  
       # We use a custom build script for pdoc itself, ideally you just run `pdoc -o docs/ ...` here.
 
-      - run: tar --directory .github/docs/ -hcf artifact.tar .
+      - run: tar --directory docs/ -hcf artifact.tar .
       - uses: actions/upload-artifact@v3
         with:
           name: github-pages
