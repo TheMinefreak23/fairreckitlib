@@ -33,13 +33,24 @@ def create_rating_converter_factory(data_registry: DataRegistry) -> GroupFactory
         dataset = data_registry.get_set(dataset_name)
         dataset_factory = GroupFactory(dataset.get_name())
 
+        # add dataset converter factory
         factory.add_factory(dataset_factory)
 
         for matrix_name in dataset.get_available_matrices():
             matrix_factory = DataModifierFactory(matrix_name, dataset)
-            matrix_factory.add_obj(CONVERTER_KL, create_kl_converter, create_kl_converter_params)
-            matrix_factory.add_obj(CONVERTER_RANGE, create_range_converter, create_range_converter_params)
-
+            # add kl converter
+            matrix_factory.add_obj(
+                CONVERTER_KL,
+                create_kl_converter,
+                create_kl_converter_params
+            )
+            # add range converter
+            matrix_factory.add_obj(
+                CONVERTER_RANGE,
+                create_range_converter,
+                create_range_converter_params
+            )
+            # add matrix converter factory
             dataset_factory.add_factory(matrix_factory)
 
     return factory
