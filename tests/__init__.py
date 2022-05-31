@@ -10,6 +10,7 @@ Modules:
     test_core_events: test the core event dispatching/listening functionality.
     test_core_parsing_assert: test the assertion parsing functionality.
     test_core_parsing_obj_params: test the object (parameters) parsing functionality.
+    test_core_threading: test the threading base/processor functionality.
     test_splitting: test the dataframe splitting functionality.
 
 This program has been developed by students from the bachelor Computer Science at
