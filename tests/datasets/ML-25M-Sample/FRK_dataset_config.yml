@@ -1,14 +1,14 @@
-dataset: ML-25M
+dataset: ML-25M-Sample
 matrices:
   user-movie-rating:
     idx_item:
       file: user-movie-rating_item_indices.hdf5
       key: movie_id
-      num_records: 10000
+      num_records: 100
     idx_user:
       file: user-movie-rating_user_indices.hdf5
       key: user_id
-      num_records: 1000
+      num_records: 50
     matrix:
       columns:
       - matrix_rating
@@ -19,7 +19,7 @@ matrices:
       foreign_keys:
       - user_id
       - movie_id
-      num_records: 141379
+      num_records: 589
       primary_key:
       - user_id
       - movie_id
@@ -36,6 +36,6 @@ tables:
     file:
       compression: bz2
       name: ML-25M_movie.tsv.bz2
-    num_records: 10000
+    num_records: 100
     primary_key:
     - movie_id
