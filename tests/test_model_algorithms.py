@@ -43,8 +43,8 @@ from src.fairreckitlib.model.algorithms.surprise import surprise_algorithms
 from src.fairreckitlib.model.model_factory import create_model_factory
 
 data_registry = DataRegistry('tests/datasets')
-dataset = data_registry.get_set('ML-100K')
-sub_set = dataset.load_matrix('user-movie-rating').sort_values(by=['user'], axis=0)[:1000]
+dataset = data_registry.get_set('ML-100K-Sample')
+sub_set = dataset.load_matrix('user-movie-rating')
 
 model_factory = create_model_factory()
 NUM_THREADS = 1
@@ -53,7 +53,7 @@ REC_FRAME_HEADER_SINGLE = ['item', 'score']
 REC_FRAME_HEADER_BATCH = ['rank', 'user'] + REC_FRAME_HEADER_SINGLE
 
 non_deterministic_algos = [lenskit_algorithms.RANDOM, surprise_algorithms.NORMAL_PREDICTOR]
-top_k = [1, 5, 10]
+top_k = [1, 3, 5]
 
 algo_kwargs = {
     'rating_scale': (sub_set['rating'].min(), sub_set['rating'].max()),
@@ -63,9 +63,14 @@ algo_kwargs = {
 
 
 def test_algorithm_subset():
-    """Test if the generated subset is sufficient to verify the other algorithm tests."""
-    assert len(sub_set['user'].unique()) > 1, 'expected more than one user for testing algorithms.'
-    assert len(sub_set['item'].unique()) > 1, 'expected more than one item for testing algorithms.'
+    """Test if the generated subset is sufficient to verify the other algorithm tests.
+
+    The majority of the algorithms will pass with lower requirements. However, in particular
+    the k-NN recommender algorithms require enough neighbours to produce the required amount
+    of user-item recommendations.
+    """
+    assert len(sub_set['user'].unique()) >= 5, 'expected more users for testing algorithms.'
+    assert len(sub_set['item'].unique()) >= 400, 'expected more items for testing algorithms.'
 
 
 def test_model_factory():
@@ -179,11 +184,9 @@ def assert_frame_headers(dataframe, expected_header):
 
 def assert_predictor_interface(api_name, predictor, train_set):
     """Assert the predictor to obey the BasePredictor interface."""
-    print('Training predictor \'' + api_name + '.' + predictor.get_name() + '\'')
+    print('Testing predictor \'' + api_name + '.' + predictor.get_name() + '\'')
 
     assert_algorithm_training(predictor, train_set)
-
-    print('Testing predictor \'' + api_name + '.' + predictor.get_name() + '\'')
 
     assert_predictor_edge_cases(predictor)
     assert_predictor_singular_user(predictor)

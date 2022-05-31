@@ -46,7 +46,8 @@ def create_dataset_sample(
     Returns:
         the resulting sample dataset.
     """
-    sample_dir = os.path.join(output_dir, dataset.get_name() + '-Sample')
+    sample_dataset_name = dataset.get_name() + '-Sample'
+    sample_dir = os.path.join(output_dir, sample_dataset_name)
     if os.path.isdir(sample_dir):
         raise IOError('Failed to create sample, directory already exists.')
 
@@ -82,7 +83,7 @@ def create_dataset_sample(
     sample_tables = create_dataset_table_samples(sample_dir, dataset, key_id_map)
 
     # create and save dataset configuration
-    sample_dataset_config = DatasetConfig(dataset.get_name(), {}, sample_matrices, sample_tables)
+    sample_dataset_config = DatasetConfig(sample_dataset_name, {}, sample_matrices, sample_tables)
     save_yml(os.path.join(sample_dir, DATASET_CONFIG_FILE), sample_dataset_config.to_yml_format())
 
     return Dataset(sample_dir, sample_dataset_config)
