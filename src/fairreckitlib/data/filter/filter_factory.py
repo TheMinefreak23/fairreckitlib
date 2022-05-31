@@ -5,10 +5,9 @@ Utrecht University within the Software Project course.
 """
 
 from ...core.factories import Factory, create_factory_from_list
-from .filter_constants import KEY_DATA_FILTERS, FILTER_AGE, FILTER_GENDER, FILTER_COUNTRY
-from .age import create_age_filter
-from .gender import create_gender_filter
-from .country import create_country_filter
+from .filter_constants import KEY_DATA_FILTERS, FILTER_NUMERICAL, FILTER_CATEGORICAL, FILTER_COUNT
+from .numerical_filter import create_numerical_filter
+from .categorical_filter import create_categorical_filter
 
 def create_filter_factory() -> Factory:
     """Create a Factory with the following data filters:
@@ -21,16 +20,17 @@ def create_filter_factory() -> Factory:
         The factory with all available filters.
     """
     return create_factory_from_list(KEY_DATA_FILTERS, [
-        (FILTER_AGE,
-         create_age_filter,
+        (FILTER_NUMERICAL,
+         create_numerical_filter,
          None  # numerical params
          ),
-        (FILTER_GENDER,
-         create_gender_filter,
+        (FILTER_CATEGORICAL,
+         create_categorical_filter,
          None # catergorical params
-         ),
-        (FILTER_COUNTRY,
-         create_country_filter, # count categorical params (country)
-         None # count
          )
+        #  ,
+        # (FILTER_COUNT,
+        #  create_count_filter, # count categorical params (country)
+        #  None # count
+        #  )
     ])

@@ -6,7 +6,7 @@ Utrecht University within the Software Project course.
 
 from typing import Any, Dict, List
 import pandas as pd
-from .base import DataFilter
+from .base_filter import DataFilter
 
 class CategoricalFilter(DataFilter):
     """Filters the dataframe on categorical data, such as country or gender.
@@ -15,21 +15,23 @@ class CategoricalFilter(DataFilter):
         filter
     """
 
-    def filter(self, dataframe: pd.DataFrame, column_name: str, conditions: List[Any]) -> pd.DataFrame:
+    def filter(self, dataframe: pd.DataFrame, column_name='', conditions=[]) -> pd.DataFrame:
         """Filters on a list of categories.
 
         Args:
             dataframe: Dataframe to be filtered.
-            column_name: Name of the column where the conditions need to be met.
-            conditions: A list of values, where values of the column_name in the resulting dataframe meet some condition.
+            column_name (str): Name of the column where the conditions need to be met.
+            conditions (List[Any]): A list of values, where values of the column_name in the resulting dataframe meet some condition.
             
         Returns:
             A filtered dataframe.
         """
-        df_filter = dataframe[column_name].isin(conditions).any(axis='columns')
+        if column_name not in dataframe.columns:
+            return dataframe
+        df_filter = dataframe[column_name].isin(conditions)
         return dataframe[df_filter].reset_index(drop=True)
 
-    def __filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+    def _filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Private filter used in run(). Requires configuration file."""
         return self.filter(dataframe, self.params['name'], self.params['values'])
 

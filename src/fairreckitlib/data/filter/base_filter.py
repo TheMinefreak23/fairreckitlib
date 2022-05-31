@@ -8,7 +8,7 @@ from abc import ABCMeta, abstractmethod
 from typing import Any, Dict
 import pandas as pd
 
-from fairreckitlib.data.set.dataset import Dataset, add_dataset_columns
+from fairreckitlib.data.set import dataset
 
 
 class DataFilter(metaclass=ABCMeta):
@@ -25,12 +25,14 @@ class DataFilter(metaclass=ABCMeta):
         run
     """
 
-    def __init__(self, name: str, params: Dict[str, Any], **kwargs) -> None:
+    def __init__(self, name='', params=None, **kwargs) -> None:
         """Make Constructor of the class.
         
+        Uses optional arguments to enable sole use of subclass.filter().
+        
         Args:
-            name: Configuration name of the filter.
-            params: Configuration parameters.
+            name (str): Configuration name of the filter.
+            params (Dict[str, Any]): Configuration parameters.
 
         """
         self.name = name
@@ -43,7 +45,7 @@ class DataFilter(metaclass=ABCMeta):
         return self.__external_col_filter(dataframe)
 
     @abstractmethod
-    def __filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+    def _filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Basic filter functionality used in the data pipeline.
 
         Raises:
@@ -51,7 +53,7 @@ class DataFilter(metaclass=ABCMeta):
         """
         raise NotImplementedError()
 
-    def __external_col_filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+    def _external_col_filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """When filter needs a column from some dataset table located elsewhere.
         
         Args:
@@ -64,7 +66,7 @@ class DataFilter(metaclass=ABCMeta):
 
         # Add required columns
         og_cols = dataframe.columns()
-        new_dataframe = add_dataset_columns(self.kwargs['dataset'], self.kwargs['matrix_name'], dataframe, [self.params['name']])
+        new_dataframe = dataset.add_dataset_columns(self.kwargs['dataset'], self.kwargs['matrix_name'], dataframe, [self.params['name']])
         new_cols = new_dataframe.columns()
         
         self.__filter(dataframe)

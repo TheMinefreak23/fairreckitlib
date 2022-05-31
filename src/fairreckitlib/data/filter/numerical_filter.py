@@ -6,7 +6,7 @@ Utrecht University within the Software Project course.
 
 from typing import Any, Dict
 import pandas as pd
-from .base import DataFilter
+from .base_filter import DataFilter
 
 
 class NumericalFilter(DataFilter):
@@ -16,22 +16,24 @@ class NumericalFilter(DataFilter):
         filter
     """
 
-    def filter(self, dataframe: pd.DataFrame, column_name: str, min, max) -> pd.DataFrame:
+    def filter(self, dataframe: pd.DataFrame, column_name='', min=0, max=100) -> pd.DataFrame:
         """Filters the dataframe on values in the range of min and max.
 
         Args:
             dataframe: Dataframe to be filtered on.
-            column_name: Name of the column where the conditions need to be met.
-            min: Minimal number.
-            max: Maximum number.
+            column_name (str): Name of the column where the conditions need to be met.
+            min (int | float): Minimal number.
+            max (int | float): Maximum number.
 
         Returns:
             A filtered dataframe.
         """
+        if column_name not in dataframe.columns:
+            return dataframe
         df_filter = dataframe[column_name].between(min, max, inclusive="both")
         return dataframe[df_filter].reset_index(drop=True)
 
-    def __filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+    def _filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Private filter used in run(). Requires configuration file."""
         return self.filter(dataframe, self.params['name'], self.params["min"], self.params["max"])
 
