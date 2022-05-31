@@ -33,7 +33,7 @@ class CategoricalFilter(DataFilter):
 
     def _filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Private filter used in run(). Requires configuration file."""
-        return self.filter(dataframe, self.params['name'], self.params['values'])
+        return self.filter(dataframe, self.params['column_name'], self.params['values'])
 
 
 

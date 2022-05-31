@@ -8,15 +8,19 @@ evaluation:
   params:
     K: 10
   prefilters: # kan toch niet zo veel verschillende name?
-    - name: user_gender
+    - column_name: user_gender
       values: [male, female]
-    - name: user_age
+      type: categorical
+    - column_name: user_age
       min: 1
       max: 100
-    - name: user_country
+      type: numerical
+    - column_name: user_country
       values: [NL]
-    - name: user_country_threshold
-      threshold: 1
+      type: categorical
+    - column_name: user_country_threshold # column name of name??
+      threshold: 3
+      type: count
   Implicit:
   - name: AlternatingLeastSquares
 name: Dev

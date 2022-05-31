@@ -37,12 +37,12 @@ class DataFilter(metaclass=ABCMeta):
         """
         self.name = name
         self.params = params
-        # self.column_name = params['name']  # not needed but! needs verification..
+        # self.column_name = params['column_name']  # not needed but! needs verification..
         self.kwargs = kwargs
 
     def run(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Carry out the filtering."""
-        return self.__external_col_filter(dataframe)
+        return self._external_col_filter(dataframe)
 
     @abstractmethod
     def _filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
@@ -66,10 +66,10 @@ class DataFilter(metaclass=ABCMeta):
 
         # Add required columns
         og_cols = dataframe.columns()
-        new_dataframe = dataset.add_dataset_columns(self.kwargs['dataset'], self.kwargs['matrix_name'], dataframe, [self.params['name']])
+        new_dataframe = dataset.add_dataset_columns(self.kwargs['dataset'], self.kwargs['matrix_name'], dataframe, [self.params['column_name']])
         new_cols = new_dataframe.columns()
         
-        self.__filter(dataframe)
+        self._filter(dataframe)
 
         # Remove columns not in original dataframe
         for i in range(len(new_cols)):

@@ -35,12 +35,12 @@ class NumericalFilter(DataFilter):
 
     def _filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Private filter used in run(). Requires configuration file."""
-        return self.filter(dataframe, self.params['name'], self.params["min"], self.params["max"])
+        return self.filter(dataframe, self.params['column_name'], self.params["min"], self.params["max"])
 
 
 def create_numerical_filter(name: str, 
-                      params: Dict[str, Any], 
-                      **kwargs) -> DataFilter:
+                            params: Dict[str, Any], 
+                            **kwargs) -> DataFilter:
     """Create an instance of the class NumericalFilter.
 
     Args:

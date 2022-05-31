@@ -26,6 +26,13 @@ class TestFilterAge:
         df_result = self.filter_obj.filter(self.df_source, 'age', min=10, max=45)
         assert_frame_equal(df_result, df_expected)
 
+    def test_run_with_float_int_param(self):
+        """Test run with given parameters."""
+        df_expected = DataFrame({"id": [1, 4], "age": [24, 45]})
+        df_result = self.filter_obj.filter(self.df_source, 'age', min=int(10), max=float(45.3))
+        assert_frame_equal(df_result, df_expected)
+    
+
 def test_run_no_age_col():
     """Test a given dataframe with no age column."""
     df_given = DataFrame({"id": [1, 2, 3, 4, 5], "play_count": [24, 0, -1, 45, 102]})

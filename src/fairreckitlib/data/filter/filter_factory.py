@@ -4,6 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from fairreckitlib.data.filter.filter_params import create_params_categorical, create_params_numerical, create_params_count
 from ...core.factories import Factory, create_factory_from_list
 from .filter_constants import KEY_DATA_FILTERS, FILTER_NUMERICAL, FILTER_CATEGORICAL, FILTER_COUNT
 from .numerical_filter import create_numerical_filter
@@ -22,15 +23,15 @@ def create_filter_factory() -> Factory:
     return create_factory_from_list(KEY_DATA_FILTERS, [
         (FILTER_NUMERICAL,
          create_numerical_filter,
-         None  # numerical params
+         create_params_numerical
          ),
         (FILTER_CATEGORICAL,
          create_categorical_filter,
-         None # catergorical params
+         create_params_categorical
          )
         #  ,
         # (FILTER_COUNT,
         #  create_count_filter, # count categorical params (country)
-        #  None # count
+        #  create_params_count
         #  )
     ])
