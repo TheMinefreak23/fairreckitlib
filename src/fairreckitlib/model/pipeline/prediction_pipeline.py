@@ -14,7 +14,7 @@ from typing import Callable
 import pandas as pd
 
 from ..algorithms.base_predictor import BasePredictor
-from .model_pipeline import ModelPipeline, write_computed_ratings
+from .model_pipeline import ModelPipeline
 
 
 class PredictionPipeline(ModelPipeline):
@@ -60,6 +60,5 @@ class PredictionPipeline(ModelPipeline):
             if not is_running():
                 return
 
-            write_computed_ratings(self.event_dispatcher, output_path, predictions,
-                start_index == 0)
+            self.write_dataframe(output_path, predictions, start_index == 0)
             start_index += batch_size

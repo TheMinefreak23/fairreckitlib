@@ -17,7 +17,7 @@ from typing import Dict, List, Optional, Tuple
 
 import pandas as pd
 
-from ..utility import save_yml
+from ...core.io.io_utility import save_yml
 from .dataset import Dataset
 from .dataset_constants import DATASET_CONFIG_FILE
 from .dataset_config import DatasetConfig, DatasetMatrixConfig, DatasetIndexConfig

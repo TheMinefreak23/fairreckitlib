@@ -35,7 +35,7 @@ from dataclasses import dataclass
 from typing import Callable, Dict, List
 
 from ...core.events.event_dispatcher import EventArgs
-from ...core.events.event_io import DataframeEventArgs, print_load_df_event_args
+from ...core.io.event_io import DataframeEventArgs, print_load_df_event_args
 from ..filter.filter_event import print_filter_event_args
 from ..ratings.convert_event import print_convert_event_args
 from ..split.split_event import print_split_event_args

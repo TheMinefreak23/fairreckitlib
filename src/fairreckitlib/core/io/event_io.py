@@ -29,14 +29,13 @@ Utrecht University within the Software Project course.
 from dataclasses import dataclass
 from typing import Callable, Dict, List
 
-from .event_dispatcher import EventArgs
+from ..events.event_dispatcher import EventArgs
 
 ON_MAKE_DIR = 'IO.on_make_dir'
 ON_REMOVE_DIR = 'IO.on_remove_dir'
 
 ON_CREATE_FILE = 'IO.on_create_file'
 ON_REMOVE_FILE = 'IO.on_remove_file'
-ON_RENAME_FILE = 'IO.on_rename_file'
 
 
 @dataclass
@@ -73,18 +72,6 @@ class DataframeEventArgs(FileEventArgs):
     dataframe_name: str
 
 
-@dataclass
-class RenameFileEventArgs(FileEventArgs):
-    """Rename File Event Arguments.
-
-    event_id: the unique ID that classifies the file renaming event.
-    file_path: the path to the file before renaming.
-    dst_file_path: the path to the file after renaming.
-    """
-
-    dst_file_path: str
-
-
 def get_io_events() -> List[str]:
     """Get a list of IO event IDs.
 
@@ -98,8 +85,6 @@ def get_io_events() -> List[str]:
         # FileEventArgs
         ON_CREATE_FILE,
         ON_REMOVE_FILE,
-        # RenameFileEventArgs
-        ON_RENAME_FILE
     ]
 
 
@@ -118,8 +103,6 @@ def get_io_event_print_switch() -> Dict[str, Callable[[EventArgs], None]]:
             lambda args: print('Creating file:', args.file_path),
         ON_REMOVE_FILE:
             lambda args: print('Removing file:', args.file_path),
-        ON_RENAME_FILE:
-            lambda args: print('Renaming file:', args.file_path, 'to', args.dst_file_path)
     }
 
 

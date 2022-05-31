@@ -18,6 +18,7 @@ from ..core.core_constants import KEY_TYPE, TYPE_PREDICTION, TYPE_RECOMMENDATION
 from ..core.core_constants import KEY_NAME, KEY_TOP_K, DEFAULT_TOP_K
 from ..core.core_constants import KEY_RATED_ITEMS_FILTER, DEFAULT_RATED_ITEMS_FILTER
 from ..core.events.event_dispatcher import EventDispatcher
+from ..core.io.io_utility import load_yml
 from ..core.parsing.parse_assert import assert_is_type
 from ..core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
 from ..core.parsing.parse_config_params import parse_config_param
@@ -25,7 +26,6 @@ from ..core.parsing.parse_event import ON_PARSE, print_parse_event
 from ..data.data_factory import KEY_DATA
 from ..data.pipeline.data_config_parsing import parse_data_config
 from ..data.set.dataset_registry import DataRegistry
-from ..data.utility import load_yml
 from ..evaluation.evaluation_factory import KEY_EVALUATION
 from ..evaluation.pipeline.evaluation_config_parsing import parse_evaluation_config
 from ..model.model_factory import KEY_MODELS

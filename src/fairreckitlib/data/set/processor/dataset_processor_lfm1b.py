@@ -17,7 +17,6 @@ import numpy as np
 import pandas as pd
 from scipy import sparse
 
-from ...utility import convert_csr_to_coo, convert_coo_to_df
 from ..dataset_config import DatasetIndexConfig, DatasetMatrixConfig, DatasetTableConfig
 from ..dataset_config import DATASET_RATINGS_IMPLICIT, create_dataset_table_config
 from ..dataset_constants import TABLE_FILE_PREFIX
@@ -299,10 +298,11 @@ class DatasetProcessorLFM1B(DatasetProcessorLFM):
         artist_index_config.save_indices(self.dataset_dir, artist_list)
 
         # convert csr to dataframe
-        user_artist_matrix = convert_coo_to_df(
-            convert_csr_to_coo(csr_matrix),
-            'user_id', 'artist_id', 'matrix_count'
-        )
+        coo_matrix = pd.DataFrame.sparse.from_spmatrix(csr_matrix).sparse.to_coo()
+        user_artist_matrix = pd.DataFrame()
+        user_artist_matrix['user_id'] = coo_matrix.row
+        user_artist_matrix['artist_id'] = coo_matrix.col
+        user_artist_matrix['matrix_count'] = coo_matrix.data
 
         # create matrix table configuration
         user_artist_table_config = create_dataset_table_config(

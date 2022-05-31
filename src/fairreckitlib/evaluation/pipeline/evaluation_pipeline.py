@@ -4,18 +4,19 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-import os
 import time
 from typing import Tuple
 
-import json
 import pandas as pd
 
 from ...core.config.config_factories import Factory
 from ...core.events.event_dispatcher import EventDispatcher
-from ...core.events.event_error import ON_RAISE_ERROR, ErrorEventArgs
-from ...core.events.event_io import ON_REMOVE_FILE, DataframeEventArgs, FileEventArgs
+from ...core.io.io_delete import delete_file
+from ...core.io.io_utility import load_json, save_json
+from ...core.pipeline.core_pipeline import CorePipeline
 from ...data.filter.filter_event import FilterDataframeEventArgs
+from ..metrics.evaluator import Evaluator
+from ..metrics.filter import filter_data
 from .evaluation_config import MetricConfig
 from .evaluation_event import EvaluationPipelineEventArgs, MetricEventArgs
 from .evaluation_event import ON_BEGIN_EVAL_PIPELINE, ON_END_EVAL_PIPELINE
@@ -24,8 +25,6 @@ from .evaluation_event import ON_BEGIN_LOAD_TRAIN_SET, ON_END_LOAD_TRAIN_SET
 from .evaluation_event import ON_BEGIN_LOAD_TEST_SET, ON_END_LOAD_TEST_SET
 from .evaluation_event import ON_BEGIN_LOAD_RECS_SET, ON_END_LOAD_RECS_SET
 from .evaluation_event import ON_BEGIN_METRIC, ON_END_METRIC
-from ..metrics.evaluator import Evaluator
-from ..metrics.filter import filter_data
 
 
 FILTER_SUFFIX = 'filtered'
@@ -33,13 +32,12 @@ FILTER_SUFFIX = 'filtered'
 USE_FILTER = False
 
 
-class EvaluationPipeline:
+class EvaluationPipeline(CorePipeline):
     """Evaluation Pipeline to run evaluations from a specific metric category."""
 
     def __init__(self, metric_factory: Factory, event_dispatcher: EventDispatcher):
+        CorePipeline.__init__(self, event_dispatcher)
         self.metric_factory = metric_factory
-
-        self.event_dispatcher = event_dispatcher
 
     # TODO documentation
     def run(self, out_path: str, recs_path: str, data_transition, metrics, **kwargs):
@@ -121,12 +119,7 @@ class EvaluationPipeline:
 
                 # Remove filtered data
                 for path in filtered_paths:
-                    os.remove(path)
-
-                    self.event_dispatcher.dispatch(FileEventArgs(
-                        ON_REMOVE_FILE,
-                        path
-                    ))
+                    delete_file(path, self.event_dispatcher)
 
             self.event_dispatcher.dispatch(FilterDataframeEventArgs(
                 ON_END_FILTER_RECS,
@@ -176,137 +169,36 @@ class EvaluationPipeline:
         if use_filter: # Append filter suffix to path for temporary filtered data storage
             set_paths = [path + FILTER_SUFFIX for path in set_paths]
         train_set_path, test_set_path, recs_path = set_paths
-        train_set = self.load_train_set(train_set_path)
-        test_set = self.load_test_set(test_set_path)
-        recs = self.load_recs(recs_path)
-        return train_set, test_set, recs
-
-    # TODO EXCEPT FOR RETURN VALUE THIS IS A COPY PASTE FROM MODEL PIPELINE!!!!!!!!!
-    def load_train_set(self, train_set_path: str) -> pd.DataFrame:
-        """Load the train set that the models used for training.
-
-        Args:
-            train_set_path: path to where the train set is stored.
-        """
-        self.event_dispatcher.dispatch(DataframeEventArgs(
+        train_set = self.read_dataframe(
+            train_set_path,
+            'train set',
             ON_BEGIN_LOAD_TRAIN_SET,
-            train_set_path,
-            'train set'
-        ))
-
-        start = time.time()
-
-        try:
-            train_set = pd.read_csv(
-                train_set_path,
-                sep='\t',
-                header=None,
-                names=['user', 'item', 'rating']
-            )
-        except FileNotFoundError as err:
-            self.event_dispatcher.dispatch(ErrorEventArgs(
-                ON_RAISE_ERROR,
-                'FileNotFoundError: raised while trying to load the train set from ' +
-                train_set_path
-            ))
-            # raise again so that the pipeline aborts
-            raise err
-
-        end = time.time()
-
-        self.event_dispatcher.dispatch(DataframeEventArgs(
             ON_END_LOAD_TRAIN_SET,
-            train_set_path,
-            'train set'
-        ), elapsed_time=end - start)
-
-        return train_set
-
-    def load_test_set(self, test_set_path: str) -> pd.DataFrame:
-        """Load the test set that the models used for testing.
-
-        Args:
-            test_set_path: path to where the test set is stored.
-        """
-        self.event_dispatcher.dispatch(DataframeEventArgs(
+            names=['user', 'item', 'rating']
+        )
+        test_set = self.read_dataframe(
+            test_set_path,
+            'test set',
             ON_BEGIN_LOAD_TEST_SET,
-            test_set_path,
-            'test set'
-        ))
-
-        start = time.time()
-
-        try:
-            test_set = pd.read_csv(
-                test_set_path,
-                sep='\t',
-                header=None,
-                names=['user', 'item', 'rating']
-            )
-        except FileNotFoundError as err:
-            self.event_dispatcher.dispatch(ErrorEventArgs(
-                ON_RAISE_ERROR,
-                'FileNotFoundError: raised while trying to load the test set from ' +
-                test_set_path
-            ))
-            # raise again so that the pipeline aborts
-            raise err
-
-        end = time.time()
-
-        self.event_dispatcher.dispatch(DataframeEventArgs(
             ON_END_LOAD_TEST_SET,
-            test_set_path,
-            'test set'
-        ), elapsed_time=end - start)
-
-        return test_set
-
-    def load_recs(self, recs_path: str) -> pd.DataFrame:
-        """Load the model recs result.
-
-        Args:
-            recs_path: path to where the recs are stored.
-        """
-        self.event_dispatcher.dispatch(DataframeEventArgs(
+            names=['user', 'item', 'rating']
+        )
+        recs = self.read_dataframe(
+            recs_path,
+            'rec set',
             ON_BEGIN_LOAD_RECS_SET,
-            recs_path,
-            'rec set'
-        ))
-
-        start = time.time()
-
-        try:
-            # recs = pd.read_csv(recs_path, header=None, sep='\t', names=['user', 'item', 'score'])
-            # recs['rank'] = recs.groupby('user')['score'].rank()
-            recs = pd.read_csv(recs_path, sep='\t')
-
-            # Reorder/filter columns for LensKit format
-            recs = recs[['item', 'score', 'user', 'rank']]
-
-            # LensKit needs this column, TODO refactor?
-            # It is a bit redundant because
-            # there is only one approach during the evaluation pipeline
-            recs['Algorithm'] = 'APPROACHNAME'
-
-        except FileNotFoundError as err:
-            self.event_dispatcher.dispatch(ErrorEventArgs(
-                ON_RAISE_ERROR,
-                'FileNotFoundError: raised while trying to load the test set from ' +
-                recs_path
-            ))
-            # raise again so that the pipeline aborts
-            raise err
-
-        end = time.time()
-
-        self.event_dispatcher.dispatch(DataframeEventArgs(
             ON_END_LOAD_RECS_SET,
-            recs_path,
-            'rec set'
-        ), elapsed_time=end - start)
+        )
 
-        return recs
+        # Reorder/filter columns for LensKit format
+        recs = recs[['item', 'score', 'user', 'rank']]
+
+        # LensKit needs this column, TODO refactor?
+        # It is a bit redundant because
+        # there is only one approach during the evaluation pipeline
+        recs['Algorithm'] = 'APPROACHNAME'
+
+        return train_set, test_set, recs
 
 
 def add_evaluation_to_file(file_path, evaluation_value, metric_config):
@@ -323,14 +215,12 @@ def add_evaluation_to_file(file_path, evaluation_value, metric_config):
                   'evaluation': {'global': evaluation_value, 'filtered': []}}
 
     # TODO refactor
-    with open(file_path, encoding='utf-8') as out_file:
-        evaluations = json.load(out_file)
+    evaluations = load_json(file_path)
 
     evaluations['evaluations'].append(evaluation)
     # print(json.dumps(evaluations, indent=4))
 
-    with open(file_path, mode='w', encoding='utf-8') as out_file:
-        json.dump(evaluations, out_file, indent=4)
+    save_json(file_path, evaluations, indent=4)
 
 
 def filter_pass(set_paths, profile, filter_passes):
