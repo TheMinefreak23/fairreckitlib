@@ -2,6 +2,12 @@
 
 Constants:
 
+    ELLIOT_API: name of the Elliot API.
+    IMPLICIT_API: name of the Implicit API.
+    LENSKIT_API: name of the LensKit API.
+    REXMEX_API: name of the Rexmex API.
+    SURPRISE_API: name of the Surprise API.
+
     KEY_NAME: the key that is used for a name.
     KEY_PARAMS: the key that is used for params.
     KEY_TYPE: the key that is used for types.
@@ -24,6 +30,12 @@ This program has been developed by students from the bachelor Computer Science a
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
+
+ELLIOT_API = 'Elliot' # no longer supported
+IMPLICIT_API = 'Implicit'
+LENSKIT_API = 'LensKit'
+REXMEX_API = 'Rexmex'
+SURPRISE_API = 'Surprise'
 
 KEY_NAME = 'name'
 KEY_PARAMS = 'params'

@@ -1,5 +1,9 @@
 """This module contains functionality to create a data factory.
 
+Constants:
+
+    KEY_DATA: key that is used to identify data.
+
 Functions:
 
     create_data_factory: create factory with data modifier factories.
@@ -9,7 +13,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ..core.factories import GroupFactory
+from ..core.config.config_factories import GroupFactory
 from .ratings.rating_converter_factory import create_rating_converter_factory
 from .split.split_factory import create_split_factory
 

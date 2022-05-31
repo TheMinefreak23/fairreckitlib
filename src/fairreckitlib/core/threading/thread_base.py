@@ -13,7 +13,7 @@ from abc import ABCMeta, abstractmethod
 from threading import Thread
 from typing import Any, Callable
 
-from ..event_dispatcher import EventDispatcher
+from ..events.event_dispatcher import EventDispatcher
 
 
 class ThreadBase(metaclass=ABCMeta):
@@ -31,6 +31,12 @@ class ThreadBase(metaclass=ABCMeta):
     once the stop() function is called it requests the thread to finish.
     Threads cannot be cancelled so any derived class logic needs to account for this request
     by checking the is_running function pointer (in step 2) regularly.
+
+    Abstract methods:
+
+    on_initialize (optional)
+    on_run (required)
+    on_terminate (optional)
 
     Public methods:
 
@@ -57,20 +63,25 @@ class ThreadBase(metaclass=ABCMeta):
         self.verbose = verbose
         self.event_dispatcher = EventDispatcher()
 
-    def start(self, terminate_callback: Callable[[Any], None]) -> None:
+    def start(self, terminate_callback: Callable[[Any], None]) -> bool:
         """Start running the thread.
 
         Args:
             terminate_callback: call back function that is called once the thread is
             finished running and is terminated. This function has one argument
             which is the thread itself.
+
+        Returns:
+            True when the thread successfully started or False when the thread is already running.
         """
         if self.running:
-            return
+            return False
 
         self.running = True
         self.terminate_callback = terminate_callback
         self.thread.start()
+
+        return True
 
     def stop(self) -> None:
         """Stop running the thread.
@@ -121,6 +132,8 @@ class ThreadBase(metaclass=ABCMeta):
 
         This function is called once after the thread is done running.
         It should not be used directly, add specific logic in derived classes.
+        Moreover, derived classes are expected to call their super implementation
+        after their own implementation is finished.
         """
         self.terminate_callback(self)
 

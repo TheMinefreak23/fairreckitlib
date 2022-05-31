@@ -8,8 +8,8 @@ from typing import Any, Dict
 import pandas as pd
 from lenskit.metrics import predict
 
-from src.fairreckitlib.core.apis import LENSKIT_API
-from src.fairreckitlib.evaluation.metrics.evaluator import Evaluator
+from ....core.core_constants import LENSKIT_API
+from ..evaluator import Evaluator
 
 
 class LensKitPredictionEvaluator(Evaluator):

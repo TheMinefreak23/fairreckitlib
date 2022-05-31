@@ -17,7 +17,6 @@ import numpy as np
 import pandas as pd
 from scipy import sparse
 
-from ...utility import convert_csr_to_coo, convert_coo_to_df, save_array_to_hdf5
 from ..dataset_config import DatasetIndexConfig, DatasetMatrixConfig, DatasetTableConfig
 from ..dataset_config import DATASET_RATINGS_IMPLICIT, create_dataset_table_config
 from ..dataset_constants import TABLE_FILE_PREFIX
@@ -287,11 +286,7 @@ class DatasetProcessorLFM1B(DatasetProcessorLFM):
             'user_id',
             len(user_list)
         )
-        save_array_to_hdf5(
-            os.path.join(self.dataset_dir, user_index_config.file_name),
-            user_list,
-            'indices'
-        )
+        user_index_config.save_indices(self.dataset_dir, user_list)
 
         # create and save artist indirection array
         artist_list = list(map(lambda i: i[0], idx_artists))
@@ -300,17 +295,14 @@ class DatasetProcessorLFM1B(DatasetProcessorLFM):
             'artist_id',
             len(artist_list)
         )
-        save_array_to_hdf5(
-            os.path.join(self.dataset_dir, artist_index_config.file_name),
-            artist_list,
-            'indices'
-        )
+        artist_index_config.save_indices(self.dataset_dir, artist_list)
 
         # convert csr to dataframe
-        user_artist_matrix = convert_coo_to_df(
-            convert_csr_to_coo(csr_matrix),
-            'user_id', 'artist_id', 'matrix_count'
-        )
+        coo_matrix = pd.DataFrame.sparse.from_spmatrix(csr_matrix).sparse.to_coo()
+        user_artist_matrix = pd.DataFrame()
+        user_artist_matrix['user_id'] = coo_matrix.row
+        user_artist_matrix['artist_id'] = coo_matrix.col
+        user_artist_matrix['matrix_count'] = coo_matrix.data
 
         # create matrix table configuration
         user_artist_table_config = create_dataset_table_config(

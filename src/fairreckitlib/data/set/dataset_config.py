@@ -28,8 +28,9 @@ from typing import Any, Dict, List, Optional, Union
 
 import pandas as pd
 
-from ...core.config_constants import KEY_NAME
-from ...core.config_object import YmlConfig, format_yml_config_dict
+from ...core.core_constants import KEY_NAME
+from ...core.config.config_yml import YmlConfig, format_yml_config_dict
+from ...core.io.io_utility import load_array_from_hdf5, save_array_to_hdf5
 from .dataset_constants import KEY_RATING_MIN, KEY_RATING_MAX, KEY_RATING_TYPE
 from .dataset_constants import KEY_MATRIX, KEY_IDX_ITEM, KEY_IDX_USER
 from .dataset_constants import KEY_DATASET, KEY_EVENTS, KEY_MATRICES, KEY_TABLES
@@ -191,6 +192,39 @@ class DatasetIndexConfig(YmlConfig):
     key: str
     num_records: int
 
+    def load_indices(self, dataset_dir: str) -> Optional[List[int]]:
+        """Load the indices from the specified directory.
+
+        This function raises a FileNotFoundError when the file is not
+        found in the specified directory.
+
+        Args:
+            dataset_dir: the directory to load the indices from.
+
+        Returns:
+            the resulting indices or None when not available.
+        """
+        if self.file_name is None:
+            return None
+
+        return load_array_from_hdf5(os.path.join(dataset_dir, self.file_name), 'indices')
+
+    def save_indices(self, dataset_dir: str, indices: List[int]) -> bool:
+        """Save the indices to the specified directory.
+
+        Args:
+            dataset_dir: the directory to save the indices to.
+            indices: the list of indices to save.
+
+        Returns:
+            true when the indices are saved or false when the configuration has no file name.
+        """
+        if self.file_name is None:
+            return False
+
+        save_array_to_hdf5(os.path.join(dataset_dir, self.file_name), indices, 'indices')
+        return True
+
     def to_yml_format(self) -> Dict[str, Any]:
         """Format dataset index configuration to a yml compatible dictionary.
 
@@ -227,17 +261,16 @@ class DatasetMatrixConfig(YmlConfig):
     user: DatasetIndexConfig
     item: DatasetIndexConfig
 
-    def load_matrix(self, dataset_dir: str, chunk_size: int=None) -> pd.DataFrame:
+    def load_matrix(self, dataset_dir: str) -> pd.DataFrame:
         """Load the matrix from the specified directory.
 
         Args:
             dataset_dir: directory path to where the dataset matrix is stored.
-            chunk_size: loads the matrix in chunks as an iterator or the entire table when None.
 
         Returns:
             the resulting matrix (iterator).
         """
-        matrix = self.table.read_table(dataset_dir, chunk_size=chunk_size)
+        matrix = self.table.read_table(dataset_dir)
 
         columns = {
             self.user.key: 'user',

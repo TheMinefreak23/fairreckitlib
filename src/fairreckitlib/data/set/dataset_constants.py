@@ -18,6 +18,8 @@ TABLE_INDEXED = 'indexed'
 TABLE_NUM_RECORDS = 'num_records'
 TABLE_SEP = 'sep'
 
+DATASET_CONFIG_FILE = TABLE_FILE_PREFIX + 'dataset_config.yml'
+
 KEY_MATRIX = 'matrix'
 KEY_IDX_ITEM = 'idx_item'
 KEY_IDX_USER = 'idx_user'

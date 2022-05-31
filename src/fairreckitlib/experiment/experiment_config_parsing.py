@@ -11,20 +11,21 @@ Utrecht University within the Software Project course.
 
 from typing import Any, Dict, Optional, Union
 
-from ..core.config_constants import KEY_TYPE, TYPE_PREDICTION, TYPE_RECOMMENDATION, VALID_TYPES
-from ..core.config_constants import KEY_NAME, KEY_TOP_K, DEFAULT_TOP_K
-from ..core.config_constants import KEY_RATED_ITEMS_FILTER, DEFAULT_RATED_ITEMS_FILTER
-from ..core.config_params import ConfigOptionParam, ConfigValueParam
-from ..core.event_dispatcher import EventDispatcher
-from ..core.factories import GroupFactory
+from ..core.config.config_factories import GroupFactory
+from ..core.config.config_option_param import ConfigSingleOptionParam
+from ..core.config.config_value_param import ConfigNumberParam
+from ..core.core_constants import KEY_TYPE, TYPE_PREDICTION, TYPE_RECOMMENDATION, VALID_TYPES
+from ..core.core_constants import KEY_NAME, KEY_TOP_K, DEFAULT_TOP_K
+from ..core.core_constants import KEY_RATED_ITEMS_FILTER, DEFAULT_RATED_ITEMS_FILTER
+from ..core.events.event_dispatcher import EventDispatcher
+from ..core.io.io_utility import load_yml
 from ..core.parsing.parse_assert import assert_is_type
 from ..core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
-from ..core.parsing.parse_event import ON_PARSE, on_parse
-from ..core.parsing.parse_params import parse_config_param
+from ..core.parsing.parse_config_params import parse_config_param
+from ..core.parsing.parse_event import ON_PARSE, print_parse_event
 from ..data.data_factory import KEY_DATA
 from ..data.pipeline.data_config_parsing import parse_data_config
 from ..data.set.dataset_registry import DataRegistry
-from ..data.utility import load_yml
 from ..evaluation.evaluation_factory import KEY_EVALUATION
 from ..evaluation.pipeline.evaluation_config_parsing import parse_evaluation_config
 from ..model.model_factory import KEY_MODELS
@@ -47,9 +48,12 @@ class Parser:
         Args:
             verbose: whether the parser should give verbose output.
         """
+        handle_parse_event = lambda parser, args: \
+            print_parse_event(args) if parser.verbose else None
+
         self.verbose = verbose
         self.event_dispatcher = EventDispatcher()
-        self.event_dispatcher.add_listener(ON_PARSE, self, (on_parse, None))
+        self.event_dispatcher.add_listener(ON_PARSE, self, (handle_parse_event, None))
 
     def parse_experiment_config(
             self,
@@ -128,7 +132,7 @@ class Parser:
             _, experiment_top_k = parse_config_param(
                 experiment_config,
                 'recommender experiment',
-                ConfigValueParam(
+                ConfigNumberParam(
                     KEY_TOP_K,
                     int,
                     DEFAULT_TOP_K,
@@ -141,7 +145,7 @@ class Parser:
             _, experiment_rated_items_filter = parse_config_param(
                 experiment_config,
                 'recommender experiment',
-                ConfigOptionParam(
+                ConfigSingleOptionParam(
                     KEY_RATED_ITEMS_FILTER,
                     bool,
                     DEFAULT_RATED_ITEMS_FILTER,

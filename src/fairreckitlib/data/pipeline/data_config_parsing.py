@@ -12,14 +12,15 @@ Utrecht University within the Software Project course.
 
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from ...core.event_dispatcher import EventDispatcher
-from ...core.factories import GroupFactory
+from ...core.config.config_factories import GroupFactory
+from ...core.events.event_dispatcher import EventDispatcher
 from ...core.parsing.parse_assert import assert_is_type, assert_is_container_not_empty
 from ...core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
 from ...core.parsing.parse_event import ON_PARSE
 from ..data_factory import KEY_DATA
 from ..ratings.convert_constants import KEY_RATING_CONVERTER
 from ..ratings.convert_config_parsing import parse_data_convert_config
+from ..set.dataset_constants import KEY_DATASET, KEY_MATRIX
 from ..set.dataset_registry import DataRegistry
 from ..split.split_constants import KEY_SPLITTING
 from ..split.split_config_parsing import parse_data_split_config
@@ -124,13 +125,13 @@ def parse_dataset_config(
 
     # assert dataset name is present
     if not assert_is_key_in_dict(
-        'dataset',
+        KEY_DATASET,
         dataset_config,
         event_dispatcher,
-        'PARSE ERROR: missing key \'dataset\' (required)'
+        'PARSE ERROR: missing key \'' + KEY_DATASET + '\' (required)'
     ): return None, None
 
-    dataset_name = dataset_config['dataset']
+    dataset_name = dataset_config[KEY_DATASET]
 
     # assert dataset name is available in the data registry
     if not assert_is_one_of_list(
@@ -141,7 +142,24 @@ def parse_dataset_config(
     ): return None, dataset_name
 
     dataset = data_registry.get_set(dataset_name)
-    dataset_matrix = dataset_config['matrix']  # TODO parse this
+
+    # assert matrix name is present
+    if not assert_is_key_in_dict(
+        KEY_MATRIX,
+        dataset_config,
+        event_dispatcher,
+        'PARSE ERROR: missing key \'' + KEY_MATRIX + '\' (required)'
+    ): return None, dataset_name
+
+    dataset_matrix = dataset_config[KEY_MATRIX]
+
+    # assert matrix name is available in the dataset
+    if not assert_is_one_of_list(
+        dataset_matrix,
+        dataset.get_available_matrices(),
+        event_dispatcher,
+        'PARSE ERROR: unknown dataset matrix \'' + str(dataset_matrix) + '\''
+    ): return None, dataset_name
 
     # TODO parse this
     dataset_prefilters = []

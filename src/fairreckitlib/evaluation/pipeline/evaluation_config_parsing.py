@@ -1,4 +1,10 @@
-"""
+"""This module contains a parser for the evaluation and metric configuration(s).
+
+Functions:
+
+    parse_evaluation_config: parse all metric configurations.
+    parse_metric_config: parse metric configuration.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -6,15 +12,15 @@ Utrecht University within the Software Project course.
 
 from typing import Any, Dict, List, Optional, Tuple
 
-from ..metrics.common import KEY_METRIC_PARAM_K
-from ...core.config_constants import KEY_NAME, KEY_PARAMS, KEY_TOP_K
-from ...core.event_dispatcher import EventDispatcher
-from ...core.factories import GroupFactory
+from ...core.config.config_factories import GroupFactory
+from ...core.core_constants import KEY_NAME, KEY_PARAMS, KEY_TOP_K
+from ...core.events.event_dispatcher import EventDispatcher
 from ...core.parsing.parse_assert import assert_is_type, assert_is_container_not_empty
 from ...core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
+from ...core.parsing.parse_config_params import parse_config_parameters
 from ...core.parsing.parse_event import ON_PARSE
-from ...core.parsing.parse_params import parse_config_parameters
 from ..evaluation_factory import KEY_EVALUATION
+from ..metrics.common import KEY_METRIC_PARAM_K
 from ..metrics.metric_factory import resolve_metric_factory
 from .evaluation_config import MetricConfig
 
@@ -47,7 +53,7 @@ def parse_evaluation_config(
         list,
         event_dispatcher,
         'PARSE ERROR: invalid experiment value for key \'' + KEY_EVALUATION + '\'',
-        default=parsed_config
+        default_value=parsed_config
     ): return parsed_config
 
     # assert eval_config has list entries
@@ -55,12 +61,11 @@ def parse_evaluation_config(
         eval_config,
         event_dispatcher,
         'PARSE ERROR: experiment \'' + KEY_EVALUATION + '\' is empty',
-        default=parsed_config
+        default_value=parsed_config
     ): return parsed_config
 
     # parse eval_config list entries
-    for _, metric_config in enumerate(eval_config):
-        #print(metric_config)
+    for metric_config in eval_config:
         metric, metric_name = parse_metric_config(
             metric_config,
             metric_category_factory,
@@ -114,7 +119,6 @@ def parse_metric_config(
     ): return None, None
 
     metric_name = metric_config[KEY_NAME]
-    #print(metric_name, metric_category_factory)
     metric_factory = resolve_metric_factory(metric_name, metric_category_factory)
 
     # assert metric name is available in the metric factory
@@ -142,7 +146,7 @@ def parse_metric_config(
         metric_config,
         event_dispatcher,
         'PARSE WARNING: ' + metric_name + ' missing key \'' + KEY_PARAMS + '\'',
-        default=metric_params
+        default_value=metric_params
     ):
         # parse the metric parameters
         metric_params = parse_config_parameters(

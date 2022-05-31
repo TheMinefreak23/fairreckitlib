@@ -11,13 +11,14 @@ Utrecht University within the Software Project course.
 
 from typing import Any, Dict
 
-from ...core.config_constants import KEY_NAME, KEY_PARAMS
-from ...core.config_params import ConfigOptionParam, ConfigValueParam
-from ...core.event_dispatcher import EventDispatcher
-from ...core.factories import Factory
+from ...core.config.config_factories import Factory
+from ...core.config.config_option_param import ConfigSingleOptionParam
+from ...core.config.config_value_param import ConfigNumberParam
+from ...core.core_constants import KEY_NAME, KEY_PARAMS
+from ...core.events.event_dispatcher import EventDispatcher
 from ...core.parsing.parse_assert import assert_is_type, assert_is_key_in_dict
+from ...core.parsing.parse_config_params import parse_config_param, parse_config_parameters
 from ...core.parsing.parse_event import ON_PARSE
-from ...core.parsing.parse_params import parse_config_param, parse_config_parameters
 from ..set.dataset import Dataset
 from .split_config import SplitConfig
 from .split_constants import KEY_SPLITTING, KEY_SPLIT_TEST_RATIO
@@ -64,14 +65,14 @@ def parse_data_split_config(
         dict,
         event_dispatcher,
         'PARSE WARNING: dataset ' + dataset.get_name() + ' invalid splitting value',
-        default=parsed_config
+        default_value=parsed_config
     ): return parsed_config
 
     # parse splitting test ratio
     success, test_ratio = parse_config_param(
         split_config,
         dataset.get_name() + ' ' + KEY_SPLITTING,
-        ConfigValueParam(
+        ConfigNumberParam(
             KEY_SPLIT_TEST_RATIO,
             float,
             DEFAULT_SPLIT_TEST_RATIO,
@@ -86,7 +87,7 @@ def parse_data_split_config(
     success, split_name = parse_config_param(
         split_config,
         dataset.get_name() + ' ' + KEY_SPLITTING,
-        ConfigOptionParam(
+        ConfigSingleOptionParam(
             KEY_NAME,
             str,
             DEFAULT_SPLIT_NAME,
@@ -108,7 +109,7 @@ def parse_data_split_config(
         event_dispatcher,
         'PARSE WARNING: dataset ' + dataset.get_name() + ' ' + KEY_SPLITTING + ' missing key \'' +
         KEY_PARAMS + '\'',
-        default=parsed_config.params
+        default_value=parsed_config.params
     ):
         # parse the splitter parameters
         parsed_config.params = parse_config_parameters(

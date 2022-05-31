@@ -18,18 +18,26 @@ from dataclasses import dataclass
 import os
 from typing import Callable, Union
 
-from ..core.event_dispatcher import EventDispatcher
-from ..core.event_io import ON_MAKE_DIR
-from ..core.factories import GroupFactory
+from ..core.config.config_factories import GroupFactory
+from ..core.events.event_dispatcher import EventDispatcher
+from ..core.io.io_create import create_dir, create_yml
 from ..data.set.dataset_registry import DataRegistry
-from ..data.utility import save_yml
 from .experiment_config import PredictorExperimentConfig, RecommenderExperimentConfig
 from .experiment_pipeline import ExperimentPipeline
 
 
 @dataclass
 class ExperimentPipelineConfig:
-    """ExperimentPipeline Configuration."""
+    """Experiment Pipeline Configuration.
+
+    output_dir: the directory to store the output.
+    data_registry: the registry with available datasets.
+    experiment_factory: the factory with data/model/evaluation pipeline factories.
+    experiment_config: the experiment configuration to compute.
+    start_run: the experiment run to start with.
+    num_runs: the number of runs of the experiment.
+    num_threads: the max number of threads the experiment can use.
+    """
 
     output_dir: str
     data_registry: DataRegistry
@@ -53,17 +61,16 @@ def run_experiment_pipelines(
             are still running. Stops early when False is returned.
 
     """
-    # Create result output directory
     if not os.path.isdir(pipeline_config.output_dir):
-        os.mkdir(pipeline_config.output_dir)
-        event_dispatcher.dispatch(
-            ON_MAKE_DIR,
-            dir=pipeline_config.output_dir
-        )
+        # create result output directory
+        create_dir(pipeline_config.output_dir, event_dispatcher)
 
         # save the yml configuration file
-        experiment_yml = pipeline_config.experiment_config.to_yml_format()
-        save_yml(os.path.join(pipeline_config.output_dir, 'config.yml'), experiment_yml)
+        create_yml(
+            os.path.join(pipeline_config.output_dir, 'config.yml'),
+            pipeline_config.experiment_config.to_yml_format(),
+            event_dispatcher
+        )
 
     # prepare pipeline
     experiment_pipeline = ExperimentPipeline(

@@ -1,21 +1,31 @@
-"""
+"""This module contains the metric configuration.
+
+Classes:
+
+    MetricConfig: metric configuration.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict
+from typing import Any, Dict, List
 
-from ...core.config_object import ObjectConfig
+from ...core.config.config_object import ObjectConfig
 from ...data.filter.filter_constants import KEY_DATA_FILTERS
 
 
 @dataclass
 class MetricConfig(ObjectConfig):
-    """Metric Configuration."""
+    """Metric Configuration.
 
-    prefilters: []
+    name: the name of the metric.
+    params: the parameters of the metric.
+    prefilters: the prefilters of the metric.
+    """
+
+    prefilters: List[Any]
 
     def to_yml_format(self) -> Dict[str, Any]:
         """Format metric configuration to a yml compatible dictionary.

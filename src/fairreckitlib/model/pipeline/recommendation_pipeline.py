@@ -14,7 +14,7 @@ from typing import Callable
 import pandas as pd
 
 from ..algorithms.base_recommender import BaseRecommender
-from .model_pipeline import ModelPipeline, write_computed_ratings
+from .model_pipeline import ModelPipeline
 
 
 class RecommendationPipeline(ModelPipeline):
@@ -64,5 +64,5 @@ class RecommendationPipeline(ModelPipeline):
             if not is_running():
                 return
 
-            write_computed_ratings(output_path, recommendations, start_index==0)
+            self.write_dataframe(output_path, recommendations, start_index == 0)
             start_index += batch_size

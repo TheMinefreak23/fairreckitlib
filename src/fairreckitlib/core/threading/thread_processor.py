@@ -18,10 +18,13 @@ class ThreadProcessor:
     """Processor for multiple threads (derived from ThreadBase class).
 
     Keeps track of all threads that are started by this processor.
-    Additionally, these started threads can be stopped as well.
+    The processor acquires ownership of these aforementioned threads and
+    will dispose of them after they are finished.
+    Additionally, these threads can be stopped as well.
 
     Public methods:
 
+    get_active_threads
     get_num_active
     is_active_thread
     start
@@ -38,6 +41,12 @@ class ThreadProcessor:
         Returns:
             a list of thread names that are currently running.
         """
+        active_threads = []
+
+        for thread_name, _ in self.threads.items():
+            active_threads.append(thread_name)
+
+        return active_threads
 
     def get_num_active(self) -> int:
         """Get the number of active threads for this processor.

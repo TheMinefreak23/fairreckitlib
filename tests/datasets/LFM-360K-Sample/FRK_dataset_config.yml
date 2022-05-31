@@ -1,0 +1,52 @@
+dataset: LFM-360K
+matrices:
+  user-artist-count:
+    idx_item:
+      file: user-artist-count_item_indices.hdf5
+      key: artist_id
+      num_records: 10000
+    idx_user:
+      file: user-artist-count_user_indices.hdf5
+      key: user_id
+      num_records: 1000
+    matrix:
+      columns:
+      - matrix_count
+      file:
+        compression: bz2
+        name: LFM-360K_user-artist-count.tsv.bz2
+      foreign_keys:
+      - user_id
+      - artist_id
+      num_records: 42429
+      primary_key:
+      - user_id
+      - artist_id
+    rating_max: 107758.0
+    rating_min: 1.0
+    rating_type: implicit
+tables:
+  artist:
+    columns:
+    - artist_name
+    - artist_mbID
+    - artist_gender
+    file:
+      compression: bz2
+      name: LFM-360K_artist.tsv.bz2
+    num_records: 10000
+    primary_key:
+    - artist_id
+  user:
+    columns:
+    - user_sha
+    - user_gender
+    - user_age
+    - user_country
+    - user_signup
+    file:
+      compression: bz2
+      name: LFM-360K_user.tsv.bz2
+    num_records: 1000
+    primary_key:
+    - user_id

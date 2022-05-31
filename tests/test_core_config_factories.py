@@ -1,4 +1,4 @@
-"""This module tests the base functionality of all types of factories.
+"""This module tests the functionality of all (base) types of config factories.
 
 Functions:
 
@@ -18,9 +18,11 @@ Utrecht University within the Software Project course.
 
 import pytest
 
-from src.fairreckitlib.core.config_constants import KEY_NAME, KEY_PARAMS
-from src.fairreckitlib.core.config_params import ConfigParameters, create_empty_parameters
-from src.fairreckitlib.core.factories import Factory, GroupFactory, create_factory_from_list
+from src.fairreckitlib.core.config.config_factories import \
+    Factory, GroupFactory, create_factory_from_list
+from src.fairreckitlib.core.core_constants import KEY_NAME, KEY_PARAMS
+from src.fairreckitlib.core.config.config_parameters import \
+    ConfigParameters, create_empty_parameters
 
 dummy_names = ['dummy_a', 'dummy_b', 'dummy_c']
 
@@ -143,18 +145,31 @@ def test_group_factory_add_and_available(create_child_factory):
         assert name in group.get_available_names(), 'factory should be in available names.'
         assert not group.is_obj_available(name), 'factory should not be available, only objects.'
 
+
     availability = group.get_available()
     assert len(availability) == group.get_num_entries(), 'availability should have the same' \
                                                          ' length as the number of entries'
 
-    child_name = 'child'
-    child = Factory('child')
-    child.add_obj('obj', create_dummy_obj, None)
-    group.add_factory(child)
-    assert group.is_obj_available('obj'), 'obj should be available in the child factory.'
+    sub_child_name = 'sub_child'
+    sub_child = Factory(sub_child_name)
+    sub_child.add_obj('obj', create_dummy_obj, None)
+    group.add_factory(sub_child)
+
+    sub_group_name = 'sub_group'
+    sub_group = GroupFactory(sub_group_name)
+    sub_group.add_factory(sub_child)
+    group.add_factory(sub_group)
+
+    assert group.is_obj_available('obj'), 'obj should be available in the sub child factory.'
+    assert len(group.get_sub_availability(sub_child_name)) == 1, \
+        'group should have sub child available.'
+    assert len(group.get_sub_availability(sub_group_name, sub_child_name)) == 1, \
+        'group should have sub child in a sub group available.'
+    assert len(group.get_sub_availability(sub_group_name, sub_group_name)) == 0, \
+        'group should not have sub group in a sub group available.'
 
     for factory_name, factory_availability in availability.items():
-        if factory_name == child_name:
+        if factory_name == sub_child_name:
             assert len(factory_availability) == 1, 'child factory should have one available entry.'
         else:
             assert factory_name in dummy_names, 'factory name should be in the original list'

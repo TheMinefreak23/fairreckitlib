@@ -14,8 +14,8 @@ Utrecht University within the Software Project course.
 from abc import ABCMeta, abstractmethod
 from typing import Any, Callable, Dict, List, Tuple
 
-from .config_constants import KEY_NAME, KEY_PARAMS
-from .config_params import ConfigParameters, create_empty_parameters
+from ..core_constants import KEY_NAME, KEY_PARAMS
+from .config_parameters import ConfigParameters, create_empty_parameters
 
 FUNC_CREATE_OBJ = 'f_create_obj'
 FUNC_CREATE_PARAMS = 'f_create_params'
@@ -274,7 +274,6 @@ class GroupFactory(BaseFactory):
         Returns:
             a dictionary containing the availability of the sub-factory (type).
         """
-        # TODO add unit test for this
         sub_factory = self.get_factory(sub_factory_name)
         if sub_type is None:
             return sub_factory.get_available()
