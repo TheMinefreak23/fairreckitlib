@@ -5,28 +5,24 @@ Utrecht University within the Software Project course.
 """
 
 import pandas as pd
+from .count import CountFilter
 from .base import DataFilter
 
 
-class AgeFilter(DataFilter):
+class AgeFilter(CountFilter):
     """Filters the dataframe on user age, if such a column exists."""
 
-    def run(self, col_name: str, min_val: int = 0, max_val: int = 100) -> pd.DataFrame:
+    def __init__(self, dataset: pd.DataFrame, min_val: int = 0, max_val: int = 100) -> None:
         """
-        Filter the dataframe based on age column in the range of min_val and max_val values.
+        the constructor
 
         Args:
-            col_name: the name of the column to be filtered
-            min_val: minimum age (default 0)
-            max_val: maximum age (default 0)
-
-        Returns:
-            a filtered dataframe from the given dataframe
+            min_val: minimum count (default 0)
+            max_val: maximum count (default 100)
         """
-        if col_name in self.dataset.columns:
-            df_filter = self.dataset[col_name].between(min_val, max_val, inclusive="both")
-            return self.dataset[df_filter].reset_index(drop=True)
-        return self.dataset
+        super().__init__(dataset)
+        self.min_val = min_val
+        self.max_val = max_val
 
     def __str__(self):
         """To string
@@ -37,13 +33,16 @@ class AgeFilter(DataFilter):
         return self.__class__.__name__
 
 
-def create_age_filter(data_frame: pd.DataFrame) -> DataFilter:
+def create_age_filter(data_frame: pd.DataFrame, min_val: int = 0, max_val: int = 100
+                     ) -> DataFilter:
     """Create an instance of the class AgeFilter
 
     Args:
         data_frame: a pandas DataFrame being filtered
+        min_val: minimum count (default 0)
+        max_val: maximum count (default 100)
 
     Returns:
         an instance of the AgeFilter class
     """
-    return AgeFilter(data_frame)
+    return AgeFilter(data_frame, min_val, max_val)
