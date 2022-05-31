@@ -268,8 +268,12 @@ class DataPipeline(CorePipeline):
         ))
 
         start = time.time()
-        convert_factory = self.data_factory.get_factory(KEY_RATING_CONVERTER)
-        converter = convert_factory.create(convert_config.name, convert_config.params)
+
+        converter_factory = self.data_factory.get_factory(KEY_RATING_CONVERTER)
+        dataset_converter_factory = converter_factory.get_factory(dataset.get_name())
+        matrix_converter_factory = dataset_converter_factory.get_factory(matrix_name)
+
+        converter = matrix_converter_factory.create(convert_config.name, convert_config.params)
         if converter is None:
             self.event_dispatcher.dispatch(ErrorEventArgs(
                 ON_FAILURE_ERROR,
@@ -279,6 +283,7 @@ class DataPipeline(CorePipeline):
             raise RuntimeError()
 
         dataframe, rating_type = converter.run(dataframe)
+
         end = time.time()
 
         self.event_dispatcher.dispatch(ConvertRatingsEventArgs(

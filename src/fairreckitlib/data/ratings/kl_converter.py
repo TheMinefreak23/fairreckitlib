@@ -29,6 +29,7 @@ from typing import Any, Dict, Tuple
 import pandas as pd
 
 from ...core.config.config_parameters import ConfigParameters
+from ..set.dataset import Dataset
 from .base_converter import RatingConverter
 
 
@@ -61,7 +62,7 @@ class KLConverter(RatingConverter):
         raise NotImplementedError()
 
 
-def create_kl_converter(name: str, params: Dict[str, Any]) -> KLConverter:
+def create_kl_converter(name: str, params: Dict[str, Any], **_) -> KLConverter:
     """Create the KL Converter.
 
     Args:
@@ -75,13 +76,16 @@ def create_kl_converter(name: str, params: Dict[str, Any]) -> KLConverter:
     return KLConverter(name, params)
 
 
-def create_kl_converter_params() -> ConfigParameters:
+def create_kl_converter_params(dataset: Dataset, matrix_name: str) -> ConfigParameters:
     """Create the parameters of the kl converter.
 
     Returns:
         the configuration parameters of the converter.
     """
-    methods = ['APC', 'ALC']
+    if dataset.get_matrix_config(matrix_name).item.key == 'artist_id':
+        methods = ['APC', 'ALC']
+    else:
+        methods = ['None']
 
     params = ConfigParameters()
     params.add_single_option('method', str, methods[0], methods)
