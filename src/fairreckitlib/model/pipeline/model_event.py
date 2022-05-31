@@ -34,7 +34,7 @@ from dataclasses import dataclass
 from typing import Any, Callable, Dict, List
 
 from ...core.events.event_dispatcher import EventArgs
-from ...core.events.event_io import print_load_df_event_args
+from ...core.io.event_io import print_load_df_event_args
 from .model_config import ModelConfig
 
 ON_BEGIN_LOAD_TEST_SET = 'ModelPipeline.on_begin_load_test_set'
@@ -85,11 +85,11 @@ def get_model_events() -> List[str]:
     """
     return [
         # DataframeEventArgs
-        ON_BEGIN_LOAD_TEST_SET,
-        ON_END_LOAD_TEST_SET,
-        # DataframeEventArgs
         ON_BEGIN_LOAD_TRAIN_SET,
         ON_END_LOAD_TRAIN_SET,
+        # DataframeEventArgs
+        ON_BEGIN_LOAD_TEST_SET,
+        ON_END_LOAD_TEST_SET,
         # ModelPipelineEventArgs
         ON_BEGIN_MODEL_PIPELINE,
         ON_END_MODEL_PIPELINE,

@@ -34,7 +34,7 @@ from dataclasses import dataclass
 from typing import Callable, Dict, List
 
 from ...core.events.event_dispatcher import EventArgs
-from ...core.events.event_io import print_load_df_event_args
+from ...core.io.event_io import print_load_df_event_args
 from ...data.filter.filter_event import print_filter_event_args
 from .evaluation_config import MetricConfig
 

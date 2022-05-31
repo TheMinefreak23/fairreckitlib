@@ -27,7 +27,7 @@ from typing import Dict, Callable, List
 
 from ..core.events.event_dispatcher import EventArgs
 from ..core.events.event_error import get_error_events, get_error_event_print_switch
-from ..core.events.event_io import get_io_events, get_io_event_print_switch
+from ..core.io.event_io import get_io_events, get_io_event_print_switch
 from ..data.pipeline.data_event import get_data_events, get_data_event_print_switch
 from ..evaluation.pipeline.evaluation_event import get_eval_events, get_eval_event_print_switch
 from ..model.pipeline.model_event import get_model_events, get_model_event_print_switch

@@ -12,7 +12,7 @@ Utrecht University within the Software Project course.
 import os
 from typing import Any, Dict, List, Optional
 
-from ..utility import load_yml, save_yml
+from ...core.io.io_utility import load_yml, save_yml
 from .dataset_config_parsing import parse_dataset_config
 from .dataset_constants import DATASET_CONFIG_FILE
 from .dataset import Dataset
