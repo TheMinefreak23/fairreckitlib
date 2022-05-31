@@ -16,7 +16,8 @@ Utrecht University within the Software Project course.
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
-from ...core.config_object import ObjectConfig, format_yml_config_list
+from ...core.config.config_object import ObjectConfig
+from ...core.config.config_yml import format_yml_config_list
 
 
 @dataclass

@@ -1,4 +1,4 @@
-"""This module tests the event dispatching/listening functionality.
+"""This module tests the core event dispatching/listening functionality.
 
 Classes:
 

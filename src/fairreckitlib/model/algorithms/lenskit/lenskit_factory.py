@@ -10,9 +10,9 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ....core.apis import LENSKIT_API
-from ....core.params.config_parameters import create_params_random_seed
-from ....core.factories import Factory, create_factory_from_list
+from ....core.config.config_factories import Factory, create_factory_from_list
+from ....core.config.config_parameters import create_params_random_seed
+from ....core.core_constants import LENSKIT_API
 from . import lenskit_algorithms
 from . import lenskit_params
 from . import lenskit_predictor

@@ -16,9 +16,9 @@ Utrecht University within the Software Project course.
 from dataclasses import dataclass
 from typing import Callable, List
 
+from ...core.config.config_factories import GroupFactory
 from ...core.events.event_dispatcher import EventDispatcher
 from ...core.events.event_error import ON_FAILURE_ERROR, ErrorEventArgs
-from ...core.factories import GroupFactory
 from ..set.dataset_registry import DataRegistry
 from .data_config import DataMatrixConfig
 from .data_pipeline import DataPipeline, DataTransition

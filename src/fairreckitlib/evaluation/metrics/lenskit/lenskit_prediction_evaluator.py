@@ -8,7 +8,7 @@ from typing import Any, Dict
 import pandas as pd
 from lenskit.metrics import predict
 
-from ....core.apis import LENSKIT_API
+from ....core.core_constants import LENSKIT_API
 from ..evaluator import Evaluator
 
 

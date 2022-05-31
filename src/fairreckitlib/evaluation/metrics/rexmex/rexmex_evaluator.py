@@ -5,7 +5,7 @@ Utrecht University within the Software Project course.
 """
 from typing import Any, Dict
 
-from ....core.apis import REXMEX_API
+from ....core.core_constants import REXMEX_API
 from ..evaluator import Evaluator
 
 

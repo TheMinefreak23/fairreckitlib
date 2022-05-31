@@ -28,8 +28,8 @@ from typing import Any, Dict, List, Optional, Union
 
 import pandas as pd
 
-from ...core.config_constants import KEY_NAME
-from ...core.config_object import YmlConfig, format_yml_config_dict
+from ...core.core_constants import KEY_NAME
+from ...core.config.config_yml import YmlConfig, format_yml_config_dict
 from ..utility import load_array_from_hdf5, save_array_to_hdf5
 from .dataset_constants import KEY_RATING_MIN, KEY_RATING_MAX, KEY_RATING_TYPE
 from .dataset_constants import KEY_MATRIX, KEY_IDX_ITEM, KEY_IDX_USER

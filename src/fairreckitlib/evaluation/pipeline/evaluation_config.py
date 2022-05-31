@@ -12,7 +12,7 @@ Utrecht University within the Software Project course.
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
-from ...core.config_object import ObjectConfig
+from ...core.config.config_object import ObjectConfig
 from ...data.filter.filter_constants import KEY_DATA_FILTERS
 
 

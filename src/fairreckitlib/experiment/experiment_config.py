@@ -14,9 +14,8 @@ Utrecht University within the Software Project course.
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
-from ..core.config_constants import KEY_NAME, KEY_TYPE
-from ..core.config_constants import KEY_TOP_K, KEY_RATED_ITEMS_FILTER
-from ..core.config_object import format_yml_config_list
+from ..core.config.config_yml import format_yml_config_list
+from ..core.core_constants import KEY_NAME, KEY_TYPE, KEY_TOP_K, KEY_RATED_ITEMS_FILTER
 from ..data.data_factory import KEY_DATA
 from ..data.pipeline.data_config import DataMatrixConfig
 from ..evaluation.evaluation_factory import KEY_EVALUATION
