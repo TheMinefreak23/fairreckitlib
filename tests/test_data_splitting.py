@@ -27,7 +27,7 @@ from src.fairreckitlib.data.split.temporal_splitter import TemporalSplitter
 # dataset matrices to run splitting with
 dataset_registry = DataRegistry('tests/datasets')
 timestamp_matrices = [
-    #('ML-100K-Sample', 'user-movie-rating'),
+    ('ML-100K-Sample', 'user-movie-rating'),
     ('ML-25M-Sample', 'user-movie-rating'),
 ]
 dataset_matrices = timestamp_matrices + [

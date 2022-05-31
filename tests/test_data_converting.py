@@ -26,7 +26,7 @@ from src.fairreckitlib.data.set.dataset_registry import DataRegistry
 # dataset matrices to run rating converters with
 dataset_registry = DataRegistry('tests/datasets')
 movie_matrices = [
-    #('ML-100K-Sample', 'user-movie-rating'),
+    ('ML-100K-Sample', 'user-movie-rating'),
     ('ML-25M-Sample', 'user-movie-rating'),
 ]
 artist_matrices = [
