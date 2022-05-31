@@ -13,8 +13,7 @@ class CountFilter(DataFilter):
     """Filters the dataframe on user play count, if such a column exists."""
 
     def __init__(self, dataset: pd.DataFrame, min_val: int = 0, max_val: int = math.inf) -> None:
-        """
-        The constructor.
+        """The constructor.
 
         Args:
             min_val: minimum count (default 0)
@@ -25,8 +24,7 @@ class CountFilter(DataFilter):
         self.max_val = max_val
 
     def run(self, col_name: str) -> pd.DataFrame:
-        """
-        Filter the dataframe based on (play_)count or rating column in the range of
+        """Filter the dataframe based on (play_)count or rating column in the range of
         min_val and max_val values.
 
         Args:
@@ -42,7 +40,7 @@ class CountFilter(DataFilter):
         return self.dataset
 
     def __str__(self):
-        """To string
+        """To string.
 
         Returns:
             name of the class

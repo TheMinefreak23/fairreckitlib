@@ -13,8 +13,7 @@ class AgeFilter(CountFilter):
     """Filters the dataframe on user age, if such a column exists."""
 
     def __init__(self, dataset: pd.DataFrame, min_val: int = 0, max_val: int = 100) -> None:
-        """
-        The constructor.
+        """The constructor.
 
         Args:
             min_val: minimum count (default 0)
@@ -25,7 +24,7 @@ class AgeFilter(CountFilter):
         self.max_val = max_val
 
     def __str__(self):
-        """To string
+        """To string.
 
         Returns:
             name of the class

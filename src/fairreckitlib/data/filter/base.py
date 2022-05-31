@@ -31,7 +31,7 @@ class DataFilter(metaclass=ABCMeta):
 
     @abstractmethod
     def run(self, col_name: str):
-        """Carry out the filtering
+        """Carry out the filtering.
 
         Raises:
             NotImplementedError: this method should be implimented in the subclasses
@@ -39,7 +39,7 @@ class DataFilter(metaclass=ABCMeta):
         raise NotImplementedError()
 
     def __str__(self):
-        """To string
+        """To string.
 
         Returns:
             name of the class

@@ -31,7 +31,7 @@ class CountryFilter(GenderFilter):
         return self.dataset
 
     def __str__(self):
-        """To string
+        """To string.
 
         Returns:
             name of the class
@@ -40,7 +40,7 @@ class CountryFilter(GenderFilter):
 
 
 def create_country_filter(data_frame: pd.DataFrame, filters: List[str] = None) -> DataFilter:
-    """Create an instance of the class CountryFilter
+    """Create an instance of the class CountryFilter.
 
     Args:
         data_frame: a pandas DataFrame being filtered

@@ -15,8 +15,7 @@ class GenderFilter(DataFilter):
     """Filters the dataframe on gender column f/m, if such a column exists."""
 
     def __init__(self, dataset: pd.DataFrame, filters: List[str] = None) -> None:
-        """
-        The constructor.
+        """The constructor.
 
         Args:
             filters: the list of filters used in filtering
@@ -54,8 +53,7 @@ class GenderFilter(DataFilter):
         return self.dataset
 
     def do_filtering(self, df_filter: List[List[bool]]) -> pd.DataFrame:
-        """
-        Combining all the filtering conditions and filter the dataframe
+        """Combining all the filtering conditions and filter the dataframe.
 
         Args:
             df_filter: the list of all filtering conditions
@@ -69,7 +67,7 @@ class GenderFilter(DataFilter):
         return self.dataset
 
     def __str__(self):
-        """To string
+        """To string.
 
         Returns:
             name of the class
@@ -77,7 +75,7 @@ class GenderFilter(DataFilter):
         return self.__class__.__name__
 
 def create_gender_filter(data_frame: pd.DataFrame, filters: List[str] = None) -> DataFilter:
-    """Create an instance of the class GenderFilter
+    """Create an instance of the class GenderFilter.
 
     Args:
         data_frame: a pandas DataFrame being filtered
