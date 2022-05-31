@@ -14,7 +14,7 @@ class AgeFilter(CountFilter):
 
     def __init__(self, dataset: pd.DataFrame, min_val: int = 0, max_val: int = 100) -> None:
         """
-        the constructor
+        The constructor.
 
         Args:
             min_val: minimum count (default 0)

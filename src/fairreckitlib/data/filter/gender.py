@@ -16,7 +16,7 @@ class GenderFilter(DataFilter):
 
     def __init__(self, dataset: pd.DataFrame, filters: List[str] = None) -> None:
         """
-        the constructor
+        The constructor.
 
         Args:
             filters: the list of filters used in filtering
