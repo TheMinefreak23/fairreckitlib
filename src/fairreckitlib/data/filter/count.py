@@ -20,6 +20,7 @@ class CountFilter(DataFilter):
             min_val: minimum count (default 0)
             max_val: maximum count (default infinite)
         """
+
         super().__init__(dataset)
         self.min_val = min_val
         self.max_val = max_val
@@ -35,6 +36,7 @@ class CountFilter(DataFilter):
         Returns:
             a filtered dataframe from the given dataframe
         """
+
         if col_name in self.dataset.columns:
             df_filter = self.dataset[col_name].between(self.min_val, self.max_val,
                                                        inclusive="both")
@@ -47,6 +49,7 @@ class CountFilter(DataFilter):
         Returns:
             name of the class
         """
+
         return self.__class__.__name__
 
 
@@ -62,4 +65,5 @@ def create_count_filter(data_frame: pd.DataFrame, min_val: int = 0, max_val: int
     Returns:
         an instance of the CountFilter class
     """
+
     return CountFilter(data_frame, min_val, max_val)
