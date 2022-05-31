@@ -16,7 +16,6 @@ class TestFilterAge:
 
     def test_run_no_param(self):
         """Test run with no given parameter."""
-
         filter_obj = AgeFilter(self.df_source)
         df_expected = DataFrame({"id": [1, 2, 4], "age": [24, 0, 45]})
         df_result = filter_obj.run("age")
@@ -24,7 +23,6 @@ class TestFilterAge:
 
     def test_run_with_param(self):
         """Test run with given parameters."""
-
         filter_obj = AgeFilter(self.df_source, min_val=10, max_val=45)
         df_result = filter_obj.run("age")
         df_expected = DataFrame({"id": [1, 4], "age": [24, 45]})
@@ -33,7 +31,6 @@ class TestFilterAge:
 
 def test_run_no_age():
     """Test a given dataframe with no age column."""
-
     df_given = DataFrame({"id": [1, 2, 3, 4, 5], "play_count": [24, 0, -1, 45, 102]})
     filter_obj = AgeFilter(df_given)
     df_result = filter_obj.run("age")

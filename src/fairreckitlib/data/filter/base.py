@@ -27,7 +27,6 @@ class DataFilter(metaclass=ABCMeta):
 
     def __init__(self, dataset: pd.DataFrame) -> None:
         """Make Constructor of the class."""
-
         self.dataset = dataset
 
     @abstractmethod
@@ -37,7 +36,6 @@ class DataFilter(metaclass=ABCMeta):
         Raises:
             NotImplementedError: this method should be implimented in the subclasses
         """
-
         raise NotImplementedError()
 
     def __str__(self):
@@ -46,5 +44,4 @@ class DataFilter(metaclass=ABCMeta):
         Returns:
             name of the class
         """
-
         return self.__class__.__name__

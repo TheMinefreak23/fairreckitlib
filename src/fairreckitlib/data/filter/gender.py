@@ -21,7 +21,6 @@ class GenderFilter(DataFilter):
         Args:
             filters: the list of filters used in filtering
         """
-
         super().__init__(dataset)
         self.filters = filters
 
@@ -64,7 +63,6 @@ class GenderFilter(DataFilter):
         Returns:
             a filtered dataframe from the given dataframe
         """
-
         if df_filter:
             df_filter = reduce(lambda x, y: (x) | (y), df_filter)
             return self.dataset[df_filter].reset_index(drop=True)
@@ -76,7 +74,6 @@ class GenderFilter(DataFilter):
         Returns:
             name of the class
         """
-
         return self.__class__.__name__
 
 def create_gender_filter(data_frame: pd.DataFrame, filters: List[str] = None) -> DataFilter:
@@ -89,5 +86,4 @@ def create_gender_filter(data_frame: pd.DataFrame, filters: List[str] = None) ->
     Returns:
         an instance of the GenderFilter class
     """
-
     return GenderFilter(data_frame, filters)

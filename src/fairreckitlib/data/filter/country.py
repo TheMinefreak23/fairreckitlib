@@ -21,7 +21,6 @@ class CountryFilter(GenderFilter):
         Returns:
             a filtered dataframe from the given dataframe
         """
-
         if col_name in self.dataset.columns and self.filters:
             df_filter = []
             for country in self.filters:
@@ -37,7 +36,6 @@ class CountryFilter(GenderFilter):
         Returns:
             name of the class
         """
-
         return self.__class__.__name__
 
 
@@ -51,5 +49,4 @@ def create_country_filter(data_frame: pd.DataFrame, filters: List[str] = None) -
     Returns:
         an instance of the CountryFilter class
     """
-
     return CountryFilter(data_frame, filters)

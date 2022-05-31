@@ -20,7 +20,6 @@ class AgeFilter(CountFilter):
             min_val: minimum count (default 0)
             max_val: maximum count (default 100)
         """
-
         super().__init__(dataset)
         self.min_val = min_val
         self.max_val = max_val
@@ -31,7 +30,6 @@ class AgeFilter(CountFilter):
         Returns:
             name of the class
         """
-
         return self.__class__.__name__
 
 
@@ -47,5 +45,4 @@ def create_age_filter(data_frame: pd.DataFrame, min_val: int = 0, max_val: int =
     Returns:
         an instance of the AgeFilter class
     """
-
     return AgeFilter(data_frame, min_val, max_val)
