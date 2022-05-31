@@ -11,7 +11,6 @@ Utrecht University within the Software Project course.
 
 from ...core.config.config_factories import GroupFactory
 from ..data_modifier import DataModifierFactory
-from ..set.dataset import Dataset
 from ..set.dataset_registry import DataRegistry
 from .convert_constants import KEY_RATING_CONVERTER, CONVERTER_KL, CONVERTER_RANGE
 from .range_converter import create_range_converter, create_range_converter_params
@@ -20,6 +19,10 @@ from .kl_converter import create_kl_converter, create_kl_converter_params
 
 def create_rating_converter_factory(data_registry: DataRegistry) -> GroupFactory:
     """Create the rating converter factory.
+
+    Args:
+
+        data_registry: the data registry with available datasets.
 
     Returns:
         the factory with all available converters.
@@ -33,14 +36,10 @@ def create_rating_converter_factory(data_registry: DataRegistry) -> GroupFactory
         factory.add_factory(dataset_factory)
 
         for matrix_name in dataset.get_available_matrices():
-            dataset_factory.add_factory(create_matrix_converter_factory(dataset, matrix_name))
+            matrix_factory = DataModifierFactory(matrix_name, dataset)
+            matrix_factory.add_obj(CONVERTER_KL, create_kl_converter, create_kl_converter_params)
+            matrix_factory.add_obj(CONVERTER_RANGE, create_range_converter, create_range_converter_params)
 
-    return factory
+            dataset_factory.add_factory(matrix_factory)
 
-
-def create_matrix_converter_factory(dataset: Dataset, matrix_name: str) -> DataModifierFactory:
-    """TODO"""
-    factory = DataModifierFactory(matrix_name, dataset)
-    factory.add_obj(CONVERTER_KL, create_kl_converter, create_kl_converter_params)
-    factory.add_obj(CONVERTER_RANGE, create_range_converter, create_range_converter_params)
     return factory

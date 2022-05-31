@@ -24,6 +24,10 @@ KEY_DATA = 'data'
 def create_data_factory(data_registry: DataRegistry) -> GroupFactory:
     """Create a group factory with all data modifier factories.
 
+    Args:
+
+        data_registry: the data registry with available datasets.
+
     Consists of two data modifier factories:
         1) data rating converters.
         2) data splitters.
