@@ -19,8 +19,7 @@ def create_params_numerical() -> ConfigParameters:
         the configuration parameters of the algorithm.
     """
     params = ConfigParameters()
-    params.add_single_option('type', str, FILTER_NUMERICAL, [FILTER_NUMERICAL, FILTER_CATEGORICAL, FILTER_COUNT])
-    params.add_single_option('column_name', str, '', []) #options cant knwo..
+    params.add_single_option('name', str, '', ['user_age', 'rating', 'timestamp'])
     params.add_number('min', float, 1, (0, 10000000000))
     params.add_number('max', float, 100, (0, 10000000000))
     return params
@@ -32,8 +31,9 @@ def create_params_categorical() -> ConfigParameters:
         the configuration parameters of the algorithm.
     """
     params = ConfigParameters()
-    params.add_single_option('type', str, FILTER_CATEGORICAL, [FILTER_CATEGORICAL, FILTER_COUNT])
-    params.add_single_option('column_name', str, '', [])
+    params.add_single_option('name', str, '', ['user_gender', 'user_country', 'user_occupation',
+                                                      'artist_gender', 'artist_country', 'artist_genres',
+                                                      'movie_genres'])
     params.add_multi_option('values', [], []) #optoins cant know..
     return params
 
@@ -44,7 +44,6 @@ def create_params_count() -> ConfigParameters:
         the configuration parameters of the algorithm.
     """
     params = ConfigParameters()
-    params.add_single_option('type', str, FILTER_COUNT, [FILTER_COUNT])
-    params.add_single_option('column_name', str, '', [])
+    params.add_single_option('name', str, '', ['user_country', 'artist_country', 'artist_genres', 'movie_genres'])
     params.add_number('threshold', int, 100, (1, 10000000000))
     return params

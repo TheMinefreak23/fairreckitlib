@@ -29,13 +29,17 @@ class NumericalFilter(DataFilter):
             A filtered dataframe.
         """
         if column_name not in dataframe.columns:
-            return dataframe
+            return self.__empty_df__(dataframe)
         df_filter = dataframe[column_name].between(min, max, inclusive="both")
         return dataframe[df_filter].reset_index(drop=True)
 
     def _filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Private filter used in run(). Requires configuration file."""
         return self.filter(dataframe, self.params['column_name'], self.params["min"], self.params["max"])
+
+    def _filter_empty(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        """Filters only the empty value: -1."""
+        return self.filter(dataframe, self.params['colum_name'], -1, -1)
 
 
 def create_numerical_filter(name: str, 
@@ -51,4 +55,4 @@ def create_numerical_filter(name: str,
     Returns:
         An instance of the NumericalFilter class.
     """
-    return NumericalFilter(name, params, kwargs)
+    return NumericalFilter(name, params, **kwargs)

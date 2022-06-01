@@ -8,7 +8,7 @@ from logging.handlers import DEFAULT_SOAP_LOGGING_PORT
 from pandas import DataFrame
 from pandas.testing import assert_frame_equal
 from src.fairreckitlib.data.filter.numerical_filter import NumericalFilter
-
+# TODO use sample datasets
 class TestFilterAge:
     """Creates a filter object and a dummy data frame to test age filter."""
     df_source = DataFrame({"id": [1, 2, 3, 4, 5], "age": [24, 0, -1, 45, 102]})

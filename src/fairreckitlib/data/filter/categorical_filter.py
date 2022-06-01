@@ -5,6 +5,7 @@ Utrecht University within the Software Project course.
 """
 
 from typing import Any, Dict, List
+import numpy
 import pandas as pd
 from .base_filter import DataFilter
 
@@ -27,7 +28,8 @@ class CategoricalFilter(DataFilter):
             A filtered dataframe.
         """
         if column_name not in dataframe.columns:
-            return dataframe
+            return self.__empty_df__(dataframe)
+        self._handle_None(conditions)
         df_filter = dataframe[column_name].isin(conditions)
         return dataframe[df_filter].reset_index(drop=True)
 
@@ -35,6 +37,11 @@ class CategoricalFilter(DataFilter):
         """Private filter used in run(). Requires configuration file."""
         return self.filter(dataframe, self.params['column_name'], self.params['values'])
 
+    def _handle_None(self, conditions: List[Any]):
+        """Change None value to empty value: numpy.NaN."""
+        if None in conditions:
+            conditions.remove(None)
+            conditions.append(numpy.NaN)
 
 
 def create_categorical_filter(name: str, params: Dict[str, Any], **kwargs) -> DataFilter:
@@ -48,4 +55,4 @@ def create_categorical_filter(name: str, params: Dict[str, Any], **kwargs) -> Da
     Returns:
         An instance of the CategoricalFilter class.
     """
-    return CategoricalFilter(name, params, kwargs)
+    return CategoricalFilter(name, params, **kwargs)

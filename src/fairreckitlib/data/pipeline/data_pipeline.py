@@ -26,7 +26,7 @@ from ..ratings.convert_config import ConvertConfig
 from ..ratings.convert_event import ConvertRatingsEventArgs
 from ..ratings.rating_converter_factory import KEY_RATING_CONVERTER
 from ..set.dataset import Dataset
-from ..filter.filter_constants import KEY_DATA_FILTERS
+from ..filter.filter_constants import KEY_DATA_FILTERS, deduce_filter_type
 from ..split.split_config import SplitConfig
 from ..split.split_constants import KEY_SPLITTING, KEY_SPLIT_TEST_RATIO
 from ..split.split_event import SplitDataframeEventArgs
@@ -110,7 +110,7 @@ class DataPipeline(metaclass=ABCMeta):
         dataframe = self.filter_rows(dataset,
                                      data_config.matrix,
                                      dataframe,
-                                     data_config.converter)
+                                     data_config.filter)
         if not is_running():
             return None
 
@@ -247,7 +247,7 @@ class DataPipeline(metaclass=ABCMeta):
         filter_factory = self.data_factory.get_factory(KEY_DATA_FILTERS)
 
         # for prefilter in filter_config.params.:
-        #     filterer = filter_factory.create(prefilter.name, prefilter.value)
+        #     filterer = filter_factory.create(deduce_filter_type(filter_config.params), prefilter.value)
         #     dataframe = filterer.run(dataframe)
 
 
