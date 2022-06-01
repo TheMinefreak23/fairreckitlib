@@ -50,7 +50,7 @@ class CountFilter(DataFilter):
 
 def create_count_filter(data_frame: pd.DataFrame, min_val: int = 0, max_val: int = math.inf
                        ) -> DataFilter:
-    """Create an instance of the class CountFilter
+    """Create an instance of the class CountFilter.
 
     Args:
         data_frame: a pandas DataFrame being filtered
