@@ -118,4 +118,4 @@ class DataModifierFactory(Factory):
             the configuration parameters of the object or empty parameters when it does not exist.
         """
         matrix_name = self.factory_name
-        return self.factory[obj_name][FUNC_CREATE_PARAMS](self.dataset, matrix_name)
+        return self.factory[obj_name][FUNC_CREATE_PARAMS](obj_name, self.dataset, matrix_name)

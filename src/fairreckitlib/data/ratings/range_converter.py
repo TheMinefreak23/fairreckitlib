@@ -72,7 +72,7 @@ def create_range_converter(name: str, params: Dict[str, Any], **_) -> RangeConve
     return RangeConverter(name, params)
 
 
-def create_range_converter_params(dataset: Dataset, matrix_name: str) -> ConfigParameters:
+def create_range_converter_params(_, dataset: Dataset, matrix_name: str) -> ConfigParameters:
     """Create the parameters of the range converter.
 
     Returns:

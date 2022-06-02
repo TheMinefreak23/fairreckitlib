@@ -22,7 +22,7 @@ from ..core.io.io_utility import load_yml
 from ..core.parsing.parse_assert import assert_is_type
 from ..core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
 from ..core.parsing.parse_config_params import parse_config_param
-from ..core.parsing.parse_event import ON_PARSE, print_parse_event
+from ..core.parsing.parse_event import ON_PARSE, ParseEventArgs, print_parse_event
 from ..data.data_factory import KEY_DATA
 from ..data.pipeline.data_config_parsing import parse_data_config
 from ..data.set.dataset_registry import DataRegistry
@@ -222,11 +222,11 @@ class Parser:
         top_k = DEFAULT_TOP_K
 
         if recommender_experiment_config.get(KEY_TOP_K) is None:
-            self.event_dispatcher.dispatch(
+            self.event_dispatcher.dispatch(ParseEventArgs(
                 ON_PARSE,
-                msg='PARSE WARNING: missing experiment key \'' + KEY_TOP_K + '\'',
-                default=top_k
-            )
+                'PARSE WARNING: missing experiment key \'' + KEY_TOP_K + '\'',
+                default_value=top_k
+            ))
         else:
             top_k = recommender_experiment_config[KEY_TOP_K]
 

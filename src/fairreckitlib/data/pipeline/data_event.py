@@ -111,6 +111,9 @@ def get_data_events() -> List[str]:
         # ConvertRatingsEventArgs
         ON_BEGIN_CONVERT_RATINGS,
         ON_END_CONVERT_RATINGS,
+        # SplitDataframeEventArgs
+        ON_BEGIN_SPLIT_DATASET,
+        ON_END_SPLIT_DATASET,
         # SaveSetsEventArgs
         ON_BEGIN_SAVE_SETS,
         ON_END_SAVE_SETS,

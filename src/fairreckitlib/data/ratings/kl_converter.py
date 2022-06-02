@@ -76,7 +76,7 @@ def create_kl_converter(name: str, params: Dict[str, Any], **_) -> KLConverter:
     return KLConverter(name, params)
 
 
-def create_kl_converter_params(dataset: Dataset, matrix_name: str) -> ConfigParameters:
+def create_kl_converter_params(_, dataset: Dataset, matrix_name: str) -> ConfigParameters:
     """Create the parameters of the kl converter.
 
     Returns:

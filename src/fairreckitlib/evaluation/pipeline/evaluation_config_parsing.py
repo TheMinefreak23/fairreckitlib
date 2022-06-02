@@ -18,7 +18,7 @@ from ...core.events.event_dispatcher import EventDispatcher
 from ...core.parsing.parse_assert import assert_is_type, assert_is_container_not_empty
 from ...core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
 from ...core.parsing.parse_config_params import parse_config_parameters
-from ...core.parsing.parse_event import ON_PARSE
+from ...core.parsing.parse_event import ON_PARSE, ParseEventArgs
 from ..evaluation_factory import KEY_EVALUATION
 from ..metrics.common import KEY_METRIC_PARAM_K
 from ..metrics.metric_factory import resolve_metric_factory
@@ -74,11 +74,11 @@ def parse_evaluation_config(
         )
         # skip on failure
         if metric is None:
-            event_dispatcher.dispatch(
+            event_dispatcher.dispatch(ParseEventArgs(
                 ON_PARSE,
-                msg='PARSE WARNING: failed to parse metric \'' +
+                'PARSE WARNING: failed to parse metric \'' +
                 str(metric_name) + '\', skipping...'
-            )
+            ))
             continue
 
         parsed_config.append(metric)

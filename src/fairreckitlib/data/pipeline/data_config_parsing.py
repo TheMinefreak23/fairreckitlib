@@ -16,7 +16,7 @@ from ...core.config.config_factories import GroupFactory
 from ...core.events.event_dispatcher import EventDispatcher
 from ...core.parsing.parse_assert import assert_is_type, assert_is_container_not_empty
 from ...core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
-from ...core.parsing.parse_event import ON_PARSE
+from ...core.parsing.parse_event import ON_PARSE, ParseEventArgs
 from ..data_factory import KEY_DATA
 from ..ratings.convert_constants import KEY_RATING_CONVERTER
 from ..ratings.convert_config_parsing import parse_data_convert_config
@@ -80,11 +80,11 @@ def parse_data_config(
         )
         # skip on failure
         if dataset is None:
-            event_dispatcher.dispatch(
+            event_dispatcher.dispatch(ParseEventArgs(
                 ON_PARSE,
-                msg='PARSE WARNING: failed to parse dataset \'' +
+                'PARSE WARNING: failed to parse dataset \'' +
                 str(dataset_name) + '\', skipping...'
-            )
+            ))
             continue
 
         parsed_config.append(dataset)
