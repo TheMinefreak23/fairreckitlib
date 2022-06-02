@@ -69,7 +69,14 @@ def get_experiment_events() -> List[str]:
     Returns:
         a list of unique experiment pipeline event IDs.
     """
-    events = []
+    events = [
+        # ExperimentEventArgs
+        ON_BEGIN_EXPERIMENT_PIPELINE,
+        ON_END_EXPERIMENT_PIPELINE,
+        # ExperimentThreadEventArgs
+        ON_BEGIN_EXPERIMENT_THREAD,
+        ON_END_EXPERIMENT_THREAD
+    ]
     events += get_error_events()
     events += get_io_events()
     events += get_data_events()

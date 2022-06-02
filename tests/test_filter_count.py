@@ -9,13 +9,17 @@ import math
 from pandas import DataFrame
 from pandas.testing import assert_frame_equal
 from src.fairreckitlib.data.filter.count_filter import CountFilter
+from src.fairreckitlib.data.set.dataset_registry import DataRegistry
+
+dataset = DataRegistry('tests/datasets').get_set('ML-100K-Sample')
+filter_kwargs = {'dataset': dataset, 'matrix_name': 'user-movie-rating'}
 
 class TestFilterCount:
     """Creates a filter object and a dummy data frame to test count filter."""
 
     df_source = DataFrame({"id":[1, 2, 3, 4, 5, 6, 7],
                            "country": ["NL", "NL", "NL", "BE", "NL", "BE", "FR"]})
-    filter_obj = CountFilter()
+    filter_obj = CountFilter('', {}, **filter_kwargs)
     df_empty = filter_obj.__empty_df__(df_source)
 
     def test_run_not_exist_col(self):

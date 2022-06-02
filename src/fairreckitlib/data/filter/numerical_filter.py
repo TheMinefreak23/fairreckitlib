@@ -18,7 +18,7 @@ import math
 from typing import Any, Dict
 import pandas as pd
 from .base_filter import DataFilter
-
+from .filter_constants import FILTER_NUMERICAL
 
 class NumericalFilter(DataFilter):
     """Filters the dataframe on numerical data, such as age or rating.
@@ -26,6 +26,14 @@ class NumericalFilter(DataFilter):
     Public method:
         filter
     """
+
+    def get_type(self) -> str:
+        """Get the type of the filter.
+
+        Returns:
+            The type name of the filter.
+        """
+        return FILTER_NUMERICAL
 
     def filter(self, dataframe: pd.DataFrame, column_name='',
                min_val=0, max_val=math.inf) -> pd.DataFrame:
@@ -47,8 +55,9 @@ class NumericalFilter(DataFilter):
 
     def _filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Private filter used in run(). Requires configuration file."""
-        return self.filter(dataframe, self.params['column_name'],
-                           self.params["min"], self.params["max"])
+        numerical_range = self.params['range']
+        return self.filter(dataframe, self.get_name(),
+                           numerical_range["min"], numerical_range["max"])
 
     def _filter_empty(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Filter only the empty value: -1."""

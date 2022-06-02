@@ -16,6 +16,7 @@ Utrecht University within the Software Project course.
 from typing import Any, Dict, List
 import numpy
 import pandas as pd
+from .filter_constants import FILTER_CATEGORICAL
 from .base_filter import DataFilter
 
 
@@ -25,6 +26,14 @@ class CategoricalFilter(DataFilter):
     Public method:
         filter
     """
+
+    def get_type(self) -> str:
+        """Get the type of the filter.
+
+        Returns:
+            The type name of the filter.
+        """
+        return FILTER_CATEGORICAL
 
     def filter(self, dataframe: pd.DataFrame, column_name='',
                conditions: List[Any]=None) -> pd.DataFrame:
@@ -47,7 +56,7 @@ class CategoricalFilter(DataFilter):
 
     def _filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Private filter used in run(). Requires configuration file."""
-        return self.filter(dataframe, self.params['column_name'], self.params['values'])
+        return self.filter(dataframe, self.get_name(), self.params['values'])
 
     @staticmethod
     def _handle_none_value(conditions: List[Any]):
