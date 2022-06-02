@@ -5,7 +5,7 @@ Utrecht University within the Software Project course.
 """
 
 from fairreckitlib.data.filter.filter_params import create_params_categorical, create_params_numerical, create_params_count
-from ...core.factories import Factory, create_factory_from_list
+from fairreckitlib.core.config.config_factories import Factory, create_factory_from_list
 from .filter_constants import KEY_DATA_FILTERS, FILTER_NUMERICAL, FILTER_CATEGORICAL, FILTER_COUNT
 from .numerical_filter import create_numerical_filter
 from .categorical_filter import create_categorical_filter

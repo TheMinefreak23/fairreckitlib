@@ -10,7 +10,7 @@ Utrecht University within the Software Project course.
 """
 
 from .filter_constants import FILTER_NUMERICAL, FILTER_CATEGORICAL, FILTER_COUNT
-from ...core.params.config_parameters import ConfigParameters
+from fairreckitlib.core.config.config_parameters import ConfigParameters
 
 def create_params_numerical() -> ConfigParameters:
     """Create the parameters of the FunkSVD algorithm.
