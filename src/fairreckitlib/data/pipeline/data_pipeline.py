@@ -11,7 +11,7 @@ Utrecht University within the Software Project course.
 
 import os
 import time
-from typing import Callable, Optional, Tuple
+from typing import List, Any, Callable, Optional, Tuple
 
 import pandas as pd
 
@@ -21,7 +21,7 @@ from ...core.events.event_error import ON_FAILURE_ERROR, ErrorEventArgs
 from ...core.io.io_create import create_dir
 from ...core.pipeline.core_pipeline import CorePipeline
 from ..data_transition import DataTransition
-# from ..filter.filter_event import FilterDataframeEventArgs
+from ..filter.filter_event import FilterDataframeEventArgs
 from ..ratings.convert_config import ConvertConfig
 from ..ratings.convert_event import ConvertRatingsEventArgs
 from ..ratings.rating_converter_factory import KEY_RATING_CONVERTER
@@ -33,7 +33,7 @@ from ..split.split_event import SplitDataframeEventArgs
 from .data_config import DataMatrixConfig
 from .data_event import ON_BEGIN_DATA_PIPELINE, ON_END_DATA_PIPELINE, DatasetEventArgs
 from .data_event import ON_BEGIN_LOAD_DATASET, ON_END_LOAD_DATASET, DatasetMatrixEventArgs
-# from .data_event import ON_BEGIN_FILTER_DATASET, ON_END_FILTER_DATASET
+from .data_event import ON_BEGIN_FILTER_DATASET, ON_END_FILTER_DATASET
 from .data_event import ON_BEGIN_CONVERT_RATINGS, ON_END_CONVERT_RATINGS
 from .data_event import ON_BEGIN_SPLIT_DATASET, ON_END_SPLIT_DATASET
 from .data_event import ON_BEGIN_SAVE_SETS, ON_END_SAVE_SETS, SaveSetsEventArgs
@@ -217,7 +217,7 @@ class DataPipeline(CorePipeline):
                     dataset: Dataset,
                     matrix_name: str,
                     dataframe: pd.DataFrame,
-                    filter_config: SplitConfig) -> pd.DataFrame:
+                    filter_config: List[Any]) -> pd.DataFrame:
         """Apply the specified filters to the dataframe.
 
         Args:
@@ -232,10 +232,10 @@ class DataPipeline(CorePipeline):
         # if len(prefilters) == 0:
         #     return dataframe
 
-        # self.event_dispatcher.dispatch(FilterDataframeEventArgs(
-        #     ON_BEGIN_FILTER_DATASET,
-        #     prefilters
-        # ))
+        self.event_dispatcher.dispatch(FilterDataframeEventArgs(
+            ON_BEGIN_FILTER_DATASET,
+            filter_config
+        ))
 
         # start = time.time()
         # TODO aggregated the set using the given filters
@@ -244,7 +244,8 @@ class DataPipeline(CorePipeline):
         # filter_factory = self.data_factory.get_factory(KEY_DATA_FILTERS)
 
         # for prefilter in filter_config.params.:
-        #     filterer = filter_factory.create(deduce_filter_type(filter_config.params), prefilter.value)
+        #     filterer = filter_factory.create(deduce_filter_type(filter_confi
+        # g.params), prefilter.value)
         #     dataframe = filterer.run(dataframe)
 
 
