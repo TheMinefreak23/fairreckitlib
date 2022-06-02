@@ -12,7 +12,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 
 # Installation Requirements
-FairRecKitLib utilizes the scikit-surprise package, which relies on having a suitable C/C++ compiler present on the system to be able to install itself. For this purpose, make sure you have [Cython](https://pypi.org/project/Cython/) installed before attempting to install FairRecKitLib. If your system lacks a compiler, install the 'Desktop development with C++' build tools through the [Visual Studio installer](https://aka.ms/vs/17/release/vs_buildtools.exe).
+FairRecKitLib utilises the scikit-surprise package, which relies on having a suitable C/C++ compiler present on the system to be able to install itself. For this purpose, make sure you have [Cython](https://pypi.org/project/Cython/) installed before attempting to install FairRecKitLib. If your system lacks a compiler, install the 'Desktop development with C++' build tools through the [Visual Studio installer](https://aka.ms/vs/17/release/vs_buildtools.exe).
 
 Meeting these requirements, you can install FairRecKitLib like any PyPI package, using e.g. pip or conda.
 
@@ -21,3 +21,6 @@ Meeting these requirements, you can install FairRecKitLib like any PyPI package,
 
 **conda**  
 `conda install fairreckitlib`
+
+# Documentation
+Please check out the [FairRecKitLib Wiki](https://github.com/TheMinefreak23/fairreckitlib/wiki) and [FairRecKitLib API](https://theminefreak23.github.io/fairreckitlib/src/fairreckitlib) for instructions and guides on how to utilise the library or add new functionality.
