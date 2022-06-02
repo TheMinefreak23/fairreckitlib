@@ -22,7 +22,7 @@ class TestFilterCountry:
         """Test run with no given parameter."""
         df_result = self.filter_obj.filter(self.df_source)
         assert_frame_equal(df_result, self.empty_df)
-        
+
     def test_run_no_conditions_param(self):
         """Test run with no given parameter."""
         df_result = self.filter_obj.filter(self.df_source, 'country')
@@ -41,7 +41,7 @@ class TestFilterCountry:
         df_result = self.filter_obj.filter(self.df_source, 'country', ['Iran'])
         df_expected = DataFrame({"id": [1], "country": ['Iran']})
         assert_frame_equal(df_result, df_expected)
-        
+
     def test_run_with_multiple_matching_filter(self):
         """Test run with given parameters."""
         df_result = self.filter_obj.filter(self.df_source, 'country', ['Iran', 'Sweden'])
@@ -50,7 +50,8 @@ class TestFilterCountry:
 
     def test_run_with_multiple_unmatching_filter(self):
         """Test run with given parameters."""
-        df_result = self.filter_obj.filter(self.df_source, 'country', ['Iran', 'Sweden', 'France', 'Hungary'])
+        df_result = self.filter_obj.filter(self.df_source, 'country',
+            ['Iran', 'Sweden', 'France', 'Hungary'])
         df_expected = DataFrame({"id": [1, 5], "country": ['Iran', 'Sweden']})
         assert_frame_equal(df_result, df_expected)
 
