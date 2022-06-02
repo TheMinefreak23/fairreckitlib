@@ -107,9 +107,7 @@ class DataPipeline(CorePipeline):
             return None
 
         # step 3
-        dataframe = self.filter_rows(dataset,
-                                     data_config.matrix,
-                                     dataframe,
+        dataframe = self.filter_rows(dataframe,
                                      data_config.filter)
         if not is_running():
             return None
@@ -214,8 +212,6 @@ class DataPipeline(CorePipeline):
         return dataframe
 
     def filter_rows(self,
-                    dataset: Dataset,
-                    matrix_name: str,
                     dataframe: pd.DataFrame,
                     filter_config: List[Any]) -> pd.DataFrame:
         """Apply the specified filters to the dataframe.
@@ -237,7 +233,7 @@ class DataPipeline(CorePipeline):
             filter_config
         ))
 
-        # start = time.time()
+        start = time.time()
         # TODO aggregated the set using the given filters
         # use parameters. also params
 
@@ -249,12 +245,12 @@ class DataPipeline(CorePipeline):
         #     dataframe = filterer.run(dataframe)
 
 
-        # end = time.time()
+        end = time.time()
 
-        # self.event_dispatcher.dispatch(FilterDataframeEventArgs(
-        #     ON_END_FILTER_DATASET,
-        #     prefilters
-        # ), elapsed_time=end - start)
+        self.event_dispatcher.dispatch(FilterDataframeEventArgs(
+            ON_END_FILTER_DATASET,
+            filter_config
+        ), elapsed_time=end - start)
 
         return dataframe
 
