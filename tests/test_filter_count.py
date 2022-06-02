@@ -4,33 +4,38 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+import math
 from pandas import DataFrame
 from pandas.testing import assert_frame_equal
-from src.fairreckitlib.data.filter.count import CountFilter
+from src.fairreckitlib.data.filter.count_filter import CountFilter
 
 class TestFilterCount:
     """Creates a filter object and a dummy data frame to test count filter."""
 
-    df_source = DataFrame({"id": [1, 2, 3, 4, 5], "count": [24, 0, -1, 45, 102]})
+    df_source = DataFrame({"id":[1, 2, 3, 4, 5, 6, 7],
+                           "country": ["NL", "NL", "NL", "BE", "NL", "BE", "FR"]})
+    filter_obj = CountFilter()
+    df_empty = filter_obj.__empty_df__(df_source)
 
-    def test_run_no_param(self):
-        """Test run with no given parameter."""
-        filter_obj = CountFilter(self.df_source)
-        df_expected = DataFrame({"id": [1, 2, 4, 5], "count": [24, 0, 45, 102]})
-        df_result = filter_obj.run("count")
-        assert_frame_equal(df_result, df_expected)
+    def test_run_not_exist_col(self):
+        """Test run with non-existent column."""
+        df_result = self.filter_obj.filter(self.df_source, "age")
+        assert_frame_equal(df_result, self.df_empty)
 
     def test_run_with_param(self):
-        """Test run with given parameters."""
-        filter_obj = CountFilter(self.df_source, min_val=10, max_val=45)
-        df_result = filter_obj.run("count")
-        df_expected = DataFrame({"id": [1, 4], "count": [24, 45]})
+        """Test run with existent column."""
+        df_result = self.filter_obj.filter(self.df_source, "country", 2)
+        df_expected = DataFrame({"id":[1, 2, 3, 4, 5, 6],
+                                 "country": ["NL", "NL", "NL", "BE", "NL", "BE"]})
         assert_frame_equal(df_result, df_expected)
 
+    def test_run_with_low_threshold(self):
+        """Test run with threshold < 1."""
+        df_result = self.filter_obj.filter(self.df_source, "country", -5)
+        assert_frame_equal(df_result, self.df_source)
 
-def test_run_no_count():
-    """Test a given dataframe with no count column."""
-    df_given = DataFrame({"id": [1, 2, 3, 4, 5], "age": [24, 0, -1, 45, 102]})
-    filter_obj = CountFilter(df_given)
-    df_result = filter_obj.run("count")
-    assert_frame_equal(df_result, df_given)
+
+    def test_run_with_high_threshold(self):
+        """Test run with infinite threshold."""
+        df_result = self.filter_obj.filter(self.df_source, "country", math.inf)
+        assert_frame_equal(df_result, self.df_empty)

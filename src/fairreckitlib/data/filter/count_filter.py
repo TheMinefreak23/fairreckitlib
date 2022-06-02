@@ -5,12 +5,11 @@ Utrecht University within the Software Project course.
 """
 
 from typing import Any, Dict, List
-import numpy
 import pandas as pd
-from .categorical_filter import CategoricalFilter
+from .base_filter import DataFilter
 
 
-class CountFilter(CategoricalFilter):
+class CountFilter(DataFilter):
     """Filter the dataframe on categorical data,
     and selects only those of which its count is above a given threshold.
 
@@ -32,7 +31,7 @@ class CountFilter(CategoricalFilter):
         """
         if column_name not in dataframe.columns:
             return self.__empty_df__(dataframe)
-        value_counts = dataframe.groupby([column_name]).size()
+        value_counts = dataframe[column_name].value_counts()
         key_dict = (value_counts >= threshold).to_dict()
         df_filter = dataframe[column_name].map(key_dict)
         return dataframe[df_filter].reset_index(drop=True)
