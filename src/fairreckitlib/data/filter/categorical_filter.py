@@ -41,7 +41,7 @@ class CategoricalFilter(DataFilter):
         """
         if column_name not in dataframe.columns:
             return self.__empty_df__(dataframe)
-        self._handle_none_value(conditions)
+        conditions = self._handle_none_value(conditions)
         df_filter = dataframe[column_name].isin(conditions)
         return dataframe[df_filter].reset_index(drop=True)
 
@@ -53,10 +53,11 @@ class CategoricalFilter(DataFilter):
     def _handle_none_value(conditions: List[Any]):
         """Change None value to empty value: numpy.NaN."""
         if conditions is None:
-            conditions = []
+            return []
         if None in conditions:
-            conditions.remove(None)
             conditions.append(numpy.NaN)
+            conditions.remove(None)
+        return conditions
 
 
 def create_categorical_filter(name: str, params: Dict[str, Any], **kwargs) -> DataFilter:

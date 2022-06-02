@@ -25,13 +25,13 @@ class TestFilterAge:
     def test_run_with_param(self):
         """Test run with given parameters."""
         df_expected = DataFrame({"id": [1, 4], "age": [24, 45]})
-        df_result = self.filter_obj.filter(self.df_source, 'age', min=10, max=45)
+        df_result = self.filter_obj.filter(self.df_source, 'age', min_val=10, max_val=45)
         assert_frame_equal(df_result, df_expected)
 
     def test_run_with_float_int_param(self):
         """Test run with given parameters."""
         df_expected = DataFrame({"id": [1, 4], "age": [24, 45]})
-        df_result = self.filter_obj.filter(self.df_source, 'age', min=int(10), max=float(45.3))
+        df_result = self.filter_obj.filter(self.df_source, 'age', min_val=int(10), max_val=float(45.3))
         assert_frame_equal(df_result, df_expected)
     
     def test_run_no_age_col(self):
