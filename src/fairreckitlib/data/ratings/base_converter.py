@@ -1,6 +1,6 @@
 """This module contains the base class for converting ratings.
 
-CLasses:
+Classes:
 
     RatingConverter: the base class for converting ratings.
 
