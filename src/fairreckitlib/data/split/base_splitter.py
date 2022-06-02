@@ -29,6 +29,9 @@ class DataSplitter(DataModifier):
     def __init__(self, name: str, params: Dict[str, Any], test_ratio: float):
         """Construct the base splitter.
 
+        The constructor raises a RuntimeError if the test ratio is not within the
+        accepted range of 0.01 < ratio < 0.99.
+
         Args:
             name: the name of the splitter.
             params: a dictionary containing the parameters for the splitter.
@@ -36,6 +39,9 @@ class DataSplitter(DataModifier):
         """
         DataModifier.__init__(self, name, params)
         self.test_ratio = test_ratio
+
+        if self.test_ratio < 0.01 or self.test_ratio > 0.99:
+            raise RuntimeError()
 
     def get_test_ratio(self) -> float:
         """Get the test ratio used by the splitter when run.

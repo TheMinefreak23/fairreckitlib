@@ -17,7 +17,7 @@ from typing import Dict, List, Optional, Tuple
 
 import pandas as pd
 
-from ..utility import save_yml
+from ...core.io.io_utility import save_yml
 from .dataset import Dataset
 from .dataset_constants import DATASET_CONFIG_FILE
 from .dataset_config import DatasetConfig, DatasetMatrixConfig, DatasetIndexConfig
@@ -82,7 +82,12 @@ def create_dataset_sample(
     sample_tables = create_dataset_table_samples(sample_dir, dataset, key_id_map)
 
     # create and save dataset configuration
-    sample_dataset_config = DatasetConfig(dataset.get_name(), {}, sample_matrices, sample_tables)
+    sample_dataset_config = DatasetConfig(
+        dataset.get_name() + '-Sample',
+        {},
+        sample_matrices,
+        sample_tables
+    )
     save_yml(os.path.join(sample_dir, DATASET_CONFIG_FILE), sample_dataset_config.to_yml_format())
 
     return Dataset(sample_dir, sample_dataset_config)

@@ -17,12 +17,10 @@ from dataclasses import dataclass
 import os
 from typing import List, Callable
 
-import json
-
 from ...core.config.config_factories import GroupFactory
 from ...core.core_constants import MODEL_RATINGS_FILE
 from ...core.events.event_dispatcher import EventDispatcher
-from ...core.events.event_io import ON_CREATE_FILE, FileEventArgs
+from ...core.io.io_create import create_json
 from ...data.data_transition import DataTransition
 from ..metrics.common import metric_category_dict
 from .evaluation_config import MetricConfig
@@ -69,16 +67,15 @@ def run_evaluation_pipelines(
         #pipeline = api_factory.create_pipeline(api_factory, event_dispatcher)
 
         recs_path = os.path.join(model_dir, MODEL_RATINGS_FILE)
+        out_path = os.path.join(model_dir, 'evaluations.json')
 
         # Create evaluations file
-        out_path = os.path.join(model_dir, 'evaluations.json')
-        with open(out_path, mode='w', encoding='utf-8') as out_file:
-            json.dump({'evaluations': []}, out_file, indent=4)
-
-        event_dispatcher.dispatch(FileEventArgs(
-            ON_CREATE_FILE,
-            out_path
-        ))
+        create_json(
+            out_path,
+            {'evaluations': []},
+            event_dispatcher,
+            indent=4
+        )
 
         for category, metrics in metric_category_dict.items():
             #print('==DEV CATEGORY METRICS==', category, metrics)

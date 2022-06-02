@@ -3,8 +3,10 @@
 Classes:
 
     ExperimentPipeline: class that connects the data, model and evaluation pipelines.
+
+Functions:
+
     add_result_to_overview: add a computed result to the experiment result overview.
-    write_storage_file: write the experiment result overview to a json file.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
@@ -15,11 +17,9 @@ import os
 import time
 from typing import Dict, Callable, List, Tuple, Union
 
-import json
-
 from ..core.config.config_factories import GroupFactory
 from ..core.events.event_dispatcher import EventDispatcher
-from ..core.events.event_io import ON_MAKE_DIR, DirEventArgs
+from ..core.io.io_create import create_dir, create_json
 from ..data.data_factory import KEY_DATA
 from ..data.pipeline.data_run import DataPipelineConfig, run_data_pipelines
 from ..data.set.dataset_registry import DataRegistry
@@ -159,8 +159,7 @@ class ExperimentPipeline:
             experiment_config.name
         ))
 
-        os.mkdir(output_dir)
-        self.event_dispatcher.dispatch(DirEventArgs(ON_MAKE_DIR, output_dir))
+        create_dir(output_dir, self.event_dispatcher)
 
         return [], start_time
 
@@ -178,12 +177,38 @@ class ExperimentPipeline:
             experiment_config: the configuration of the experiment.
             results: the current results list.
         """
-        write_storage_file(output_dir, results)
+        self.write_storage_file(output_dir, results)
 
         self.event_dispatcher.dispatch(ExperimentEventArgs(
             ON_END_EXPERIMENT_PIPELINE,
             experiment_config.name
         ), elapsed_time=time.time() - start_time)
+
+    def write_storage_file(
+            self,
+            output_dir: str,
+            results: List[Dict[str, str]]) -> None:
+        """Write a JSON file with overview of the results file paths.
+
+        Args:
+            output_dir: path to the directory to store the result overview.
+            results: the result overview containing completed computations.
+        """
+        formatted_results = map(lambda result: {
+            'name': result['dataset'] + ' - ' + result['model'],
+            'dataset': result['dataset'],
+            'recommender_system': result['model'],
+            'evaluation_path': result['dir'] + '\\evaluations.json',
+            'ratings_path': result['dir'] + '\\ratings.tsv',
+            'ratings_settings_path': result['dir'] + '\\settings.json'
+        }, results)
+
+        create_json(
+            os.path.join(output_dir, 'overview.json'),
+            {'overview': list(formatted_results)},
+            self.event_dispatcher,
+            indent=4
+        )
 
 
 def add_result_to_overview(
@@ -208,23 +233,3 @@ def add_result_to_overview(
         results.append(result)
 
     return results
-
-
-def write_storage_file(output_dir: str, results: List[Dict[str, str]]) -> None:
-    """Write a JSON file with overview of the results file paths.
-
-    Args:
-        output_dir: path to the directory to store the result overview.
-        results: the result overview containing completed computations.
-    """
-    formatted_results = map(lambda result: {
-        'name': result['dataset'] + ' - ' + result['model'],
-        'dataset': result['dataset'],
-        'recommender_system': result['model'],
-        'evaluation_path': result['dir'] + '\\evaluations.json',
-        'ratings_path': result['dir'] + '\\ratings.tsv',
-        'ratings_settings_path': result['dir'] + '\\settings.json'
-    }, results)
-    output_path = os.path.join(output_dir, 'overview.json')
-    with open(output_path, 'w', encoding='utf-8') as file:
-        json.dump({'overview': list(formatted_results)}, file, indent=4)

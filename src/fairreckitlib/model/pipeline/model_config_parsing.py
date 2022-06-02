@@ -19,7 +19,7 @@ from ...core.events.event_dispatcher import EventDispatcher
 from ...core.parsing.parse_assert import assert_is_type, assert_is_container_not_empty
 from ...core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
 from ...core.parsing.parse_config_params import parse_config_parameters
-from ...core.parsing.parse_event import ON_PARSE
+from ...core.parsing.parse_event import ON_PARSE, ParseEventArgs
 from ..model_factory import KEY_MODELS
 from .model_config import ModelConfig
 
@@ -147,10 +147,10 @@ def parse_api_models(
         )
         # skip on failure
         if model is None:
-            event_dispatcher.dispatch(
+            event_dispatcher.dispatch(ParseEventArgs(
                 ON_PARSE,
-                msg='PARSE WARNING: failed to parse model \'' + str(model_name) + '\', skipping...'
-            )
+                'PARSE WARNING: failed to parse model \'' + str(model_name) + '\', skipping...'
+            ))
             continue
 
         parsed_models.append(model)

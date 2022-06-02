@@ -2,10 +2,9 @@
 
 Modules:
 
-    data_factory: create data factory with available data modifiers.
-    data_modifier: base class for dataframe modifications.
+    data_factory: create data factory with available data modifier factories.
+    data_modifier: base class and factory for dataframe modifications.
     data_transition: data transition class.
-    utility: data utility functions.
 
 Packages:
 

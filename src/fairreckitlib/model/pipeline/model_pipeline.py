@@ -18,15 +18,14 @@ import os
 import time
 from typing import Any, Callable, Dict, List, Tuple
 
-import json
 import pandas as pd
 
 from ...core.config.config_factories import Factory
 from ...core.core_constants import MODEL_RATINGS_FILE, MODEL_USER_BATCH_SIZE
 from ...core.events.event_dispatcher import EventDispatcher
 from ...core.events.event_error import ON_FAILURE_ERROR, ON_RAISE_ERROR, ErrorEventArgs
-from ...core.events.event_io import ON_CREATE_FILE, FileEventArgs
-from ...core.events.event_io import ON_MAKE_DIR, DirEventArgs, DataframeEventArgs
+from ...core.io.io_create import create_dir, create_json
+from ...core.pipeline.core_pipeline import CorePipeline
 from ...data.data_transition import DataTransition
 from ..algorithms.base_algorithm import BaseAlgorithm
 from .model_config import ModelConfig
@@ -39,7 +38,7 @@ from .model_event import ON_BEGIN_MODEL, ON_END_MODEL
 from .model_event import ModelPipelineEventArgs, ModelEventArgs
 
 
-class ModelPipeline(metaclass=ABCMeta):
+class ModelPipeline(CorePipeline, metaclass=ABCMeta):
     """Model Pipeline to run computations for algorithms from a specific API.
 
     Wraps the common functionality that applies to all models disregarding the type.
@@ -71,13 +70,12 @@ class ModelPipeline(metaclass=ABCMeta):
             algo_factory: factory of available algorithms for this API.
             event_dispatcher: used to dispatch model/IO events when running the pipeline.
         """
+        CorePipeline.__init__(self, event_dispatcher)
         self.algo_factory = algo_factory
         self.tested_models = {}
 
         self.train_set = None
         self.test_set = None
-
-        self.event_dispatcher = event_dispatcher
 
     def run(self,
             output_dir: str,
@@ -291,7 +289,13 @@ class ModelPipeline(metaclass=ABCMeta):
             ))
             raise err
 
-        self.write_settings_file(model_dir, model.get_params())
+        # create settings file
+        create_json(
+            os.path.join(model_dir, 'settings.json'),
+            model.get_params(),
+            self.event_dispatcher,
+            indent=4
+        )
 
         return model_dir, model, start
 
@@ -308,11 +312,8 @@ class ModelPipeline(metaclass=ABCMeta):
         index = self.tested_models[model_name]
         model_dir = os.path.join(output_dir, self.algo_factory.get_name() +
                                  '_' + model_name + '_' + str(index))
-        if not os.path.isdir(model_dir):
-            os.mkdir(model_dir)
-            self.event_dispatcher.dispatch(DirEventArgs(ON_MAKE_DIR, model_dir))
 
-        return model_dir
+        return create_dir(model_dir, self.event_dispatcher)
 
     def end_model(self, model: BaseAlgorithm, start: float) -> None:
         """Finalize the model computation.
@@ -349,37 +350,6 @@ class ModelPipeline(metaclass=ABCMeta):
         Args:
             test_set_path: path to where the test set is stored.
         """
-        self.event_dispatcher.dispatch(DataframeEventArgs(
-            ON_BEGIN_LOAD_TEST_SET,
-            test_set_path,
-            'test set'
-        ))
-
-        start = time.time()
-
-        try:
-            self.test_set = pd.read_csv(
-                test_set_path,
-                sep='\t',
-                header=None,
-                names=['user', 'item', 'rating']
-            )
-        except FileNotFoundError as err:
-            self.event_dispatcher.dispatch(ErrorEventArgs(
-                ON_RAISE_ERROR,
-                'FileNotFoundError: raised while trying to load the test set from ' +
-                test_set_path
-            ))
-            # raise again so that the pipeline aborts
-            raise err
-
-        end = time.time()
-
-        self.event_dispatcher.dispatch(DataframeEventArgs(
-            ON_END_LOAD_TEST_SET,
-            test_set_path,
-            'test set'
-        ), elapsed_time=end - start)
 
     def load_train_set(self, train_set_path: str) -> None:
         """Load the train set that all models can use for training.
@@ -387,37 +357,6 @@ class ModelPipeline(metaclass=ABCMeta):
         Args:
             train_set_path: path to where the train set is stored.
         """
-        self.event_dispatcher.dispatch(DataframeEventArgs(
-            ON_BEGIN_LOAD_TRAIN_SET,
-            train_set_path,
-            'train set'
-        ))
-
-        start = time.time()
-
-        try:
-            self.train_set = pd.read_csv(
-                train_set_path,
-                sep='\t',
-                header=None,
-                names=['user', 'item', 'rating']
-            )
-        except FileNotFoundError as err:
-            self.event_dispatcher.dispatch(ErrorEventArgs(
-                ON_RAISE_ERROR,
-                'FileNotFoundError: raised while trying to load the train set from ' +
-                train_set_path
-            ))
-            # raise again so that the pipeline aborts
-            raise err
-
-        end = time.time()
-
-        self.event_dispatcher.dispatch(DataframeEventArgs(
-            ON_END_LOAD_TRAIN_SET,
-            train_set_path,
-            'train set'
-        ), elapsed_time=end - start)
 
     def load_train_and_test_set(self, train_set_path: str, test_set_path: str) -> None:
         """Load the train and test set that all models can use.
@@ -426,8 +365,21 @@ class ModelPipeline(metaclass=ABCMeta):
             train_set_path: path to where the train set is stored.
             test_set_path: path to where the test set is stored.
         """
-        self.load_train_set(train_set_path)
-        self.load_test_set(test_set_path)
+        names = ['user', 'item', 'rating']
+        self.train_set = self.read_dataframe(
+            train_set_path,
+            'model train set',
+            ON_BEGIN_LOAD_TRAIN_SET,
+            ON_END_LOAD_TRAIN_SET,
+            names=names
+        )
+        self.test_set = self.read_dataframe(
+            test_set_path,
+            'model test set',
+            ON_BEGIN_LOAD_TEST_SET,
+            ON_END_LOAD_TEST_SET,
+            names=names
+        )
 
     def reconstruct_ratings(self, result_file_path: str) -> None:
         """Reconstruct the original ratings in the specified result file.
@@ -438,23 +390,6 @@ class ModelPipeline(metaclass=ABCMeta):
         result = pd.read_csv(result_file_path, sep='\t')
         result = pd.merge(result, self.get_ratings_dataframe(), how='left', on=['user', 'item'])
         result.to_csv(result_file_path, sep='\t', header=True, index=False)
-
-    def write_settings_file(self, settings_dir: str, model_params: Dict[str, Any]) -> None:
-        """Write model params in settings file in the model's result directory.
-
-        Args:
-            settings_dir: directory in which to store the model parameter settings.
-            model_params: dictionary containing the model parameter name-value pairs.
-        """
-        settings_path = os.path.join(settings_dir, 'settings.json')
-
-        with open(settings_path, 'w', encoding='utf-8') as file:
-            json.dump(model_params, file, indent=4)
-
-        self.event_dispatcher.dispatch(FileEventArgs(
-            ON_CREATE_FILE,
-            settings_path
-        ))
 
     def test_model(
             self,
@@ -597,26 +532,3 @@ class ModelPipeline(metaclass=ABCMeta):
             raise err
 
         return result_file_path
-
-
-def write_computed_ratings(
-        event_dispatcher: EventDispatcher,
-        output_path: str,
-        ratings: pd.DataFrame,
-        header: bool) -> None:
-    """Append the ratings to the file specified by the output path.
-
-    Args:
-        event_dispatcher: used to dispatch create file IO event.
-        output_path: path to the file where the ratings are appended to.
-        ratings: the computed ratings dataframe that needs to be appended.
-        header: whether to write the header as the first line.
-
-    """
-    ratings.to_csv(output_path, mode='a', sep='\t', header=header, index=False)
-    # header is the first line meaning the file has just been created
-    if header:
-        event_dispatcher.dispatch(FileEventArgs(
-            ON_CREATE_FILE,
-            output_path
-        ))

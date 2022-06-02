@@ -20,9 +20,8 @@ from typing import Callable, Union
 
 from ..core.config.config_factories import GroupFactory
 from ..core.events.event_dispatcher import EventDispatcher
-from ..core.events.event_io import ON_MAKE_DIR, DirEventArgs
+from ..core.io.io_create import create_dir, create_yml
 from ..data.set.dataset_registry import DataRegistry
-from ..data.utility import save_yml
 from .experiment_config import PredictorExperimentConfig, RecommenderExperimentConfig
 from .experiment_pipeline import ExperimentPipeline
 
@@ -64,12 +63,14 @@ def run_experiment_pipelines(
     """
     if not os.path.isdir(pipeline_config.output_dir):
         # create result output directory
-        os.mkdir(pipeline_config.output_dir)
-        event_dispatcher.dispatch(DirEventArgs(ON_MAKE_DIR, pipeline_config.output_dir))
+        create_dir(pipeline_config.output_dir, event_dispatcher)
 
         # save the yml configuration file
-        experiment_yml = pipeline_config.experiment_config.to_yml_format()
-        save_yml(os.path.join(pipeline_config.output_dir, 'config.yml'), experiment_yml)
+        create_yml(
+            os.path.join(pipeline_config.output_dir, 'config.yml'),
+            pipeline_config.experiment_config.to_yml_format(),
+            event_dispatcher
+        )
 
     # prepare pipeline
     experiment_pipeline = ExperimentPipeline(

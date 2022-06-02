@@ -9,7 +9,6 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from abc import ABCMeta
 import os
 import time
 from typing import Any, Callable, List, Optional, Tuple
@@ -19,7 +18,8 @@ import pandas as pd
 from ...core.config.config_factories import GroupFactory
 from ...core.events.event_dispatcher import EventDispatcher
 from ...core.events.event_error import ON_FAILURE_ERROR, ErrorEventArgs
-from ...core.events.event_io import ON_MAKE_DIR, DirEventArgs
+from ...core.io.io_create import create_dir
+from ...core.pipeline.core_pipeline import CorePipeline
 from ..data_transition import DataTransition
 from ..filter.filter_event import FilterDataframeEventArgs
 from ..ratings.convert_config import ConvertConfig
@@ -39,7 +39,7 @@ from .data_event import ON_BEGIN_SPLIT_DATASET, ON_END_SPLIT_DATASET
 from .data_event import ON_BEGIN_SAVE_SETS, ON_END_SAVE_SETS, SaveSetsEventArgs
 
 
-class DataPipeline(metaclass=ABCMeta):
+class DataPipeline(CorePipeline):
     """Data Pipeline to prepare a dataset for a transition to the ModelPipeline(s).
 
     The pipeline is intended to be reused multiple times depending on the specified
@@ -66,9 +66,9 @@ class DataPipeline(metaclass=ABCMeta):
             data_factory: the factory with available data modifier factories.
             event_dispatcher: used to dispatch data/IO events when running the pipeline.
         """
+        CorePipeline.__init__(self, event_dispatcher)
         self.split_datasets = {}
         self.data_factory = data_factory
-        self.event_dispatcher = event_dispatcher
 
     def run(self,
             output_dir: str,
@@ -166,10 +166,7 @@ class DataPipeline(metaclass=ABCMeta):
         self.split_datasets[dataset_matrix_name] += 1
 
         data_dir = os.path.join(output_dir, dataset_matrix_name + '_' + str(index))
-        os.mkdir(data_dir)
-        self.event_dispatcher.dispatch(DirEventArgs(ON_MAKE_DIR, data_dir))
-
-        return data_dir
+        return create_dir(data_dir, self.event_dispatcher)
 
     def load_from_dataset(self, dataset: Dataset, matrix_name: str) -> pd.DataFrame:
         """Load in the desired dataset matrix into a dataframe.
@@ -288,8 +285,12 @@ class DataPipeline(metaclass=ABCMeta):
         ))
 
         start = time.time()
-        convert_factory = self.data_factory.get_factory(KEY_RATING_CONVERTER)
-        converter = convert_factory.create(convert_config.name, convert_config.params)
+
+        converter_factory = self.data_factory.get_factory(KEY_RATING_CONVERTER)
+        dataset_converter_factory = converter_factory.get_factory(dataset.get_name())
+        matrix_converter_factory = dataset_converter_factory.get_factory(matrix_name)
+
+        converter = matrix_converter_factory.create(convert_config.name, convert_config.params)
         if converter is None:
             self.event_dispatcher.dispatch(ErrorEventArgs(
                 ON_FAILURE_ERROR,
@@ -299,6 +300,7 @@ class DataPipeline(metaclass=ABCMeta):
             raise RuntimeError()
 
         dataframe, rating_type = converter.run(dataframe)
+
         end = time.time()
 
         self.event_dispatcher.dispatch(ConvertRatingsEventArgs(

@@ -17,11 +17,11 @@ class RecommendationPipelineElliot(RecommendationPipeline):
             is_running: Callable[[], bool],
             **kwargs) -> str:
         ...
-        save_yml(yml_path, data)
+        create_yml(yml_path, data, self.event_dispatcher)
 
         run_experiment(yml_path)
 
-        self.clear_temp_dir(temp_dir)
+        delete_dir(temp_dir, self.event_dispatcher)
         ...
     ...
 
@@ -39,9 +39,8 @@ import pandas as pd
 from ...core.config.config_factories import Factory
 from ...core.core_constants import MODEL_RATINGS_FILE
 from ...core.events.event_dispatcher import EventDispatcher
-from ...core.events.event_io import ON_MAKE_DIR, ON_REMOVE_DIR, ON_RENAME_FILE, ON_REMOVE_FILE
-from ...core.events.event_io import DirEventArgs, FileEventArgs, RenameFileEventArgs
-from ...data.utility import save_yml
+from ...core.io.io_create import create_dir, create_yml
+from ...core.io.io_delete import delete_dir, delete_file
 from ..algorithms.elliot.elliot_recommender import ElliotRecommender
 from .recommendation_pipeline import RecommendationPipeline
 
@@ -101,7 +100,7 @@ class RecommendationPipelineElliot(RecommendationPipeline):
 
         top_k = kwargs['num_items']
 
-        temp_dir = self.create_temp_dir(model_dir)
+        temp_dir = create_dir(os.path.join(model_dir, 'temp'), self.event_dispatcher)
         yml_path = os.path.join(temp_dir, 'config.yml')
 
         data = {
@@ -125,11 +124,11 @@ class RecommendationPipelineElliot(RecommendationPipeline):
             }
         }
 
-        save_yml(yml_path, data)
+        create_yml(yml_path, data, self.event_dispatcher)
 
         # run_experiment(yml_path)
 
-        self.clear_temp_dir(temp_dir)
+        delete_dir(temp_dir, self.event_dispatcher)
         if params.get('epochs'):
             # remove everything so that only the final epochs file remains
             self.clear_unused_epochs(params['epochs'], model_dir)
@@ -146,50 +145,6 @@ class RecommendationPipelineElliot(RecommendationPipeline):
         )
 
         return result_file_path
-
-
-    def create_temp_dir(self, model_dir: str) -> str:
-        """Create a temp directory to store unnecessary artifacts.
-
-        Args:
-            model_dir: the directory where the computed ratings can be stored.
-
-        Returns:
-            the path to the temp directory that was created.
-        """
-        temp_dir = os.path.join(model_dir, 'temp')
-        if not os.path.isdir(temp_dir):
-            os.mkdir(temp_dir)
-            self.event_dispatcher.dispatch(DirEventArgs(
-                ON_MAKE_DIR,
-                temp_dir
-            ))
-
-        return temp_dir
-
-    def clear_temp_dir(self, temp_dir: str) -> None:
-        """Clear and remove the temp directory.
-
-        Args:
-            temp_dir: the path to the temp directory.
-        """
-        for file in os.listdir(temp_dir):
-            file_name = os.fsdecode(file)
-            file_path = os.path.join(temp_dir, file_name)
-            if os.path.isdir(file_path):
-                os.rmdir(file_path)
-                self.event_dispatcher.dispatch(DirEventArgs(
-                    ON_REMOVE_DIR,
-                    temp_dir
-                ))
-            else:
-                os.remove(file_path)
-                self.event_dispatcher.dispatch(FileEventArgs(
-                    ON_REMOVE_FILE,
-                    file_path
-                ))
-
-        os.rmdir(temp_dir)
 
     def clear_unused_epochs(self, num_epochs: int, model_dir: str) -> None:
         """Clear unused epochs from the model output directory.
@@ -211,11 +166,7 @@ class RecommendationPipelineElliot(RecommendationPipeline):
             file_path = os.path.join(model_dir, file_name)
 
             if used_epoch not in file_name:
-                os.remove(file_path)
-                self.event_dispatcher.dispatch(FileEventArgs(
-                    ON_REMOVE_FILE,
-                    file_path
-                ))
+                delete_file(file_path, self.event_dispatcher)
 
     def reconstruct_rank_column(self, model_dir: str, top_k: int) -> str:
         """Reconstruct the rank column in the result file that the framework generated.
@@ -255,7 +206,8 @@ class RecommendationPipelineElliot(RecommendationPipeline):
 
         return result_file_path
 
-    def rename_result(self, model_dir: str) -> str:
+    @staticmethod
+    def rename_result(model_dir: str) -> str:
         """Rename the computed ratings file to be consistent with other pipelines.
 
         Args:
@@ -274,10 +226,5 @@ class RecommendationPipelineElliot(RecommendationPipeline):
             dst_path = os.path.join(model_dir, MODEL_RATINGS_FILE)
 
             os.rename(src_path, dst_path)
-            self.event_dispatcher.dispatch(RenameFileEventArgs(
-                ON_RENAME_FILE,
-                src_path,
-                dst_path
-            ))
 
             return dst_path

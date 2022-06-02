@@ -1,0 +1,54 @@
+dataset: ML-100K-Sample
+matrices:
+  user-movie-rating:
+    idx_item:
+      file: user-movie-rating_item_indices.hdf5
+      key: movie_id
+      num_records: 403
+    idx_user:
+      file: user-movie-rating_user_indices.hdf5
+      key: user_id
+      num_records: 5
+    matrix:
+      columns:
+      - matrix_rating
+      - matrix_timestamp
+      file:
+        compression: bz2
+        name: ML-100K_user-movie-rating.tsv.bz2
+      foreign_keys:
+      - user_id
+      - movie_id
+      num_records: 517
+      primary_key:
+      - user_id
+      - movie_id
+    rating_max: 5.0
+    rating_min: 1.0
+    rating_type: explicit
+tables:
+  movie:
+    columns:
+    - movie_title
+    - movie_release date
+    - movie_imdb url
+    - movie_genres
+    file:
+      compression: bz2
+      encoding: ISO-8859-1
+      name: ML-100K_movie.tsv.bz2
+    num_records: 403
+    primary_key:
+    - movie_id
+  user:
+    columns:
+    - user_age
+    - user_gender
+    - user_occupation
+    - user_zip code
+    file:
+      compression: bz2
+      name: ML-100K_user.tsv.bz2
+    num_records: 5
+    primary_key:
+    - user_id

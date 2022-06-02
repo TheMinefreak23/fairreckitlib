@@ -70,7 +70,7 @@ class RecommenderSystem:
         if not os.path.isdir(self.result_dir):
             os.mkdir(self.result_dir)
 
-        self.experiment_factory = create_experiment_factory()
+        self.experiment_factory = create_experiment_factory(self.data_registry)
         self.thread_processor = ThreadProcessor()
 
     def abort_computation(self, computation_name: str) -> bool:
