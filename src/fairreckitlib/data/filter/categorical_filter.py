@@ -1,4 +1,13 @@
-"""
+"""Module to filter on categories, like country or gender.
+
+Classes:
+
+    CategoricalFilter: Filter the dataframe on categorical data, such as country or gender.
+
+Functions:
+
+    create_categorical_filter: Create an instance of CategoricalFilter.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -11,7 +20,7 @@ from .base_filter import DataFilter
 
 
 class CategoricalFilter(DataFilter):
-    """Filters the dataframe on categorical data, such as country or gender.
+    """Filter the dataframe on categorical data, such as country or gender.
 
     Public method:
         filter

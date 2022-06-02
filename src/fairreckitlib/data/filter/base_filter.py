@@ -1,4 +1,9 @@
-"""
+"""Module that provides a base for all three types of filters: Numerical, Categorical, Count.
+
+Classes:
+
+    DataFilter: Base filter class.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -6,13 +11,11 @@ Utrecht University within the Software Project course.
 
 from abc import ABCMeta, abstractmethod
 import pandas as pd
-from fairreckitlib.data.set.dataset import Dataset
-
-import fairreckitlib.data.set.dataset as ds
+from ..set import dataset as ds
+from ..set.dataset import Dataset
 
 class DataFilter(metaclass=ABCMeta):
-    """Base class to filter a df (not a dataframe in particular), as long as the df
-    contains a 'user' and 'item' column.
+    """Base class to filter a df (not a dataframe in particular).
 
     Together with a factory pattern similar to the data.split module
     we can define a variety of filters to exclude rows that do not satisfy the filter
@@ -32,7 +35,6 @@ class DataFilter(metaclass=ABCMeta):
         Args:
             name (str): Configuration name of the filter.
             params (Dict[str, Any]): Configuration parameters.
-
         """
         self.name = name
         self.params = params
@@ -58,7 +60,7 @@ class DataFilter(metaclass=ABCMeta):
 
     @abstractmethod
     def _filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
-        """Basic filter functionality used in the data pipeline.
+        """Sugar coats subclasses' filter() for run and _external_col_filter as sugar.
 
         Raises:
             NotImplementedError: This method should be implemented in the subclasses.

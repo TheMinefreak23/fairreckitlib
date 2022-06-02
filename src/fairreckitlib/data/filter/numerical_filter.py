@@ -1,4 +1,14 @@
-"""
+"""Module to filter on numerical data, like age or rating.
+
+Classes:
+
+    NumericalFilter: Filter the dataframe on numerical data, such as age or rating.
+
+Functions:
+
+    create_numerical_filter: Create an instance of NumericalFilter.
+
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)

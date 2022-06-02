@@ -1,4 +1,5 @@
-"""
+"""This module tests the dataframe categorical filter functionality on gender.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -11,6 +12,7 @@ from src.fairreckitlib.data.filter.categorical_filter import CategoricalFilter
 
 class TestFilterGender:
     """Create a filter object and a dummy data frame to test gender filter."""
+    
     df_source = DataFrame({"id": [1, 2, 3, 4, 5, 6], "user_gender": ['f', 'm', 'f', 'm', ' ', None]})
     filter_obj = CategoricalFilter()
     df_empty = filter_obj.__empty_df__(df_source)

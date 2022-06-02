@@ -37,7 +37,7 @@ def create_data_factory(data_registry: DataRegistry) -> GroupFactory:
         the group factory with available data modifier factories.
     """
     data_factory = GroupFactory(KEY_DATA)
-    # data_factory.add_factory(create_filter_factory())
+    data_factory.add_factory(create_filter_factory())
     data_factory.add_factory(create_rating_converter_factory(data_registry))
     data_factory.add_factory(create_split_factory())
     return data_factory

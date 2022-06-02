@@ -9,7 +9,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from typing import Dict, List, Any
+from typing import Dict, Any
 
 
 FILTER_NUMERICAL = 'numerical'

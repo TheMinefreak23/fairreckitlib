@@ -9,8 +9,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from .filter_constants import FILTER_NUMERICAL, FILTER_CATEGORICAL, FILTER_COUNT
-from fairreckitlib.core.config.config_parameters import ConfigParameters
+from ...core.config.config_parameters import ConfigParameters
 
 def create_params_numerical() -> ConfigParameters:
     """Create the parameters of the FunkSVD algorithm.
@@ -31,9 +30,10 @@ def create_params_categorical() -> ConfigParameters:
         the configuration parameters of the algorithm.
     """
     params = ConfigParameters()
-    params.add_single_option('name', str, '', ['user_gender', 'user_country', 'user_occupation',
-                                                      'artist_gender', 'artist_country', 'artist_genres',
-                                                      'movie_genres'])
+    params.add_single_option('name', str, '', [
+        'user_gender', 'user_country', 'user_occupation',
+        'artist_gender', 'artist_country', 'artist_genres',
+        'movie_genres'])
     params.add_multi_option('values', [], []) #optoins cant know..
     return params
 
@@ -44,6 +44,7 @@ def create_params_count() -> ConfigParameters:
         the configuration parameters of the algorithm.
     """
     params = ConfigParameters()
-    params.add_single_option('name', str, '', ['user_country', 'artist_country', 'artist_genres', 'movie_genres'])
-    params.add_number('threshold', int, 100, (1, 10000000000))
+    params.add_single_option('name', str, '', [
+        'user_country', 'artist_country', 'artist_genres', 'movie_genres'])
+    params.add_number('threshold', int, 100, (0, 10000000000))
     return params

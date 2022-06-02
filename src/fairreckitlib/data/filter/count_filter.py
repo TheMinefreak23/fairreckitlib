@@ -1,4 +1,15 @@
-"""
+"""Module to filter on count threshold. Can be used to filter on countries with many users.
+
+Classes:
+
+    CountFilter: Filter the dataframe on a column, such as country.
+        Show only those above a certain threshold.
+
+Functions:
+
+    create_count_filter: Create an instance of CountFilter.
+
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -10,8 +21,7 @@ from .base_filter import DataFilter
 
 
 class CountFilter(DataFilter):
-    """Filter the dataframe on categorical data,
-    and selects only those of which its count is above a given threshold.
+    """Filter the dataframe on a column, and select only whose count is above a given threshold.
 
     Public method:
         filter
