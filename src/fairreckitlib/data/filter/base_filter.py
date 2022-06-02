@@ -5,12 +5,10 @@ Utrecht University within the Software Project course.
 """
 
 from abc import ABCMeta, abstractmethod
-from typing import Any, Dict
 import pandas as pd
 from fairreckitlib.data.set.dataset import Dataset
 
-from fairreckitlib.data.set import dataset
-
+import fairreckitlib.data.set.dataset as ds
 
 class DataFilter(metaclass=ABCMeta):
     """Base class to filter a df (not a dataframe in particular), as long as the df
@@ -28,9 +26,9 @@ class DataFilter(metaclass=ABCMeta):
 
     def __init__(self, name='', params=None, **kwargs) -> None:
         """Make Constructor of the class.
-        
+
         Uses optional arguments to enable sole use of subclass.filter().
-                
+
         Args:
             name (str): Configuration name of the filter.
             params (Dict[str, Any]): Configuration parameters.
@@ -40,9 +38,10 @@ class DataFilter(metaclass=ABCMeta):
         self.params = params
         # self.column_name = params['column_name']  # not needed but! needs verification..
 
-    def run(self, dataframe: pd.DataFrame, _dataset: Dataset=None, matrix_name: str='') -> pd.DataFrame:
+    def run(self, dataframe: pd.DataFrame, _dataset: Dataset=None,
+            matrix_name: str='') -> pd.DataFrame:
         """Carry out the filtering.
-        
+
         Args:
             dataframe: Dataframe to be filtered on.
             _dataset (Optional): Dataset object the external column is retrieved from.
@@ -55,8 +54,7 @@ class DataFilter(metaclass=ABCMeta):
         if _dataset and matrix_name:
             return self._external_col_filter(dataframe, _dataset, matrix_name)
         # Filter using dataframe that is assumed to be complete.
-        else:
-            return self._filter(dataframe)
+        return self._filter(dataframe)
 
     @abstractmethod
     def _filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
@@ -67,29 +65,32 @@ class DataFilter(metaclass=ABCMeta):
         """
         raise NotImplementedError()
 
-    def _external_col_filter(self, dataframe: pd.DataFrame, _dataset: Dataset, matrix_name: str) -> pd.DataFrame:
+    def _external_col_filter(self, dataframe: pd.DataFrame, _dataset: Dataset,
+        matrix_name: str) -> pd.DataFrame:
         """When filter needs a column from some dataset table located elsewhere.
-        
+
         Args:
             dataframe: The dataframe to be filtered.
-        
+
         Returns:
             A filtered dataframe.
-        """ 
+        """
         # Add required columns
         og_cols = dataframe.columns
-        new_dataframe = dataset.add_dataset_columns(_dataset, matrix_name, dataframe, [self.params['column_name']])
+        new_dataframe = ds.add_dataset_columns(
+            _dataset, matrix_name, dataframe, [self.params['column_name']])
         new_cols = new_dataframe.columns
-        
+
         new_dataframe = self._filter(new_dataframe)
 
         # Remove columns not in original dataframe
-        for i in range(len(new_cols)):
-            if new_cols[i] not in og_cols:
-                new_dataframe = new_dataframe.drop([new_cols[i]], axis=1, errors='ignore')
+        for new_col in new_cols:
+            if new_col not in og_cols:
+                new_dataframe = new_dataframe.drop([new_col], axis=1, errors='ignore')
         return new_dataframe
 
-    def __empty_df__(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+    @staticmethod
+    def __empty_df__(dataframe: pd.DataFrame) -> pd.DataFrame:
         """Return an empty dataframe with same columns."""
         return dataframe.iloc[:0,:].copy()
 
