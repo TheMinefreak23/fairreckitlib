@@ -4,7 +4,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict
 import pandas as pd
 from .base_filter import DataFilter
 
