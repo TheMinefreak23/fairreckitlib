@@ -15,7 +15,7 @@ Utrecht University within the Software Project course.
 import pandas as pd
 import pytest
 
-from src.fairreckitlib.core.factories import Factory
+from src.fairreckitlib.core.config.config_factories import Factory
 from src.fairreckitlib.data.ratings.base_converter import RatingConverter
 from src.fairreckitlib.data.ratings import count, rating_converter_factory, range_converter
 from src.fairreckitlib.data.set import dataset_registry

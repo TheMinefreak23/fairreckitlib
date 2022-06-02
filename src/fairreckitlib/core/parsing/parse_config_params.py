@@ -13,16 +13,16 @@ Utrecht University within the Software Project course.
 
 from typing import Any, Dict, Tuple
 
+from ..config.config_base_param import ConfigParam
+from ..config.config_parameters import ConfigParameters
 from ..events.event_dispatcher import EventDispatcher
-from ..params.config_base_param import ConfigParam
-from ..params.config_parameters import ConfigParameters
 from .parse_assert import assert_is_container_not_empty, assert_is_type
 from .parse_assert import assert_is_key_in_dict, assert_is_one_of_list
 from .parse_event import ON_PARSE, ParseEventArgs
 
 
 def parse_config_parameters(
-        params_config: Dict[str, Any],
+        params_config: Any,
         parent_name: str,
         parameters: ConfigParameters,
         event_dispatcher: EventDispatcher) -> Dict[str, Any]:
@@ -117,7 +117,7 @@ def parse_config_param(
             ON_PARSE,
             'PARSE WARNING: ' + parent_name + ' invalid param \'' + param.name + '\'' +
             '\n\t' + error_msg,
-            actual_type=config_value,
+            actual_type=type(config_value),
             default_value=value
         ))
     # validation succeeded but extra info is available
@@ -126,7 +126,7 @@ def parse_config_param(
             ON_PARSE,
             'PARSE WARNING: ' + parent_name + ' modified param \'' + param.name + '\'' +
             '\n\t' + error_msg,
-            actual_type=config_value
+            actual_type=type(config_value)
         ))
 
     return success, value

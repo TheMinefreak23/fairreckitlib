@@ -14,8 +14,8 @@ Utrecht University within the Software Project course.
 from abc import ABCMeta, abstractmethod
 from typing import Any, Callable, Dict, List, Tuple
 
-from .config_constants import KEY_NAME, KEY_PARAMS
-from .params.config_parameters import ConfigParameters, create_empty_parameters
+from ..core_constants import KEY_NAME, KEY_PARAMS
+from .config_parameters import ConfigParameters, create_empty_parameters
 
 FUNC_CREATE_OBJ = 'f_create_obj'
 FUNC_CREATE_PARAMS = 'f_create_params'

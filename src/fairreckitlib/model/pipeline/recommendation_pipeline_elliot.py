@@ -36,11 +36,11 @@ from typing import Callable
 import numpy as np
 import pandas as pd
 
-from ...core.config_constants import MODEL_RATINGS_FILE
+from ...core.config.config_factories import Factory
+from ...core.core_constants import MODEL_RATINGS_FILE
 from ...core.events.event_dispatcher import EventDispatcher
 from ...core.events.event_io import ON_MAKE_DIR, ON_REMOVE_DIR, ON_RENAME_FILE, ON_REMOVE_FILE
 from ...core.events.event_io import DirEventArgs, FileEventArgs, RenameFileEventArgs
-from ...core.factories import Factory
 from ...data.utility import save_yml
 from ..algorithms.elliot.elliot_recommender import ElliotRecommender
 from .recommendation_pipeline import RecommendationPipeline

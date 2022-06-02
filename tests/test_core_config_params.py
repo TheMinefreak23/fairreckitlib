@@ -1,4 +1,4 @@
-"""This module tests the functionality of configuration param(s).
+"""This module tests the configuration parameters functionality.
 
 Functions:
 
@@ -18,12 +18,12 @@ from typing import Any, List, Tuple, Type, Union
 
 import pytest
 
-from src.fairreckitlib.core.params.config_base_param import ConfigParam,PARAM_KEY_MIN,PARAM_KEY_MAX
-from src.fairreckitlib.core.params.config_value_param import ConfigValueParam, \
+from src.fairreckitlib.core.config.config_base_param import ConfigParam,PARAM_KEY_MIN,PARAM_KEY_MAX
+from src.fairreckitlib.core.config.config_value_param import ConfigValueParam, \
     ConfigNumberParam, ConfigRandomParam, ConfigRangeParam
-from src.fairreckitlib.core.params.config_option_param import ConfigOptionParam, \
+from src.fairreckitlib.core.config.config_option_param import ConfigOptionParam, \
     ConfigMultiOptionParam, ConfigSingleOptionParam, create_bool_param
-from src.fairreckitlib.core.params.config_parameters import create_empty_parameters
+from src.fairreckitlib.core.config.config_parameters import create_empty_parameters
 
 
 def test_config_multi_option_param() -> None:

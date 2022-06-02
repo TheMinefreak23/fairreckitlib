@@ -16,10 +16,10 @@ from typing import Any, Callable, List, Optional, Tuple
 
 import pandas as pd
 
+from ...core.config.config_factories import GroupFactory
 from ...core.events.event_dispatcher import EventDispatcher
 from ...core.events.event_error import ON_FAILURE_ERROR, ErrorEventArgs
 from ...core.events.event_io import ON_MAKE_DIR, DirEventArgs
-from ...core.factories import GroupFactory
 from ..data_transition import DataTransition
 from ..filter.filter_event import FilterDataframeEventArgs
 from ..ratings.convert_config import ConvertConfig

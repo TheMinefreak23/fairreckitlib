@@ -1,4 +1,4 @@
-"""This module tests the base functionality of all types of factories.
+"""This module tests the functionality of all (base) types of config factories.
 
 Functions:
 
@@ -18,9 +18,10 @@ Utrecht University within the Software Project course.
 
 import pytest
 
-from src.fairreckitlib.core.config_constants import KEY_NAME, KEY_PARAMS
-from src.fairreckitlib.core.factories import Factory, GroupFactory, create_factory_from_list
-from src.fairreckitlib.core.params.config_parameters import \
+from src.fairreckitlib.core.config.config_factories import \
+    Factory, GroupFactory, create_factory_from_list
+from src.fairreckitlib.core.core_constants import KEY_NAME, KEY_PARAMS
+from src.fairreckitlib.core.config.config_parameters import \
     ConfigParameters, create_empty_parameters
 
 dummy_names = ['dummy_a', 'dummy_b', 'dummy_c']

@@ -21,12 +21,12 @@ from typing import Any, Callable, Dict, List, Tuple
 import json
 import pandas as pd
 
-from ...core.config_constants import MODEL_RATINGS_FILE, MODEL_USER_BATCH_SIZE
-from ...core.events.event_io import ON_CREATE_FILE, FileEventArgs
+from ...core.config.config_factories import Factory
+from ...core.core_constants import MODEL_RATINGS_FILE, MODEL_USER_BATCH_SIZE
 from ...core.events.event_dispatcher import EventDispatcher
-from ...core.events.event_io import ON_MAKE_DIR, DirEventArgs, DataframeEventArgs
 from ...core.events.event_error import ON_FAILURE_ERROR, ON_RAISE_ERROR, ErrorEventArgs
-from ...core.factories import Factory
+from ...core.events.event_io import ON_CREATE_FILE, FileEventArgs
+from ...core.events.event_io import ON_MAKE_DIR, DirEventArgs, DataframeEventArgs
 from ...data.data_transition import DataTransition
 from ..algorithms.base_algorithm import BaseAlgorithm
 from .model_config import ModelConfig

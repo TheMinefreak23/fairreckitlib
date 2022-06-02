@@ -32,9 +32,9 @@ Utrecht University within the Software Project course.
 
 from typing import Callable
 
-from ..core.config_constants import TYPE_PREDICTION, TYPE_RECOMMENDATION
+from ..core.config.config_factories import Factory, GroupFactory
+from ..core.core_constants import TYPE_PREDICTION, TYPE_RECOMMENDATION
 from ..core.events.event_dispatcher import EventDispatcher
-from ..core.factories import Factory, GroupFactory
 from .algorithms.implicit import implicit_factory
 from .algorithms.lenskit import lenskit_factory
 from .algorithms.surprise import surprise_factory

@@ -31,9 +31,9 @@ import pytest
 import numpy as np
 import pandas as pd
 
-from src.fairreckitlib.core.config_constants import KEY_RATED_ITEMS_FILTER
-from src.fairreckitlib.core.config_constants import TYPE_PREDICTION, TYPE_RECOMMENDATION
-from src.fairreckitlib.core.factories import Factory, GroupFactory
+from src.fairreckitlib.core.config.config_factories import Factory, GroupFactory
+from src.fairreckitlib.core.core_constants import KEY_RATED_ITEMS_FILTER
+from src.fairreckitlib.core.core_constants import TYPE_PREDICTION, TYPE_RECOMMENDATION
 from src.fairreckitlib.data.set.dataset_registry import DataRegistry
 from src.fairreckitlib.model.algorithms.base_algorithm import BaseAlgorithm
 from src.fairreckitlib.model.algorithms.base_predictor import BasePredictor

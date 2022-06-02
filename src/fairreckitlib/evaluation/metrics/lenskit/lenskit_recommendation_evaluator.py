@@ -7,7 +7,7 @@ from typing import Any, Dict
 
 from lenskit import topn
 
-from ....core.apis import LENSKIT_API
+from ....core.core_constants import LENSKIT_API
 from ..common import KEY_METRIC_PARAM_K
 from ..evaluator import Evaluator
 

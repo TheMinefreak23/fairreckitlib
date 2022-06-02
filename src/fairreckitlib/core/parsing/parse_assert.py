@@ -25,7 +25,7 @@ def assert_is_container_not_empty(
         *,
         one_of_list: List[Any]=None,
         expected_type: Type=None,
-        actual_type: Any=None,
+        actual_type: Type=None,
         default_value: Any=None) -> bool:
     """Assert whether the specified container is not empty.
 
@@ -80,7 +80,7 @@ def assert_is_key_in_dict(
     Returns:
         whether the assertion has passed.
     """
-    if not src_key in src_dict:
+    if src_key not in src_dict:
         event_dispatcher.dispatch(ParseEventArgs(
             ON_PARSE,
             error_msg,
@@ -117,7 +117,7 @@ def assert_is_one_of_list(
     Returns:
         bool: whether the assertion has passed.
     """
-    if not src_value in src_list:
+    if src_value not in src_list:
         event_dispatcher.dispatch(ParseEventArgs(
             ON_PARSE,
             error_msg,
