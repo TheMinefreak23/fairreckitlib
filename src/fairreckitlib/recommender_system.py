@@ -301,7 +301,6 @@ class RecommenderSystem:
         Returns:
             a dictionary with the availability of data filters.
         """
-        # TODO the data filter factory does not exist
         return self.experiment_factory.get_sub_availability(
             KEY_DATA,
             sub_type=KEY_DATA_FILTERS

@@ -8,14 +8,19 @@ Utrecht University within the Software Project course.
 from numpy import int64
 from pandas import DataFrame
 from pandas.testing import assert_frame_equal
+from src.fairreckitlib.data.set.dataset_registry import DataRegistry
 from src.fairreckitlib.data.filter.categorical_filter import CategoricalFilter
+
+
+dataset = DataRegistry('tests/datasets').get_set('ML-100K-Sample')
+kwargs = {'dataset': dataset, 'matrix_name': 'user-movie-rating'}
 
 class TestFilterCountry:
     """Create a filter object and a dummy data frame to test country filter."""
 
     df_source = DataFrame({"id": [1, 2, 3, 4, 5, 6],
                            "country": ['Iran', ' ', 'Netherlands', 'Russia', 'Sweden', None]})
-    filter_obj = CategoricalFilter()
+    filter_obj = CategoricalFilter('', {}, **kwargs)
     empty_df = filter_obj.__empty_df__(df_source)
 
     def test_run_no_param(self):

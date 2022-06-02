@@ -29,15 +29,16 @@ def create_data_factory(data_registry: DataRegistry) -> GroupFactory:
 
         data_registry: the data registry with available datasets.
 
-    Consists of two data modifier factories:
-        1) data rating converters.
-        2) data splitters.
+    Consists of three data modifier factories:
+        1) data filters.
+        2) data rating converters.
+        3) data splitters.
 
     Returns:
         the group factory with available data modifier factories.
     """
     data_factory = GroupFactory(KEY_DATA)
-    data_factory.add_factory(create_filter_factory())
+    data_factory.add_factory(create_filter_factory(data_registry))
     data_factory.add_factory(create_rating_converter_factory(data_registry))
     data_factory.add_factory(create_split_factory())
     return data_factory

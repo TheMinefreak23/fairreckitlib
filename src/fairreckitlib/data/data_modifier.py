@@ -11,14 +11,14 @@ Utrecht University within the Software Project course.
 """
 
 from abc import ABCMeta, abstractmethod
-from typing import Any, Dict
+from typing import Any, Callable, Dict
 
 import pandas as pd
 
-from ..core.config.config_factories import Factory, FUNC_CREATE_PARAMS
+from ..core.config.config_factories import Factory, GroupFactory, FUNC_CREATE_PARAMS
 from ..core.config.config_parameters import ConfigParameters
 from .set.dataset import Dataset
-
+from .set.dataset_registry import DataRegistry
 
 class DataModifier(metaclass=ABCMeta):
     """Base class for FairRecKit data modifiers.
@@ -117,5 +117,40 @@ class DataModifierFactory(Factory):
         Returns:
             the configuration parameters of the object or empty parameters when it does not exist.
         """
-        matrix_name = self.factory_name
-        return self.factory[obj_name][FUNC_CREATE_PARAMS](obj_name, self.dataset, matrix_name)
+        kwargs = {
+            'column_name': obj_name,
+            'dataset': self.dataset,
+            'matrix_name': self.factory_name
+        }
+        return self.factory[obj_name][FUNC_CREATE_PARAMS](**kwargs)
+
+
+def create_data_modifier_factory(
+        data_registry: DataRegistry,
+        factory_name: str,
+        func_on_add_entries: Callable[[DataModifierFactory, Dataset], None]) -> GroupFactory:
+    """Create a data modifier factory for each dataset-matrix pair.
+
+    Args:
+
+        data_registry: the data registry with available datasets.
+        factory_name: the name of the data modifier factory.
+        func_on_add_entries: callback for each dataset-matrix pair to add data modifiers.
+
+    Returns:
+        the factory with all available data modifiers per dataset-matrix pair.
+    """
+    factory = GroupFactory(factory_name)
+
+    for dataset_name in data_registry.get_available_sets():
+        dataset = data_registry.get_set(dataset_name)
+        dataset_factory = GroupFactory(dataset.get_name())
+
+        factory.add_factory(dataset_factory)
+
+        for matrix_name in dataset.get_available_matrices():
+            matrix_factory = DataModifierFactory(matrix_name, dataset)
+            func_on_add_entries(matrix_factory, dataset)
+            dataset_factory.add_factory(matrix_factory)
+
+    return factory

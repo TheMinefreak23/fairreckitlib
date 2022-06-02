@@ -10,53 +10,54 @@ Utrecht University within the Software Project course.
 """
 
 from abc import ABCMeta, abstractmethod
+from typing import Any, Dict
+
 import pandas as pd
+
 from ..set import dataset as ds
-from ..set.dataset import Dataset
+from ..data_modifier import DataModifier
 
-class DataFilter(metaclass=ABCMeta):
+
+class DataFilter(DataModifier, metaclass=ABCMeta):
     """Base class to filter a df (not a dataframe in particular).
-
-    Together with a factory pattern similar to the data.split module
-    we can define a variety of filters to exclude rows that do not satisfy the filter
-    from the specified df as long as it retains the 'user' and 'item' columns.
-
-    These filters could be used by the fair-rec-kit-app as well (table browsing).
 
     Public method:
         run
     """
 
-    def __init__(self, name='', params=None, **kwargs) -> None:
+    def __init__(self, name: str, params: Dict[str, Any], **kwargs):
         """Make Constructor of the class.
 
         Uses optional arguments to enable sole use of subclass.filter().
 
         Args:
-            name (str): Configuration name of the filter.
-            params (Dict[str, Any]): Configuration parameters.
+            name: Configuration name of the filter.
+            params: Configuration parameters.
         """
-        self.name = name
-        self.params = params
-        # self.column_name = params['column_name']  # not needed but! needs verification..
+        DataModifier.__init__(self, name, params)
+        self.dataset = kwargs['dataset']
+        self.matrix_name = kwargs['matrix_name']
 
-    def run(self, dataframe: pd.DataFrame, _dataset: Dataset=None,
-            matrix_name: str='') -> pd.DataFrame:
+    def run(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Carry out the filtering.
 
         Args:
             dataframe: Dataframe to be filtered on.
-            _dataset (Optional): Dataset object the external column is retrieved from.
-            matrix_name (Optional): Name of the matrix inside the dataset.
 
         Return:
             The filtered dataframe.
         """
         # Filtering that requires external columns i.e., filter column not available in dataframe.
-        if _dataset and matrix_name:
-            return self._external_col_filter(dataframe, _dataset, matrix_name)
-        # Filter using dataframe that is assumed to be complete.
-        return self._filter(dataframe)
+        return self._external_col_filter(dataframe)
+
+    @abstractmethod
+    def get_type(self) -> str:
+        """Get the type of the filter.
+
+        Returns:
+            The type name of the filter.
+        """
+        raise NotImplementedError()
 
     @abstractmethod
     def _filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
@@ -67,8 +68,7 @@ class DataFilter(metaclass=ABCMeta):
         """
         raise NotImplementedError()
 
-    def _external_col_filter(self, dataframe: pd.DataFrame, _dataset: Dataset,
-        matrix_name: str) -> pd.DataFrame:
+    def _external_col_filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """When filter needs a column from some dataset table located elsewhere.
 
         Args:
@@ -80,7 +80,7 @@ class DataFilter(metaclass=ABCMeta):
         # Add required columns
         og_cols = dataframe.columns
         new_dataframe = ds.add_dataset_columns(
-            _dataset, matrix_name, dataframe, [self.params['column_name']])
+            self.dataset, self.matrix_name, dataframe, [self.get_name()])
         new_cols = new_dataframe.columns
 
         new_dataframe = self._filter(new_dataframe)

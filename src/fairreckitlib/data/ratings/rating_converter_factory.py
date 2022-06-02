@@ -10,7 +10,7 @@ Utrecht University within the Software Project course.
 """
 
 from ...core.config.config_factories import GroupFactory
-from ..data_modifier import DataModifierFactory
+from ..data_modifier import DataModifierFactory, create_data_modifier_factory
 from ..set.dataset_registry import DataRegistry
 from .convert_constants import KEY_RATING_CONVERTER, CONVERTER_KL, CONVERTER_RANGE
 from .range_converter import create_range_converter, create_range_converter_params
@@ -27,30 +27,25 @@ def create_rating_converter_factory(data_registry: DataRegistry) -> GroupFactory
     Returns:
         the factory with all available converters.
     """
-    factory = GroupFactory(KEY_RATING_CONVERTER)
+    def on_add_entries(matrix_factory: DataModifierFactory, _) -> None:
+        """Add the rating converters to the matrix factory.
 
-    for dataset_name in data_registry.get_available_sets():
-        dataset = data_registry.get_set(dataset_name)
-        dataset_factory = GroupFactory(dataset.get_name())
+        Args:
+            matrix_factory: the factory to add the converters to.
+            _: the dataset associated with the matrix factory.
 
-        # add dataset converter factory
-        factory.add_factory(dataset_factory)
+        """
+        # add kl converter
+        matrix_factory.add_obj(
+            CONVERTER_KL,
+            create_kl_converter,
+            create_kl_converter_params
+        )
+        # add range converter
+        matrix_factory.add_obj(
+            CONVERTER_RANGE,
+            create_range_converter,
+            create_range_converter_params
+        )
 
-        for matrix_name in dataset.get_available_matrices():
-            matrix_factory = DataModifierFactory(matrix_name, dataset)
-            # add kl converter
-            matrix_factory.add_obj(
-                CONVERTER_KL,
-                create_kl_converter,
-                create_kl_converter_params
-            )
-            # add range converter
-            matrix_factory.add_obj(
-                CONVERTER_RANGE,
-                create_range_converter,
-                create_range_converter_params
-            )
-            # add matrix converter factory
-            dataset_factory.add_factory(matrix_factory)
-
-    return factory
+    return create_data_modifier_factory(data_registry, KEY_RATING_CONVERTER, on_add_entries)

@@ -8,12 +8,16 @@ Utrecht University within the Software Project course.
 from pandas import DataFrame
 from pandas.testing import assert_frame_equal
 from src.fairreckitlib.data.filter.numerical_filter import NumericalFilter
+from src.fairreckitlib.data.set.dataset_registry import DataRegistry
+
+dataset = DataRegistry('tests/datasets').get_set('ML-100K-Sample')
+filter_kwargs = {'dataset': dataset, 'matrix_name': 'user-movie-rating'}
 
 class TestFilterAge:
     """Creates a filter object and a dummy data frame to test age filter."""
 
     df_source = DataFrame({"id": [1, 2, 3, 4, 5], "age": [24, 0, -1, 45, 102]})
-    filter_obj = NumericalFilter()
+    filter_obj = NumericalFilter('', {}, **filter_kwargs)
 
     def test_run_no_param(self):
         """Test run with no given min max."""

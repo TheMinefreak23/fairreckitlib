@@ -19,7 +19,6 @@ from typing import Any, Dict, Tuple
 import pandas as pd
 
 from ...core.config.config_parameters import ConfigParameters
-from ..set.dataset import Dataset
 from ..set.dataset_config import DATASET_RATINGS_EXPLICIT, DATASET_RATINGS_IMPLICIT
 from .base_converter import RatingConverter
 from .convert_constants import RATING_TYPE_THRESHOLD
@@ -72,14 +71,13 @@ def create_range_converter(name: str, params: Dict[str, Any], **_) -> RangeConve
     return RangeConverter(name, params)
 
 
-def create_range_converter_params(_, dataset: Dataset, matrix_name: str) -> ConfigParameters:
+def create_range_converter_params(**kwargs) -> ConfigParameters:
     """Create the parameters of the range converter.
 
     Returns:
         the configuration parameters of the converter.
     """
-    matrix_config = dataset.get_matrix_config(matrix_name)
-    max_rating = matrix_config.rating_max
+    max_rating = kwargs['dataset'].get_matrix_config(kwargs['matrix_name']).rating_max
 
     params = ConfigParameters()
     params.add_number('upper_bound', float, max_rating, (1.0, max_rating))

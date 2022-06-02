@@ -108,7 +108,7 @@ class DataPipeline(CorePipeline):
 
         # step 3
         dataframe = self.filter_rows(dataframe,
-                                     data_config.filter)
+                                     data_config.prefilters)
         if not is_running():
             return None
 

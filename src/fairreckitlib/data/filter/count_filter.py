@@ -18,7 +18,7 @@ Utrecht University within the Software Project course.
 from typing import Any, Dict
 import pandas as pd
 from .base_filter import DataFilter
-
+from .filter_constants import FILTER_COUNT
 
 class CountFilter(DataFilter):
     """Filter the dataframe on a column, and select only whose count is above a given threshold.
@@ -27,13 +27,22 @@ class CountFilter(DataFilter):
         filter
     """
 
-    def filter(self, dataframe: pd.DataFrame, column_name='', threshold: int=1) -> pd.DataFrame:
+    def get_type(self) -> str:
+        """Get the type of the filter.
+
+        Returns:
+            The type name of the filter.
+        """
+        return FILTER_COUNT
+
+    def filter(self, dataframe: pd.DataFrame,
+               column_name: str='', threshold: int=1) -> pd.DataFrame:
         """Filter out the values in column_name which count is below threshold.
 
         Args:
             dataframe: Dataframe to be filtered.
-            column_name (str): Name of the column.
-            threshold (int):
+            column_name: Name of the column.
+            threshold:
                 Values above or equal to the threshold will be included in the resulting dataframe.
 
         Returns:
@@ -48,7 +57,8 @@ class CountFilter(DataFilter):
 
     def _filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Private filter used in run(). Requires configuration file."""
-        return self.filter(dataframe, self.params['column_name'], self.params['threshold'])
+        return self.filter(dataframe, self.get_name().removesuffix('_' + FILTER_COUNT),
+                           self.params['threshold'])
 
 
 def create_count_filter(name: str, params: Dict[str, Any], **kwargs) -> CountFilter:
