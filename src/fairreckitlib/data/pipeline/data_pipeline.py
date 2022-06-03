@@ -11,7 +11,7 @@ Utrecht University within the Software Project course.
 
 import os
 import time
-from typing import List, Any, Callable, Optional, Tuple
+from typing import Callable, List, Optional, Tuple
 
 import pandas as pd
 
@@ -213,7 +213,7 @@ class DataPipeline(CorePipeline):
 
     def filter_rows(self,
                     dataframe: pd.DataFrame,
-                    filter_config: List[Any]) -> pd.DataFrame:
+                    prefilters: List) -> pd.DataFrame:
         """Apply the specified filters to the dataframe.
 
         Args:
@@ -225,31 +225,21 @@ class DataPipeline(CorePipeline):
             the dataframe with the specified filters applied to it.
         """
         # early exit, because no filtering is needed
-        # if len(prefilters) == 0:
-        #     return dataframe
+        if len(prefilters) == 0:
+            return dataframe
 
         self.event_dispatcher.dispatch(FilterDataframeEventArgs(
             ON_BEGIN_FILTER_DATASET,
-            filter_config
+            prefilters
         ))
 
         start = time.time()
         # TODO aggregated the set using the given filters
-        # use parameters. also params
-
-        # filter_factory = self.data_factory.get_factory(KEY_DATA_FILTERS)
-
-        # for prefilter in filter_config.params.:
-        #     filterer = filter_factory.create(deduce_filter_type(filter_confi
-        # g.params), prefilter.value)
-        #     dataframe = filterer.run(dataframe)
-
-
         end = time.time()
 
         self.event_dispatcher.dispatch(FilterDataframeEventArgs(
             ON_END_FILTER_DATASET,
-            filter_config
+            prefilters
         ), elapsed_time=end - start)
 
         return dataframe

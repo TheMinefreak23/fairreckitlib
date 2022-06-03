@@ -6,7 +6,7 @@ Modules:
     evaluation_config_parsing: parse metric configuration(s).
     evaluation_event: event ids, event args and a print switch for the evaluation pipeline.
     evaluation_pipeline: the evaluation pipeline class.
-    evaluation_run: run (multiple) model pipelines.
+    evaluation_run: run (multiple) evaluation pipelines for each computed ratings set.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.

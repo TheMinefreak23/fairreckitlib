@@ -20,7 +20,7 @@ from ...core.parsing.parse_assert import assert_is_type, assert_is_container_not
 from ...core.parsing.parse_config_params import parse_config_parameters
 from ...core.parsing.parse_event import ON_PARSE, ParseEventArgs
 from ..evaluation_factory import KEY_EVALUATION
-from ..metrics.common import KEY_METRIC_PARAM_K
+from ..metrics.metric_constants import KEY_METRIC_PARAM_K
 from ..metrics.metric_factory import resolve_metric_factory
 from .evaluation_config import MetricConfig
 

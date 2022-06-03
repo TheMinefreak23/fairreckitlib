@@ -12,7 +12,7 @@ Utrecht University within the Software Project course.
 """
 
 from abc import ABCMeta, abstractmethod
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from ..core_constants import KEY_NAME, KEY_PARAMS
 from .config_parameters import ConfigParameters, create_empty_parameters
@@ -107,7 +107,7 @@ class Factory(BaseFactory):
     def add_obj(self,
                 obj_name: str,
                 func_create_obj: Callable[[str, Dict[str, Any]], Any],
-                func_create_obj_params: Callable[[], ConfigParameters]=None
+                func_create_obj_params: Optional[Callable[[], ConfigParameters]]=None
                 ) -> None:
         """Add object with associated parameter creation to the factory.
 
@@ -118,7 +118,8 @@ class Factory(BaseFactory):
             obj_name: the name of the object
             func_create_obj: the function that creates and returns a new object.
             func_create_obj_params: the function that creates and returns the parameters
-                that are associated with a newly created object.
+                that are associated with a newly created object or None when the object
+                has no parameters.
         """
         if obj_name in self.factory:
             raise KeyError('Factory ' + self.factory_name,
@@ -317,7 +318,7 @@ def create_factory_from_list(
         obj_tuple_list: List[Tuple[
             str,
             Callable[[str, Dict[str, Any]], Any],
-            Callable[[], ConfigParameters]
+            Optional[Callable[[], ConfigParameters]]
         ]]) -> Factory:
     """Create and return the factory with the specified tuple entries.
 

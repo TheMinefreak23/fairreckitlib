@@ -15,6 +15,36 @@ class Filter(enum.Enum):
     CLAMP = 'clamp' # Select rows with values between a min and max
 
 
+def filter_pass(set_paths, profile, filter_passes):
+    """Make temporary filtered data
+
+    Args:
+        set_paths: paths to the train and test set and model result
+        profile: additional dataset information for filtering
+        filter_passes: list of filter passes to perform
+
+    Returns:
+        the paths of the filtered data.
+    """
+    filtered_paths = []
+    for path in set_paths:
+        raw_df = pd.read_csv(
+            path,
+            header=None,
+            sep='\t',
+            names=['user', 'item', 'rating']
+        )
+        merged = raw_df.merge(raw_df, profile, on=['user'])
+        print(merged.head())
+        filtered_df = filter_data(merged, filter_passes)['user', 'item', 'rating']
+        print(filtered_df.head())
+        filtered_path = path + FILTER_SUFFIX
+        filtered_paths.append(filtered_path)
+        pd.write_csv(filtered_df, filtered_path, header=None, sep='\t')
+
+    return filtered_paths
+
+
 def filter_data(dataframe, filters):
     """
     Filter a dataset using the specified list of filter passes
