@@ -130,8 +130,7 @@ class ExperimentPipeline:
                         experiment_config.evaluation
                     ),
                     self.event_dispatcher,
-                    is_running,
-                    **kwargs
+                    is_running
                 )
 
             # add overview of the data transition on the computed models/metrics

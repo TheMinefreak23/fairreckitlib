@@ -9,7 +9,14 @@ evaluation:
 - name: NDCG@K
 - name: P@K
 - name: R@K
+- name: HR@K
+- name: MAE
+- name: MAPE
 - name: MRR
+- name: MSE
+- name: RMSE
+- name: Item Coverage
+- name: User Coverage
 models:
   Implicit:
   - name: AlternatingLeastSquares

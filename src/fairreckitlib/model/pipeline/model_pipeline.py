@@ -92,7 +92,7 @@ class ModelPipeline(CorePipeline, metaclass=ABCMeta):
         Args:
             output_dir: the path of the directory to store the output.
             data_transition: data input.
-            models_config: list of ModelConfig objects.
+            models_config: list of ModelConfig objects to compute.
             is_running: function that returns whether the pipeline
                 is still running. Stops early when False is returned.
 
