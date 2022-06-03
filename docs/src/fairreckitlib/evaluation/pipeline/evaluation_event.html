@@ -76,13 +76,13 @@ src<wbr>.<a href="./../../../fairreckitlib.html">fairreckitlib</a><wbr>.<a href=
 
 <pre><code>ON_BEGIN_EVAL_PIPELINE: id of the event that is used when the evaluation pipeline starts.
 ON_BEGIN_FILTER_RECS: id of the event that is used when recs filtering starts.
-ON_BEGIN_LOAD_RECS_SET: id of the event that is used when a recs set is being loaded.
+ON_BEGIN_LOAD_RATING_SET: id of the event that is used when a rating set is being loaded.
 ON_BEGIN_LOAD_TEST_SET: id of the event that is used when a test set is being loaded.
 ON_BEGIN_LOAD_TRAIN_SET: id of the event that is used when a train set is being loaded.
 ON_BEGIN_METRIC: id of the event that is used when a metric computation started.
 ON_END_EVAL_PIPELINE: id of the event that is used when the evaluation pipeline ends.
 ON_END_FILTER_RECS: id of the event that is used when recs filtering finishes.
-ON_END_LOAD_RECS_SET: id of the event that is used when a recs set has been loaded.
+ON_END_LOAD_RATING_SET: id of the event that is used when a rating set has been loaded.
 ON_END_LOAD_TEST_SET: id of the event that is used when a test set has been loaded.
 ON_END_LOAD_TRAIN_SET: id of the event that is used when a train set has been loaded.
 ON_END_METRIC: id of the event that is used when a metric computation finishes.
@@ -115,13 +115,13 @@ Utrecht University within the Software Project course.
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a>
 </span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="sd">    ON_BEGIN_EVAL_PIPELINE: id of the event that is used when the evaluation pipeline starts.</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="sd">    ON_BEGIN_FILTER_RECS: id of the event that is used when recs filtering starts.</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="sd">    ON_BEGIN_LOAD_RECS_SET: id of the event that is used when a recs set is being loaded.</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="sd">    ON_BEGIN_LOAD_RATING_SET: id of the event that is used when a rating set is being loaded.</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="sd">    ON_BEGIN_LOAD_TEST_SET: id of the event that is used when a test set is being loaded.</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="sd">    ON_BEGIN_LOAD_TRAIN_SET: id of the event that is used when a train set is being loaded.</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="sd">    ON_BEGIN_METRIC: id of the event that is used when a metric computation started.</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="sd">    ON_END_EVAL_PIPELINE: id of the event that is used when the evaluation pipeline ends.</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="sd">    ON_END_FILTER_RECS: id of the event that is used when recs filtering finishes.</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="sd">    ON_END_LOAD_RECS_SET: id of the event that is used when a recs set has been loaded.</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="sd">    ON_END_LOAD_RATING_SET: id of the event that is used when a rating set has been loaded.</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="sd">    ON_END_LOAD_TEST_SET: id of the event that is used when a test set has been loaded.</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="sd">    ON_END_LOAD_TRAIN_SET: id of the event that is used when a train set has been loaded.</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="sd">    ON_END_METRIC: id of the event that is used when a metric computation finishes.</span>
@@ -153,94 +153,104 @@ Utrecht University within the Software Project course.
 </span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="n">ON_END_LOAD_TEST_SET</span> <span class="o">=</span> <span class="s1">&#39;EvaluationPipeline.on_end_load_test_set&#39;</span>
 </span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="n">ON_BEGIN_LOAD_TRAIN_SET</span> <span class="o">=</span> <span class="s1">&#39;EvaluationPipeline.on_begin_load_train_set&#39;</span>
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="n">ON_END_LOAD_TRAIN_SET</span> <span class="o">=</span> <span class="s1">&#39;EvaluationPipeline.on_end_load_train_set&#39;</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="n">ON_BEGIN_LOAD_RECS_SET</span> <span class="o">=</span> <span class="s1">&#39;EvaluationPipeline.on_begin_load_recs_set&#39;</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="n">ON_END_LOAD_RECS_SET</span> <span class="o">=</span> <span class="s1">&#39;EvaluationPipeline.on_end_load_recs_set&#39;</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="n">ON_BEGIN_LOAD_RATING_SET</span> <span class="o">=</span> <span class="s1">&#39;EvaluationPipeline.on_begin_load_rating_set&#39;</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="n">ON_END_LOAD_RATING_SET</span> <span class="o">=</span> <span class="s1">&#39;EvaluationPipeline.on_end_load_rating_set&#39;</span>
 </span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="n">ON_BEGIN_EVAL_PIPELINE</span> <span class="o">=</span> <span class="s1">&#39;EvaluationPipeline.on_begin_eval_pipeline&#39;</span>
 </span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="n">ON_END_EVAL_PIPELINE</span> <span class="o">=</span> <span class="s1">&#39;EvaluationPipeline.on_end_eval_pipeline&#39;</span>
 </span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="n">ON_BEGIN_METRIC</span> <span class="o">=</span> <span class="s1">&#39;EvaluationPipeline.on_begin_metric&#39;</span>
 </span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="n">ON_END_METRIC</span> <span class="o">=</span> <span class="s1">&#39;EvaluationPipeline.on_end_metric&#39;</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="n">ON_BEGIN_FILTER_RECS</span> <span class="o">=</span> <span class="s1">&#39;EvaluationPipeline.on_begin_filter_recs&#39;</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="n">ON_END_FILTER_RECS</span> <span class="o">=</span> <span class="s1">&#39;EvaluationPipeline.on_end_filter_recs&#39;</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="nd">@dataclass</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="k">class</span> <span class="nc">EvaluationPipelineEventArgs</span><span class="p">(</span><span class="n">EventArgs</span><span class="p">):</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="sd">&quot;&quot;&quot;Evaluation Pipeline Event Arguments.</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">    event_id: the unique ID that classifies the evaluation pipeline event.</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">    metrics_config: list of metric configurations that is used in the evaluation pipeline.</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="n">metrics_config</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MetricConfig</span><span class="p">]</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="n">ON_BEGIN_EVAL_METRIC</span> <span class="o">=</span> <span class="s1">&#39;EvaluationPipeline.on_begin_eval_metric&#39;</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="n">ON_END_EVAL_METRIC</span> <span class="o">=</span> <span class="s1">&#39;EvaluationPipeline.on_end_eval_metric&#39;</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="n">ON_BEGIN_FILTER_RECS</span> <span class="o">=</span> <span class="s1">&#39;EvaluationPipeline.on_begin_filter_recs&#39;</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="n">ON_END_FILTER_RECS</span> <span class="o">=</span> <span class="s1">&#39;EvaluationPipeline.on_end_filter_recs&#39;</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="nd">@dataclass</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="k">class</span> <span class="nc">EvaluationPipelineEventArgs</span><span class="p">(</span><span class="n">EventArgs</span><span class="p">):</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>    <span class="sd">&quot;&quot;&quot;Evaluation Pipeline Event Arguments.</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">    event_id: the unique ID that classifies the evaluation pipeline event.</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="sd">    metrics_config: list of metric configurations that is used in the evaluation pipeline.</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="nd">@dataclass</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="k">class</span> <span class="nc">MetricEventArgs</span><span class="p">(</span><span class="n">EventArgs</span><span class="p">):</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>    <span class="sd">&quot;&quot;&quot;Evaluation Pipeline Event Arguments.</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">    event_id: the unique ID that classifies the metric event.</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">    metric_config: the metric configuration that is used.</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>    <span class="n">metric_config</span><span class="p">:</span> <span class="n">MetricConfig</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="n">metrics_config</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MetricConfig</span><span class="p">]</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="nd">@dataclass</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="k">class</span> <span class="nc">MetricEventArgs</span><span class="p">(</span><span class="n">EventArgs</span><span class="p">):</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>    <span class="sd">&quot;&quot;&quot;Evaluation Pipeline Event Arguments.</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">    event_id: the unique ID that classifies the metric event.</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">    metric_config: the metric configuration that is used.</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="k">def</span> <span class="nf">get_eval_events</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>    <span class="sd">&quot;&quot;&quot;Get a list of evaluation pipeline event IDs.</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">    Returns:</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">        a list of unique evaluation pipeline event IDs.</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="k">return</span> <span class="p">[</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>        <span class="c1"># DataframeEventArgs</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>        <span class="n">ON_BEGIN_LOAD_TEST_SET</span><span class="p">,</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>        <span class="n">ON_END_LOAD_TEST_SET</span><span class="p">,</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>        <span class="c1"># DataframeEventArgs</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>        <span class="n">ON_BEGIN_LOAD_TRAIN_SET</span><span class="p">,</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>        <span class="n">ON_END_LOAD_TRAIN_SET</span><span class="p">,</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>        <span class="c1"># DataframeEventArgs</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="n">ON_BEGIN_LOAD_RECS_SET</span><span class="p">,</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>        <span class="n">ON_END_LOAD_RECS_SET</span><span class="p">,</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>        <span class="c1"># EvaluationPipelineEventArgs</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="n">ON_BEGIN_EVAL_PIPELINE</span><span class="p">,</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>        <span class="n">ON_END_EVAL_PIPELINE</span><span class="p">,</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>        <span class="c1"># MetricEventArgs</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="n">ON_BEGIN_METRIC</span><span class="p">,</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>        <span class="n">ON_END_METRIC</span><span class="p">,</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>        <span class="c1"># FilterDataframeEventArgs</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="n">ON_BEGIN_FILTER_RECS</span><span class="p">,</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>        <span class="n">ON_END_FILTER_RECS</span><span class="p">,</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>    <span class="p">]</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="k">def</span> <span class="nf">get_eval_event_print_switch</span><span class="p">(</span><span class="n">elapsed_time</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">EventArgs</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]:</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>    <span class="sd">&quot;&quot;&quot;Get a switch that prints evaluation pipeline event IDs.</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">    Returns:</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">        the print evaluation pipeline event switch.</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="k">return</span> <span class="p">{</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>        <span class="n">ON_BEGIN_EVAL_PIPELINE</span><span class="p">:</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Starting Evaluation Pipeline to process&#39;</span><span class="p">,</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>                               <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">metrics_config</span><span class="p">),</span> <span class="s1">&#39;metric(s)&#39;</span><span class="p">),</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>        <span class="n">ON_BEGIN_FILTER_RECS</span><span class="p">:</span> <span class="n">print_filter_event_args</span><span class="p">,</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>        <span class="n">ON_BEGIN_LOAD_RECS_SET</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">,</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>        <span class="n">ON_BEGIN_LOAD_TEST_SET</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">,</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>        <span class="n">ON_BEGIN_LOAD_TRAIN_SET</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">,</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>        <span class="n">ON_BEGIN_METRIC</span><span class="p">:</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Starting evaluation with metric&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">metric_config</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>        <span class="n">ON_END_EVAL_PIPELINE</span><span class="p">:</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Finished Evaluation Pipeline on&#39;</span><span class="p">,</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>                               <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">metrics_config</span><span class="p">),</span> <span class="s1">&#39;metrics&#39;</span><span class="p">,</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>                               <span class="sa">f</span><span class="s1">&#39;in </span><span class="si">{</span><span class="n">elapsed_time</span><span class="si">:</span><span class="s1">1.4f</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">),</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>        <span class="n">ON_END_FILTER_RECS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">print_filter_event_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">),</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>        <span class="n">ON_END_LOAD_RECS_SET</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">),</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>        <span class="n">ON_END_LOAD_TEST_SET</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">),</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>        <span class="n">ON_END_LOAD_TRAIN_SET</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">),</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>        <span class="n">ON_END_METRIC</span><span class="p">:</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Finished metric&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">metric_config</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>    <span class="n">metric_config</span><span class="p">:</span> <span class="n">MetricConfig</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="k">def</span> <span class="nf">get_eval_events</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>    <span class="sd">&quot;&quot;&quot;Get a list of evaluation pipeline event IDs.</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">    Returns:</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">        a list of unique evaluation pipeline event IDs.</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="k">return</span> <span class="p">[</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>        <span class="c1"># DataframeEventArgs</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>        <span class="n">ON_BEGIN_LOAD_TEST_SET</span><span class="p">,</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>        <span class="n">ON_END_LOAD_TEST_SET</span><span class="p">,</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>        <span class="c1"># DataframeEventArgs</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>        <span class="n">ON_BEGIN_LOAD_TRAIN_SET</span><span class="p">,</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="n">ON_END_LOAD_TRAIN_SET</span><span class="p">,</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>        <span class="c1"># DataframeEventArgs</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>        <span class="n">ON_BEGIN_LOAD_RATING_SET</span><span class="p">,</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="n">ON_END_LOAD_RATING_SET</span><span class="p">,</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>        <span class="c1"># EvaluationPipelineEventArgs</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>        <span class="n">ON_BEGIN_EVAL_PIPELINE</span><span class="p">,</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="n">ON_END_EVAL_PIPELINE</span><span class="p">,</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>        <span class="c1"># MetricEventArgs</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>        <span class="n">ON_BEGIN_METRIC</span><span class="p">,</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="n">ON_END_METRIC</span><span class="p">,</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>        <span class="c1"># MetricEventArgs</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="n">ON_BEGIN_EVAL_METRIC</span><span class="p">,</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>        <span class="n">ON_END_EVAL_METRIC</span><span class="p">,</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>        <span class="c1"># FilterDataframeEventArgs</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>        <span class="n">ON_BEGIN_FILTER_RECS</span><span class="p">,</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>        <span class="n">ON_END_FILTER_RECS</span><span class="p">,</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>    <span class="p">]</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="k">def</span> <span class="nf">get_eval_event_print_switch</span><span class="p">(</span><span class="n">elapsed_time</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">EventArgs</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]:</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="sd">&quot;&quot;&quot;Get a switch that prints evaluation pipeline event IDs.</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">    Returns:</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">        the print evaluation pipeline event switch.</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>    <span class="k">return</span> <span class="p">{</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>        <span class="n">ON_BEGIN_EVAL_PIPELINE</span><span class="p">:</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Starting Evaluation Pipeline to process&#39;</span><span class="p">,</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>                               <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">metrics_config</span><span class="p">),</span> <span class="s1">&#39;metric(s)&#39;</span><span class="p">),</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>        <span class="n">ON_BEGIN_EVAL_METRIC</span><span class="p">:</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Starting evaluation with metric&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">metric_config</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>        <span class="n">ON_BEGIN_FILTER_RECS</span><span class="p">:</span> <span class="n">print_filter_event_args</span><span class="p">,</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>        <span class="n">ON_BEGIN_LOAD_RATING_SET</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">,</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>        <span class="n">ON_BEGIN_LOAD_TEST_SET</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">,</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>        <span class="n">ON_BEGIN_LOAD_TRAIN_SET</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">,</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>        <span class="n">ON_BEGIN_METRIC</span><span class="p">:</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Starting metric&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">metric_config</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>        <span class="n">ON_END_EVAL_PIPELINE</span><span class="p">:</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Finished Evaluation Pipeline on&#39;</span><span class="p">,</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>                               <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">metrics_config</span><span class="p">),</span> <span class="s1">&#39;metrics&#39;</span><span class="p">,</span>
 </span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>                               <span class="sa">f</span><span class="s1">&#39;in </span><span class="si">{</span><span class="n">elapsed_time</span><span class="si">:</span><span class="s1">1.4f</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">),</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>    <span class="p">}</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>        <span class="n">ON_END_EVAL_METRIC</span><span class="p">:</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Finished evaluating metric&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">metric_config</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>                               <span class="sa">f</span><span class="s1">&#39;in </span><span class="si">{</span><span class="n">elapsed_time</span><span class="si">:</span><span class="s1">1.4f</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">),</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>        <span class="n">ON_END_FILTER_RECS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">print_filter_event_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">),</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>        <span class="n">ON_END_LOAD_RATING_SET</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">),</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>        <span class="n">ON_END_LOAD_TEST_SET</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">),</span>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>        <span class="n">ON_END_LOAD_TRAIN_SET</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">),</span>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>        <span class="n">ON_END_METRIC</span><span class="p">:</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Finished metric&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">metric_config</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>                               <span class="sa">f</span><span class="s1">&#39;in </span><span class="si">{</span><span class="n">elapsed_time</span><span class="si">:</span><span class="s1">1.4f</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">),</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>    <span class="p">}</span>
 </span></pre></div>
 
 
@@ -257,15 +267,15 @@ Utrecht University within the Software Project course.
 
     </div>
     <a class="headerlink" href="#EvaluationPipelineEventArgs"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="EvaluationPipelineEventArgs-56"><a href="#EvaluationPipelineEventArgs-56"><span class="linenos">56</span></a><span class="nd">@dataclass</span>
-</span><span id="EvaluationPipelineEventArgs-57"><a href="#EvaluationPipelineEventArgs-57"><span class="linenos">57</span></a><span class="k">class</span> <span class="nc">EvaluationPipelineEventArgs</span><span class="p">(</span><span class="n">EventArgs</span><span class="p">):</span>
-</span><span id="EvaluationPipelineEventArgs-58"><a href="#EvaluationPipelineEventArgs-58"><span class="linenos">58</span></a>    <span class="sd">&quot;&quot;&quot;Evaluation Pipeline Event Arguments.</span>
-</span><span id="EvaluationPipelineEventArgs-59"><a href="#EvaluationPipelineEventArgs-59"><span class="linenos">59</span></a>
-</span><span id="EvaluationPipelineEventArgs-60"><a href="#EvaluationPipelineEventArgs-60"><span class="linenos">60</span></a><span class="sd">    event_id: the unique ID that classifies the evaluation pipeline event.</span>
-</span><span id="EvaluationPipelineEventArgs-61"><a href="#EvaluationPipelineEventArgs-61"><span class="linenos">61</span></a><span class="sd">    metrics_config: list of metric configurations that is used in the evaluation pipeline.</span>
-</span><span id="EvaluationPipelineEventArgs-62"><a href="#EvaluationPipelineEventArgs-62"><span class="linenos">62</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="EvaluationPipelineEventArgs-63"><a href="#EvaluationPipelineEventArgs-63"><span class="linenos">63</span></a>
-</span><span id="EvaluationPipelineEventArgs-64"><a href="#EvaluationPipelineEventArgs-64"><span class="linenos">64</span></a>    <span class="n">metrics_config</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MetricConfig</span><span class="p">]</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="EvaluationPipelineEventArgs-58"><a href="#EvaluationPipelineEventArgs-58"><span class="linenos">58</span></a><span class="nd">@dataclass</span>
+</span><span id="EvaluationPipelineEventArgs-59"><a href="#EvaluationPipelineEventArgs-59"><span class="linenos">59</span></a><span class="k">class</span> <span class="nc">EvaluationPipelineEventArgs</span><span class="p">(</span><span class="n">EventArgs</span><span class="p">):</span>
+</span><span id="EvaluationPipelineEventArgs-60"><a href="#EvaluationPipelineEventArgs-60"><span class="linenos">60</span></a>    <span class="sd">&quot;&quot;&quot;Evaluation Pipeline Event Arguments.</span>
+</span><span id="EvaluationPipelineEventArgs-61"><a href="#EvaluationPipelineEventArgs-61"><span class="linenos">61</span></a>
+</span><span id="EvaluationPipelineEventArgs-62"><a href="#EvaluationPipelineEventArgs-62"><span class="linenos">62</span></a><span class="sd">    event_id: the unique ID that classifies the evaluation pipeline event.</span>
+</span><span id="EvaluationPipelineEventArgs-63"><a href="#EvaluationPipelineEventArgs-63"><span class="linenos">63</span></a><span class="sd">    metrics_config: list of metric configurations that is used in the evaluation pipeline.</span>
+</span><span id="EvaluationPipelineEventArgs-64"><a href="#EvaluationPipelineEventArgs-64"><span class="linenos">64</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="EvaluationPipelineEventArgs-65"><a href="#EvaluationPipelineEventArgs-65"><span class="linenos">65</span></a>
+</span><span id="EvaluationPipelineEventArgs-66"><a href="#EvaluationPipelineEventArgs-66"><span class="linenos">66</span></a>    <span class="n">metrics_config</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MetricConfig</span><span class="p">]</span>
 </span></pre></div>
 
 
@@ -301,15 +311,15 @@ metrics_config: list of metric configurations that is used in the evaluation pip
 
     </div>
     <a class="headerlink" href="#MetricEventArgs"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="MetricEventArgs-67"><a href="#MetricEventArgs-67"><span class="linenos">67</span></a><span class="nd">@dataclass</span>
-</span><span id="MetricEventArgs-68"><a href="#MetricEventArgs-68"><span class="linenos">68</span></a><span class="k">class</span> <span class="nc">MetricEventArgs</span><span class="p">(</span><span class="n">EventArgs</span><span class="p">):</span>
-</span><span id="MetricEventArgs-69"><a href="#MetricEventArgs-69"><span class="linenos">69</span></a>    <span class="sd">&quot;&quot;&quot;Evaluation Pipeline Event Arguments.</span>
-</span><span id="MetricEventArgs-70"><a href="#MetricEventArgs-70"><span class="linenos">70</span></a>
-</span><span id="MetricEventArgs-71"><a href="#MetricEventArgs-71"><span class="linenos">71</span></a><span class="sd">    event_id: the unique ID that classifies the metric event.</span>
-</span><span id="MetricEventArgs-72"><a href="#MetricEventArgs-72"><span class="linenos">72</span></a><span class="sd">    metric_config: the metric configuration that is used.</span>
-</span><span id="MetricEventArgs-73"><a href="#MetricEventArgs-73"><span class="linenos">73</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="MetricEventArgs-74"><a href="#MetricEventArgs-74"><span class="linenos">74</span></a>
-</span><span id="MetricEventArgs-75"><a href="#MetricEventArgs-75"><span class="linenos">75</span></a>    <span class="n">metric_config</span><span class="p">:</span> <span class="n">MetricConfig</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="MetricEventArgs-69"><a href="#MetricEventArgs-69"><span class="linenos">69</span></a><span class="nd">@dataclass</span>
+</span><span id="MetricEventArgs-70"><a href="#MetricEventArgs-70"><span class="linenos">70</span></a><span class="k">class</span> <span class="nc">MetricEventArgs</span><span class="p">(</span><span class="n">EventArgs</span><span class="p">):</span>
+</span><span id="MetricEventArgs-71"><a href="#MetricEventArgs-71"><span class="linenos">71</span></a>    <span class="sd">&quot;&quot;&quot;Evaluation Pipeline Event Arguments.</span>
+</span><span id="MetricEventArgs-72"><a href="#MetricEventArgs-72"><span class="linenos">72</span></a>
+</span><span id="MetricEventArgs-73"><a href="#MetricEventArgs-73"><span class="linenos">73</span></a><span class="sd">    event_id: the unique ID that classifies the metric event.</span>
+</span><span id="MetricEventArgs-74"><a href="#MetricEventArgs-74"><span class="linenos">74</span></a><span class="sd">    metric_config: the metric configuration that is used.</span>
+</span><span id="MetricEventArgs-75"><a href="#MetricEventArgs-75"><span class="linenos">75</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="MetricEventArgs-76"><a href="#MetricEventArgs-76"><span class="linenos">76</span></a>
+</span><span id="MetricEventArgs-77"><a href="#MetricEventArgs-77"><span class="linenos">77</span></a>    <span class="n">metric_config</span><span class="p">:</span> <span class="n">MetricConfig</span>
 </span></pre></div>
 
 
@@ -344,32 +354,35 @@ metric_config: the metric configuration that is used.</p>
 
     </div>
     <a class="headerlink" href="#get_eval_events"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_eval_events-78"><a href="#get_eval_events-78"><span class="linenos"> 78</span></a><span class="k">def</span> <span class="nf">get_eval_events</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-</span><span id="get_eval_events-79"><a href="#get_eval_events-79"><span class="linenos"> 79</span></a>    <span class="sd">&quot;&quot;&quot;Get a list of evaluation pipeline event IDs.</span>
-</span><span id="get_eval_events-80"><a href="#get_eval_events-80"><span class="linenos"> 80</span></a>
-</span><span id="get_eval_events-81"><a href="#get_eval_events-81"><span class="linenos"> 81</span></a><span class="sd">    Returns:</span>
-</span><span id="get_eval_events-82"><a href="#get_eval_events-82"><span class="linenos"> 82</span></a><span class="sd">        a list of unique evaluation pipeline event IDs.</span>
-</span><span id="get_eval_events-83"><a href="#get_eval_events-83"><span class="linenos"> 83</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="get_eval_events-84"><a href="#get_eval_events-84"><span class="linenos"> 84</span></a>    <span class="k">return</span> <span class="p">[</span>
-</span><span id="get_eval_events-85"><a href="#get_eval_events-85"><span class="linenos"> 85</span></a>        <span class="c1"># DataframeEventArgs</span>
-</span><span id="get_eval_events-86"><a href="#get_eval_events-86"><span class="linenos"> 86</span></a>        <span class="n">ON_BEGIN_LOAD_TEST_SET</span><span class="p">,</span>
-</span><span id="get_eval_events-87"><a href="#get_eval_events-87"><span class="linenos"> 87</span></a>        <span class="n">ON_END_LOAD_TEST_SET</span><span class="p">,</span>
-</span><span id="get_eval_events-88"><a href="#get_eval_events-88"><span class="linenos"> 88</span></a>        <span class="c1"># DataframeEventArgs</span>
-</span><span id="get_eval_events-89"><a href="#get_eval_events-89"><span class="linenos"> 89</span></a>        <span class="n">ON_BEGIN_LOAD_TRAIN_SET</span><span class="p">,</span>
-</span><span id="get_eval_events-90"><a href="#get_eval_events-90"><span class="linenos"> 90</span></a>        <span class="n">ON_END_LOAD_TRAIN_SET</span><span class="p">,</span>
-</span><span id="get_eval_events-91"><a href="#get_eval_events-91"><span class="linenos"> 91</span></a>        <span class="c1"># DataframeEventArgs</span>
-</span><span id="get_eval_events-92"><a href="#get_eval_events-92"><span class="linenos"> 92</span></a>        <span class="n">ON_BEGIN_LOAD_RECS_SET</span><span class="p">,</span>
-</span><span id="get_eval_events-93"><a href="#get_eval_events-93"><span class="linenos"> 93</span></a>        <span class="n">ON_END_LOAD_RECS_SET</span><span class="p">,</span>
-</span><span id="get_eval_events-94"><a href="#get_eval_events-94"><span class="linenos"> 94</span></a>        <span class="c1"># EvaluationPipelineEventArgs</span>
-</span><span id="get_eval_events-95"><a href="#get_eval_events-95"><span class="linenos"> 95</span></a>        <span class="n">ON_BEGIN_EVAL_PIPELINE</span><span class="p">,</span>
-</span><span id="get_eval_events-96"><a href="#get_eval_events-96"><span class="linenos"> 96</span></a>        <span class="n">ON_END_EVAL_PIPELINE</span><span class="p">,</span>
-</span><span id="get_eval_events-97"><a href="#get_eval_events-97"><span class="linenos"> 97</span></a>        <span class="c1"># MetricEventArgs</span>
-</span><span id="get_eval_events-98"><a href="#get_eval_events-98"><span class="linenos"> 98</span></a>        <span class="n">ON_BEGIN_METRIC</span><span class="p">,</span>
-</span><span id="get_eval_events-99"><a href="#get_eval_events-99"><span class="linenos"> 99</span></a>        <span class="n">ON_END_METRIC</span><span class="p">,</span>
-</span><span id="get_eval_events-100"><a href="#get_eval_events-100"><span class="linenos">100</span></a>        <span class="c1"># FilterDataframeEventArgs</span>
-</span><span id="get_eval_events-101"><a href="#get_eval_events-101"><span class="linenos">101</span></a>        <span class="n">ON_BEGIN_FILTER_RECS</span><span class="p">,</span>
-</span><span id="get_eval_events-102"><a href="#get_eval_events-102"><span class="linenos">102</span></a>        <span class="n">ON_END_FILTER_RECS</span><span class="p">,</span>
-</span><span id="get_eval_events-103"><a href="#get_eval_events-103"><span class="linenos">103</span></a>    <span class="p">]</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_eval_events-80"><a href="#get_eval_events-80"><span class="linenos"> 80</span></a><span class="k">def</span> <span class="nf">get_eval_events</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+</span><span id="get_eval_events-81"><a href="#get_eval_events-81"><span class="linenos"> 81</span></a>    <span class="sd">&quot;&quot;&quot;Get a list of evaluation pipeline event IDs.</span>
+</span><span id="get_eval_events-82"><a href="#get_eval_events-82"><span class="linenos"> 82</span></a>
+</span><span id="get_eval_events-83"><a href="#get_eval_events-83"><span class="linenos"> 83</span></a><span class="sd">    Returns:</span>
+</span><span id="get_eval_events-84"><a href="#get_eval_events-84"><span class="linenos"> 84</span></a><span class="sd">        a list of unique evaluation pipeline event IDs.</span>
+</span><span id="get_eval_events-85"><a href="#get_eval_events-85"><span class="linenos"> 85</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="get_eval_events-86"><a href="#get_eval_events-86"><span class="linenos"> 86</span></a>    <span class="k">return</span> <span class="p">[</span>
+</span><span id="get_eval_events-87"><a href="#get_eval_events-87"><span class="linenos"> 87</span></a>        <span class="c1"># DataframeEventArgs</span>
+</span><span id="get_eval_events-88"><a href="#get_eval_events-88"><span class="linenos"> 88</span></a>        <span class="n">ON_BEGIN_LOAD_TEST_SET</span><span class="p">,</span>
+</span><span id="get_eval_events-89"><a href="#get_eval_events-89"><span class="linenos"> 89</span></a>        <span class="n">ON_END_LOAD_TEST_SET</span><span class="p">,</span>
+</span><span id="get_eval_events-90"><a href="#get_eval_events-90"><span class="linenos"> 90</span></a>        <span class="c1"># DataframeEventArgs</span>
+</span><span id="get_eval_events-91"><a href="#get_eval_events-91"><span class="linenos"> 91</span></a>        <span class="n">ON_BEGIN_LOAD_TRAIN_SET</span><span class="p">,</span>
+</span><span id="get_eval_events-92"><a href="#get_eval_events-92"><span class="linenos"> 92</span></a>        <span class="n">ON_END_LOAD_TRAIN_SET</span><span class="p">,</span>
+</span><span id="get_eval_events-93"><a href="#get_eval_events-93"><span class="linenos"> 93</span></a>        <span class="c1"># DataframeEventArgs</span>
+</span><span id="get_eval_events-94"><a href="#get_eval_events-94"><span class="linenos"> 94</span></a>        <span class="n">ON_BEGIN_LOAD_RATING_SET</span><span class="p">,</span>
+</span><span id="get_eval_events-95"><a href="#get_eval_events-95"><span class="linenos"> 95</span></a>        <span class="n">ON_END_LOAD_RATING_SET</span><span class="p">,</span>
+</span><span id="get_eval_events-96"><a href="#get_eval_events-96"><span class="linenos"> 96</span></a>        <span class="c1"># EvaluationPipelineEventArgs</span>
+</span><span id="get_eval_events-97"><a href="#get_eval_events-97"><span class="linenos"> 97</span></a>        <span class="n">ON_BEGIN_EVAL_PIPELINE</span><span class="p">,</span>
+</span><span id="get_eval_events-98"><a href="#get_eval_events-98"><span class="linenos"> 98</span></a>        <span class="n">ON_END_EVAL_PIPELINE</span><span class="p">,</span>
+</span><span id="get_eval_events-99"><a href="#get_eval_events-99"><span class="linenos"> 99</span></a>        <span class="c1"># MetricEventArgs</span>
+</span><span id="get_eval_events-100"><a href="#get_eval_events-100"><span class="linenos">100</span></a>        <span class="n">ON_BEGIN_METRIC</span><span class="p">,</span>
+</span><span id="get_eval_events-101"><a href="#get_eval_events-101"><span class="linenos">101</span></a>        <span class="n">ON_END_METRIC</span><span class="p">,</span>
+</span><span id="get_eval_events-102"><a href="#get_eval_events-102"><span class="linenos">102</span></a>        <span class="c1"># MetricEventArgs</span>
+</span><span id="get_eval_events-103"><a href="#get_eval_events-103"><span class="linenos">103</span></a>        <span class="n">ON_BEGIN_EVAL_METRIC</span><span class="p">,</span>
+</span><span id="get_eval_events-104"><a href="#get_eval_events-104"><span class="linenos">104</span></a>        <span class="n">ON_END_EVAL_METRIC</span><span class="p">,</span>
+</span><span id="get_eval_events-105"><a href="#get_eval_events-105"><span class="linenos">105</span></a>        <span class="c1"># FilterDataframeEventArgs</span>
+</span><span id="get_eval_events-106"><a href="#get_eval_events-106"><span class="linenos">106</span></a>        <span class="n">ON_BEGIN_FILTER_RECS</span><span class="p">,</span>
+</span><span id="get_eval_events-107"><a href="#get_eval_events-107"><span class="linenos">107</span></a>        <span class="n">ON_END_FILTER_RECS</span><span class="p">,</span>
+</span><span id="get_eval_events-108"><a href="#get_eval_events-108"><span class="linenos">108</span></a>    <span class="p">]</span>
 </span></pre></div>
 
 
@@ -392,34 +405,39 @@ metric_config: the metric configuration that is used.</p>
 
     </div>
     <a class="headerlink" href="#get_eval_event_print_switch"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_eval_event_print_switch-106"><a href="#get_eval_event_print_switch-106"><span class="linenos">106</span></a><span class="k">def</span> <span class="nf">get_eval_event_print_switch</span><span class="p">(</span><span class="n">elapsed_time</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">EventArgs</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]:</span>
-</span><span id="get_eval_event_print_switch-107"><a href="#get_eval_event_print_switch-107"><span class="linenos">107</span></a>    <span class="sd">&quot;&quot;&quot;Get a switch that prints evaluation pipeline event IDs.</span>
-</span><span id="get_eval_event_print_switch-108"><a href="#get_eval_event_print_switch-108"><span class="linenos">108</span></a>
-</span><span id="get_eval_event_print_switch-109"><a href="#get_eval_event_print_switch-109"><span class="linenos">109</span></a><span class="sd">    Returns:</span>
-</span><span id="get_eval_event_print_switch-110"><a href="#get_eval_event_print_switch-110"><span class="linenos">110</span></a><span class="sd">        the print evaluation pipeline event switch.</span>
-</span><span id="get_eval_event_print_switch-111"><a href="#get_eval_event_print_switch-111"><span class="linenos">111</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="get_eval_event_print_switch-112"><a href="#get_eval_event_print_switch-112"><span class="linenos">112</span></a>    <span class="k">return</span> <span class="p">{</span>
-</span><span id="get_eval_event_print_switch-113"><a href="#get_eval_event_print_switch-113"><span class="linenos">113</span></a>        <span class="n">ON_BEGIN_EVAL_PIPELINE</span><span class="p">:</span>
-</span><span id="get_eval_event_print_switch-114"><a href="#get_eval_event_print_switch-114"><span class="linenos">114</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Starting Evaluation Pipeline to process&#39;</span><span class="p">,</span>
-</span><span id="get_eval_event_print_switch-115"><a href="#get_eval_event_print_switch-115"><span class="linenos">115</span></a>                               <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">metrics_config</span><span class="p">),</span> <span class="s1">&#39;metric(s)&#39;</span><span class="p">),</span>
-</span><span id="get_eval_event_print_switch-116"><a href="#get_eval_event_print_switch-116"><span class="linenos">116</span></a>        <span class="n">ON_BEGIN_FILTER_RECS</span><span class="p">:</span> <span class="n">print_filter_event_args</span><span class="p">,</span>
-</span><span id="get_eval_event_print_switch-117"><a href="#get_eval_event_print_switch-117"><span class="linenos">117</span></a>        <span class="n">ON_BEGIN_LOAD_RECS_SET</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">,</span>
-</span><span id="get_eval_event_print_switch-118"><a href="#get_eval_event_print_switch-118"><span class="linenos">118</span></a>        <span class="n">ON_BEGIN_LOAD_TEST_SET</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">,</span>
-</span><span id="get_eval_event_print_switch-119"><a href="#get_eval_event_print_switch-119"><span class="linenos">119</span></a>        <span class="n">ON_BEGIN_LOAD_TRAIN_SET</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">,</span>
-</span><span id="get_eval_event_print_switch-120"><a href="#get_eval_event_print_switch-120"><span class="linenos">120</span></a>        <span class="n">ON_BEGIN_METRIC</span><span class="p">:</span>
-</span><span id="get_eval_event_print_switch-121"><a href="#get_eval_event_print_switch-121"><span class="linenos">121</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Starting evaluation with metric&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">metric_config</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
-</span><span id="get_eval_event_print_switch-122"><a href="#get_eval_event_print_switch-122"><span class="linenos">122</span></a>        <span class="n">ON_END_EVAL_PIPELINE</span><span class="p">:</span>
-</span><span id="get_eval_event_print_switch-123"><a href="#get_eval_event_print_switch-123"><span class="linenos">123</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Finished Evaluation Pipeline on&#39;</span><span class="p">,</span>
-</span><span id="get_eval_event_print_switch-124"><a href="#get_eval_event_print_switch-124"><span class="linenos">124</span></a>                               <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">metrics_config</span><span class="p">),</span> <span class="s1">&#39;metrics&#39;</span><span class="p">,</span>
-</span><span id="get_eval_event_print_switch-125"><a href="#get_eval_event_print_switch-125"><span class="linenos">125</span></a>                               <span class="sa">f</span><span class="s1">&#39;in </span><span class="si">{</span><span class="n">elapsed_time</span><span class="si">:</span><span class="s1">1.4f</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">),</span>
-</span><span id="get_eval_event_print_switch-126"><a href="#get_eval_event_print_switch-126"><span class="linenos">126</span></a>        <span class="n">ON_END_FILTER_RECS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">print_filter_event_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">),</span>
-</span><span id="get_eval_event_print_switch-127"><a href="#get_eval_event_print_switch-127"><span class="linenos">127</span></a>        <span class="n">ON_END_LOAD_RECS_SET</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">),</span>
-</span><span id="get_eval_event_print_switch-128"><a href="#get_eval_event_print_switch-128"><span class="linenos">128</span></a>        <span class="n">ON_END_LOAD_TEST_SET</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">),</span>
-</span><span id="get_eval_event_print_switch-129"><a href="#get_eval_event_print_switch-129"><span class="linenos">129</span></a>        <span class="n">ON_END_LOAD_TRAIN_SET</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">),</span>
-</span><span id="get_eval_event_print_switch-130"><a href="#get_eval_event_print_switch-130"><span class="linenos">130</span></a>        <span class="n">ON_END_METRIC</span><span class="p">:</span>
-</span><span id="get_eval_event_print_switch-131"><a href="#get_eval_event_print_switch-131"><span class="linenos">131</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Finished metric&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">metric_config</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_eval_event_print_switch-111"><a href="#get_eval_event_print_switch-111"><span class="linenos">111</span></a><span class="k">def</span> <span class="nf">get_eval_event_print_switch</span><span class="p">(</span><span class="n">elapsed_time</span><span class="p">:</span> <span class="nb">float</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">EventArgs</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]:</span>
+</span><span id="get_eval_event_print_switch-112"><a href="#get_eval_event_print_switch-112"><span class="linenos">112</span></a>    <span class="sd">&quot;&quot;&quot;Get a switch that prints evaluation pipeline event IDs.</span>
+</span><span id="get_eval_event_print_switch-113"><a href="#get_eval_event_print_switch-113"><span class="linenos">113</span></a>
+</span><span id="get_eval_event_print_switch-114"><a href="#get_eval_event_print_switch-114"><span class="linenos">114</span></a><span class="sd">    Returns:</span>
+</span><span id="get_eval_event_print_switch-115"><a href="#get_eval_event_print_switch-115"><span class="linenos">115</span></a><span class="sd">        the print evaluation pipeline event switch.</span>
+</span><span id="get_eval_event_print_switch-116"><a href="#get_eval_event_print_switch-116"><span class="linenos">116</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="get_eval_event_print_switch-117"><a href="#get_eval_event_print_switch-117"><span class="linenos">117</span></a>    <span class="k">return</span> <span class="p">{</span>
+</span><span id="get_eval_event_print_switch-118"><a href="#get_eval_event_print_switch-118"><span class="linenos">118</span></a>        <span class="n">ON_BEGIN_EVAL_PIPELINE</span><span class="p">:</span>
+</span><span id="get_eval_event_print_switch-119"><a href="#get_eval_event_print_switch-119"><span class="linenos">119</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Starting Evaluation Pipeline to process&#39;</span><span class="p">,</span>
+</span><span id="get_eval_event_print_switch-120"><a href="#get_eval_event_print_switch-120"><span class="linenos">120</span></a>                               <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">metrics_config</span><span class="p">),</span> <span class="s1">&#39;metric(s)&#39;</span><span class="p">),</span>
+</span><span id="get_eval_event_print_switch-121"><a href="#get_eval_event_print_switch-121"><span class="linenos">121</span></a>        <span class="n">ON_BEGIN_EVAL_METRIC</span><span class="p">:</span>
+</span><span id="get_eval_event_print_switch-122"><a href="#get_eval_event_print_switch-122"><span class="linenos">122</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Starting evaluation with metric&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">metric_config</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+</span><span id="get_eval_event_print_switch-123"><a href="#get_eval_event_print_switch-123"><span class="linenos">123</span></a>        <span class="n">ON_BEGIN_FILTER_RECS</span><span class="p">:</span> <span class="n">print_filter_event_args</span><span class="p">,</span>
+</span><span id="get_eval_event_print_switch-124"><a href="#get_eval_event_print_switch-124"><span class="linenos">124</span></a>        <span class="n">ON_BEGIN_LOAD_RATING_SET</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">,</span>
+</span><span id="get_eval_event_print_switch-125"><a href="#get_eval_event_print_switch-125"><span class="linenos">125</span></a>        <span class="n">ON_BEGIN_LOAD_TEST_SET</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">,</span>
+</span><span id="get_eval_event_print_switch-126"><a href="#get_eval_event_print_switch-126"><span class="linenos">126</span></a>        <span class="n">ON_BEGIN_LOAD_TRAIN_SET</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">,</span>
+</span><span id="get_eval_event_print_switch-127"><a href="#get_eval_event_print_switch-127"><span class="linenos">127</span></a>        <span class="n">ON_BEGIN_METRIC</span><span class="p">:</span>
+</span><span id="get_eval_event_print_switch-128"><a href="#get_eval_event_print_switch-128"><span class="linenos">128</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Starting metric&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">metric_config</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+</span><span id="get_eval_event_print_switch-129"><a href="#get_eval_event_print_switch-129"><span class="linenos">129</span></a>        <span class="n">ON_END_EVAL_PIPELINE</span><span class="p">:</span>
+</span><span id="get_eval_event_print_switch-130"><a href="#get_eval_event_print_switch-130"><span class="linenos">130</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Finished Evaluation Pipeline on&#39;</span><span class="p">,</span>
+</span><span id="get_eval_event_print_switch-131"><a href="#get_eval_event_print_switch-131"><span class="linenos">131</span></a>                               <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">metrics_config</span><span class="p">),</span> <span class="s1">&#39;metrics&#39;</span><span class="p">,</span>
 </span><span id="get_eval_event_print_switch-132"><a href="#get_eval_event_print_switch-132"><span class="linenos">132</span></a>                               <span class="sa">f</span><span class="s1">&#39;in </span><span class="si">{</span><span class="n">elapsed_time</span><span class="si">:</span><span class="s1">1.4f</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">),</span>
-</span><span id="get_eval_event_print_switch-133"><a href="#get_eval_event_print_switch-133"><span class="linenos">133</span></a>    <span class="p">}</span>
+</span><span id="get_eval_event_print_switch-133"><a href="#get_eval_event_print_switch-133"><span class="linenos">133</span></a>        <span class="n">ON_END_EVAL_METRIC</span><span class="p">:</span>
+</span><span id="get_eval_event_print_switch-134"><a href="#get_eval_event_print_switch-134"><span class="linenos">134</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Finished evaluating metric&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">metric_config</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+</span><span id="get_eval_event_print_switch-135"><a href="#get_eval_event_print_switch-135"><span class="linenos">135</span></a>                               <span class="sa">f</span><span class="s1">&#39;in </span><span class="si">{</span><span class="n">elapsed_time</span><span class="si">:</span><span class="s1">1.4f</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">),</span>
+</span><span id="get_eval_event_print_switch-136"><a href="#get_eval_event_print_switch-136"><span class="linenos">136</span></a>        <span class="n">ON_END_FILTER_RECS</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">print_filter_event_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">),</span>
+</span><span id="get_eval_event_print_switch-137"><a href="#get_eval_event_print_switch-137"><span class="linenos">137</span></a>        <span class="n">ON_END_LOAD_RATING_SET</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">),</span>
+</span><span id="get_eval_event_print_switch-138"><a href="#get_eval_event_print_switch-138"><span class="linenos">138</span></a>        <span class="n">ON_END_LOAD_TEST_SET</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">),</span>
+</span><span id="get_eval_event_print_switch-139"><a href="#get_eval_event_print_switch-139"><span class="linenos">139</span></a>        <span class="n">ON_END_LOAD_TRAIN_SET</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="n">print_load_df_event_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">),</span>
+</span><span id="get_eval_event_print_switch-140"><a href="#get_eval_event_print_switch-140"><span class="linenos">140</span></a>        <span class="n">ON_END_METRIC</span><span class="p">:</span>
+</span><span id="get_eval_event_print_switch-141"><a href="#get_eval_event_print_switch-141"><span class="linenos">141</span></a>            <span class="k">lambda</span> <span class="n">args</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Finished metric&#39;</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">metric_config</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+</span><span id="get_eval_event_print_switch-142"><a href="#get_eval_event_print_switch-142"><span class="linenos">142</span></a>                               <span class="sa">f</span><span class="s1">&#39;in </span><span class="si">{</span><span class="n">elapsed_time</span><span class="si">:</span><span class="s1">1.4f</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">),</span>
+</span><span id="get_eval_event_print_switch-143"><a href="#get_eval_event_print_switch-143"><span class="linenos">143</span></a>    <span class="p">}</span>
 </span></pre></div>
 
 

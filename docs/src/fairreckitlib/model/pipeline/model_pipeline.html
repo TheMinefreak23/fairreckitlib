@@ -212,7 +212,7 @@ Utrecht University within the Software Project course.
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">        Args:</span>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">            output_dir: the path of the directory to store the output.</span>
 </span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">            data_transition: data input.</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">            models_config: list of ModelConfig objects.</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">            models_config: list of ModelConfig objects to compute.</span>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">            is_running: function that returns whether the pipeline</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">                is still running. Stops early when False is returned.</span>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>
@@ -721,7 +721,7 @@ Utrecht University within the Software Project course.
 </span><span id="ModelPipeline-93"><a href="#ModelPipeline-93"><span class="linenos"> 93</span></a><span class="sd">        Args:</span>
 </span><span id="ModelPipeline-94"><a href="#ModelPipeline-94"><span class="linenos"> 94</span></a><span class="sd">            output_dir: the path of the directory to store the output.</span>
 </span><span id="ModelPipeline-95"><a href="#ModelPipeline-95"><span class="linenos"> 95</span></a><span class="sd">            data_transition: data input.</span>
-</span><span id="ModelPipeline-96"><a href="#ModelPipeline-96"><span class="linenos"> 96</span></a><span class="sd">            models_config: list of ModelConfig objects.</span>
+</span><span id="ModelPipeline-96"><a href="#ModelPipeline-96"><span class="linenos"> 96</span></a><span class="sd">            models_config: list of ModelConfig objects to compute.</span>
 </span><span id="ModelPipeline-97"><a href="#ModelPipeline-97"><span class="linenos"> 97</span></a><span class="sd">            is_running: function that returns whether the pipeline</span>
 </span><span id="ModelPipeline-98"><a href="#ModelPipeline-98"><span class="linenos"> 98</span></a><span class="sd">                is still running. Stops early when False is returned.</span>
 </span><span id="ModelPipeline-99"><a href="#ModelPipeline-99"><span class="linenos"> 99</span></a>
@@ -1250,7 +1250,7 @@ test_model_ratings</p>
 </span><span id="ModelPipeline.run-93"><a href="#ModelPipeline.run-93"><span class="linenos"> 93</span></a><span class="sd">        Args:</span>
 </span><span id="ModelPipeline.run-94"><a href="#ModelPipeline.run-94"><span class="linenos"> 94</span></a><span class="sd">            output_dir: the path of the directory to store the output.</span>
 </span><span id="ModelPipeline.run-95"><a href="#ModelPipeline.run-95"><span class="linenos"> 95</span></a><span class="sd">            data_transition: data input.</span>
-</span><span id="ModelPipeline.run-96"><a href="#ModelPipeline.run-96"><span class="linenos"> 96</span></a><span class="sd">            models_config: list of ModelConfig objects.</span>
+</span><span id="ModelPipeline.run-96"><a href="#ModelPipeline.run-96"><span class="linenos"> 96</span></a><span class="sd">            models_config: list of ModelConfig objects to compute.</span>
 </span><span id="ModelPipeline.run-97"><a href="#ModelPipeline.run-97"><span class="linenos"> 97</span></a><span class="sd">            is_running: function that returns whether the pipeline</span>
 </span><span id="ModelPipeline.run-98"><a href="#ModelPipeline.run-98"><span class="linenos"> 98</span></a><span class="sd">                is still running. Stops early when False is returned.</span>
 </span><span id="ModelPipeline.run-99"><a href="#ModelPipeline.run-99"><span class="linenos"> 99</span></a>
@@ -1348,7 +1348,7 @@ the train and/or test set.</p>
 <p>Args:
     output_dir: the path of the directory to store the output.
     data_transition: data input.
-    models_config: list of ModelConfig objects.
+    models_config: list of ModelConfig objects to compute.
     is_running: function that returns whether the pipeline
         is still running. Stops early when False is returned.</p>
 

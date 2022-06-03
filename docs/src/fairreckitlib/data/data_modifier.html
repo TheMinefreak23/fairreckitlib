@@ -48,6 +48,24 @@
                 </ul>
 
             </li>
+            <li>
+                    <a class="class" href="#DataModifierFactory">DataModifierFactory</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#DataModifierFactory.__init__">DataModifierFactory</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#DataModifierFactory.create">create</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#DataModifierFactory.on_create_params">on_create_params</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="function" href="#create_data_modifier_factory">create_data_modifier_factory</a>
+            </li>
     </ul>
 
 
@@ -64,11 +82,12 @@
                     <h1 class="modulename">
 src<wbr>.<a href="./../../fairreckitlib.html">fairreckitlib</a><wbr>.<a href="./../data.html">data</a><wbr>.data_modifier    </h1>
 
-                        <div class="docstring"><p>This module contains the base class for data modification.</p>
+                        <div class="docstring"><p>This module contains the base class and factory for data modification.</p>
 
 <p>Classes:</p>
 
 <pre><code>DataModifier: the base class for data modifying.
+DataModifierFactory: the factory that creates data modifiers related to a dataset matrix.
 </code></pre>
 
 <p>This program has been developed by students from the bachelor Computer Science at
@@ -80,70 +99,162 @@ Utrecht University within the Software Project course.
 
                         <label class="view-source-button" for="data_modifier-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="sd">&quot;&quot;&quot;This module contains the base class for data modification.</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
-</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">Classes:</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">    DataModifier: the base class for data modifying.</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="sd">This program has been developed by students from the bachelor Computer Science at</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">Utrecht University within the Software Project course.</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">© Copyright Utrecht University (Department of Information and Computing Sciences)</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="k">class</span> <span class="nc">DataModifier</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="sd">&quot;&quot;&quot;Base class for FairRecKit data modifiers.</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="sd">    Public methods:</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">    get_name</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">    get_params</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">    run</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>        <span class="sd">&quot;&quot;&quot;Construct the DataModifier.</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">        Args:</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">            name: the name of the modifier.</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">            params: the modifier parameters.</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the modifier.</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="sd">        Returns:</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="sd">            the modifier name.</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the modifier.</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="sd">        Returns:</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="sd">            the modifier parameters.</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>        <span class="sd">&quot;&quot;&quot;Run the modifier on the specified dataframe.</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="sd">        Args:</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a><span class="sd">            dataframe: source df to modify.</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="sd">        Returns:</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="sd">            any modification to the dataframe.</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">&quot;&quot;&quot;This module contains the base class and factory for data modification.</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">Classes:</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="sd">    DataModifier: the base class for data modifying.</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="sd">    DataModifierFactory: the factory that creates data modifiers related to a dataset matrix.</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="sd">This program has been developed by students from the bachelor Computer Science at</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="sd">Utrecht University within the Software Project course.</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="sd">© Copyright Utrecht University (Department of Information and Computing Sciences)</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="kn">from</span> <span class="nn">..core.config.config_factories</span> <span class="kn">import</span> <span class="n">Factory</span><span class="p">,</span> <span class="n">GroupFactory</span><span class="p">,</span> <span class="n">FUNC_CREATE_PARAMS</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="kn">from</span> <span class="nn">..core.config.config_parameters</span> <span class="kn">import</span> <span class="n">ConfigParameters</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="kn">from</span> <span class="nn">.set.dataset</span> <span class="kn">import</span> <span class="n">Dataset</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="kn">from</span> <span class="nn">.set.dataset_registry</span> <span class="kn">import</span> <span class="n">DataRegistry</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="k">class</span> <span class="nc">DataModifier</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>    <span class="sd">&quot;&quot;&quot;Base class for FairRecKit data modifiers.</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="sd">    Public methods:</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="sd">    get_name</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a><span class="sd">    get_params</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="sd">    run</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>        <span class="sd">&quot;&quot;&quot;Construct the DataModifier.</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">        Args:</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">            name: the name of the modifier.</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">            params: the modifier parameters.</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the modifier.</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">        Returns:</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">            the modifier name.</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the modifier.</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">        Returns:</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">            the modifier parameters.</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>        <span class="sd">&quot;&quot;&quot;Run the modifier on the specified dataframe.</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">        Args:</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">            dataframe: source df to modify.</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">        Returns:</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">            any modification to the dataframe.</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="k">class</span> <span class="nc">DataModifierFactory</span><span class="p">(</span><span class="n">Factory</span><span class="p">):</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>    <span class="sd">&quot;&quot;&quot;Factory for data modifier creation.</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">    The intended use is to associate the factory with a specific matrix of a dataset.</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">    Both the created parameters and the created data modifiers are supplied</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">    with a reference to the dataset and the name of the matrix they belong to.</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matrix_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">):</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>        <span class="sd">&quot;&quot;&quot;Construct the DataModifierFactory.</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">        Args:</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">            matrix_name: the name of the matrix that it relates to.</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="sd">            dataset: the dataset associated with the matrix.</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>        <span class="n">Factory</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matrix_name</span><span class="p">)</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">obj_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataModifier</span><span class="p">:</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="sd">&quot;&quot;&quot;Create and return a new data modifier with the specified name.</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">        The specified parameters are expected to be of the same structure as the defaults</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">        of the ConfigParameters that are associated with the desired data modifier.</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">        When no parameters are specified it will use the data modifier&#39;s defaults.</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">        Args:</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">            obj_name: the name of the data modifier to create.</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">            obj_params: the parameters of the data modifier.</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">        Keyword Args:</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">            Any: extra arguments that need to be passed to the data modifier on creation.</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">        Returns:</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">            the created data modifier or None when it does not exist.</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;matrix_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">factory_name</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>        <span class="k">return</span> <span class="n">Factory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_name</span><span class="p">,</span> <span class="n">obj_params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="k">def</span> <span class="nf">on_create_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConfigParameters</span><span class="p">:</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>        <span class="sd">&quot;&quot;&quot;Create parameters for the data modifier with the specified name.</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">        Args:</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">            obj_name: name of the data modifier to create parameters for.</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">        Returns:</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">            the configuration parameters of the object or empty parameters when it does not exist.</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>            <span class="s1">&#39;column_name&#39;</span><span class="p">:</span> <span class="n">obj_name</span><span class="p">,</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>            <span class="s1">&#39;dataset&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>            <span class="s1">&#39;matrix_name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">factory_name</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>        <span class="p">}</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">factory</span><span class="p">[</span><span class="n">obj_name</span><span class="p">][</span><span class="n">FUNC_CREATE_PARAMS</span><span class="p">](</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="k">def</span> <span class="nf">create_data_modifier_factory</span><span class="p">(</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>        <span class="n">data_registry</span><span class="p">:</span> <span class="n">DataRegistry</span><span class="p">,</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>        <span class="n">factory_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>        <span class="n">func_on_add_entries</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">DataModifierFactory</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">GroupFactory</span><span class="p">:</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>    <span class="sd">&quot;&quot;&quot;Create a data modifier factory for each dataset-matrix pair.</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="sd">    Args:</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a><span class="sd">        data_registry: the data registry with available datasets.</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a><span class="sd">        factory_name: the name of the data modifier factory.</span>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a><span class="sd">        func_on_add_entries: callback for each dataset-matrix pair to add data modifiers.</span>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="sd">    Returns:</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="sd">        the factory with all available data modifiers per dataset-matrix pair.</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>    <span class="n">factory</span> <span class="o">=</span> <span class="n">GroupFactory</span><span class="p">(</span><span class="n">factory_name</span><span class="p">)</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a>    <span class="k">for</span> <span class="n">dataset_name</span> <span class="ow">in</span> <span class="n">data_registry</span><span class="o">.</span><span class="n">get_available_sets</span><span class="p">():</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>        <span class="n">dataset</span> <span class="o">=</span> <span class="n">data_registry</span><span class="o">.</span><span class="n">get_set</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>        <span class="n">dataset_factory</span> <span class="o">=</span> <span class="n">GroupFactory</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">get_name</span><span class="p">())</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>        <span class="n">factory</span><span class="o">.</span><span class="n">add_factory</span><span class="p">(</span><span class="n">dataset_factory</span><span class="p">)</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>        <span class="k">for</span> <span class="n">matrix_name</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">get_available_matrices</span><span class="p">():</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>            <span class="n">matrix_factory</span> <span class="o">=</span> <span class="n">DataModifierFactory</span><span class="p">(</span><span class="n">matrix_name</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>            <span class="n">func_on_add_entries</span><span class="p">(</span><span class="n">matrix_factory</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>            <span class="n">dataset_factory</span><span class="o">.</span><span class="n">add_factory</span><span class="p">(</span><span class="n">matrix_factory</span><span class="p">)</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="k">return</span> <span class="n">factory</span>
 </span></pre></div>
 
 
@@ -159,53 +270,53 @@ Utrecht University within the Software Project course.
 
     </div>
     <a class="headerlink" href="#DataModifier"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DataModifier-19"><a href="#DataModifier-19"><span class="linenos">19</span></a><span class="k">class</span> <span class="nc">DataModifier</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
-</span><span id="DataModifier-20"><a href="#DataModifier-20"><span class="linenos">20</span></a>    <span class="sd">&quot;&quot;&quot;Base class for FairRecKit data modifiers.</span>
-</span><span id="DataModifier-21"><a href="#DataModifier-21"><span class="linenos">21</span></a>
-</span><span id="DataModifier-22"><a href="#DataModifier-22"><span class="linenos">22</span></a><span class="sd">    Public methods:</span>
-</span><span id="DataModifier-23"><a href="#DataModifier-23"><span class="linenos">23</span></a>
-</span><span id="DataModifier-24"><a href="#DataModifier-24"><span class="linenos">24</span></a><span class="sd">    get_name</span>
-</span><span id="DataModifier-25"><a href="#DataModifier-25"><span class="linenos">25</span></a><span class="sd">    get_params</span>
-</span><span id="DataModifier-26"><a href="#DataModifier-26"><span class="linenos">26</span></a><span class="sd">    run</span>
-</span><span id="DataModifier-27"><a href="#DataModifier-27"><span class="linenos">27</span></a><span class="sd">    &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DataModifier-24"><a href="#DataModifier-24"><span class="linenos">24</span></a><span class="k">class</span> <span class="nc">DataModifier</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+</span><span id="DataModifier-25"><a href="#DataModifier-25"><span class="linenos">25</span></a>    <span class="sd">&quot;&quot;&quot;Base class for FairRecKit data modifiers.</span>
+</span><span id="DataModifier-26"><a href="#DataModifier-26"><span class="linenos">26</span></a>
+</span><span id="DataModifier-27"><a href="#DataModifier-27"><span class="linenos">27</span></a><span class="sd">    Public methods:</span>
 </span><span id="DataModifier-28"><a href="#DataModifier-28"><span class="linenos">28</span></a>
-</span><span id="DataModifier-29"><a href="#DataModifier-29"><span class="linenos">29</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-</span><span id="DataModifier-30"><a href="#DataModifier-30"><span class="linenos">30</span></a>        <span class="sd">&quot;&quot;&quot;Construct the DataModifier.</span>
-</span><span id="DataModifier-31"><a href="#DataModifier-31"><span class="linenos">31</span></a>
-</span><span id="DataModifier-32"><a href="#DataModifier-32"><span class="linenos">32</span></a><span class="sd">        Args:</span>
-</span><span id="DataModifier-33"><a href="#DataModifier-33"><span class="linenos">33</span></a><span class="sd">            name: the name of the modifier.</span>
-</span><span id="DataModifier-34"><a href="#DataModifier-34"><span class="linenos">34</span></a><span class="sd">            params: the modifier parameters.</span>
-</span><span id="DataModifier-35"><a href="#DataModifier-35"><span class="linenos">35</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="DataModifier-36"><a href="#DataModifier-36"><span class="linenos">36</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-</span><span id="DataModifier-37"><a href="#DataModifier-37"><span class="linenos">37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
-</span><span id="DataModifier-38"><a href="#DataModifier-38"><span class="linenos">38</span></a>
-</span><span id="DataModifier-39"><a href="#DataModifier-39"><span class="linenos">39</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="DataModifier-40"><a href="#DataModifier-40"><span class="linenos">40</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the modifier.</span>
-</span><span id="DataModifier-41"><a href="#DataModifier-41"><span class="linenos">41</span></a>
-</span><span id="DataModifier-42"><a href="#DataModifier-42"><span class="linenos">42</span></a><span class="sd">        Returns:</span>
-</span><span id="DataModifier-43"><a href="#DataModifier-43"><span class="linenos">43</span></a><span class="sd">            the modifier name.</span>
-</span><span id="DataModifier-44"><a href="#DataModifier-44"><span class="linenos">44</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="DataModifier-45"><a href="#DataModifier-45"><span class="linenos">45</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+</span><span id="DataModifier-29"><a href="#DataModifier-29"><span class="linenos">29</span></a><span class="sd">    get_name</span>
+</span><span id="DataModifier-30"><a href="#DataModifier-30"><span class="linenos">30</span></a><span class="sd">    get_params</span>
+</span><span id="DataModifier-31"><a href="#DataModifier-31"><span class="linenos">31</span></a><span class="sd">    run</span>
+</span><span id="DataModifier-32"><a href="#DataModifier-32"><span class="linenos">32</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="DataModifier-33"><a href="#DataModifier-33"><span class="linenos">33</span></a>
+</span><span id="DataModifier-34"><a href="#DataModifier-34"><span class="linenos">34</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+</span><span id="DataModifier-35"><a href="#DataModifier-35"><span class="linenos">35</span></a>        <span class="sd">&quot;&quot;&quot;Construct the DataModifier.</span>
+</span><span id="DataModifier-36"><a href="#DataModifier-36"><span class="linenos">36</span></a>
+</span><span id="DataModifier-37"><a href="#DataModifier-37"><span class="linenos">37</span></a><span class="sd">        Args:</span>
+</span><span id="DataModifier-38"><a href="#DataModifier-38"><span class="linenos">38</span></a><span class="sd">            name: the name of the modifier.</span>
+</span><span id="DataModifier-39"><a href="#DataModifier-39"><span class="linenos">39</span></a><span class="sd">            params: the modifier parameters.</span>
+</span><span id="DataModifier-40"><a href="#DataModifier-40"><span class="linenos">40</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DataModifier-41"><a href="#DataModifier-41"><span class="linenos">41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+</span><span id="DataModifier-42"><a href="#DataModifier-42"><span class="linenos">42</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+</span><span id="DataModifier-43"><a href="#DataModifier-43"><span class="linenos">43</span></a>
+</span><span id="DataModifier-44"><a href="#DataModifier-44"><span class="linenos">44</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="DataModifier-45"><a href="#DataModifier-45"><span class="linenos">45</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the modifier.</span>
 </span><span id="DataModifier-46"><a href="#DataModifier-46"><span class="linenos">46</span></a>
-</span><span id="DataModifier-47"><a href="#DataModifier-47"><span class="linenos">47</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span id="DataModifier-48"><a href="#DataModifier-48"><span class="linenos">48</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the modifier.</span>
-</span><span id="DataModifier-49"><a href="#DataModifier-49"><span class="linenos">49</span></a>
-</span><span id="DataModifier-50"><a href="#DataModifier-50"><span class="linenos">50</span></a><span class="sd">        Returns:</span>
-</span><span id="DataModifier-51"><a href="#DataModifier-51"><span class="linenos">51</span></a><span class="sd">            the modifier parameters.</span>
-</span><span id="DataModifier-52"><a href="#DataModifier-52"><span class="linenos">52</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="DataModifier-53"><a href="#DataModifier-53"><span class="linenos">53</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+</span><span id="DataModifier-47"><a href="#DataModifier-47"><span class="linenos">47</span></a><span class="sd">        Returns:</span>
+</span><span id="DataModifier-48"><a href="#DataModifier-48"><span class="linenos">48</span></a><span class="sd">            the modifier name.</span>
+</span><span id="DataModifier-49"><a href="#DataModifier-49"><span class="linenos">49</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DataModifier-50"><a href="#DataModifier-50"><span class="linenos">50</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+</span><span id="DataModifier-51"><a href="#DataModifier-51"><span class="linenos">51</span></a>
+</span><span id="DataModifier-52"><a href="#DataModifier-52"><span class="linenos">52</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="DataModifier-53"><a href="#DataModifier-53"><span class="linenos">53</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the modifier.</span>
 </span><span id="DataModifier-54"><a href="#DataModifier-54"><span class="linenos">54</span></a>
-</span><span id="DataModifier-55"><a href="#DataModifier-55"><span class="linenos">55</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="DataModifier-56"><a href="#DataModifier-56"><span class="linenos">56</span></a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-</span><span id="DataModifier-57"><a href="#DataModifier-57"><span class="linenos">57</span></a>        <span class="sd">&quot;&quot;&quot;Run the modifier on the specified dataframe.</span>
-</span><span id="DataModifier-58"><a href="#DataModifier-58"><span class="linenos">58</span></a>
-</span><span id="DataModifier-59"><a href="#DataModifier-59"><span class="linenos">59</span></a><span class="sd">        Args:</span>
-</span><span id="DataModifier-60"><a href="#DataModifier-60"><span class="linenos">60</span></a><span class="sd">            dataframe: source df to modify.</span>
-</span><span id="DataModifier-61"><a href="#DataModifier-61"><span class="linenos">61</span></a>
-</span><span id="DataModifier-62"><a href="#DataModifier-62"><span class="linenos">62</span></a><span class="sd">        Returns:</span>
-</span><span id="DataModifier-63"><a href="#DataModifier-63"><span class="linenos">63</span></a><span class="sd">            any modification to the dataframe.</span>
-</span><span id="DataModifier-64"><a href="#DataModifier-64"><span class="linenos">64</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="DataModifier-65"><a href="#DataModifier-65"><span class="linenos">65</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</span><span id="DataModifier-55"><a href="#DataModifier-55"><span class="linenos">55</span></a><span class="sd">        Returns:</span>
+</span><span id="DataModifier-56"><a href="#DataModifier-56"><span class="linenos">56</span></a><span class="sd">            the modifier parameters.</span>
+</span><span id="DataModifier-57"><a href="#DataModifier-57"><span class="linenos">57</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DataModifier-58"><a href="#DataModifier-58"><span class="linenos">58</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+</span><span id="DataModifier-59"><a href="#DataModifier-59"><span class="linenos">59</span></a>
+</span><span id="DataModifier-60"><a href="#DataModifier-60"><span class="linenos">60</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="DataModifier-61"><a href="#DataModifier-61"><span class="linenos">61</span></a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span id="DataModifier-62"><a href="#DataModifier-62"><span class="linenos">62</span></a>        <span class="sd">&quot;&quot;&quot;Run the modifier on the specified dataframe.</span>
+</span><span id="DataModifier-63"><a href="#DataModifier-63"><span class="linenos">63</span></a>
+</span><span id="DataModifier-64"><a href="#DataModifier-64"><span class="linenos">64</span></a><span class="sd">        Args:</span>
+</span><span id="DataModifier-65"><a href="#DataModifier-65"><span class="linenos">65</span></a><span class="sd">            dataframe: source df to modify.</span>
+</span><span id="DataModifier-66"><a href="#DataModifier-66"><span class="linenos">66</span></a>
+</span><span id="DataModifier-67"><a href="#DataModifier-67"><span class="linenos">67</span></a><span class="sd">        Returns:</span>
+</span><span id="DataModifier-68"><a href="#DataModifier-68"><span class="linenos">68</span></a><span class="sd">            any modification to the dataframe.</span>
+</span><span id="DataModifier-69"><a href="#DataModifier-69"><span class="linenos">69</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DataModifier-70"><a href="#DataModifier-70"><span class="linenos">70</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -229,15 +340,15 @@ run</p>
 
     </div>
     <a class="headerlink" href="#DataModifier.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DataModifier.__init__-29"><a href="#DataModifier.__init__-29"><span class="linenos">29</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-</span><span id="DataModifier.__init__-30"><a href="#DataModifier.__init__-30"><span class="linenos">30</span></a>        <span class="sd">&quot;&quot;&quot;Construct the DataModifier.</span>
-</span><span id="DataModifier.__init__-31"><a href="#DataModifier.__init__-31"><span class="linenos">31</span></a>
-</span><span id="DataModifier.__init__-32"><a href="#DataModifier.__init__-32"><span class="linenos">32</span></a><span class="sd">        Args:</span>
-</span><span id="DataModifier.__init__-33"><a href="#DataModifier.__init__-33"><span class="linenos">33</span></a><span class="sd">            name: the name of the modifier.</span>
-</span><span id="DataModifier.__init__-34"><a href="#DataModifier.__init__-34"><span class="linenos">34</span></a><span class="sd">            params: the modifier parameters.</span>
-</span><span id="DataModifier.__init__-35"><a href="#DataModifier.__init__-35"><span class="linenos">35</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="DataModifier.__init__-36"><a href="#DataModifier.__init__-36"><span class="linenos">36</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-</span><span id="DataModifier.__init__-37"><a href="#DataModifier.__init__-37"><span class="linenos">37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DataModifier.__init__-34"><a href="#DataModifier.__init__-34"><span class="linenos">34</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+</span><span id="DataModifier.__init__-35"><a href="#DataModifier.__init__-35"><span class="linenos">35</span></a>        <span class="sd">&quot;&quot;&quot;Construct the DataModifier.</span>
+</span><span id="DataModifier.__init__-36"><a href="#DataModifier.__init__-36"><span class="linenos">36</span></a>
+</span><span id="DataModifier.__init__-37"><a href="#DataModifier.__init__-37"><span class="linenos">37</span></a><span class="sd">        Args:</span>
+</span><span id="DataModifier.__init__-38"><a href="#DataModifier.__init__-38"><span class="linenos">38</span></a><span class="sd">            name: the name of the modifier.</span>
+</span><span id="DataModifier.__init__-39"><a href="#DataModifier.__init__-39"><span class="linenos">39</span></a><span class="sd">            params: the modifier parameters.</span>
+</span><span id="DataModifier.__init__-40"><a href="#DataModifier.__init__-40"><span class="linenos">40</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DataModifier.__init__-41"><a href="#DataModifier.__init__-41"><span class="linenos">41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+</span><span id="DataModifier.__init__-42"><a href="#DataModifier.__init__-42"><span class="linenos">42</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
 </span></pre></div>
 
 
@@ -261,13 +372,13 @@ run</p>
 
     </div>
     <a class="headerlink" href="#DataModifier.get_name"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DataModifier.get_name-39"><a href="#DataModifier.get_name-39"><span class="linenos">39</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="DataModifier.get_name-40"><a href="#DataModifier.get_name-40"><span class="linenos">40</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the modifier.</span>
-</span><span id="DataModifier.get_name-41"><a href="#DataModifier.get_name-41"><span class="linenos">41</span></a>
-</span><span id="DataModifier.get_name-42"><a href="#DataModifier.get_name-42"><span class="linenos">42</span></a><span class="sd">        Returns:</span>
-</span><span id="DataModifier.get_name-43"><a href="#DataModifier.get_name-43"><span class="linenos">43</span></a><span class="sd">            the modifier name.</span>
-</span><span id="DataModifier.get_name-44"><a href="#DataModifier.get_name-44"><span class="linenos">44</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="DataModifier.get_name-45"><a href="#DataModifier.get_name-45"><span class="linenos">45</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DataModifier.get_name-44"><a href="#DataModifier.get_name-44"><span class="linenos">44</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="DataModifier.get_name-45"><a href="#DataModifier.get_name-45"><span class="linenos">45</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the modifier.</span>
+</span><span id="DataModifier.get_name-46"><a href="#DataModifier.get_name-46"><span class="linenos">46</span></a>
+</span><span id="DataModifier.get_name-47"><a href="#DataModifier.get_name-47"><span class="linenos">47</span></a><span class="sd">        Returns:</span>
+</span><span id="DataModifier.get_name-48"><a href="#DataModifier.get_name-48"><span class="linenos">48</span></a><span class="sd">            the modifier name.</span>
+</span><span id="DataModifier.get_name-49"><a href="#DataModifier.get_name-49"><span class="linenos">49</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DataModifier.get_name-50"><a href="#DataModifier.get_name-50"><span class="linenos">50</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 </span></pre></div>
 
 
@@ -290,13 +401,13 @@ run</p>
 
     </div>
     <a class="headerlink" href="#DataModifier.get_params"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DataModifier.get_params-47"><a href="#DataModifier.get_params-47"><span class="linenos">47</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span id="DataModifier.get_params-48"><a href="#DataModifier.get_params-48"><span class="linenos">48</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the modifier.</span>
-</span><span id="DataModifier.get_params-49"><a href="#DataModifier.get_params-49"><span class="linenos">49</span></a>
-</span><span id="DataModifier.get_params-50"><a href="#DataModifier.get_params-50"><span class="linenos">50</span></a><span class="sd">        Returns:</span>
-</span><span id="DataModifier.get_params-51"><a href="#DataModifier.get_params-51"><span class="linenos">51</span></a><span class="sd">            the modifier parameters.</span>
-</span><span id="DataModifier.get_params-52"><a href="#DataModifier.get_params-52"><span class="linenos">52</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="DataModifier.get_params-53"><a href="#DataModifier.get_params-53"><span class="linenos">53</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DataModifier.get_params-52"><a href="#DataModifier.get_params-52"><span class="linenos">52</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="DataModifier.get_params-53"><a href="#DataModifier.get_params-53"><span class="linenos">53</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the modifier.</span>
+</span><span id="DataModifier.get_params-54"><a href="#DataModifier.get_params-54"><span class="linenos">54</span></a>
+</span><span id="DataModifier.get_params-55"><a href="#DataModifier.get_params-55"><span class="linenos">55</span></a><span class="sd">        Returns:</span>
+</span><span id="DataModifier.get_params-56"><a href="#DataModifier.get_params-56"><span class="linenos">56</span></a><span class="sd">            the modifier parameters.</span>
+</span><span id="DataModifier.get_params-57"><a href="#DataModifier.get_params-57"><span class="linenos">57</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DataModifier.get_params-58"><a href="#DataModifier.get_params-58"><span class="linenos">58</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -320,17 +431,17 @@ run</p>
 
     </div>
     <a class="headerlink" href="#DataModifier.run"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DataModifier.run-55"><a href="#DataModifier.run-55"><span class="linenos">55</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="DataModifier.run-56"><a href="#DataModifier.run-56"><span class="linenos">56</span></a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-</span><span id="DataModifier.run-57"><a href="#DataModifier.run-57"><span class="linenos">57</span></a>        <span class="sd">&quot;&quot;&quot;Run the modifier on the specified dataframe.</span>
-</span><span id="DataModifier.run-58"><a href="#DataModifier.run-58"><span class="linenos">58</span></a>
-</span><span id="DataModifier.run-59"><a href="#DataModifier.run-59"><span class="linenos">59</span></a><span class="sd">        Args:</span>
-</span><span id="DataModifier.run-60"><a href="#DataModifier.run-60"><span class="linenos">60</span></a><span class="sd">            dataframe: source df to modify.</span>
-</span><span id="DataModifier.run-61"><a href="#DataModifier.run-61"><span class="linenos">61</span></a>
-</span><span id="DataModifier.run-62"><a href="#DataModifier.run-62"><span class="linenos">62</span></a><span class="sd">        Returns:</span>
-</span><span id="DataModifier.run-63"><a href="#DataModifier.run-63"><span class="linenos">63</span></a><span class="sd">            any modification to the dataframe.</span>
-</span><span id="DataModifier.run-64"><a href="#DataModifier.run-64"><span class="linenos">64</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="DataModifier.run-65"><a href="#DataModifier.run-65"><span class="linenos">65</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DataModifier.run-60"><a href="#DataModifier.run-60"><span class="linenos">60</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="DataModifier.run-61"><a href="#DataModifier.run-61"><span class="linenos">61</span></a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+</span><span id="DataModifier.run-62"><a href="#DataModifier.run-62"><span class="linenos">62</span></a>        <span class="sd">&quot;&quot;&quot;Run the modifier on the specified dataframe.</span>
+</span><span id="DataModifier.run-63"><a href="#DataModifier.run-63"><span class="linenos">63</span></a>
+</span><span id="DataModifier.run-64"><a href="#DataModifier.run-64"><span class="linenos">64</span></a><span class="sd">        Args:</span>
+</span><span id="DataModifier.run-65"><a href="#DataModifier.run-65"><span class="linenos">65</span></a><span class="sd">            dataframe: source df to modify.</span>
+</span><span id="DataModifier.run-66"><a href="#DataModifier.run-66"><span class="linenos">66</span></a>
+</span><span id="DataModifier.run-67"><a href="#DataModifier.run-67"><span class="linenos">67</span></a><span class="sd">        Returns:</span>
+</span><span id="DataModifier.run-68"><a href="#DataModifier.run-68"><span class="linenos">68</span></a><span class="sd">            any modification to the dataframe.</span>
+</span><span id="DataModifier.run-69"><a href="#DataModifier.run-69"><span class="linenos">69</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DataModifier.run-70"><a href="#DataModifier.run-70"><span class="linenos">70</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -345,6 +456,283 @@ run</p>
 
 
                             </div>
+                </section>
+                <section id="DataModifierFactory">
+                            <input id="DataModifierFactory-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">DataModifierFactory</span><wbr>(<span class="base"><a href="../core/config/config_factories.html#Factory">src.fairreckitlib.core.config.config_factories.Factory</a></span>):
+
+                <label class="view-source-button" for="DataModifierFactory-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#DataModifierFactory"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DataModifierFactory-73"><a href="#DataModifierFactory-73"><span class="linenos"> 73</span></a><span class="k">class</span> <span class="nc">DataModifierFactory</span><span class="p">(</span><span class="n">Factory</span><span class="p">):</span>
+</span><span id="DataModifierFactory-74"><a href="#DataModifierFactory-74"><span class="linenos"> 74</span></a>    <span class="sd">&quot;&quot;&quot;Factory for data modifier creation.</span>
+</span><span id="DataModifierFactory-75"><a href="#DataModifierFactory-75"><span class="linenos"> 75</span></a>
+</span><span id="DataModifierFactory-76"><a href="#DataModifierFactory-76"><span class="linenos"> 76</span></a><span class="sd">    The intended use is to associate the factory with a specific matrix of a dataset.</span>
+</span><span id="DataModifierFactory-77"><a href="#DataModifierFactory-77"><span class="linenos"> 77</span></a><span class="sd">    Both the created parameters and the created data modifiers are supplied</span>
+</span><span id="DataModifierFactory-78"><a href="#DataModifierFactory-78"><span class="linenos"> 78</span></a><span class="sd">    with a reference to the dataset and the name of the matrix they belong to.</span>
+</span><span id="DataModifierFactory-79"><a href="#DataModifierFactory-79"><span class="linenos"> 79</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="DataModifierFactory-80"><a href="#DataModifierFactory-80"><span class="linenos"> 80</span></a>
+</span><span id="DataModifierFactory-81"><a href="#DataModifierFactory-81"><span class="linenos"> 81</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matrix_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">):</span>
+</span><span id="DataModifierFactory-82"><a href="#DataModifierFactory-82"><span class="linenos"> 82</span></a>        <span class="sd">&quot;&quot;&quot;Construct the DataModifierFactory.</span>
+</span><span id="DataModifierFactory-83"><a href="#DataModifierFactory-83"><span class="linenos"> 83</span></a>
+</span><span id="DataModifierFactory-84"><a href="#DataModifierFactory-84"><span class="linenos"> 84</span></a><span class="sd">        Args:</span>
+</span><span id="DataModifierFactory-85"><a href="#DataModifierFactory-85"><span class="linenos"> 85</span></a><span class="sd">            matrix_name: the name of the matrix that it relates to.</span>
+</span><span id="DataModifierFactory-86"><a href="#DataModifierFactory-86"><span class="linenos"> 86</span></a><span class="sd">            dataset: the dataset associated with the matrix.</span>
+</span><span id="DataModifierFactory-87"><a href="#DataModifierFactory-87"><span class="linenos"> 87</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DataModifierFactory-88"><a href="#DataModifierFactory-88"><span class="linenos"> 88</span></a>        <span class="n">Factory</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matrix_name</span><span class="p">)</span>
+</span><span id="DataModifierFactory-89"><a href="#DataModifierFactory-89"><span class="linenos"> 89</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+</span><span id="DataModifierFactory-90"><a href="#DataModifierFactory-90"><span class="linenos"> 90</span></a>
+</span><span id="DataModifierFactory-91"><a href="#DataModifierFactory-91"><span class="linenos"> 91</span></a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">obj_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataModifier</span><span class="p">:</span>
+</span><span id="DataModifierFactory-92"><a href="#DataModifierFactory-92"><span class="linenos"> 92</span></a>        <span class="sd">&quot;&quot;&quot;Create and return a new data modifier with the specified name.</span>
+</span><span id="DataModifierFactory-93"><a href="#DataModifierFactory-93"><span class="linenos"> 93</span></a>
+</span><span id="DataModifierFactory-94"><a href="#DataModifierFactory-94"><span class="linenos"> 94</span></a><span class="sd">        The specified parameters are expected to be of the same structure as the defaults</span>
+</span><span id="DataModifierFactory-95"><a href="#DataModifierFactory-95"><span class="linenos"> 95</span></a><span class="sd">        of the ConfigParameters that are associated with the desired data modifier.</span>
+</span><span id="DataModifierFactory-96"><a href="#DataModifierFactory-96"><span class="linenos"> 96</span></a><span class="sd">        When no parameters are specified it will use the data modifier&#39;s defaults.</span>
+</span><span id="DataModifierFactory-97"><a href="#DataModifierFactory-97"><span class="linenos"> 97</span></a>
+</span><span id="DataModifierFactory-98"><a href="#DataModifierFactory-98"><span class="linenos"> 98</span></a><span class="sd">        Args:</span>
+</span><span id="DataModifierFactory-99"><a href="#DataModifierFactory-99"><span class="linenos"> 99</span></a><span class="sd">            obj_name: the name of the data modifier to create.</span>
+</span><span id="DataModifierFactory-100"><a href="#DataModifierFactory-100"><span class="linenos">100</span></a><span class="sd">            obj_params: the parameters of the data modifier.</span>
+</span><span id="DataModifierFactory-101"><a href="#DataModifierFactory-101"><span class="linenos">101</span></a>
+</span><span id="DataModifierFactory-102"><a href="#DataModifierFactory-102"><span class="linenos">102</span></a><span class="sd">        Keyword Args:</span>
+</span><span id="DataModifierFactory-103"><a href="#DataModifierFactory-103"><span class="linenos">103</span></a><span class="sd">            Any: extra arguments that need to be passed to the data modifier on creation.</span>
+</span><span id="DataModifierFactory-104"><a href="#DataModifierFactory-104"><span class="linenos">104</span></a>
+</span><span id="DataModifierFactory-105"><a href="#DataModifierFactory-105"><span class="linenos">105</span></a><span class="sd">        Returns:</span>
+</span><span id="DataModifierFactory-106"><a href="#DataModifierFactory-106"><span class="linenos">106</span></a><span class="sd">            the created data modifier or None when it does not exist.</span>
+</span><span id="DataModifierFactory-107"><a href="#DataModifierFactory-107"><span class="linenos">107</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DataModifierFactory-108"><a href="#DataModifierFactory-108"><span class="linenos">108</span></a>        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span>
+</span><span id="DataModifierFactory-109"><a href="#DataModifierFactory-109"><span class="linenos">109</span></a>        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;matrix_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">factory_name</span>
+</span><span id="DataModifierFactory-110"><a href="#DataModifierFactory-110"><span class="linenos">110</span></a>        <span class="k">return</span> <span class="n">Factory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_name</span><span class="p">,</span> <span class="n">obj_params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="DataModifierFactory-111"><a href="#DataModifierFactory-111"><span class="linenos">111</span></a>
+</span><span id="DataModifierFactory-112"><a href="#DataModifierFactory-112"><span class="linenos">112</span></a>    <span class="k">def</span> <span class="nf">on_create_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConfigParameters</span><span class="p">:</span>
+</span><span id="DataModifierFactory-113"><a href="#DataModifierFactory-113"><span class="linenos">113</span></a>        <span class="sd">&quot;&quot;&quot;Create parameters for the data modifier with the specified name.</span>
+</span><span id="DataModifierFactory-114"><a href="#DataModifierFactory-114"><span class="linenos">114</span></a>
+</span><span id="DataModifierFactory-115"><a href="#DataModifierFactory-115"><span class="linenos">115</span></a><span class="sd">        Args:</span>
+</span><span id="DataModifierFactory-116"><a href="#DataModifierFactory-116"><span class="linenos">116</span></a><span class="sd">            obj_name: name of the data modifier to create parameters for.</span>
+</span><span id="DataModifierFactory-117"><a href="#DataModifierFactory-117"><span class="linenos">117</span></a>
+</span><span id="DataModifierFactory-118"><a href="#DataModifierFactory-118"><span class="linenos">118</span></a><span class="sd">        Returns:</span>
+</span><span id="DataModifierFactory-119"><a href="#DataModifierFactory-119"><span class="linenos">119</span></a><span class="sd">            the configuration parameters of the object or empty parameters when it does not exist.</span>
+</span><span id="DataModifierFactory-120"><a href="#DataModifierFactory-120"><span class="linenos">120</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DataModifierFactory-121"><a href="#DataModifierFactory-121"><span class="linenos">121</span></a>        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="DataModifierFactory-122"><a href="#DataModifierFactory-122"><span class="linenos">122</span></a>            <span class="s1">&#39;column_name&#39;</span><span class="p">:</span> <span class="n">obj_name</span><span class="p">,</span>
+</span><span id="DataModifierFactory-123"><a href="#DataModifierFactory-123"><span class="linenos">123</span></a>            <span class="s1">&#39;dataset&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span>
+</span><span id="DataModifierFactory-124"><a href="#DataModifierFactory-124"><span class="linenos">124</span></a>            <span class="s1">&#39;matrix_name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">factory_name</span>
+</span><span id="DataModifierFactory-125"><a href="#DataModifierFactory-125"><span class="linenos">125</span></a>        <span class="p">}</span>
+</span><span id="DataModifierFactory-126"><a href="#DataModifierFactory-126"><span class="linenos">126</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">factory</span><span class="p">[</span><span class="n">obj_name</span><span class="p">][</span><span class="n">FUNC_CREATE_PARAMS</span><span class="p">](</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Factory for data modifier creation.</p>
+
+<p>The intended use is to associate the factory with a specific matrix of a dataset.
+Both the created parameters and the created data modifiers are supplied
+with a reference to the dataset and the name of the matrix they belong to.</p>
+</div>
+
+
+                            <div id="DataModifierFactory.__init__" class="classattr">
+                                        <input id="DataModifierFactory.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="name">DataModifierFactory</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">matrix_name</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">dataset</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">set</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">Dataset</span></span>)</span>
+
+                <label class="view-source-button" for="DataModifierFactory.__init__-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#DataModifierFactory.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DataModifierFactory.__init__-81"><a href="#DataModifierFactory.__init__-81"><span class="linenos">81</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matrix_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">):</span>
+</span><span id="DataModifierFactory.__init__-82"><a href="#DataModifierFactory.__init__-82"><span class="linenos">82</span></a>        <span class="sd">&quot;&quot;&quot;Construct the DataModifierFactory.</span>
+</span><span id="DataModifierFactory.__init__-83"><a href="#DataModifierFactory.__init__-83"><span class="linenos">83</span></a>
+</span><span id="DataModifierFactory.__init__-84"><a href="#DataModifierFactory.__init__-84"><span class="linenos">84</span></a><span class="sd">        Args:</span>
+</span><span id="DataModifierFactory.__init__-85"><a href="#DataModifierFactory.__init__-85"><span class="linenos">85</span></a><span class="sd">            matrix_name: the name of the matrix that it relates to.</span>
+</span><span id="DataModifierFactory.__init__-86"><a href="#DataModifierFactory.__init__-86"><span class="linenos">86</span></a><span class="sd">            dataset: the dataset associated with the matrix.</span>
+</span><span id="DataModifierFactory.__init__-87"><a href="#DataModifierFactory.__init__-87"><span class="linenos">87</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DataModifierFactory.__init__-88"><a href="#DataModifierFactory.__init__-88"><span class="linenos">88</span></a>        <span class="n">Factory</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matrix_name</span><span class="p">)</span>
+</span><span id="DataModifierFactory.__init__-89"><a href="#DataModifierFactory.__init__-89"><span class="linenos">89</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Construct the DataModifierFactory.</p>
+
+<p>Args:
+    matrix_name: the name of the matrix that it relates to.
+    dataset: the dataset associated with the matrix.</p>
+</div>
+
+
+                            </div>
+                            <div id="DataModifierFactory.create" class="classattr">
+                                        <input id="DataModifierFactory.create-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">create</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">obj_name</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">obj_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">data_modifier</span><span class="o">.</span><span class="n">DataModifier</span>:</span></span>
+
+                <label class="view-source-button" for="DataModifierFactory.create-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#DataModifierFactory.create"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DataModifierFactory.create-91"><a href="#DataModifierFactory.create-91"><span class="linenos"> 91</span></a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">obj_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataModifier</span><span class="p">:</span>
+</span><span id="DataModifierFactory.create-92"><a href="#DataModifierFactory.create-92"><span class="linenos"> 92</span></a>        <span class="sd">&quot;&quot;&quot;Create and return a new data modifier with the specified name.</span>
+</span><span id="DataModifierFactory.create-93"><a href="#DataModifierFactory.create-93"><span class="linenos"> 93</span></a>
+</span><span id="DataModifierFactory.create-94"><a href="#DataModifierFactory.create-94"><span class="linenos"> 94</span></a><span class="sd">        The specified parameters are expected to be of the same structure as the defaults</span>
+</span><span id="DataModifierFactory.create-95"><a href="#DataModifierFactory.create-95"><span class="linenos"> 95</span></a><span class="sd">        of the ConfigParameters that are associated with the desired data modifier.</span>
+</span><span id="DataModifierFactory.create-96"><a href="#DataModifierFactory.create-96"><span class="linenos"> 96</span></a><span class="sd">        When no parameters are specified it will use the data modifier&#39;s defaults.</span>
+</span><span id="DataModifierFactory.create-97"><a href="#DataModifierFactory.create-97"><span class="linenos"> 97</span></a>
+</span><span id="DataModifierFactory.create-98"><a href="#DataModifierFactory.create-98"><span class="linenos"> 98</span></a><span class="sd">        Args:</span>
+</span><span id="DataModifierFactory.create-99"><a href="#DataModifierFactory.create-99"><span class="linenos"> 99</span></a><span class="sd">            obj_name: the name of the data modifier to create.</span>
+</span><span id="DataModifierFactory.create-100"><a href="#DataModifierFactory.create-100"><span class="linenos">100</span></a><span class="sd">            obj_params: the parameters of the data modifier.</span>
+</span><span id="DataModifierFactory.create-101"><a href="#DataModifierFactory.create-101"><span class="linenos">101</span></a>
+</span><span id="DataModifierFactory.create-102"><a href="#DataModifierFactory.create-102"><span class="linenos">102</span></a><span class="sd">        Keyword Args:</span>
+</span><span id="DataModifierFactory.create-103"><a href="#DataModifierFactory.create-103"><span class="linenos">103</span></a><span class="sd">            Any: extra arguments that need to be passed to the data modifier on creation.</span>
+</span><span id="DataModifierFactory.create-104"><a href="#DataModifierFactory.create-104"><span class="linenos">104</span></a>
+</span><span id="DataModifierFactory.create-105"><a href="#DataModifierFactory.create-105"><span class="linenos">105</span></a><span class="sd">        Returns:</span>
+</span><span id="DataModifierFactory.create-106"><a href="#DataModifierFactory.create-106"><span class="linenos">106</span></a><span class="sd">            the created data modifier or None when it does not exist.</span>
+</span><span id="DataModifierFactory.create-107"><a href="#DataModifierFactory.create-107"><span class="linenos">107</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DataModifierFactory.create-108"><a href="#DataModifierFactory.create-108"><span class="linenos">108</span></a>        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;dataset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span>
+</span><span id="DataModifierFactory.create-109"><a href="#DataModifierFactory.create-109"><span class="linenos">109</span></a>        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;matrix_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">factory_name</span>
+</span><span id="DataModifierFactory.create-110"><a href="#DataModifierFactory.create-110"><span class="linenos">110</span></a>        <span class="k">return</span> <span class="n">Factory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_name</span><span class="p">,</span> <span class="n">obj_params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Create and return a new data modifier with the specified name.</p>
+
+<p>The specified parameters are expected to be of the same structure as the defaults
+of the ConfigParameters that are associated with the desired data modifier.
+When no parameters are specified it will use the data modifier's defaults.</p>
+
+<p>Args:
+    obj_name: the name of the data modifier to create.
+    obj_params: the parameters of the data modifier.</p>
+
+<p>Keyword Args:
+    Any: extra arguments that need to be passed to the data modifier on creation.</p>
+
+<p>Returns:
+    the created data modifier or None when it does not exist.</p>
+</div>
+
+
+                            </div>
+                            <div id="DataModifierFactory.on_create_params" class="classattr">
+                                        <input id="DataModifierFactory.on_create_params-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">on_create_params</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">obj_name</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">config_parameters</span><span class="o">.</span><span class="n">ConfigParameters</span>:</span></span>
+
+                <label class="view-source-button" for="DataModifierFactory.on_create_params-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#DataModifierFactory.on_create_params"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DataModifierFactory.on_create_params-112"><a href="#DataModifierFactory.on_create_params-112"><span class="linenos">112</span></a>    <span class="k">def</span> <span class="nf">on_create_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConfigParameters</span><span class="p">:</span>
+</span><span id="DataModifierFactory.on_create_params-113"><a href="#DataModifierFactory.on_create_params-113"><span class="linenos">113</span></a>        <span class="sd">&quot;&quot;&quot;Create parameters for the data modifier with the specified name.</span>
+</span><span id="DataModifierFactory.on_create_params-114"><a href="#DataModifierFactory.on_create_params-114"><span class="linenos">114</span></a>
+</span><span id="DataModifierFactory.on_create_params-115"><a href="#DataModifierFactory.on_create_params-115"><span class="linenos">115</span></a><span class="sd">        Args:</span>
+</span><span id="DataModifierFactory.on_create_params-116"><a href="#DataModifierFactory.on_create_params-116"><span class="linenos">116</span></a><span class="sd">            obj_name: name of the data modifier to create parameters for.</span>
+</span><span id="DataModifierFactory.on_create_params-117"><a href="#DataModifierFactory.on_create_params-117"><span class="linenos">117</span></a>
+</span><span id="DataModifierFactory.on_create_params-118"><a href="#DataModifierFactory.on_create_params-118"><span class="linenos">118</span></a><span class="sd">        Returns:</span>
+</span><span id="DataModifierFactory.on_create_params-119"><a href="#DataModifierFactory.on_create_params-119"><span class="linenos">119</span></a><span class="sd">            the configuration parameters of the object or empty parameters when it does not exist.</span>
+</span><span id="DataModifierFactory.on_create_params-120"><a href="#DataModifierFactory.on_create_params-120"><span class="linenos">120</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DataModifierFactory.on_create_params-121"><a href="#DataModifierFactory.on_create_params-121"><span class="linenos">121</span></a>        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="DataModifierFactory.on_create_params-122"><a href="#DataModifierFactory.on_create_params-122"><span class="linenos">122</span></a>            <span class="s1">&#39;column_name&#39;</span><span class="p">:</span> <span class="n">obj_name</span><span class="p">,</span>
+</span><span id="DataModifierFactory.on_create_params-123"><a href="#DataModifierFactory.on_create_params-123"><span class="linenos">123</span></a>            <span class="s1">&#39;dataset&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">,</span>
+</span><span id="DataModifierFactory.on_create_params-124"><a href="#DataModifierFactory.on_create_params-124"><span class="linenos">124</span></a>            <span class="s1">&#39;matrix_name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">factory_name</span>
+</span><span id="DataModifierFactory.on_create_params-125"><a href="#DataModifierFactory.on_create_params-125"><span class="linenos">125</span></a>        <span class="p">}</span>
+</span><span id="DataModifierFactory.on_create_params-126"><a href="#DataModifierFactory.on_create_params-126"><span class="linenos">126</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">factory</span><span class="p">[</span><span class="n">obj_name</span><span class="p">][</span><span class="n">FUNC_CREATE_PARAMS</span><span class="p">](</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Create parameters for the data modifier with the specified name.</p>
+
+<p>Args:
+    obj_name: name of the data modifier to create parameters for.</p>
+
+<p>Returns:
+    the configuration parameters of the object or empty parameters when it does not exist.</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="../core/config/config_factories.html#Factory">src.fairreckitlib.core.config.config_factories.Factory</a></dt>
+                                <dd id="DataModifierFactory.add_obj" class="function"><a href="../core/config/config_factories.html#Factory.add_obj">add_obj</a></dd>
+                <dd id="DataModifierFactory.create_params" class="function"><a href="../core/config/config_factories.html#Factory.create_params">create_params</a></dd>
+                <dd id="DataModifierFactory.get_available" class="function"><a href="../core/config/config_factories.html#Factory.get_available">get_available</a></dd>
+                <dd id="DataModifierFactory.is_obj_available" class="function"><a href="../core/config/config_factories.html#Factory.is_obj_available">is_obj_available</a></dd>
+
+            </div>
+            <div><dt><a href="../core/config/config_factories.html#BaseFactory">src.fairreckitlib.core.config.config_factories.BaseFactory</a></dt>
+                                <dd id="DataModifierFactory.get_available_names" class="function"><a href="../core/config/config_factories.html#BaseFactory.get_available_names">get_available_names</a></dd>
+                <dd id="DataModifierFactory.get_name" class="function"><a href="../core/config/config_factories.html#BaseFactory.get_name">get_name</a></dd>
+                <dd id="DataModifierFactory.get_num_entries" class="function"><a href="../core/config/config_factories.html#BaseFactory.get_num_entries">get_num_entries</a></dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="create_data_modifier_factory">
+                            <input id="create_data_modifier_factory-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">create_data_modifier_factory</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">data_registry</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">set</span><span class="o">.</span><span class="n">dataset_registry</span><span class="o">.</span><span class="n">DataRegistry</span>,</span><span class="param">	<span class="n">factory_name</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">func_on_add_entries</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">data_modifier</span><span class="o">.</span><span class="n">DataModifierFactory</span><span class="p">,</span> <span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">set</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">Dataset</span><span class="p">],</span> <span class="n">NoneType</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">config_factories</span><span class="o">.</span><span class="n">GroupFactory</span>:</span></span>
+
+                <label class="view-source-button" for="create_data_modifier_factory-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#create_data_modifier_factory"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="create_data_modifier_factory-129"><a href="#create_data_modifier_factory-129"><span class="linenos">129</span></a><span class="k">def</span> <span class="nf">create_data_modifier_factory</span><span class="p">(</span>
+</span><span id="create_data_modifier_factory-130"><a href="#create_data_modifier_factory-130"><span class="linenos">130</span></a>        <span class="n">data_registry</span><span class="p">:</span> <span class="n">DataRegistry</span><span class="p">,</span>
+</span><span id="create_data_modifier_factory-131"><a href="#create_data_modifier_factory-131"><span class="linenos">131</span></a>        <span class="n">factory_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="create_data_modifier_factory-132"><a href="#create_data_modifier_factory-132"><span class="linenos">132</span></a>        <span class="n">func_on_add_entries</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">DataModifierFactory</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">GroupFactory</span><span class="p">:</span>
+</span><span id="create_data_modifier_factory-133"><a href="#create_data_modifier_factory-133"><span class="linenos">133</span></a>    <span class="sd">&quot;&quot;&quot;Create a data modifier factory for each dataset-matrix pair.</span>
+</span><span id="create_data_modifier_factory-134"><a href="#create_data_modifier_factory-134"><span class="linenos">134</span></a>
+</span><span id="create_data_modifier_factory-135"><a href="#create_data_modifier_factory-135"><span class="linenos">135</span></a><span class="sd">    Args:</span>
+</span><span id="create_data_modifier_factory-136"><a href="#create_data_modifier_factory-136"><span class="linenos">136</span></a>
+</span><span id="create_data_modifier_factory-137"><a href="#create_data_modifier_factory-137"><span class="linenos">137</span></a><span class="sd">        data_registry: the data registry with available datasets.</span>
+</span><span id="create_data_modifier_factory-138"><a href="#create_data_modifier_factory-138"><span class="linenos">138</span></a><span class="sd">        factory_name: the name of the data modifier factory.</span>
+</span><span id="create_data_modifier_factory-139"><a href="#create_data_modifier_factory-139"><span class="linenos">139</span></a><span class="sd">        func_on_add_entries: callback for each dataset-matrix pair to add data modifiers.</span>
+</span><span id="create_data_modifier_factory-140"><a href="#create_data_modifier_factory-140"><span class="linenos">140</span></a>
+</span><span id="create_data_modifier_factory-141"><a href="#create_data_modifier_factory-141"><span class="linenos">141</span></a><span class="sd">    Returns:</span>
+</span><span id="create_data_modifier_factory-142"><a href="#create_data_modifier_factory-142"><span class="linenos">142</span></a><span class="sd">        the factory with all available data modifiers per dataset-matrix pair.</span>
+</span><span id="create_data_modifier_factory-143"><a href="#create_data_modifier_factory-143"><span class="linenos">143</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="create_data_modifier_factory-144"><a href="#create_data_modifier_factory-144"><span class="linenos">144</span></a>    <span class="n">factory</span> <span class="o">=</span> <span class="n">GroupFactory</span><span class="p">(</span><span class="n">factory_name</span><span class="p">)</span>
+</span><span id="create_data_modifier_factory-145"><a href="#create_data_modifier_factory-145"><span class="linenos">145</span></a>
+</span><span id="create_data_modifier_factory-146"><a href="#create_data_modifier_factory-146"><span class="linenos">146</span></a>    <span class="k">for</span> <span class="n">dataset_name</span> <span class="ow">in</span> <span class="n">data_registry</span><span class="o">.</span><span class="n">get_available_sets</span><span class="p">():</span>
+</span><span id="create_data_modifier_factory-147"><a href="#create_data_modifier_factory-147"><span class="linenos">147</span></a>        <span class="n">dataset</span> <span class="o">=</span> <span class="n">data_registry</span><span class="o">.</span><span class="n">get_set</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+</span><span id="create_data_modifier_factory-148"><a href="#create_data_modifier_factory-148"><span class="linenos">148</span></a>        <span class="n">dataset_factory</span> <span class="o">=</span> <span class="n">GroupFactory</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">get_name</span><span class="p">())</span>
+</span><span id="create_data_modifier_factory-149"><a href="#create_data_modifier_factory-149"><span class="linenos">149</span></a>
+</span><span id="create_data_modifier_factory-150"><a href="#create_data_modifier_factory-150"><span class="linenos">150</span></a>        <span class="n">factory</span><span class="o">.</span><span class="n">add_factory</span><span class="p">(</span><span class="n">dataset_factory</span><span class="p">)</span>
+</span><span id="create_data_modifier_factory-151"><a href="#create_data_modifier_factory-151"><span class="linenos">151</span></a>
+</span><span id="create_data_modifier_factory-152"><a href="#create_data_modifier_factory-152"><span class="linenos">152</span></a>        <span class="k">for</span> <span class="n">matrix_name</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">get_available_matrices</span><span class="p">():</span>
+</span><span id="create_data_modifier_factory-153"><a href="#create_data_modifier_factory-153"><span class="linenos">153</span></a>            <span class="n">matrix_factory</span> <span class="o">=</span> <span class="n">DataModifierFactory</span><span class="p">(</span><span class="n">matrix_name</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+</span><span id="create_data_modifier_factory-154"><a href="#create_data_modifier_factory-154"><span class="linenos">154</span></a>            <span class="n">func_on_add_entries</span><span class="p">(</span><span class="n">matrix_factory</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+</span><span id="create_data_modifier_factory-155"><a href="#create_data_modifier_factory-155"><span class="linenos">155</span></a>            <span class="n">dataset_factory</span><span class="o">.</span><span class="n">add_factory</span><span class="p">(</span><span class="n">matrix_factory</span><span class="p">)</span>
+</span><span id="create_data_modifier_factory-156"><a href="#create_data_modifier_factory-156"><span class="linenos">156</span></a>
+</span><span id="create_data_modifier_factory-157"><a href="#create_data_modifier_factory-157"><span class="linenos">157</span></a>    <span class="k">return</span> <span class="n">factory</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Create a data modifier factory for each dataset-matrix pair.</p>
+
+<p>Args:</p>
+
+<pre><code>data_registry: the data registry with available datasets.
+factory_name: the name of the data modifier factory.
+func_on_add_entries: callback for each dataset-matrix pair to add data modifiers.
+</code></pre>
+
+<p>Returns:
+    the factory with all available data modifiers per dataset-matrix pair.</p>
+</div>
+
+
                 </section>
     </main>
 <script>
