@@ -31,28 +31,16 @@
         <h2>API Documentation</h2>
             <ul class="memberlist">
             <li>
+                    <a class="function" href="#create_metric_params_k">create_metric_params_k</a>
+            </li>
+            <li>
                     <a class="function" href="#create_accuracy_metric_factory">create_accuracy_metric_factory</a>
             </li>
             <li>
                     <a class="function" href="#create_coverage_metric_factory">create_coverage_metric_factory</a>
             </li>
             <li>
-                    <a class="function" href="#prepare_for_coverage">prepare_for_coverage</a>
-            </li>
-            <li>
-                    <a class="function" href="#create_diversity_metric_factory">create_diversity_metric_factory</a>
-            </li>
-            <li>
-                    <a class="function" href="#create_novelty_metric_factory">create_novelty_metric_factory</a>
-            </li>
-            <li>
                     <a class="function" href="#create_rating_metric_factory">create_rating_metric_factory</a>
-            </li>
-            <li>
-                    <a class="function" href="#create_metric_params_k">create_metric_params_k</a>
-            </li>
-            <li>
-                    <a class="function" href="#create_metric">create_metric</a>
             </li>
             <li>
                     <a class="function" href="#resolve_metric_factory">resolve_metric_factory</a>
@@ -73,7 +61,18 @@
                     <h1 class="modulename">
 src<wbr>.<a href="./../../../fairreckitlib.html">fairreckitlib</a><wbr>.<a href="./../../evaluation.html">evaluation</a><wbr>.<a href="./../metrics.html">metrics</a><wbr>.metric_factory    </h1>
 
-                        <div class="docstring"><p>This program has been developed by students from the bachelor Computer Science at
+                        <div class="docstring"><p>This module contains functionality to create and resolve metric factories.</p>
+
+<p>Functions:</p>
+
+<pre><code>create_metric_params_k: create metric config parameters with a K param.
+create_accuracy_metric_factory: create metric category factory for accuracy metrics.
+create_coverage_metric_factory: create metric category factory for coverage metrics.
+create_rating_metric_factory: create metric category factory for rating metrics.
+resolve_metric_factory: resolve the metric factory from the name of the metric.
+</code></pre>
+
+<p>This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)</p>
 </div>
@@ -82,234 +81,159 @@ Utrecht University within the Software Project course.
 
                         <label class="view-source-button" for="metric_factory-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">This program has been developed by students from the bachelor Computer Science at</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">Utrecht University within the Software Project course.</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="sd">© Copyright Utrecht University (Department of Information and Computing Sciences)</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">from</span> <span class="nn">lenskit</span> <span class="kn">import</span> <span class="n">topn</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">from</span> <span class="nn">lenskit.metrics</span> <span class="kn">import</span> <span class="n">predict</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="kn">from</span> <span class="nn">rexmex.metrics</span> <span class="kn">import</span> <span class="n">item_coverage</span><span class="p">,</span> <span class="n">user_coverage</span><span class="p">,</span> <span class="n">intra_list_similarity</span><span class="p">,</span> <span class="n">novelty</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>
-</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="kn">from</span> <span class="nn">.evaluator</span> <span class="kn">import</span> <span class="n">Evaluator</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">from</span> <span class="nn">.lenskit.lenskit_prediction_evaluator</span> <span class="kn">import</span> <span class="n">LensKitPredictionEvaluator</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="kn">from</span> <span class="nn">.lenskit.lenskit_recommendation_evaluator</span> <span class="kn">import</span> <span class="n">LensKitRecommendationEvaluator</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="kn">from</span> <span class="nn">.rexmex.rexmex_evaluator</span> <span class="kn">import</span> <span class="n">RexmexEvaluator</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="kn">from</span> <span class="nn">...core.config.config_factories</span> <span class="kn">import</span> <span class="n">create_factory_from_list</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="kn">from</span> <span class="nn">...core.config.config_parameters</span> <span class="kn">import</span> <span class="n">ConfigParameters</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="kn">from</span> <span class="nn">.common</span> <span class="kn">import</span> <span class="n">Metric</span><span class="p">,</span> <span class="n">MetricCategory</span><span class="p">,</span> <span class="n">KEY_METRIC_PARAM_K</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="k">def</span> <span class="nf">create_accuracy_metric_factory</span><span class="p">():</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>    <span class="sd">&quot;&quot;&quot;Create the factory with Accuracy metrics.</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a>
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="sd">    Returns:</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">        the factory with all available metrics.</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>    <span class="k">return</span> <span class="n">create_factory_from_list</span><span class="p">(</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">ACCURACY</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">[</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">NDCG</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>         <span class="n">create_metric_params_k</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>         <span class="p">),</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">PRECISION</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>         <span class="n">create_metric_params_k</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a>         <span class="p">),</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">RECALL</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>         <span class="n">create_metric_params_k</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>         <span class="p">),</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">MRR</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>         <span class="kc">None</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>         <span class="p">)</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="p">])</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="k">def</span> <span class="nf">create_coverage_metric_factory</span><span class="p">():</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>    <span class="sd">&quot;&quot;&quot;Create the factory with Coverage metrics.</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="sd">        Returns:</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">            the factory with all available metrics.</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>    <span class="k">return</span> <span class="n">create_factory_from_list</span><span class="p">(</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">COVERAGE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">[</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">ITEM_COVERAGE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>         <span class="kc">None</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>         <span class="p">),</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">USER_COVERAGE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>         <span class="kc">None</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>         <span class="p">)</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="p">])</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="k">def</span> <span class="nf">prepare_for_coverage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">    Uses the train set and recommendations set to</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">    create a tuple that describes the possible user-item pairs in the train set</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">    and the user-item pairs in the result</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">    :return: a tuple containing (A,B) where</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">        a is a tuple (List,List) of possible users and items in the train set and</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">        b is a list of user-item tuples in the recommendations</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>    <span class="c1"># Convert recommended user, item columns to list of tuples.</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>    <span class="n">tuple_recs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">recs</span><span class="p">[[</span><span class="s1">&#39;source_id&#39;</span><span class="p">,</span> <span class="s1">&#39;target_id&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()]</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>    <span class="c1">#print(tuple_recs[0:10])</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>    <span class="c1"># The possible users and items are in the train set</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>    <span class="n">possible_users_items</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">[</span><span class="s1">&#39;source_id&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">[</span><span class="s1">&#39;target_id&#39;</span><span class="p">])</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>    <span class="c1">#print(possible_users_items)</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>    <span class="k">return</span> <span class="n">possible_users_items</span><span class="p">,</span> <span class="n">tuple_recs</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="k">def</span> <span class="nf">create_diversity_metric_factory</span><span class="p">():</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="sd">&quot;&quot;&quot;Create the factory with Diversity metrics.</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">        Returns:</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">            the factory with all available metrics.</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>    <span class="k">return</span> <span class="n">create_factory_from_list</span><span class="p">(</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">DIVERSITY</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">[</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">INTRA_LIST_SIMILARITY</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>         <span class="kc">None</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>         <span class="p">)</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="p">])</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="k">def</span> <span class="nf">create_novelty_metric_factory</span><span class="p">():</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="sd">&quot;&quot;&quot;Create the factory with Novelty metrics.</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">        Returns:</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">            the factory with all available metrics.</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>    <span class="k">return</span> <span class="n">create_factory_from_list</span><span class="p">(</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">NOVELTY</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">[</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">NOVELTY</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>         <span class="kc">None</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>         <span class="p">)</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>    <span class="p">])</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="k">def</span> <span class="nf">create_rating_metric_factory</span><span class="p">():</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>    <span class="sd">&quot;&quot;&quot;Create the factory with Rating metrics.</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">        Returns:</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">            the factory with all available metrics.</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>    <span class="k">return</span> <span class="n">create_factory_from_list</span><span class="p">(</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">RATING</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">[</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">RMSE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>         <span class="kc">None</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>         <span class="p">),</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">MAE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>         <span class="kc">None</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>         <span class="p">)</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>    <span class="p">])</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a><span class="k">def</span> <span class="nf">create_metric_params_k</span><span class="p">():</span>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>    <span class="sd">&quot;&quot;&quot;Create the K param for K metrics</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a><span class="sd">    Returns:</span>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="sd">        the configuration parameters of the metric.</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>    <span class="n">params</span> <span class="o">=</span> <span class="n">ConfigParameters</span><span class="p">()</span>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>    <span class="n">params</span><span class="o">.</span><span class="n">add_number</span><span class="p">(</span><span class="n">KEY_METRIC_PARAM_K</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>    <span class="k">return</span> <span class="n">params</span>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="k">def</span> <span class="nf">create_metric</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Evaluator</span><span class="p">:</span>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>    <span class="sd">&quot;&quot;&quot;Create a metric.</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a><span class="sd">        Args:</span>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a><span class="sd">            name: the name of the metric.</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a><span class="sd">            params: parameters for the metric</span>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="sd">        Returns:</span>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a><span class="sd">            an Evaluator that uses the metric function corresponding to the name.</span>
-</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>    <span class="c1"># TODO refactor</span>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="c1">#print(&#39;DEV metric name and params&#39;, name, params)</span>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="n">metric_dict</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">NDCG</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">LensKitRecommendationEvaluator</span><span class="p">,</span> <span class="n">topn</span><span class="o">.</span><span class="n">ndcg</span><span class="p">,</span> <span class="s1">&#39;ndcg&#39;</span><span class="p">),</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">PRECISION</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">LensKitRecommendationEvaluator</span><span class="p">,</span> <span class="n">topn</span><span class="o">.</span><span class="n">precision</span><span class="p">,</span> <span class="s1">&#39;precision&#39;</span><span class="p">),</span>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">RECALL</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">LensKitRecommendationEvaluator</span><span class="p">,</span> <span class="n">topn</span><span class="o">.</span><span class="n">recall</span><span class="p">,</span> <span class="s1">&#39;recall&#39;</span><span class="p">),</span>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">MRR</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">LensKitRecommendationEvaluator</span><span class="p">,</span> <span class="n">topn</span><span class="o">.</span><span class="n">recip_rank</span><span class="p">,</span> <span class="s1">&#39;recip_rank&#39;</span><span class="p">),</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">RMSE</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">LensKitPredictionEvaluator</span><span class="p">,</span> <span class="n">predict</span><span class="o">.</span><span class="n">rmse</span><span class="p">,</span> <span class="s1">&#39;rmse&#39;</span><span class="p">),</span>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">MAE</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">LensKitPredictionEvaluator</span><span class="p">,</span> <span class="n">predict</span><span class="o">.</span><span class="n">mae</span><span class="p">,</span> <span class="s1">&#39;mae&#39;</span><span class="p">),</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">ITEM_COVERAGE</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">RexmexEvaluator</span><span class="p">,</span> <span class="n">item_coverage</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">USER_COVERAGE</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">RexmexEvaluator</span><span class="p">,</span> <span class="n">user_coverage</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">INTRA_LIST_SIMILARITY</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">RexmexEvaluator</span><span class="p">,</span> <span class="n">intra_list_similarity</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">NOVELTY</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">RexmexEvaluator</span><span class="p">,</span> <span class="n">novelty</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>    <span class="p">}</span>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>    <span class="n">evaluator</span><span class="p">,</span> <span class="n">eval_func</span><span class="p">,</span> <span class="n">group</span> <span class="o">=</span> <span class="n">metric_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>    <span class="c1"># Add group for LensKit</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>    <span class="k">if</span> <span class="n">group</span><span class="p">:</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>    <span class="k">return</span> <span class="n">evaluator</span><span class="p">(</span><span class="n">eval_func</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>
-</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>
-</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="k">def</span> <span class="nf">resolve_metric_factory</span><span class="p">(</span><span class="n">metric_name</span><span class="p">,</span> <span class="n">metric_category_factory</span><span class="p">):</span>
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>    <span class="sd">&quot;&quot;&quot;Get metric factory from name and category factory.</span>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>
-</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="sd">    Args:</span>
-</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a><span class="sd">        metric_name: name of the metric</span>
-</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a><span class="sd">        metric_category_factory: factory of the metric category</span>
-</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>
-</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a><span class="sd">    Returns:</span>
-</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a><span class="sd">        the metric factory.</span>
-</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">factory_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metric_category_factory</span><span class="o">.</span><span class="n">get_available_names</span><span class="p">()):</span>
-</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>        <span class="n">metric_factory</span> <span class="o">=</span> <span class="n">metric_category_factory</span><span class="o">.</span><span class="n">get_factory</span><span class="p">(</span><span class="n">factory_name</span><span class="p">)</span>
-</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>        <span class="k">if</span> <span class="n">metric_factory</span><span class="o">.</span><span class="n">is_obj_available</span><span class="p">(</span><span class="n">metric_name</span><span class="p">):</span>
-</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a>            <span class="k">return</span> <span class="n">metric_factory</span>
-</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>
-</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>    <span class="k">return</span> <span class="kc">None</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="sd">&quot;&quot;&quot;This module contains functionality to create and resolve metric factories.</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">Functions:</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">    create_metric_params_k: create metric config parameters with a K param.</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="sd">    create_accuracy_metric_factory: create metric category factory for accuracy metrics.</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="sd">    create_coverage_metric_factory: create metric category factory for coverage metrics.</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">    create_rating_metric_factory: create metric category factory for rating metrics.</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">    resolve_metric_factory: resolve the metric factory from the name of the metric.</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="sd">This program has been developed by students from the bachelor Computer Science at</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="sd">Utrecht University within the Software Project course.</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="sd">© Copyright Utrecht University (Department of Information and Computing Sciences)</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="kn">from</span> <span class="nn">...core.config.config_factories</span> <span class="kn">import</span> <span class="n">Factory</span><span class="p">,</span> <span class="n">GroupFactory</span><span class="p">,</span> <span class="n">create_factory_from_list</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="kn">from</span> <span class="nn">...core.config.config_parameters</span> <span class="kn">import</span> <span class="n">ConfigParameters</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="kn">from</span> <span class="nn">.lenskit</span> <span class="kn">import</span> <span class="n">lenskit_accuracy_metric</span><span class="p">,</span> <span class="n">lenskit_rating_metric</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="kn">from</span> <span class="nn">.rexmex</span> <span class="kn">import</span> <span class="n">rexmex_coverage_metric</span><span class="p">,</span> <span class="n">rexmex_rating_metric</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="kn">from</span> <span class="nn">.metric_constants</span> <span class="kn">import</span> <span class="n">KEY_METRIC_PARAM_K</span><span class="p">,</span> <span class="n">MetricCategory</span><span class="p">,</span> <span class="n">Metric</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="k">def</span> <span class="nf">create_metric_params_k</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ConfigParameters</span><span class="p">:</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="sd">&quot;&quot;&quot;Create the parameters of a metric that utilizes the K param.</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">    Returns:</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">        the configuration parameters of the metric.</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>    <span class="n">params</span> <span class="o">=</span> <span class="n">ConfigParameters</span><span class="p">()</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="n">params</span><span class="o">.</span><span class="n">add_number</span><span class="p">(</span><span class="n">KEY_METRIC_PARAM_K</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>    <span class="k">return</span> <span class="n">params</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="k">def</span> <span class="nf">create_accuracy_metric_factory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Factory</span><span class="p">:</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>    <span class="sd">&quot;&quot;&quot;Create the factory with Accuracy metrics.</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">    Returns:</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="sd">        the factory with all available metrics.</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="k">return</span> <span class="n">create_factory_from_list</span><span class="p">(</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">ACCURACY</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">[</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">HIT_RATIO</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">lenskit_accuracy_metric</span><span class="o">.</span><span class="n">create_hit_ratio</span><span class="p">,</span> <span class="n">create_metric_params_k</span><span class="p">),</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">NDCG</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">lenskit_accuracy_metric</span><span class="o">.</span><span class="n">create_ndcg</span><span class="p">,</span> <span class="n">create_metric_params_k</span><span class="p">),</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">PRECISION</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">lenskit_accuracy_metric</span><span class="o">.</span><span class="n">create_precision</span><span class="p">,</span> <span class="n">create_metric_params_k</span><span class="p">),</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">RECALL</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">lenskit_accuracy_metric</span><span class="o">.</span><span class="n">create_recall</span><span class="p">,</span> <span class="n">create_metric_params_k</span><span class="p">),</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">MRR</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">lenskit_accuracy_metric</span><span class="o">.</span><span class="n">create_mean_recip_rank</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>    <span class="p">])</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="k">def</span> <span class="nf">create_coverage_metric_factory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Factory</span><span class="p">:</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>    <span class="sd">&quot;&quot;&quot;Create the factory with Coverage metrics.</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="sd">    Returns:</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="sd">        the factory with all available metrics.</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>    <span class="k">return</span> <span class="n">create_factory_from_list</span><span class="p">(</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">COVERAGE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">[</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">ITEM_COVERAGE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">rexmex_coverage_metric</span><span class="o">.</span><span class="n">create_item_coverage</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">USER_COVERAGE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">rexmex_coverage_metric</span><span class="o">.</span><span class="n">create_user_coverage</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>    <span class="p">])</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="k">def</span> <span class="nf">create_rating_metric_factory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Factory</span><span class="p">:</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>    <span class="sd">&quot;&quot;&quot;Create the factory with Rating metrics.</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="sd">    Returns:</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a><span class="sd">        the factory with all available metrics.</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>    <span class="k">return</span> <span class="n">create_factory_from_list</span><span class="p">(</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">RATING</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">[</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">MAE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">lenskit_rating_metric</span><span class="o">.</span><span class="n">create_mae</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">MAPE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">rexmex_rating_metric</span><span class="o">.</span><span class="n">create_mape</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">MSE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">rexmex_rating_metric</span><span class="o">.</span><span class="n">create_mse</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">RMSE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">lenskit_rating_metric</span><span class="o">.</span><span class="n">create_rmse</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>    <span class="p">])</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a><span class="k">def</span> <span class="nf">resolve_metric_factory</span><span class="p">(</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>        <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>        <span class="n">metric_category_factory</span><span class="p">:</span> <span class="n">GroupFactory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Factory</span><span class="p">]:</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>    <span class="sd">&quot;&quot;&quot;Resolve the metric factory from the name of the metric.</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a><span class="sd">    Args:</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a><span class="sd">        metric_name: the name of the metric.</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a><span class="sd">        metric_category_factory: the factory that contains metric category factories.</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>
+</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a><span class="sd">    Returns:</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a><span class="sd">        the resolved metric factory or None when not found.</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a>    <span class="k">for</span> <span class="n">factory_name</span> <span class="ow">in</span> <span class="n">metric_category_factory</span><span class="o">.</span><span class="n">get_available_names</span><span class="p">():</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos">90</span></a>        <span class="n">metric_factory</span> <span class="o">=</span> <span class="n">metric_category_factory</span><span class="o">.</span><span class="n">get_factory</span><span class="p">(</span><span class="n">factory_name</span><span class="p">)</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos">91</span></a>        <span class="k">if</span> <span class="n">metric_factory</span><span class="o">.</span><span class="n">is_obj_available</span><span class="p">(</span><span class="n">metric_name</span><span class="p">):</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos">92</span></a>            <span class="k">return</span> <span class="n">metric_factory</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos">93</span></a>
+</span><span id="L-94"><a href="#L-94"><span class="linenos">94</span></a>    <span class="k">return</span> <span class="kc">None</span>
 </span></pre></div>
 
 
             </section>
+                <section id="create_metric_params_k">
+                            <input id="create_metric_params_k-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">create_metric_params_k</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">config_parameters</span><span class="o">.</span><span class="n">ConfigParameters</span>:</span></span>
+
+                <label class="view-source-button" for="create_metric_params_k-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#create_metric_params_k"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="create_metric_params_k-26"><a href="#create_metric_params_k-26"><span class="linenos">26</span></a><span class="k">def</span> <span class="nf">create_metric_params_k</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ConfigParameters</span><span class="p">:</span>
+</span><span id="create_metric_params_k-27"><a href="#create_metric_params_k-27"><span class="linenos">27</span></a>    <span class="sd">&quot;&quot;&quot;Create the parameters of a metric that utilizes the K param.</span>
+</span><span id="create_metric_params_k-28"><a href="#create_metric_params_k-28"><span class="linenos">28</span></a>
+</span><span id="create_metric_params_k-29"><a href="#create_metric_params_k-29"><span class="linenos">29</span></a><span class="sd">    Returns:</span>
+</span><span id="create_metric_params_k-30"><a href="#create_metric_params_k-30"><span class="linenos">30</span></a><span class="sd">        the configuration parameters of the metric.</span>
+</span><span id="create_metric_params_k-31"><a href="#create_metric_params_k-31"><span class="linenos">31</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="create_metric_params_k-32"><a href="#create_metric_params_k-32"><span class="linenos">32</span></a>    <span class="n">params</span> <span class="o">=</span> <span class="n">ConfigParameters</span><span class="p">()</span>
+</span><span id="create_metric_params_k-33"><a href="#create_metric_params_k-33"><span class="linenos">33</span></a>    <span class="n">params</span><span class="o">.</span><span class="n">add_number</span><span class="p">(</span><span class="n">KEY_METRIC_PARAM_K</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+</span><span id="create_metric_params_k-34"><a href="#create_metric_params_k-34"><span class="linenos">34</span></a>    <span class="k">return</span> <span class="n">params</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Create the parameters of a metric that utilizes the K param.</p>
+
+<p>Returns:
+    the configuration parameters of the metric.</p>
+</div>
+
+
+                </section>
                 <section id="create_accuracy_metric_factory">
                             <input id="create_accuracy_metric_factory-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">create_accuracy_metric_factory</span><span class="signature pdoc-code condensed">()</span>
+        <span class="name">create_accuracy_metric_factory</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">config_factories</span><span class="o">.</span><span class="n">Factory</span>:</span></span>
 
                 <label class="view-source-button" for="create_accuracy_metric_factory-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#create_accuracy_metric_factory"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="create_accuracy_metric_factory-22"><a href="#create_accuracy_metric_factory-22"><span class="linenos">22</span></a><span class="k">def</span> <span class="nf">create_accuracy_metric_factory</span><span class="p">():</span>
-</span><span id="create_accuracy_metric_factory-23"><a href="#create_accuracy_metric_factory-23"><span class="linenos">23</span></a>    <span class="sd">&quot;&quot;&quot;Create the factory with Accuracy metrics.</span>
-</span><span id="create_accuracy_metric_factory-24"><a href="#create_accuracy_metric_factory-24"><span class="linenos">24</span></a>
-</span><span id="create_accuracy_metric_factory-25"><a href="#create_accuracy_metric_factory-25"><span class="linenos">25</span></a><span class="sd">    Returns:</span>
-</span><span id="create_accuracy_metric_factory-26"><a href="#create_accuracy_metric_factory-26"><span class="linenos">26</span></a><span class="sd">        the factory with all available metrics.</span>
-</span><span id="create_accuracy_metric_factory-27"><a href="#create_accuracy_metric_factory-27"><span class="linenos">27</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="create_accuracy_metric_factory-28"><a href="#create_accuracy_metric_factory-28"><span class="linenos">28</span></a>    <span class="k">return</span> <span class="n">create_factory_from_list</span><span class="p">(</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">ACCURACY</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">[</span>
-</span><span id="create_accuracy_metric_factory-29"><a href="#create_accuracy_metric_factory-29"><span class="linenos">29</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">NDCG</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="create_accuracy_metric_factory-30"><a href="#create_accuracy_metric_factory-30"><span class="linenos">30</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="create_accuracy_metric_factory-31"><a href="#create_accuracy_metric_factory-31"><span class="linenos">31</span></a>         <span class="n">create_metric_params_k</span>
-</span><span id="create_accuracy_metric_factory-32"><a href="#create_accuracy_metric_factory-32"><span class="linenos">32</span></a>         <span class="p">),</span>
-</span><span id="create_accuracy_metric_factory-33"><a href="#create_accuracy_metric_factory-33"><span class="linenos">33</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">PRECISION</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="create_accuracy_metric_factory-34"><a href="#create_accuracy_metric_factory-34"><span class="linenos">34</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="create_accuracy_metric_factory-35"><a href="#create_accuracy_metric_factory-35"><span class="linenos">35</span></a>         <span class="n">create_metric_params_k</span>
-</span><span id="create_accuracy_metric_factory-36"><a href="#create_accuracy_metric_factory-36"><span class="linenos">36</span></a>         <span class="p">),</span>
-</span><span id="create_accuracy_metric_factory-37"><a href="#create_accuracy_metric_factory-37"><span class="linenos">37</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">RECALL</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="create_accuracy_metric_factory-38"><a href="#create_accuracy_metric_factory-38"><span class="linenos">38</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="create_accuracy_metric_factory-39"><a href="#create_accuracy_metric_factory-39"><span class="linenos">39</span></a>         <span class="n">create_metric_params_k</span>
-</span><span id="create_accuracy_metric_factory-40"><a href="#create_accuracy_metric_factory-40"><span class="linenos">40</span></a>         <span class="p">),</span>
-</span><span id="create_accuracy_metric_factory-41"><a href="#create_accuracy_metric_factory-41"><span class="linenos">41</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">MRR</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="create_accuracy_metric_factory-42"><a href="#create_accuracy_metric_factory-42"><span class="linenos">42</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="create_accuracy_metric_factory-43"><a href="#create_accuracy_metric_factory-43"><span class="linenos">43</span></a>         <span class="kc">None</span>
-</span><span id="create_accuracy_metric_factory-44"><a href="#create_accuracy_metric_factory-44"><span class="linenos">44</span></a>         <span class="p">)</span>
-</span><span id="create_accuracy_metric_factory-45"><a href="#create_accuracy_metric_factory-45"><span class="linenos">45</span></a>    <span class="p">])</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="create_accuracy_metric_factory-37"><a href="#create_accuracy_metric_factory-37"><span class="linenos">37</span></a><span class="k">def</span> <span class="nf">create_accuracy_metric_factory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Factory</span><span class="p">:</span>
+</span><span id="create_accuracy_metric_factory-38"><a href="#create_accuracy_metric_factory-38"><span class="linenos">38</span></a>    <span class="sd">&quot;&quot;&quot;Create the factory with Accuracy metrics.</span>
+</span><span id="create_accuracy_metric_factory-39"><a href="#create_accuracy_metric_factory-39"><span class="linenos">39</span></a>
+</span><span id="create_accuracy_metric_factory-40"><a href="#create_accuracy_metric_factory-40"><span class="linenos">40</span></a><span class="sd">    Returns:</span>
+</span><span id="create_accuracy_metric_factory-41"><a href="#create_accuracy_metric_factory-41"><span class="linenos">41</span></a><span class="sd">        the factory with all available metrics.</span>
+</span><span id="create_accuracy_metric_factory-42"><a href="#create_accuracy_metric_factory-42"><span class="linenos">42</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="create_accuracy_metric_factory-43"><a href="#create_accuracy_metric_factory-43"><span class="linenos">43</span></a>    <span class="k">return</span> <span class="n">create_factory_from_list</span><span class="p">(</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">ACCURACY</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">[</span>
+</span><span id="create_accuracy_metric_factory-44"><a href="#create_accuracy_metric_factory-44"><span class="linenos">44</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">HIT_RATIO</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">lenskit_accuracy_metric</span><span class="o">.</span><span class="n">create_hit_ratio</span><span class="p">,</span> <span class="n">create_metric_params_k</span><span class="p">),</span>
+</span><span id="create_accuracy_metric_factory-45"><a href="#create_accuracy_metric_factory-45"><span class="linenos">45</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">NDCG</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">lenskit_accuracy_metric</span><span class="o">.</span><span class="n">create_ndcg</span><span class="p">,</span> <span class="n">create_metric_params_k</span><span class="p">),</span>
+</span><span id="create_accuracy_metric_factory-46"><a href="#create_accuracy_metric_factory-46"><span class="linenos">46</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">PRECISION</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">lenskit_accuracy_metric</span><span class="o">.</span><span class="n">create_precision</span><span class="p">,</span> <span class="n">create_metric_params_k</span><span class="p">),</span>
+</span><span id="create_accuracy_metric_factory-47"><a href="#create_accuracy_metric_factory-47"><span class="linenos">47</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">RECALL</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">lenskit_accuracy_metric</span><span class="o">.</span><span class="n">create_recall</span><span class="p">,</span> <span class="n">create_metric_params_k</span><span class="p">),</span>
+</span><span id="create_accuracy_metric_factory-48"><a href="#create_accuracy_metric_factory-48"><span class="linenos">48</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">MRR</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">lenskit_accuracy_metric</span><span class="o">.</span><span class="n">create_mean_recip_rank</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+</span><span id="create_accuracy_metric_factory-49"><a href="#create_accuracy_metric_factory-49"><span class="linenos">49</span></a>    <span class="p">])</span>
 </span></pre></div>
 
 
@@ -326,146 +250,26 @@ Utrecht University within the Software Project course.
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">create_coverage_metric_factory</span><span class="signature pdoc-code condensed">()</span>
+        <span class="name">create_coverage_metric_factory</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">config_factories</span><span class="o">.</span><span class="n">Factory</span>:</span></span>
 
                 <label class="view-source-button" for="create_coverage_metric_factory-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#create_coverage_metric_factory"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="create_coverage_metric_factory-48"><a href="#create_coverage_metric_factory-48"><span class="linenos">48</span></a><span class="k">def</span> <span class="nf">create_coverage_metric_factory</span><span class="p">():</span>
-</span><span id="create_coverage_metric_factory-49"><a href="#create_coverage_metric_factory-49"><span class="linenos">49</span></a>    <span class="sd">&quot;&quot;&quot;Create the factory with Coverage metrics.</span>
-</span><span id="create_coverage_metric_factory-50"><a href="#create_coverage_metric_factory-50"><span class="linenos">50</span></a>
-</span><span id="create_coverage_metric_factory-51"><a href="#create_coverage_metric_factory-51"><span class="linenos">51</span></a><span class="sd">        Returns:</span>
-</span><span id="create_coverage_metric_factory-52"><a href="#create_coverage_metric_factory-52"><span class="linenos">52</span></a><span class="sd">            the factory with all available metrics.</span>
-</span><span id="create_coverage_metric_factory-53"><a href="#create_coverage_metric_factory-53"><span class="linenos">53</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="create_coverage_metric_factory-54"><a href="#create_coverage_metric_factory-54"><span class="linenos">54</span></a>    <span class="k">return</span> <span class="n">create_factory_from_list</span><span class="p">(</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">COVERAGE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">[</span>
-</span><span id="create_coverage_metric_factory-55"><a href="#create_coverage_metric_factory-55"><span class="linenos">55</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">ITEM_COVERAGE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="create_coverage_metric_factory-56"><a href="#create_coverage_metric_factory-56"><span class="linenos">56</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="create_coverage_metric_factory-57"><a href="#create_coverage_metric_factory-57"><span class="linenos">57</span></a>         <span class="kc">None</span>
-</span><span id="create_coverage_metric_factory-58"><a href="#create_coverage_metric_factory-58"><span class="linenos">58</span></a>         <span class="p">),</span>
-</span><span id="create_coverage_metric_factory-59"><a href="#create_coverage_metric_factory-59"><span class="linenos">59</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">USER_COVERAGE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="create_coverage_metric_factory-60"><a href="#create_coverage_metric_factory-60"><span class="linenos">60</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="create_coverage_metric_factory-61"><a href="#create_coverage_metric_factory-61"><span class="linenos">61</span></a>         <span class="kc">None</span>
-</span><span id="create_coverage_metric_factory-62"><a href="#create_coverage_metric_factory-62"><span class="linenos">62</span></a>         <span class="p">)</span>
-</span><span id="create_coverage_metric_factory-63"><a href="#create_coverage_metric_factory-63"><span class="linenos">63</span></a>    <span class="p">])</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="create_coverage_metric_factory-52"><a href="#create_coverage_metric_factory-52"><span class="linenos">52</span></a><span class="k">def</span> <span class="nf">create_coverage_metric_factory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Factory</span><span class="p">:</span>
+</span><span id="create_coverage_metric_factory-53"><a href="#create_coverage_metric_factory-53"><span class="linenos">53</span></a>    <span class="sd">&quot;&quot;&quot;Create the factory with Coverage metrics.</span>
+</span><span id="create_coverage_metric_factory-54"><a href="#create_coverage_metric_factory-54"><span class="linenos">54</span></a>
+</span><span id="create_coverage_metric_factory-55"><a href="#create_coverage_metric_factory-55"><span class="linenos">55</span></a><span class="sd">    Returns:</span>
+</span><span id="create_coverage_metric_factory-56"><a href="#create_coverage_metric_factory-56"><span class="linenos">56</span></a><span class="sd">        the factory with all available metrics.</span>
+</span><span id="create_coverage_metric_factory-57"><a href="#create_coverage_metric_factory-57"><span class="linenos">57</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="create_coverage_metric_factory-58"><a href="#create_coverage_metric_factory-58"><span class="linenos">58</span></a>    <span class="k">return</span> <span class="n">create_factory_from_list</span><span class="p">(</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">COVERAGE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">[</span>
+</span><span id="create_coverage_metric_factory-59"><a href="#create_coverage_metric_factory-59"><span class="linenos">59</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">ITEM_COVERAGE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">rexmex_coverage_metric</span><span class="o">.</span><span class="n">create_item_coverage</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+</span><span id="create_coverage_metric_factory-60"><a href="#create_coverage_metric_factory-60"><span class="linenos">60</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">USER_COVERAGE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">rexmex_coverage_metric</span><span class="o">.</span><span class="n">create_user_coverage</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span id="create_coverage_metric_factory-61"><a href="#create_coverage_metric_factory-61"><span class="linenos">61</span></a>    <span class="p">])</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>Create the factory with Coverage metrics.</p>
-
-<p>Returns:
-    the factory with all available metrics.</p>
-</div>
-
-
-                </section>
-                <section id="prepare_for_coverage">
-                            <input id="prepare_for_coverage-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">prepare_for_coverage</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span>)</span>
-
-                <label class="view-source-button" for="prepare_for_coverage-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#prepare_for_coverage"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="prepare_for_coverage-66"><a href="#prepare_for_coverage-66"><span class="linenos">66</span></a><span class="k">def</span> <span class="nf">prepare_for_coverage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="prepare_for_coverage-67"><a href="#prepare_for_coverage-67"><span class="linenos">67</span></a>    <span class="sd">&quot;&quot;&quot;</span>
-</span><span id="prepare_for_coverage-68"><a href="#prepare_for_coverage-68"><span class="linenos">68</span></a><span class="sd">    Uses the train set and recommendations set to</span>
-</span><span id="prepare_for_coverage-69"><a href="#prepare_for_coverage-69"><span class="linenos">69</span></a><span class="sd">    create a tuple that describes the possible user-item pairs in the train set</span>
-</span><span id="prepare_for_coverage-70"><a href="#prepare_for_coverage-70"><span class="linenos">70</span></a><span class="sd">    and the user-item pairs in the result</span>
-</span><span id="prepare_for_coverage-71"><a href="#prepare_for_coverage-71"><span class="linenos">71</span></a>
-</span><span id="prepare_for_coverage-72"><a href="#prepare_for_coverage-72"><span class="linenos">72</span></a><span class="sd">    :return: a tuple containing (A,B) where</span>
-</span><span id="prepare_for_coverage-73"><a href="#prepare_for_coverage-73"><span class="linenos">73</span></a><span class="sd">        a is a tuple (List,List) of possible users and items in the train set and</span>
-</span><span id="prepare_for_coverage-74"><a href="#prepare_for_coverage-74"><span class="linenos">74</span></a><span class="sd">        b is a list of user-item tuples in the recommendations</span>
-</span><span id="prepare_for_coverage-75"><a href="#prepare_for_coverage-75"><span class="linenos">75</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="prepare_for_coverage-76"><a href="#prepare_for_coverage-76"><span class="linenos">76</span></a>    <span class="c1"># Convert recommended user, item columns to list of tuples.</span>
-</span><span id="prepare_for_coverage-77"><a href="#prepare_for_coverage-77"><span class="linenos">77</span></a>    <span class="n">tuple_recs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">recs</span><span class="p">[[</span><span class="s1">&#39;source_id&#39;</span><span class="p">,</span> <span class="s1">&#39;target_id&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()]</span>
-</span><span id="prepare_for_coverage-78"><a href="#prepare_for_coverage-78"><span class="linenos">78</span></a>    <span class="c1">#print(tuple_recs[0:10])</span>
-</span><span id="prepare_for_coverage-79"><a href="#prepare_for_coverage-79"><span class="linenos">79</span></a>    <span class="c1"># The possible users and items are in the train set</span>
-</span><span id="prepare_for_coverage-80"><a href="#prepare_for_coverage-80"><span class="linenos">80</span></a>    <span class="n">possible_users_items</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">[</span><span class="s1">&#39;source_id&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">[</span><span class="s1">&#39;target_id&#39;</span><span class="p">])</span>
-</span><span id="prepare_for_coverage-81"><a href="#prepare_for_coverage-81"><span class="linenos">81</span></a>    <span class="c1">#print(possible_users_items)</span>
-</span><span id="prepare_for_coverage-82"><a href="#prepare_for_coverage-82"><span class="linenos">82</span></a>    <span class="k">return</span> <span class="n">possible_users_items</span><span class="p">,</span> <span class="n">tuple_recs</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Uses the train set and recommendations set to
-create a tuple that describes the possible user-item pairs in the train set
-and the user-item pairs in the result</p>
-
-<h6 id="returns">Returns</h6>
-
-<blockquote>
-  <p>a tuple containing (A,B) where
-      a is a tuple (List,List) of possible users and items in the train set and
-      b is a list of user-item tuples in the recommendations</p>
-</blockquote>
-</div>
-
-
-                </section>
-                <section id="create_diversity_metric_factory">
-                            <input id="create_diversity_metric_factory-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">create_diversity_metric_factory</span><span class="signature pdoc-code condensed">()</span>
-
-                <label class="view-source-button" for="create_diversity_metric_factory-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#create_diversity_metric_factory"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="create_diversity_metric_factory-85"><a href="#create_diversity_metric_factory-85"><span class="linenos">85</span></a><span class="k">def</span> <span class="nf">create_diversity_metric_factory</span><span class="p">():</span>
-</span><span id="create_diversity_metric_factory-86"><a href="#create_diversity_metric_factory-86"><span class="linenos">86</span></a>    <span class="sd">&quot;&quot;&quot;Create the factory with Diversity metrics.</span>
-</span><span id="create_diversity_metric_factory-87"><a href="#create_diversity_metric_factory-87"><span class="linenos">87</span></a>
-</span><span id="create_diversity_metric_factory-88"><a href="#create_diversity_metric_factory-88"><span class="linenos">88</span></a><span class="sd">        Returns:</span>
-</span><span id="create_diversity_metric_factory-89"><a href="#create_diversity_metric_factory-89"><span class="linenos">89</span></a><span class="sd">            the factory with all available metrics.</span>
-</span><span id="create_diversity_metric_factory-90"><a href="#create_diversity_metric_factory-90"><span class="linenos">90</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="create_diversity_metric_factory-91"><a href="#create_diversity_metric_factory-91"><span class="linenos">91</span></a>    <span class="k">return</span> <span class="n">create_factory_from_list</span><span class="p">(</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">DIVERSITY</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">[</span>
-</span><span id="create_diversity_metric_factory-92"><a href="#create_diversity_metric_factory-92"><span class="linenos">92</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">INTRA_LIST_SIMILARITY</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="create_diversity_metric_factory-93"><a href="#create_diversity_metric_factory-93"><span class="linenos">93</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="create_diversity_metric_factory-94"><a href="#create_diversity_metric_factory-94"><span class="linenos">94</span></a>         <span class="kc">None</span>
-</span><span id="create_diversity_metric_factory-95"><a href="#create_diversity_metric_factory-95"><span class="linenos">95</span></a>         <span class="p">)</span>
-</span><span id="create_diversity_metric_factory-96"><a href="#create_diversity_metric_factory-96"><span class="linenos">96</span></a>    <span class="p">])</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Create the factory with Diversity metrics.</p>
-
-<p>Returns:
-    the factory with all available metrics.</p>
-</div>
-
-
-                </section>
-                <section id="create_novelty_metric_factory">
-                            <input id="create_novelty_metric_factory-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">create_novelty_metric_factory</span><span class="signature pdoc-code condensed">()</span>
-
-                <label class="view-source-button" for="create_novelty_metric_factory-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#create_novelty_metric_factory"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="create_novelty_metric_factory-99"><a href="#create_novelty_metric_factory-99"><span class="linenos"> 99</span></a><span class="k">def</span> <span class="nf">create_novelty_metric_factory</span><span class="p">():</span>
-</span><span id="create_novelty_metric_factory-100"><a href="#create_novelty_metric_factory-100"><span class="linenos">100</span></a>    <span class="sd">&quot;&quot;&quot;Create the factory with Novelty metrics.</span>
-</span><span id="create_novelty_metric_factory-101"><a href="#create_novelty_metric_factory-101"><span class="linenos">101</span></a>
-</span><span id="create_novelty_metric_factory-102"><a href="#create_novelty_metric_factory-102"><span class="linenos">102</span></a><span class="sd">        Returns:</span>
-</span><span id="create_novelty_metric_factory-103"><a href="#create_novelty_metric_factory-103"><span class="linenos">103</span></a><span class="sd">            the factory with all available metrics.</span>
-</span><span id="create_novelty_metric_factory-104"><a href="#create_novelty_metric_factory-104"><span class="linenos">104</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="create_novelty_metric_factory-105"><a href="#create_novelty_metric_factory-105"><span class="linenos">105</span></a>    <span class="k">return</span> <span class="n">create_factory_from_list</span><span class="p">(</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">NOVELTY</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">[</span>
-</span><span id="create_novelty_metric_factory-106"><a href="#create_novelty_metric_factory-106"><span class="linenos">106</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">NOVELTY</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="create_novelty_metric_factory-107"><a href="#create_novelty_metric_factory-107"><span class="linenos">107</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="create_novelty_metric_factory-108"><a href="#create_novelty_metric_factory-108"><span class="linenos">108</span></a>         <span class="kc">None</span>
-</span><span id="create_novelty_metric_factory-109"><a href="#create_novelty_metric_factory-109"><span class="linenos">109</span></a>         <span class="p">)</span>
-</span><span id="create_novelty_metric_factory-110"><a href="#create_novelty_metric_factory-110"><span class="linenos">110</span></a>    <span class="p">])</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Create the factory with Novelty metrics.</p>
 
 <p>Returns:
     the factory with all available metrics.</p>
@@ -478,28 +282,24 @@ and the user-item pairs in the result</p>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">create_rating_metric_factory</span><span class="signature pdoc-code condensed">()</span>
+        <span class="name">create_rating_metric_factory</span><span class="signature pdoc-code condensed">(<span class="return-annotation">) -> <span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">config_factories</span><span class="o">.</span><span class="n">Factory</span>:</span></span>
 
                 <label class="view-source-button" for="create_rating_metric_factory-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#create_rating_metric_factory"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="create_rating_metric_factory-113"><a href="#create_rating_metric_factory-113"><span class="linenos">113</span></a><span class="k">def</span> <span class="nf">create_rating_metric_factory</span><span class="p">():</span>
-</span><span id="create_rating_metric_factory-114"><a href="#create_rating_metric_factory-114"><span class="linenos">114</span></a>    <span class="sd">&quot;&quot;&quot;Create the factory with Rating metrics.</span>
-</span><span id="create_rating_metric_factory-115"><a href="#create_rating_metric_factory-115"><span class="linenos">115</span></a>
-</span><span id="create_rating_metric_factory-116"><a href="#create_rating_metric_factory-116"><span class="linenos">116</span></a><span class="sd">        Returns:</span>
-</span><span id="create_rating_metric_factory-117"><a href="#create_rating_metric_factory-117"><span class="linenos">117</span></a><span class="sd">            the factory with all available metrics.</span>
-</span><span id="create_rating_metric_factory-118"><a href="#create_rating_metric_factory-118"><span class="linenos">118</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="create_rating_metric_factory-119"><a href="#create_rating_metric_factory-119"><span class="linenos">119</span></a>    <span class="k">return</span> <span class="n">create_factory_from_list</span><span class="p">(</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">RATING</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">[</span>
-</span><span id="create_rating_metric_factory-120"><a href="#create_rating_metric_factory-120"><span class="linenos">120</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">RMSE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="create_rating_metric_factory-121"><a href="#create_rating_metric_factory-121"><span class="linenos">121</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="create_rating_metric_factory-122"><a href="#create_rating_metric_factory-122"><span class="linenos">122</span></a>         <span class="kc">None</span>
-</span><span id="create_rating_metric_factory-123"><a href="#create_rating_metric_factory-123"><span class="linenos">123</span></a>         <span class="p">),</span>
-</span><span id="create_rating_metric_factory-124"><a href="#create_rating_metric_factory-124"><span class="linenos">124</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">MAE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
-</span><span id="create_rating_metric_factory-125"><a href="#create_rating_metric_factory-125"><span class="linenos">125</span></a>         <span class="n">create_metric</span><span class="p">,</span>
-</span><span id="create_rating_metric_factory-126"><a href="#create_rating_metric_factory-126"><span class="linenos">126</span></a>         <span class="kc">None</span>
-</span><span id="create_rating_metric_factory-127"><a href="#create_rating_metric_factory-127"><span class="linenos">127</span></a>         <span class="p">)</span>
-</span><span id="create_rating_metric_factory-128"><a href="#create_rating_metric_factory-128"><span class="linenos">128</span></a>    <span class="p">])</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="create_rating_metric_factory-64"><a href="#create_rating_metric_factory-64"><span class="linenos">64</span></a><span class="k">def</span> <span class="nf">create_rating_metric_factory</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Factory</span><span class="p">:</span>
+</span><span id="create_rating_metric_factory-65"><a href="#create_rating_metric_factory-65"><span class="linenos">65</span></a>    <span class="sd">&quot;&quot;&quot;Create the factory with Rating metrics.</span>
+</span><span id="create_rating_metric_factory-66"><a href="#create_rating_metric_factory-66"><span class="linenos">66</span></a>
+</span><span id="create_rating_metric_factory-67"><a href="#create_rating_metric_factory-67"><span class="linenos">67</span></a><span class="sd">    Returns:</span>
+</span><span id="create_rating_metric_factory-68"><a href="#create_rating_metric_factory-68"><span class="linenos">68</span></a><span class="sd">        the factory with all available metrics.</span>
+</span><span id="create_rating_metric_factory-69"><a href="#create_rating_metric_factory-69"><span class="linenos">69</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="create_rating_metric_factory-70"><a href="#create_rating_metric_factory-70"><span class="linenos">70</span></a>    <span class="k">return</span> <span class="n">create_factory_from_list</span><span class="p">(</span><span class="n">MetricCategory</span><span class="o">.</span><span class="n">RATING</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="p">[</span>
+</span><span id="create_rating_metric_factory-71"><a href="#create_rating_metric_factory-71"><span class="linenos">71</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">MAE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">lenskit_rating_metric</span><span class="o">.</span><span class="n">create_mae</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+</span><span id="create_rating_metric_factory-72"><a href="#create_rating_metric_factory-72"><span class="linenos">72</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">MAPE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">rexmex_rating_metric</span><span class="o">.</span><span class="n">create_mape</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+</span><span id="create_rating_metric_factory-73"><a href="#create_rating_metric_factory-73"><span class="linenos">73</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">MSE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">rexmex_rating_metric</span><span class="o">.</span><span class="n">create_mse</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+</span><span id="create_rating_metric_factory-74"><a href="#create_rating_metric_factory-74"><span class="linenos">74</span></a>        <span class="p">(</span><span class="n">Metric</span><span class="o">.</span><span class="n">RMSE</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">lenskit_rating_metric</span><span class="o">.</span><span class="n">create_rmse</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span id="create_rating_metric_factory-75"><a href="#create_rating_metric_factory-75"><span class="linenos">75</span></a>    <span class="p">])</span>
 </span></pre></div>
 
 
@@ -511,131 +311,46 @@ and the user-item pairs in the result</p>
 
 
                 </section>
-                <section id="create_metric_params_k">
-                            <input id="create_metric_params_k-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">create_metric_params_k</span><span class="signature pdoc-code condensed">()</span>
-
-                <label class="view-source-button" for="create_metric_params_k-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#create_metric_params_k"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="create_metric_params_k-131"><a href="#create_metric_params_k-131"><span class="linenos">131</span></a><span class="k">def</span> <span class="nf">create_metric_params_k</span><span class="p">():</span>
-</span><span id="create_metric_params_k-132"><a href="#create_metric_params_k-132"><span class="linenos">132</span></a>    <span class="sd">&quot;&quot;&quot;Create the K param for K metrics</span>
-</span><span id="create_metric_params_k-133"><a href="#create_metric_params_k-133"><span class="linenos">133</span></a>
-</span><span id="create_metric_params_k-134"><a href="#create_metric_params_k-134"><span class="linenos">134</span></a><span class="sd">    Returns:</span>
-</span><span id="create_metric_params_k-135"><a href="#create_metric_params_k-135"><span class="linenos">135</span></a><span class="sd">        the configuration parameters of the metric.</span>
-</span><span id="create_metric_params_k-136"><a href="#create_metric_params_k-136"><span class="linenos">136</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="create_metric_params_k-137"><a href="#create_metric_params_k-137"><span class="linenos">137</span></a>    <span class="n">params</span> <span class="o">=</span> <span class="n">ConfigParameters</span><span class="p">()</span>
-</span><span id="create_metric_params_k-138"><a href="#create_metric_params_k-138"><span class="linenos">138</span></a>    <span class="n">params</span><span class="o">.</span><span class="n">add_number</span><span class="p">(</span><span class="n">KEY_METRIC_PARAM_K</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-</span><span id="create_metric_params_k-139"><a href="#create_metric_params_k-139"><span class="linenos">139</span></a>    <span class="k">return</span> <span class="n">params</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Create the K param for K metrics</p>
-
-<p>Returns:
-    the configuration parameters of the metric.</p>
-</div>
-
-
-                </section>
-                <section id="create_metric">
-                            <input id="create_metric-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">create_metric</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">name</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">evaluation</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">evaluator</span><span class="o">.</span><span class="n">Evaluator</span>:</span></span>
-
-                <label class="view-source-button" for="create_metric-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#create_metric"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="create_metric-142"><a href="#create_metric-142"><span class="linenos">142</span></a><span class="k">def</span> <span class="nf">create_metric</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Evaluator</span><span class="p">:</span>
-</span><span id="create_metric-143"><a href="#create_metric-143"><span class="linenos">143</span></a>    <span class="sd">&quot;&quot;&quot;Create a metric.</span>
-</span><span id="create_metric-144"><a href="#create_metric-144"><span class="linenos">144</span></a>
-</span><span id="create_metric-145"><a href="#create_metric-145"><span class="linenos">145</span></a><span class="sd">        Args:</span>
-</span><span id="create_metric-146"><a href="#create_metric-146"><span class="linenos">146</span></a><span class="sd">            name: the name of the metric.</span>
-</span><span id="create_metric-147"><a href="#create_metric-147"><span class="linenos">147</span></a><span class="sd">            params: parameters for the metric</span>
-</span><span id="create_metric-148"><a href="#create_metric-148"><span class="linenos">148</span></a><span class="sd">        Returns:</span>
-</span><span id="create_metric-149"><a href="#create_metric-149"><span class="linenos">149</span></a><span class="sd">            an Evaluator that uses the metric function corresponding to the name.</span>
-</span><span id="create_metric-150"><a href="#create_metric-150"><span class="linenos">150</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="create_metric-151"><a href="#create_metric-151"><span class="linenos">151</span></a>    <span class="c1"># TODO refactor</span>
-</span><span id="create_metric-152"><a href="#create_metric-152"><span class="linenos">152</span></a>    <span class="c1">#print(&#39;DEV metric name and params&#39;, name, params)</span>
-</span><span id="create_metric-153"><a href="#create_metric-153"><span class="linenos">153</span></a>    <span class="n">metric_dict</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="create_metric-154"><a href="#create_metric-154"><span class="linenos">154</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">NDCG</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">LensKitRecommendationEvaluator</span><span class="p">,</span> <span class="n">topn</span><span class="o">.</span><span class="n">ndcg</span><span class="p">,</span> <span class="s1">&#39;ndcg&#39;</span><span class="p">),</span>
-</span><span id="create_metric-155"><a href="#create_metric-155"><span class="linenos">155</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">PRECISION</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">LensKitRecommendationEvaluator</span><span class="p">,</span> <span class="n">topn</span><span class="o">.</span><span class="n">precision</span><span class="p">,</span> <span class="s1">&#39;precision&#39;</span><span class="p">),</span>
-</span><span id="create_metric-156"><a href="#create_metric-156"><span class="linenos">156</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">RECALL</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">LensKitRecommendationEvaluator</span><span class="p">,</span> <span class="n">topn</span><span class="o">.</span><span class="n">recall</span><span class="p">,</span> <span class="s1">&#39;recall&#39;</span><span class="p">),</span>
-</span><span id="create_metric-157"><a href="#create_metric-157"><span class="linenos">157</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">MRR</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">LensKitRecommendationEvaluator</span><span class="p">,</span> <span class="n">topn</span><span class="o">.</span><span class="n">recip_rank</span><span class="p">,</span> <span class="s1">&#39;recip_rank&#39;</span><span class="p">),</span>
-</span><span id="create_metric-158"><a href="#create_metric-158"><span class="linenos">158</span></a>
-</span><span id="create_metric-159"><a href="#create_metric-159"><span class="linenos">159</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">RMSE</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">LensKitPredictionEvaluator</span><span class="p">,</span> <span class="n">predict</span><span class="o">.</span><span class="n">rmse</span><span class="p">,</span> <span class="s1">&#39;rmse&#39;</span><span class="p">),</span>
-</span><span id="create_metric-160"><a href="#create_metric-160"><span class="linenos">160</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">MAE</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">LensKitPredictionEvaluator</span><span class="p">,</span> <span class="n">predict</span><span class="o">.</span><span class="n">mae</span><span class="p">,</span> <span class="s1">&#39;mae&#39;</span><span class="p">),</span>
-</span><span id="create_metric-161"><a href="#create_metric-161"><span class="linenos">161</span></a>
-</span><span id="create_metric-162"><a href="#create_metric-162"><span class="linenos">162</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">ITEM_COVERAGE</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">RexmexEvaluator</span><span class="p">,</span> <span class="n">item_coverage</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
-</span><span id="create_metric-163"><a href="#create_metric-163"><span class="linenos">163</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">USER_COVERAGE</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">RexmexEvaluator</span><span class="p">,</span> <span class="n">user_coverage</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
-</span><span id="create_metric-164"><a href="#create_metric-164"><span class="linenos">164</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">INTRA_LIST_SIMILARITY</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">RexmexEvaluator</span><span class="p">,</span> <span class="n">intra_list_similarity</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
-</span><span id="create_metric-165"><a href="#create_metric-165"><span class="linenos">165</span></a>        <span class="n">Metric</span><span class="o">.</span><span class="n">NOVELTY</span><span class="o">.</span><span class="n">value</span><span class="p">:</span> <span class="p">(</span><span class="n">RexmexEvaluator</span><span class="p">,</span> <span class="n">novelty</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span id="create_metric-166"><a href="#create_metric-166"><span class="linenos">166</span></a>    <span class="p">}</span>
-</span><span id="create_metric-167"><a href="#create_metric-167"><span class="linenos">167</span></a>
-</span><span id="create_metric-168"><a href="#create_metric-168"><span class="linenos">168</span></a>    <span class="n">evaluator</span><span class="p">,</span> <span class="n">eval_func</span><span class="p">,</span> <span class="n">group</span> <span class="o">=</span> <span class="n">metric_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-</span><span id="create_metric-169"><a href="#create_metric-169"><span class="linenos">169</span></a>    <span class="c1"># Add group for LensKit</span>
-</span><span id="create_metric-170"><a href="#create_metric-170"><span class="linenos">170</span></a>    <span class="k">if</span> <span class="n">group</span><span class="p">:</span>
-</span><span id="create_metric-171"><a href="#create_metric-171"><span class="linenos">171</span></a>        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">group</span>
-</span><span id="create_metric-172"><a href="#create_metric-172"><span class="linenos">172</span></a>    <span class="k">return</span> <span class="n">evaluator</span><span class="p">(</span><span class="n">eval_func</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Create a metric.</p>
-
-<p>Args:
-    name: the name of the metric.
-    params: parameters for the metric
-Returns:
-    an Evaluator that uses the metric function corresponding to the name.</p>
-</div>
-
-
-                </section>
                 <section id="resolve_metric_factory">
                             <input id="resolve_metric_factory-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">resolve_metric_factory</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">metric_name</span>, </span><span class="param"><span class="n">metric_category_factory</span></span>)</span>
+        <span class="name">resolve_metric_factory</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">metric_category_factory</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">config_factories</span><span class="o">.</span><span class="n">GroupFactory</span></span><span class="return-annotation">) -> <span class="n">Optional</span><span class="p">[</span><span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">config_factories</span><span class="o">.</span><span class="n">Factory</span><span class="p">]</span>:</span></span>
 
                 <label class="view-source-button" for="resolve_metric_factory-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#resolve_metric_factory"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="resolve_metric_factory-175"><a href="#resolve_metric_factory-175"><span class="linenos">175</span></a><span class="k">def</span> <span class="nf">resolve_metric_factory</span><span class="p">(</span><span class="n">metric_name</span><span class="p">,</span> <span class="n">metric_category_factory</span><span class="p">):</span>
-</span><span id="resolve_metric_factory-176"><a href="#resolve_metric_factory-176"><span class="linenos">176</span></a>    <span class="sd">&quot;&quot;&quot;Get metric factory from name and category factory.</span>
-</span><span id="resolve_metric_factory-177"><a href="#resolve_metric_factory-177"><span class="linenos">177</span></a>
-</span><span id="resolve_metric_factory-178"><a href="#resolve_metric_factory-178"><span class="linenos">178</span></a><span class="sd">    Args:</span>
-</span><span id="resolve_metric_factory-179"><a href="#resolve_metric_factory-179"><span class="linenos">179</span></a><span class="sd">        metric_name: name of the metric</span>
-</span><span id="resolve_metric_factory-180"><a href="#resolve_metric_factory-180"><span class="linenos">180</span></a><span class="sd">        metric_category_factory: factory of the metric category</span>
-</span><span id="resolve_metric_factory-181"><a href="#resolve_metric_factory-181"><span class="linenos">181</span></a>
-</span><span id="resolve_metric_factory-182"><a href="#resolve_metric_factory-182"><span class="linenos">182</span></a><span class="sd">    Returns:</span>
-</span><span id="resolve_metric_factory-183"><a href="#resolve_metric_factory-183"><span class="linenos">183</span></a><span class="sd">        the metric factory.</span>
-</span><span id="resolve_metric_factory-184"><a href="#resolve_metric_factory-184"><span class="linenos">184</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="resolve_metric_factory-185"><a href="#resolve_metric_factory-185"><span class="linenos">185</span></a>    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">factory_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metric_category_factory</span><span class="o">.</span><span class="n">get_available_names</span><span class="p">()):</span>
-</span><span id="resolve_metric_factory-186"><a href="#resolve_metric_factory-186"><span class="linenos">186</span></a>        <span class="n">metric_factory</span> <span class="o">=</span> <span class="n">metric_category_factory</span><span class="o">.</span><span class="n">get_factory</span><span class="p">(</span><span class="n">factory_name</span><span class="p">)</span>
-</span><span id="resolve_metric_factory-187"><a href="#resolve_metric_factory-187"><span class="linenos">187</span></a>        <span class="k">if</span> <span class="n">metric_factory</span><span class="o">.</span><span class="n">is_obj_available</span><span class="p">(</span><span class="n">metric_name</span><span class="p">):</span>
-</span><span id="resolve_metric_factory-188"><a href="#resolve_metric_factory-188"><span class="linenos">188</span></a>            <span class="k">return</span> <span class="n">metric_factory</span>
-</span><span id="resolve_metric_factory-189"><a href="#resolve_metric_factory-189"><span class="linenos">189</span></a>
-</span><span id="resolve_metric_factory-190"><a href="#resolve_metric_factory-190"><span class="linenos">190</span></a>    <span class="k">return</span> <span class="kc">None</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="resolve_metric_factory-78"><a href="#resolve_metric_factory-78"><span class="linenos">78</span></a><span class="k">def</span> <span class="nf">resolve_metric_factory</span><span class="p">(</span>
+</span><span id="resolve_metric_factory-79"><a href="#resolve_metric_factory-79"><span class="linenos">79</span></a>        <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="resolve_metric_factory-80"><a href="#resolve_metric_factory-80"><span class="linenos">80</span></a>        <span class="n">metric_category_factory</span><span class="p">:</span> <span class="n">GroupFactory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Factory</span><span class="p">]:</span>
+</span><span id="resolve_metric_factory-81"><a href="#resolve_metric_factory-81"><span class="linenos">81</span></a>    <span class="sd">&quot;&quot;&quot;Resolve the metric factory from the name of the metric.</span>
+</span><span id="resolve_metric_factory-82"><a href="#resolve_metric_factory-82"><span class="linenos">82</span></a>
+</span><span id="resolve_metric_factory-83"><a href="#resolve_metric_factory-83"><span class="linenos">83</span></a><span class="sd">    Args:</span>
+</span><span id="resolve_metric_factory-84"><a href="#resolve_metric_factory-84"><span class="linenos">84</span></a><span class="sd">        metric_name: the name of the metric.</span>
+</span><span id="resolve_metric_factory-85"><a href="#resolve_metric_factory-85"><span class="linenos">85</span></a><span class="sd">        metric_category_factory: the factory that contains metric category factories.</span>
+</span><span id="resolve_metric_factory-86"><a href="#resolve_metric_factory-86"><span class="linenos">86</span></a>
+</span><span id="resolve_metric_factory-87"><a href="#resolve_metric_factory-87"><span class="linenos">87</span></a><span class="sd">    Returns:</span>
+</span><span id="resolve_metric_factory-88"><a href="#resolve_metric_factory-88"><span class="linenos">88</span></a><span class="sd">        the resolved metric factory or None when not found.</span>
+</span><span id="resolve_metric_factory-89"><a href="#resolve_metric_factory-89"><span class="linenos">89</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="resolve_metric_factory-90"><a href="#resolve_metric_factory-90"><span class="linenos">90</span></a>    <span class="k">for</span> <span class="n">factory_name</span> <span class="ow">in</span> <span class="n">metric_category_factory</span><span class="o">.</span><span class="n">get_available_names</span><span class="p">():</span>
+</span><span id="resolve_metric_factory-91"><a href="#resolve_metric_factory-91"><span class="linenos">91</span></a>        <span class="n">metric_factory</span> <span class="o">=</span> <span class="n">metric_category_factory</span><span class="o">.</span><span class="n">get_factory</span><span class="p">(</span><span class="n">factory_name</span><span class="p">)</span>
+</span><span id="resolve_metric_factory-92"><a href="#resolve_metric_factory-92"><span class="linenos">92</span></a>        <span class="k">if</span> <span class="n">metric_factory</span><span class="o">.</span><span class="n">is_obj_available</span><span class="p">(</span><span class="n">metric_name</span><span class="p">):</span>
+</span><span id="resolve_metric_factory-93"><a href="#resolve_metric_factory-93"><span class="linenos">93</span></a>            <span class="k">return</span> <span class="n">metric_factory</span>
+</span><span id="resolve_metric_factory-94"><a href="#resolve_metric_factory-94"><span class="linenos">94</span></a>
+</span><span id="resolve_metric_factory-95"><a href="#resolve_metric_factory-95"><span class="linenos">95</span></a>    <span class="k">return</span> <span class="kc">None</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Get metric factory from name and category factory.</p>
+            <div class="docstring"><p>Resolve the metric factory from the name of the metric.</p>
 
 <p>Args:
-    metric_name: name of the metric
-    metric_category_factory: factory of the metric category</p>
+    metric_name: the name of the metric.
+    metric_category_factory: the factory that contains metric category factories.</p>
 
 <p>Returns:
-    the metric factory.</p>
+    the resolved metric factory or None when not found.</p>
 </div>
 
 

@@ -11,13 +11,13 @@ Utrecht University within the Software Project course.
 
 from typing import Any, Dict, Optional
 
-from ...core.config.config_factories import Factory
+from ...core.config.config_factories import GroupFactory
 from ...core.config.config_option_param import ConfigSingleOptionParam
 from ...core.core_constants import KEY_NAME, KEY_PARAMS
 from ...core.events.event_dispatcher import EventDispatcher
 from ...core.parsing.parse_assert import assert_is_type, assert_is_key_in_dict
 from ...core.parsing.parse_config_params import parse_config_param, parse_config_parameters
-from ...core.parsing.parse_event import ON_PARSE, ParseEventArgs
+from ...core.parsing.parse_event import ParseEventArgs, ON_PARSE
 from ..set.dataset import Dataset
 from .convert_config import ConvertConfig
 from .convert_constants import KEY_RATING_CONVERTER
@@ -27,7 +27,7 @@ def parse_data_convert_config(
         dataset_config: Dict[str, Any],
         dataset: Dataset,
         matrix_name: str,
-        converter_factory: Factory,
+        converter_factory: GroupFactory,
         event_dispatcher: EventDispatcher) -> Optional[ConvertConfig]:
     """Parse a dataset rating converter configuration.
 
@@ -64,6 +64,9 @@ def parse_data_convert_config(
         default_value=parsed_config
     ): return parsed_config
 
+    dataset_converter_factory = converter_factory.get_factory(dataset.get_name())
+    matrix_converter_factory = dataset_converter_factory.get_factory(matrix_name)
+
     # parse converter name
     success, converter_name = parse_config_param(
         convert_config,
@@ -72,19 +75,14 @@ def parse_data_convert_config(
             KEY_NAME,
             str,
             'None',
-            converter_factory.get_available_names()
+            matrix_converter_factory.get_available_names()
         ),
         event_dispatcher
     )
     if not success:
         return parsed_config
 
-    convert_params = converter_factory.create_params(converter_name)
-    upper_bound = convert_params.get_param('upper_bound')
-    if upper_bound is not None:
-        # update upper_bound param's default value to match the dataset's max rating
-        upper_bound.default_value = dataset.get_matrix_config(matrix_name).rating_max
-
+    convert_params = matrix_converter_factory.create_params(converter_name)
     parsed_config = ConvertConfig(
         converter_name,
         convert_params.get_defaults()

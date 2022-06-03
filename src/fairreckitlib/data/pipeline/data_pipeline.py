@@ -11,7 +11,7 @@ Utrecht University within the Software Project course.
 
 import os
 import time
-from typing import Any, Callable, List, Optional, Tuple
+from typing import Callable, List, Optional, Tuple
 
 import pandas as pd
 
@@ -26,6 +26,7 @@ from ..ratings.convert_config import ConvertConfig
 from ..ratings.convert_event import ConvertRatingsEventArgs
 from ..ratings.rating_converter_factory import KEY_RATING_CONVERTER
 from ..set.dataset import Dataset
+# from ..filter.filter_constants import KEY_DATA_FILTERS, deduce_filter_type
 from ..split.split_config import SplitConfig
 from ..split.split_constants import KEY_SPLITTING, KEY_SPLIT_TEST_RATIO
 from ..split.split_event import SplitDataframeEventArgs
@@ -106,7 +107,8 @@ class DataPipeline(CorePipeline):
             return None
 
         # step 3
-        dataframe = self.filter_rows(dataframe, data_config.prefilters)
+        dataframe = self.filter_rows(dataframe,
+                                     data_config.prefilters)
         if not is_running():
             return None
 
@@ -209,7 +211,9 @@ class DataPipeline(CorePipeline):
 
         return dataframe
 
-    def filter_rows(self, dataframe: pd.DataFrame, prefilters: List[Any]) -> pd.DataFrame:
+    def filter_rows(self,
+                    dataframe: pd.DataFrame,
+                    prefilters: List) -> pd.DataFrame:
         """Apply the specified filters to the dataframe.
 
         Args:
@@ -268,8 +272,12 @@ class DataPipeline(CorePipeline):
         ))
 
         start = time.time()
-        convert_factory = self.data_factory.get_factory(KEY_RATING_CONVERTER)
-        converter = convert_factory.create(convert_config.name, convert_config.params)
+
+        converter_factory = self.data_factory.get_factory(KEY_RATING_CONVERTER)
+        dataset_converter_factory = converter_factory.get_factory(dataset.get_name())
+        matrix_converter_factory = dataset_converter_factory.get_factory(matrix_name)
+
+        converter = matrix_converter_factory.create(convert_config.name, convert_config.params)
         if converter is None:
             self.event_dispatcher.dispatch(ErrorEventArgs(
                 ON_FAILURE_ERROR,
@@ -279,6 +287,7 @@ class DataPipeline(CorePipeline):
             raise RuntimeError()
 
         dataframe, rating_type = converter.run(dataframe)
+
         end = time.time()
 
         self.event_dispatcher.dispatch(ConvertRatingsEventArgs(

@@ -57,7 +57,7 @@ class RangeConverter(RatingConverter):
         return dataframe, rating_type
 
 
-def create_range_converter(name: str, params: Dict[str, Any]) -> RangeConverter:
+def create_range_converter(name: str, params: Dict[str, Any], **_) -> RangeConverter:
     """Create the Range Converter.
 
     Args:
@@ -71,12 +71,14 @@ def create_range_converter(name: str, params: Dict[str, Any]) -> RangeConverter:
     return RangeConverter(name, params)
 
 
-def create_range_converter_params() -> ConfigParameters:
+def create_range_converter_params(**kwargs) -> ConfigParameters:
     """Create the parameters of the range converter.
 
     Returns:
         the configuration parameters of the converter.
     """
+    max_rating = kwargs['dataset'].get_matrix_config(kwargs['matrix_name']).rating_max
+
     params = ConfigParameters()
-    params.add_number('upper_bound', float, 1.0, (1.0, 1000000.0))
+    params.add_number('upper_bound', float, max_rating, (1.0, max_rating))
     return params
