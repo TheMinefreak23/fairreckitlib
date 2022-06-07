@@ -44,9 +44,24 @@ class LensKitPredictor(Predictor):
         Predictor.__init__(self, name, params, kwargs['num_threads'])
         self.algo = algo
 
-    def on_train(self) -> None:
-        """Fit the lenskit algorithm on the train set."""
-        self.algo.fit(self.train_set)
+    def on_train(self, train_set: pd.DataFrame) -> None:
+        """Fit the lenskit algorithm on the train set.
+
+        The predictor should be trained with a dataframe matrix.
+
+        Args:
+            train_set: the set to train the predictor with.
+
+        Raises:
+            ArithmeticError: possibly raised by an algorithm on training.
+            MemoryError: possibly raised by an algorithm on training.
+            RuntimeError: possibly raised by an algorithm on training.
+            TypeError: when the train set is not a pandas dataframe.
+        """
+        if not isinstance(train_set, pd.DataFrame):
+            raise TypeError('Expected predictor to be trained with a dataframe matrix')
+
+        self.algo.fit(train_set)
 
     def on_predict(self, user: int, item: int) -> float:
         """Compute a prediction for the specified user and item.
@@ -58,6 +73,11 @@ class LensKitPredictor(Predictor):
         Args:
             user: the user ID.
             item: the item ID.
+
+        Raises:
+            ArithmeticError: possibly raised by a predictor on testing.
+            MemoryError: possibly raised by a predictor on testing.
+            RuntimeError: when the predictor is not trained yet.
 
         Returns:
             the predicted rating.
@@ -73,6 +93,11 @@ class LensKitPredictor(Predictor):
 
         Args:
             user_item_pairs: with at least two columns: 'user', 'item'.
+
+        Raises:
+            ArithmeticError: possibly raised by a predictor on testing.
+            MemoryError: possibly raised by a predictor on testing.
+            RuntimeError: when the predictor is not trained yet.
 
         Returns:
             dataFrame with the columns: 'user', 'item', 'prediction'.

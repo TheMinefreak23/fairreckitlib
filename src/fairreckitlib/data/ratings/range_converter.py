@@ -14,14 +14,12 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from typing import Any, Dict, Tuple
+from typing import Any, Dict
 
 import pandas as pd
 
 from ...core.config.config_parameters import ConfigParameters
-from ..set.dataset_config import DATASET_RATINGS_EXPLICIT, DATASET_RATINGS_IMPLICIT
 from .base_converter import RatingConverter
-from .convert_constants import RATING_TYPE_THRESHOLD
 
 
 class RangeConverter(RatingConverter):
@@ -30,7 +28,7 @@ class RangeConverter(RatingConverter):
     Converts the rating column of the dataframe to a specified range.
     """
 
-    def run(self, dataframe: pd.DataFrame) -> Tuple[pd.DataFrame, str]:
+    def run(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Convert ratings in the dataframe.
 
         Takes the max value and divides all values so that
@@ -48,13 +46,7 @@ class RangeConverter(RatingConverter):
         max_rating = dataframe.max()['rating']
         dataframe['rating'] = dataframe['rating'].apply(lambda x : x / max_rating * upper_bound)
 
-        # any ratings above a RATING_TYPE_THRESHOLD will be viewed as implicit
-        if upper_bound > RATING_TYPE_THRESHOLD:
-            rating_type = DATASET_RATINGS_IMPLICIT
-        else:
-            rating_type = DATASET_RATINGS_EXPLICIT
-
-        return dataframe, rating_type
+        return dataframe
 
 
 def create_range_converter(name: str, params: Dict[str, Any], **_) -> RangeConverter:

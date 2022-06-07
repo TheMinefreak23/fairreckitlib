@@ -15,7 +15,7 @@ Utrecht University within the Software Project course.
 """
 
 import json
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 import h5py
 import numpy as np
@@ -39,7 +39,7 @@ def load_array_from_hdf5(file_path: str, array_name: str) -> np.array:
         return np.array(file.get(array_name))
 
 
-def load_json(file_path: str, encoding: str='utf-8') -> Dict:
+def load_json(file_path: str, encoding: str='utf-8') -> Union[Dict[str, Any], List]:
     """Load a json file.
 
     This function raises a FileNotFoundError when the specified file does not exist.
@@ -56,7 +56,7 @@ def load_json(file_path: str, encoding: str='utf-8') -> Dict:
         return json.load(out_file)
 
 
-def load_yml(file_path: str, encoding: str='utf-8') -> Dict:
+def load_yml(file_path: str, encoding: str='utf-8') -> Union[Dict[str, Any], List]:
     """Load a yml file.
 
     This function raises a FileNotFoundError when the specified file does not exist.
@@ -87,7 +87,8 @@ def save_array_to_hdf5(file_path: str, arr: List[Any], array_name: str) -> None:
         file.create_dataset(array_name, data=arr)
 
 
-def save_json(file_path: str, data: Dict, *, encoding: str='utf-8', indent=None) -> None:
+def save_json(file_path: str, data: Union[Dict[str, Any], List],
+              *, encoding: str='utf-8', indent=None) -> None:
     """Save a json file.
 
     Counterpart of the load_json function.
@@ -102,7 +103,7 @@ def save_json(file_path: str, data: Dict, *, encoding: str='utf-8', indent=None)
         json.dump(data, file, indent=indent)
 
 
-def save_yml(file_path: str, data: Dict, *, encoding: str='utf-8') -> None:
+def save_yml(file_path: str, data: Union[Dict[str, Any], List], *, encoding: str='utf-8') -> None:
     """Save a yml file.
 
     Counterpart of the load_yml function.

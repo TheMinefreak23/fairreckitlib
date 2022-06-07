@@ -3,17 +3,19 @@
 Classes:
 
     RecommendationPipeline: can batch recommendations from multiple models for a specific API.
+    RecommendationPipelineCSR: recommendation pipeline with a csr matrix instead of a dataframe.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from typing import Callable
+from typing import List
 
 import pandas as pd
 
 from ..algorithms.base_recommender import BaseRecommender
+from ..algorithms.matrix import Matrix, MatrixCSR
 from .model_pipeline import ModelPipeline
 
 
@@ -23,46 +25,54 @@ class RecommendationPipeline(ModelPipeline):
     The topK item recommendations will be computed for each user that is present in the test set.
     """
 
-    def get_ratings_dataframe(self) -> pd.DataFrame:
-        """Get the dataframe that contains the original ratings.
+    def load_test_set_users(self) -> None:
+        """Load the test set users that all models can use for testing.
 
-        For the recommendation pipeline the ratings is the combination of the train and test set.
+        Recommendations are made for every user in the test set.
 
-        Returns:
-            dataframe containing the 'user', 'item', 'rating', columns.
+        Raises:
+            FileNotFoundError: when the test set file is not found.
         """
-        return pd.concat([self.train_set, self.test_set])
+        test_set = self.load_test_set_dataframe('recommendation test set')
+        self.test_set_users = test_set['user'].unique()
 
-    def test_model_ratings(self,
-                           model: BaseRecommender,
-                           output_path: str,
-                           batch_size: int,
-                           is_running: Callable[[], bool],
-                           **kwargs) -> None:
+    def test_model_ratings(
+            self,
+            model: BaseRecommender,
+            user_batch: List[int],
+            **kwargs) -> pd.DataFrame:
         """Test the specified model for rating recommendations.
 
         Produce a top K number of item scores for each user that is present in the test set.
 
         Args:
             model: the model that needs to be tested.
-            output_path: path to the file where the ratings will be stored.
-            batch_size: number of users to test ratings for in a batch.
-            is_running: function that returns whether the pipeline
-                is still running. Stops early when False is returned.
+            user_batch: the user batch to compute model ratings for.
 
         Keyword Args:
             num_items(int): the number of item recommendations to produce.
+
+        Raises:
+            ArithmeticError: possibly raised by a recommender model on testing.
+            MemoryError: possibly raised by a recommender model on testing.
+            RuntimeError: possibly raised by a recommender model on testing.
+
+        Returns:
+            a dataframe containing the computed item recommendations.
         """
-        test_users = self.test_set.user.unique()
-        start_index = 0
-        while start_index < len(test_users):
-            if not is_running():
-                return
+        return model.recommend_batch(user_batch, num_items=kwargs['num_items'])
 
-            user_batch = test_users[start_index : start_index + batch_size]
-            recommendations = model.recommend_batch(user_batch, num_items=kwargs['num_items'])
-            if not is_running():
-                return
 
-            self.write_dataframe(output_path, recommendations, start_index == 0)
-            start_index += batch_size
+class RecommendationPipelineCSR(RecommendationPipeline):
+    """Recommendation Pipeline implementation for a CSR matrix train set."""
+
+    def on_load_train_set_matrix(self) -> Matrix:
+        """Load the train set matrix that all models can use for training.
+
+        Raises:
+            FileNotFoundError: when the train set file is not found.
+
+        Returns:
+            the loaded train set csr matrix.
+        """
+        return MatrixCSR(self.data_transition.train_set_path)

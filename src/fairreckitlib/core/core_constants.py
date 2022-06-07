@@ -10,6 +10,7 @@ Constants:
 
     KEY_NAME: the key that is used for a name.
     KEY_PARAMS: the key that is used for params.
+    KEY_RANDOM_SEED: the key that is used for a random seed param.
     KEY_TYPE: the key that is used for types.
 
     TYPE_PREDICTION: the prediction experiment type.
@@ -39,6 +40,7 @@ SURPRISE_API = 'Surprise'
 
 KEY_NAME = 'name'
 KEY_PARAMS = 'params'
+KEY_RANDOM_SEED = 'seed'
 KEY_TYPE = 'type'
 
 TYPE_PREDICTION = 'prediction'

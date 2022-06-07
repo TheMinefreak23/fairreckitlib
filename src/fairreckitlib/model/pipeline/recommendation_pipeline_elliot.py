@@ -36,9 +36,7 @@ from typing import Callable
 import numpy as np
 import pandas as pd
 
-from ...core.config.config_factories import Factory
 from ...core.core_constants import MODEL_RATINGS_FILE
-from ...core.events.event_dispatcher import EventDispatcher
 from ...core.io.io_create import create_dir, create_yml
 from ...core.io.io_delete import delete_dir, delete_file
 from ..algorithms.elliot.elliot_recommender import ElliotRecommender
@@ -48,35 +46,12 @@ from .recommendation_pipeline import RecommendationPipeline
 class RecommendationPipelineElliot(RecommendationPipeline):
     """Recommendation Pipeline implementation for the Elliot framework."""
 
-    def __init__(self, factory: Factory, event_dispatcher: EventDispatcher):
-        """Construct the elliot recommendation pipeline.
-
-        Args:
-            factory: factory of available elliot recommenders.
-            event_dispatcher: used to dispatch model/IO events when running the pipeline.
-        """
-        RecommendationPipeline.__init__(self, factory, event_dispatcher)
-        self.train_set_path = None
-        self.test_set_path = None
-
-    def load_train_and_test_set(self, train_set_path: str, test_set_path: str) -> None:
-        """Load the train and test set that all models can use.
-
-        The loading is done by the Elliot framework, delay until after it is done.
-
-        Args:
-            train_set_path: path to where the train set is stored.
-            test_set_path: path to where the test set is stored.
-        """
-        self.train_set_path = train_set_path
-        self.test_set_path = test_set_path
-
     def train_and_test_model(
             self,
             model: ElliotRecommender,
             model_dir: str,
             is_running: Callable[[], bool],
-            **kwargs) -> str:
+            **kwargs) -> None:
         """Train and test the specified model.
 
         Convert the model configuration into a yml file that is accepted by the framework.
@@ -92,8 +67,10 @@ class RecommendationPipelineElliot(RecommendationPipeline):
         Keyword Args:
             num_items(int): the number of item recommendations to produce.
 
-        Returns:
-            the path to the file where the model's computed ratings are stored.
+        Raises:
+            ArithmeticError: possibly raised by a model on training or testing.
+            MemoryError: possibly raised by a model on training or testing.
+            RuntimeError: possibly raised by a model on training or testing.
         """
         params = model.get_params()
         params['meta'] = {'verbose': False, 'save_recs': True, 'save_weights': False}
@@ -133,18 +110,7 @@ class RecommendationPipelineElliot(RecommendationPipeline):
             # remove everything so that only the final epochs file remains
             self.clear_unused_epochs(params['epochs'], model_dir)
 
-        result_file_path = self.reconstruct_rank_column(model_dir, top_k)
-        if not is_running():
-            return result_file_path
-
-        # load the train and test set now the elliot framework is done
-        RecommendationPipeline.load_train_and_test_set(
-            self,
-            self.train_set_path,
-            self.test_set_path
-        )
-
-        return result_file_path
+        self.reconstruct_rank_column(model_dir, top_k)
 
     def clear_unused_epochs(self, num_epochs: int, model_dir: str) -> None:
         """Clear unused epochs from the model output directory.
@@ -168,15 +134,12 @@ class RecommendationPipelineElliot(RecommendationPipeline):
             if used_epoch not in file_name:
                 delete_file(file_path, self.event_dispatcher)
 
-    def reconstruct_rank_column(self, model_dir: str, top_k: int) -> str:
+    def reconstruct_rank_column(self, model_dir: str, top_k: int) -> None:
         """Reconstruct the rank column in the result file that the framework generated.
 
         Args:
             model_dir: the directory where the computed ratings are stored.
             top_k: the topK that was used to compute the ratings.
-
-        Returns:
-            the path to the computed ratings file.
         """
         result_file_path = self.rename_result(model_dir)
         result = pd.read_csv(
@@ -203,8 +166,6 @@ class RecommendationPipelineElliot(RecommendationPipeline):
             header=True,
             index=False
         )
-
-        return result_file_path
 
     @staticmethod
     def rename_result(model_dir: str) -> str:

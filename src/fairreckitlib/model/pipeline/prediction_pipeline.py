@@ -9,7 +9,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from typing import Callable
+from typing import List
 
 import pandas as pd
 
@@ -23,42 +23,35 @@ class PredictionPipeline(ModelPipeline):
     The (user,item) prediction will be computed and for each pair that is present in the test set.
     """
 
-    def get_ratings_dataframe(self) -> pd.DataFrame:
-        """Get the dataframe that contains the original ratings.
+    def load_test_set_users(self) -> None:
+        """Load the test set users that all models can use for testing.
 
-        For the prediction pipeline only the ratings from the test set are necessary.
+        Predictions are made for every user-item pair in the test set.
 
-        Returns:
-            dataframe containing the 'user', 'item', 'rating', columns.
+        Raises:
+            FileNotFoundError: when the test set file is not found.
         """
-        return self.test_set
+        self.test_set_users = self.load_test_set_dataframe('prediction test set')
 
-    def test_model_ratings(self,
-                           model: BasePredictor,
-                           output_path: str,
-                           batch_size: int,
-                           is_running: Callable[[], bool],
-                           **kwargs) -> None:
+    def test_model_ratings(
+            self,
+            model: BasePredictor,
+            user_batch: List[int],
+            **kwargs) -> pd.DataFrame:
         """Test the specified model for rating predictions.
 
         Predict ratings for each user-item pair that is present in the test set.
 
         Args:
             model: the model that needs to be tested.
-            output_path: path to the file where the ratings will be stored.
-            batch_size: number of users to test ratings for in a batch.
-            is_running: function that returns whether the pipeline
-                is still running. Stops early when False is returned.
+            user_batch: the user batch to compute model ratings for.
+
+        Raises:
+            ArithmeticError: possibly raised by a predictor model on testing.
+            MemoryError: possibly raised by a predictor model on testing.
+            RuntimeError: possibly raised by a predictor model on testing.
+
+        Returns:
+            a dataframe containing the computed rating predictions.
         """
-        start_index = 0
-        while start_index < len(self.test_set):
-            if not is_running():
-                return
-
-            user_batch = self.test_set[start_index : start_index + batch_size]
-            predictions = model.predict_batch(user_batch)
-            if not is_running():
-                return
-
-            self.write_dataframe(output_path, predictions, start_index == 0)
-            start_index += batch_size
+        return model.predict_batch(user_batch)

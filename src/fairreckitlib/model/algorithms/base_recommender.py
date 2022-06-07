@@ -66,10 +66,18 @@ class BaseRecommender(BaseAlgorithm, metaclass=ABCMeta):
             user: the user ID to compute recommendations for.
             num_items: the number of item recommendations to produce.
 
+        Raises:
+            ArithmeticError: possibly raised by a recommender on testing.
+            MemoryError: possibly raised by a recommender on testing.
+            RuntimeError: when the recommender is not trained yet.
+
         Returns:
             a dataframe with the columns: 'item' and 'score'.
         """
-        if user not in self.users:
+        if self.train_set is None:
+            raise RuntimeError('Recommender is not trained for item recommendations')
+
+        if not self.train_set.knows_user(user):
             return pd.DataFrame(columns=['item', 'score'])
 
         return self.on_recommend(user, num_items)
@@ -87,6 +95,11 @@ class BaseRecommender(BaseAlgorithm, metaclass=ABCMeta):
             user: the user ID to compute recommendations for.
             num_items: the number of item recommendations to produce.
 
+        Raises:
+            ArithmeticError: possibly raised by a recommender on testing.
+            MemoryError: possibly raised by a recommender on testing.
+            RuntimeError: when the recommender is not trained yet.
+
         Returns:
             a dataframe with the columns: 'item' and 'score'.
         """
@@ -102,10 +115,18 @@ class BaseRecommender(BaseAlgorithm, metaclass=ABCMeta):
             users: the user ID's to compute recommendations for.
             num_items: the number of item recommendations to produce.
 
+        Raises:
+            ArithmeticError: possibly raised by a recommender on testing.
+            MemoryError: possibly raised by a recommender on testing.
+            RuntimeError: when the recommender is not trained yet.
+
         Returns:
             a dataframe with the columns: 'rank', 'user', 'item', 'score'.
         """
-        users = [u for u in users if u in self.users]
+        if self.train_set is None:
+            raise RuntimeError('Recommender is not trained for item recommendations')
+
+        users = [u for u in users if self.train_set.knows_user(u)]
         if len(users) == 0:
             return pd.DataFrame(columns=['rank', 'user', 'item', 'score'])
 
@@ -123,12 +144,17 @@ class BaseRecommender(BaseAlgorithm, metaclass=ABCMeta):
             users: the user ID's to compute recommendations for.
             num_items: the number of item recommendations to produce.
 
+        Raises:
+            ArithmeticError: possibly raised by a recommender on testing.
+            MemoryError: possibly raised by a recommender on testing.
+            RuntimeError: when the recommender is not trained yet.
+
         Returns:
             a dataframe with the columns: 'rank', 'user', 'item', 'score'.
         """
         result = pd.DataFrame()
 
-        for _, user in enumerate(users):
+        for user in users:
             item_scores = self.recommend(user, num_items)
 
             item_scores['rank'] = np.arange(1, 1 + num_items)

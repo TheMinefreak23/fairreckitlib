@@ -29,7 +29,7 @@ import math
 import time
 from typing import Any, Dict
 
-from surprise.dataset import Dataset
+import surprise
 from surprise.prediction_algorithms import AlgoBase
 from surprise.prediction_algorithms import BaselineOnly
 from surprise.prediction_algorithms import CoClustering
@@ -38,7 +38,6 @@ from surprise.prediction_algorithms import NMF
 from surprise.prediction_algorithms import NormalPredictor
 from surprise.prediction_algorithms import SlopeOne
 from surprise.prediction_algorithms import SVD, SVDpp
-from surprise.reader import Reader
 
 from ..base_predictor import Predictor
 
@@ -56,23 +55,29 @@ class SurprisePredictor(Predictor):
 
         Keyword Args:
             num_threads(int): the max number of threads the predictor can use.
-            rating_scale(Tuple[float, float]): consisting of the min_rating and max_rating on
-                which the algorithm will perform training.
         """
         Predictor.__init__(self, name, params, kwargs['num_threads'])
         self.algo = algo
-        self.rating_scale = kwargs['rating_scale']
 
-    def on_train(self) -> None:
+    def on_train(self, train_set: surprise.Trainset) -> None:
         """Train the algorithm on the train set.
 
-        Surprise predictors expect the train set as a Dataset class,
-        so the original train set needs to be converted before training can be done.
+        The predictor should be trained with a matrix that is
+        compatible with the surprise package.
+
+        Args:
+            train_set: the set to train the predictor with.
+
+        Raises:
+            ArithmeticError: possibly raised by an algorithm on training.
+            MemoryError: possibly raised by an algorithm on training.
+            RuntimeError: possibly raised by an algorithm on training.
+            TypeError: when the train set is not a surprise.Trainset.
         """
-        reader = Reader(rating_scale=self.rating_scale)
-        # other columns in the train set need to be removed, otherwise it raises an error
-        dataset = Dataset.load_from_df(self.train_set[['user', 'item', 'rating']], reader)
-        self.algo.fit(dataset.build_full_trainset())
+        if not isinstance(train_set, surprise.Trainset):
+            raise TypeError('Expected predictor to be trained with a surprise compatible matrix')
+
+        self.algo.fit(train_set)
 
     def on_predict(self, user: int, item: int) -> float:
         """Compute a prediction for the specified user and item.
@@ -83,6 +88,11 @@ class SurprisePredictor(Predictor):
         Args:
             user: the user ID.
             item: the item ID.
+
+        Raises:
+            ArithmeticError: possibly raised by a predictor on testing.
+            MemoryError: possibly raised by a predictor on testing.
+            RuntimeError: when the predictor is not trained yet.
 
         Returns:
             the predicted rating.

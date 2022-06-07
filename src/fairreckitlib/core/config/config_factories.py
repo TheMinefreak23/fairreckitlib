@@ -6,13 +6,18 @@ Classes:
     Factory: class that instantiates new objects (a leaf).
     GroupFactory: class that groups other factories (a branch).
 
+Functions:
+
+    create_factory_from_list: create object factory from list of object (param) creation tuples.
+    resolve_factory: resolve the object factory from the name of the object.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
 from abc import ABCMeta, abstractmethod
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from ..core_constants import KEY_NAME, KEY_PARAMS
 from .config_parameters import ConfigParameters, create_empty_parameters
@@ -112,7 +117,6 @@ class Factory(BaseFactory):
         """Add object with associated parameter creation to the factory.
 
         Parameter creation is optional and should be None if the object has no parameters.
-        A key error is raised when the obj_name is present in the factory.
 
         Args:
             obj_name: the name of the object
@@ -120,6 +124,9 @@ class Factory(BaseFactory):
             func_create_obj_params: the function that creates and returns the parameters
                 that are associated with a newly created object or None when the object
                 has no parameters.
+
+        Raises:
+            KeyError: when the object name is already present in the factory.
         """
         if obj_name in self.factory:
             raise KeyError('Factory ' + self.factory_name,
@@ -230,11 +237,13 @@ class GroupFactory(BaseFactory):
     def add_factory(self, factory: BaseFactory) -> None:
         """Add the specified factory to the group.
 
-        The name of the factory is used as the key, and thus it will raise a
-        KeyError when the name of the factory already exists in the group.
+        The name of the factory is used as the key.
 
         Args:
             factory: to add to the group.
+
+        Raises:
+            KeyError: when the name of the factory already exists in the group.
         """
         factory_name = factory.get_name()
         if factory_name in self.factory:
@@ -334,8 +343,7 @@ def create_factory_from_list(
     """
     factory = Factory(factory_name)
 
-    for _, obj in enumerate(obj_tuple_list):
-        (obj_name, func_create_obj, func_create_obj_params) = obj
+    for (obj_name, func_create_obj, func_create_obj_params) in obj_tuple_list:
         factory.add_obj(
             obj_name,
             func_create_obj,
@@ -343,3 +351,29 @@ def create_factory_from_list(
         )
 
     return factory
+
+
+def resolve_factory(
+        obj_name: str,
+        obj_factory: Union[Factory, GroupFactory]) -> Optional[Factory]:
+    """Resolve the object factory from the name of the object.
+
+    Args:
+        obj_name: the name of the object.
+        obj_factory: the (group) factory to query for the object.
+
+    Returns:
+        the resolved factory or None when not found.
+    """
+    if isinstance(obj_factory, Factory):
+        return obj_factory if obj_factory.is_obj_available(obj_name) else None
+
+    for factory_name in obj_factory.get_available_names():
+        obj_sub_factory = obj_factory.get_factory(factory_name)
+        if obj_sub_factory.is_obj_available(obj_name):
+            if isinstance(obj_sub_factory, GroupFactory):
+                return resolve_factory(obj_name, obj_sub_factory)
+
+            return obj_sub_factory
+
+    return None

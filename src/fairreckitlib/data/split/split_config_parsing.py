@@ -20,7 +20,7 @@ from ...core.parsing.parse_assert import assert_is_type, assert_is_key_in_dict
 from ...core.parsing.parse_config_params import parse_config_param, parse_config_parameters
 from ...core.parsing.parse_event import ON_PARSE, ParseEventArgs
 from ..set.dataset import Dataset
-from .split_config import SplitConfig
+from .split_config import SplitConfig, create_default_split_config
 from .split_constants import KEY_SPLITTING, KEY_SPLIT_TEST_RATIO
 from .split_constants import DEFAULT_SPLIT_TEST_RATIO, DEFAULT_SPLIT_NAME
 
@@ -41,11 +41,7 @@ def parse_data_split_config(
     Returns:
         the parsed configuration or None on failure.
     """
-    parsed_config = SplitConfig(
-        DEFAULT_SPLIT_NAME,
-        split_factory.create_params(DEFAULT_SPLIT_NAME).get_defaults(),
-        DEFAULT_SPLIT_TEST_RATIO
-    )
+    parsed_config = create_default_split_config()
 
     # dataset splitting is optional
     if KEY_SPLITTING not in dataset_config:
