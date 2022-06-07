@@ -74,14 +74,14 @@ class DummyPredictor(Predictor):
             raise kwargs['const_error']()
 
     def on_predict(self, user: int, item: int) -> float:
-        """TODO"""
+        """Raise error on predicting."""
         if self.test_error is None:
             return Predictor.on_predict(self, user, item)
 
         raise self.test_error()
 
     def on_train(self, train_set: Any) -> None:
-        """TODO"""
+        """Raise error or fake training."""
         if self.train_error is None:
             if self.test_error is not None:
                 return # succeed training
@@ -103,14 +103,14 @@ class DummyRecommender(Recommender):
             raise kwargs['const_error']()
 
     def on_recommend(self, user: int, num_items: int) -> pd.DataFrame:
-        """TODO"""
+        """Raise error on recommending."""
         if self.test_error is None:
             return Recommender.on_recommend(self, user, num_items)
 
         raise self.test_error()
 
     def on_train(self, train_set: Any) -> None:
-        """TODO"""
+        """Raise error or fake training."""
         if self.train_error is None:
             if self.test_error is not None:
                 return # succeed training

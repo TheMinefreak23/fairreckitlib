@@ -51,6 +51,7 @@ class DummyConverter(RatingConverter):
     """Dummy converter to test not implemented errors."""
 
     def __init__(self):
+        """Construct dummy converter."""
         RatingConverter.__init__(self, 'converter', {})
 
     def run(self, dataframe: pd.DataFrame) -> pd.DataFrame:

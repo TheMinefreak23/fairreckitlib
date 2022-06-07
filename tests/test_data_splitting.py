@@ -57,6 +57,7 @@ class DummySplitter(DataSplitter):
     """Dummy splitter to test not implemented errors."""
 
     def __init__(self):
+        """Construct dummy splitter."""
         DataSplitter.__init__(self, 'splitter', {}, 0.2)
 
     def run(self, dataframe: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:

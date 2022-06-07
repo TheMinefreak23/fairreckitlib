@@ -41,7 +41,7 @@ class DummyMatrix(Matrix):
     """Dummy matrix used to test algorithm training errors."""
 
     def __init__(self):
-        """TODO"""
+        """Construct dummy matrix."""
         Matrix.__init__(self, MATRIX_FILE)
 
     def get_matrix(self) -> None:
