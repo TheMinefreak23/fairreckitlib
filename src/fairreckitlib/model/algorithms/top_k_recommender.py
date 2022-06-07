@@ -9,7 +9,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 import pandas as pd
 
@@ -55,24 +55,15 @@ class TopK(BaseRecommender):
         """
         return self.predictor.get_params()
 
-    def get_items(self) -> Optional[List[int]]:
-        """Get the (unique) items the underlying predictor was trained on.
+    def on_train(self, _) -> None:
+        """Train the underlying predictor on the train set.
 
-        Returns:
-            a list of unique item IDs or None if the algorithm is not trained yet.
+        Raises:
+            ArithmeticError: possibly raised by the underlying predictor on training.
+            MemoryError: possibly raised by the underlying predictor on training.
+            RuntimeError: possibly raised by the underlying predictor on training.
         """
-        return self.predictor.get_items()
-
-    def get_users(self) -> Optional[List[int]]:
-        """Get the (unique) users the underlying predictor was trained on.
-
-        Returns:
-            a list of unique user IDs or None if the algorithm is not trained yet.
-        """
-        return self.predictor.get_users()
-
-    def on_train(self) -> None:
-        """Train the underlying predictor on the train set."""
+        # use the original train_set matrix to train the predictor
         self.predictor.train(self.train_set)
 
     def on_recommend(self, user: int, num_items: int) -> pd.DataFrame:
@@ -85,15 +76,19 @@ class TopK(BaseRecommender):
             user: the user ID to compute recommendations for.
             num_items: the number of item recommendations to produce.
 
+        Raises:
+            ArithmeticError: possibly raised by the underlying predictor on testing.
+            MemoryError: possibly raised by the underlying predictor on testing.
+            RuntimeError: when the underlying predictor is not trained yet.
+
         Returns:
             dataframe with the columns: 'item' and 'score'.
         """
-        items = self.items
+        items = self.predictor.train_set.get_items()
         # filter items that are rated by the user already
         if self.rated_items_filter:
-            is_user = self.train_set['user'] == user
-            user_item_ratings = self.train_set.loc[is_user]['item'].tolist()
-            items = [i for i in self.items if i not in user_item_ratings]
+            user_rated_items = self.predictor.train_set.get_user_rated_items(user)
+            items = [i for i in items if i not in user_rated_items]
 
         # TODO this is not very efficient, but works (also should utilize available num_threads)
         # compute recommendations for all items and truncate to the top num_items

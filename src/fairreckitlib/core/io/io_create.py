@@ -12,7 +12,7 @@ Utrecht University within the Software Project course.
 """
 
 import os
-from typing import Dict
+from typing import Any, Dict, List, Union
 
 from ..events.event_dispatcher import EventDispatcher
 from .event_io import ON_CREATE_FILE, ON_MAKE_DIR, DirEventArgs, FileEventArgs
@@ -41,7 +41,7 @@ def create_dir(directory: str, event_dispatcher: EventDispatcher) -> str:
 
 def create_json(
         file_path: str,
-        data: Dict,
+        data: Union[Dict[str, Any], List],
         event_dispatcher: EventDispatcher,
         *,
         encoding: str='utf-8',
@@ -63,7 +63,7 @@ def create_json(
 
 def create_yml(
         file_path: str,
-        data: Dict,
+        data: Union[Dict[str, Any], List],
         event_dispatcher: EventDispatcher,
         *,
         encoding: str='utf-8') -> None:

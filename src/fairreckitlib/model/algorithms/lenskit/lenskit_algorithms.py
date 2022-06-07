@@ -1,5 +1,14 @@
 """This module contains name constants and creation wrappers for implemented lenskit algorithms.
 
+Constants:
+
+    BIASED_MF: name of the BiasedMF algorithm.
+    IMPLICIT_MF: name of the ImplicitMF algorithm.
+    ITEM_ITEM: name of the ItemItem algorithm.
+    POP_SCORE: name of the PopScore algorithm.
+    RANDOM: name of the Random recommender.
+    USER_USER: name of the UserUser algorithm.
+
 Functions:
 
     create_biased_mf: create lenskit BiasedMF algorithm.

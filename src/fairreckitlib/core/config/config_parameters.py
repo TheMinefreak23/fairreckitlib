@@ -16,6 +16,7 @@ Utrecht University within the Software Project course.
 
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
+from ..core_constants import KEY_RANDOM_SEED
 from .config_base_param import ConfigParam, PARAM_KEY_OPTIONS, PARAM_KEY_VALUES
 from .config_option_param import ConfigSingleOptionParam, ConfigMultiOptionParam, create_bool_param
 from .config_value_param import ConfigNumberParam, ConfigRandomParam, ConfigRangeParam
@@ -285,5 +286,5 @@ def create_params_random_seed() -> ConfigParameters:
         the configuration parameters with one parameter: 'seed'.
     """
     params = ConfigParameters()
-    params.add_random_seed('seed')
+    params.add_random_seed(KEY_RANDOM_SEED)
     return params

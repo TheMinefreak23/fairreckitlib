@@ -9,7 +9,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from typing import Any, Dict, Tuple
+from typing import Any, Dict
 
 import pandas as pd
 
@@ -31,7 +31,7 @@ class RatingConverter(DataModifier):
         """
         DataModifier.__init__(self, name, params)
 
-    def run(self, dataframe: pd.DataFrame) -> Tuple[pd.DataFrame, str]:
+    def run(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Run the converter on the specified dataframe.
 
         Args:

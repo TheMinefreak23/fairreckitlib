@@ -10,9 +10,9 @@ Utrecht University within the Software Project course.
 """
 
 from abc import ABCMeta, abstractmethod
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
-import pandas as pd
+from .matrix import Matrix
 
 
 class BaseAlgorithm(metaclass=ABCMeta):
@@ -27,19 +27,16 @@ class BaseAlgorithm(metaclass=ABCMeta):
 
     Public methods:
 
-    get_items
     get_name
     get_num_threads
     get_params
-    get_users
+    get_train_set
     train
     """
 
     def __init__(self):
         """Construct the algorithm."""
         self.train_set = None
-        self.users = None
-        self.items = None
 
     @abstractmethod
     def get_name(self) -> str:
@@ -68,39 +65,38 @@ class BaseAlgorithm(metaclass=ABCMeta):
         """
         raise NotImplementedError()
 
-    def get_items(self) -> Optional[List[int]]:
-        """Get the (unique) items the algorithm was trained on.
+    def get_train_set(self) -> Optional[Matrix]:
+        """Get the train set that the algorithm was trained on.
 
         Returns:
-            a list of unique item IDs or None if the algorithm is not trained yet.
+            the train set matrix or None if the algorithm is not trained yet.
         """
-        return self.items
+        return self.train_set
 
-    def get_users(self) -> Optional[List[int]]:
-        """Get the (unique) users the algorithm was trained on.
-
-        Returns:
-            a list of unique user IDs or None if the algorithm is not trained yet.
-        """
-        return self.users
-
-    def train(self, train_set: pd.DataFrame) -> None:
+    def train(self, train_set: Matrix) -> None:
         """Train the algorithm on the specified train set.
 
         Args:
-            train_set: with at least three columns: 'user', 'item', 'rating'.
+            train_set: the matrix train set.
+
+        Raises:
+            ArithmeticError: possibly raised by an algorithm on training.
+            MemoryError: possibly raised by an algorithm on training.
+            RuntimeError: possibly raised by an algorithm on training.
+            TypeError: when the specified train set does not have the correct matrix format.
         """
         self.train_set = train_set
-        self.users = train_set['user'].unique()
-        self.items = train_set['item'].unique()
-
-        self.on_train()
+        self.on_train(self.train_set.get_matrix())
 
     @abstractmethod
-    def on_train(self) -> None:
+    def on_train(self, train_set: Any) -> None:
         """Train the algorithm on the train set.
 
         Derived classes should implement the training logic
-        of the algorithm.
+        of the algorithm. The train set can be anything depending
+        on the matrix that is used.
+
+        Args:
+            train_set: the set to train the algorithm with.
         """
         raise NotImplementedError()

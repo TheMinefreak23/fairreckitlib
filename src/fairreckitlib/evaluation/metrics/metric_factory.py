@@ -6,16 +6,13 @@ Functions:
     create_accuracy_metric_factory: create metric category factory for accuracy metrics.
     create_coverage_metric_factory: create metric category factory for coverage metrics.
     create_rating_metric_factory: create metric category factory for rating metrics.
-    resolve_metric_factory: resolve the metric factory from the name of the metric.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from typing import Optional
-
-from ...core.config.config_factories import Factory, GroupFactory, create_factory_from_list
+from ...core.config.config_factories import Factory, create_factory_from_list
 from ...core.config.config_parameters import ConfigParameters
 from .lenskit import lenskit_accuracy_metric, lenskit_rating_metric
 from .rexmex import rexmex_coverage_metric, rexmex_rating_metric
@@ -72,23 +69,3 @@ def create_rating_metric_factory() -> Factory:
         (Metric.MSE.value, rexmex_rating_metric.create_mse, None),
         (Metric.RMSE.value, lenskit_rating_metric.create_rmse, None)
     ])
-
-
-def resolve_metric_factory(
-        metric_name: str,
-        metric_category_factory: GroupFactory) -> Optional[Factory]:
-    """Resolve the metric factory from the name of the metric.
-
-    Args:
-        metric_name: the name of the metric.
-        metric_category_factory: the factory that contains metric category factories.
-
-    Returns:
-        the resolved metric factory or None when not found.
-    """
-    for factory_name in metric_category_factory.get_available_names():
-        metric_factory = metric_category_factory.get_factory(factory_name)
-        if metric_factory.is_obj_available(metric_name):
-            return metric_factory
-
-    return None

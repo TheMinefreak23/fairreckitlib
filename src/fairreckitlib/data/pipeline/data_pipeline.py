@@ -113,10 +113,10 @@ class DataPipeline(CorePipeline):
             return None
 
         # step 4
-        dataframe, rating_type = self.convert_ratings(dataset,
-                                                      data_config.matrix,
-                                                      dataframe,
-                                                      data_config.converter)
+        dataframe = self.convert_ratings(dataset,
+                                         data_config.matrix,
+                                         dataframe,
+                                         data_config.converter)
         if not is_running():
             return None
 
@@ -140,8 +140,7 @@ class DataPipeline(CorePipeline):
             data_dir,
             train_set_path,
             test_set_path,
-            (dataframe['rating'].min(), dataframe['rating'].max()),
-            rating_type
+            (dataframe['rating'].min(), dataframe['rating'].max())
         )
 
         return data_output
@@ -248,7 +247,7 @@ class DataPipeline(CorePipeline):
                         dataset: Dataset,
                         matrix_name: str,
                         dataframe: pd.DataFrame,
-                        convert_config: ConvertConfig) -> Tuple[pd.DataFrame, str]:
+                        convert_config: ConvertConfig) -> pd.DataFrame:
         """Convert the ratings in the dataframe with the specified rating modifier.
 
         It raises a RuntimeError when the converter specified by the configuration is not available.
@@ -261,10 +260,10 @@ class DataPipeline(CorePipeline):
             convert_config: the configuration of the converter to apply to the 'rating' column.
 
         Returns:
-            the converted dataframe and the type of rating, either 'explicit' or 'implicit'.
+            the converted dataframe or the input dataframe when no converter is specified.
         """
         if convert_config is None:
-            return dataframe, dataset.get_matrix_config(matrix_name).rating_type
+            return dataframe
 
         self.event_dispatcher.dispatch(ConvertRatingsEventArgs(
             ON_BEGIN_CONVERT_RATINGS,
@@ -286,7 +285,7 @@ class DataPipeline(CorePipeline):
             # raise error so the data run aborts
             raise RuntimeError()
 
-        dataframe, rating_type = converter.run(dataframe)
+        dataframe = converter.run(dataframe)
 
         end = time.time()
 
@@ -295,7 +294,7 @@ class DataPipeline(CorePipeline):
             convert_config
         ), elapsed_time=end - start)
 
-        return dataframe, rating_type
+        return dataframe
 
     def split(self,
               dataframe: pd.DataFrame,

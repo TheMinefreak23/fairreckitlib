@@ -16,7 +16,7 @@ Utrecht University within the Software Project course.
 import time
 from typing import Callable, List
 
-from ...core.config.config_factories import Factory, GroupFactory
+from ...core.config.config_factories import Factory, GroupFactory, resolve_factory
 from ...core.events.event_dispatcher import EventDispatcher
 from ...core.events.event_error import ON_FAILURE_ERROR, ON_RAISE_ERROR, ErrorEventArgs
 from ...core.io.io_utility import load_json, save_json
@@ -24,7 +24,6 @@ from ...core.pipeline.core_pipeline import CorePipeline
 from ...data.filter.filter_event import FilterDataframeEventArgs
 from ...data.set.dataset import Dataset
 from ..metrics.metric_base import BaseMetric
-from ..metrics.metric_factory import resolve_metric_factory
 from ..evaluation_sets import EvaluationSetPaths, EvaluationSets
 from .evaluation_config import MetricConfig
 from .evaluation_event import EvaluationPipelineEventArgs, MetricEventArgs
@@ -100,7 +99,7 @@ class EvaluationPipeline(CorePipeline):
             if not is_running():
                 return
 
-            metric_factory = resolve_metric_factory(
+            metric_factory = resolve_factory(
                 metric_config.name,
                 self.metric_category_factory
             )

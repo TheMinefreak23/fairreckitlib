@@ -49,19 +49,25 @@ class ImplicitRecommender(Recommender):
         Recommender.__init__(self, name, params, kwargs['num_threads'],
                              kwargs['rated_items_filter'])
         self.algo = algo
-        self.csr_train_set = None
 
-    def on_train(self) -> None:
+    def on_train(self, train_set: sparse.csr_matrix) -> None:
         """Train the algorithm on the train set.
 
-        Implicit recommenders expect a CSR matrix, convert the train set and store
-        it for recommending items.
-        """
-        self.csr_train_set = sparse.csr_matrix(
-            (self.train_set['rating'], (self.train_set['user'], self.train_set['item']))
-        )
+        The recommender should be trained with a csr matrix.
 
-        self.algo.fit(self.csr_train_set, False)
+        Args:
+            train_set: the set to train the recommender with.
+
+        Raises:
+            ArithmeticError: possibly raised by an algorithm on training.
+            MemoryError: possibly raised by an algorithm on training.
+            RuntimeError: possibly raised by an algorithm on training.
+            TypeError: when the train set is not a csr matrix.
+        """
+        if not isinstance(train_set, sparse.csr_matrix):
+            raise TypeError('Expected recommender to be trained with a csr matrix')
+
+        self.algo.fit(train_set, False)
 
     def on_recommend(self, user: int, num_items: int) -> pd.DataFrame:
         """Compute item recommendations for the specified user.
@@ -72,12 +78,17 @@ class ImplicitRecommender(Recommender):
             user: the user ID to compute recommendations for.
             num_items: the number of item recommendations to produce.
 
+        Raises:
+            ArithmeticError: possibly raised by a recommender on testing.
+            MemoryError: possibly raised by a recommender on testing.
+            RuntimeError: when the recommender is not trained yet.
+
         Returns:
             dataframe with the columns: 'item' and 'score'.
         """
         items, scores = self.algo.recommend(
             user,
-            self.csr_train_set[user],
+            self.train_set.get_matrix()[user],
             N=num_items,
             filter_already_liked_items=self.rated_items_filter
         )
@@ -94,12 +105,17 @@ class ImplicitRecommender(Recommender):
             users: the user ID's to compute recommendations for.
             num_items: the number of item recommendations to produce.
 
+        Raises:
+            ArithmeticError: possibly raised by a recommender on testing.
+            MemoryError: possibly raised by a recommender on testing.
+            RuntimeError: when the recommender is not trained yet.
+
         Returns:
             dataframe with the columns: 'rank', 'user', 'item', 'score'.
         """
         items, scores = self.algo.recommend(
             users,
-            self.csr_train_set[users],
+            self.train_set.get_matrix()[users],
             N=num_items,
             filter_already_liked_items=True
         )
