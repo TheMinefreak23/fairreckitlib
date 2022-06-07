@@ -34,7 +34,7 @@ def create_params_numerical(**kwargs) -> ConfigParameters:
     for table_name, table_columns in dataset.get_available_columns(matrix_name).items():
         if column_name in table_columns:
             table = dataset.read_table(table_name, [column_name])
-            numerical_range = (table[column_name].min(), table[column_name].max())
+            numerical_range = (int(table[column_name].min()), int(table[column_name].max()))
             params.add_range('range', int, numerical_range, numerical_range)
 
     return params

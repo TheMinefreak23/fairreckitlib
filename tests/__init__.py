@@ -22,6 +22,7 @@ Modules:
     test_model_config: test the formatting/parsing of the model config of the experiment.
     test_model_factory: test the model (type/API) factories.
     test_model_pipeline: test the model pipeline functionality.
+    test_recommender_system: test the top level functionality of the recommender system.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
