@@ -14,7 +14,7 @@ from src.fairreckitlib.data.set.dataset_registry import DataRegistry
 from src.fairreckitlib.data.set.dataset import add_dataset_columns
 
 
-dataset_registry = DataRegistry('datasets')
+dataset_registry = DataRegistry('tests/datasets')
 movie_matrices = [
     ('ML-100K-Sample', 'user-movie-rating'),
     ('ML-25M-Sample', 'user-movie-rating'),
@@ -34,7 +34,6 @@ filter_factory = create_filter_factory(dataset_registry)
 @pytest.mark.parametrize('dataset_name, matrix_name', dataset_matrices)
 def test_categorical_filter(dataset_name, matrix_name):
     """Test categorical filter on unique and total number of values per condition and as a whole.
-
     Tests all sample datasets. Default options should contain all values,
     i.e. the aggregation of the conditions equals the original dataframe.
     """
@@ -70,7 +69,6 @@ def test_categorical_filter(dataset_name, matrix_name):
 @pytest.mark.parametrize('dataset_name, matrix_name', dataset_matrices)
 def test_numerical_filter(dataset_name, matrix_name):
     """Test numerical filter on range (min, max) before and after run.
-
     Tests all sample datasets. The default values should include all entries of
     the original dataframe with the same range.
     """
@@ -102,7 +100,6 @@ def test_numerical_filter(dataset_name, matrix_name):
 @pytest.mark.parametrize('dataset_name, matrix_name', dataset_matrices)
 def test_count_filter(dataset_name, matrix_name):
     """Test count filter on thresholds: 0, default, infinite.
-
     Tests all sample datasets. The length of the dataframe using default threshold should be
     between thresholds infinite and 0.
     """
