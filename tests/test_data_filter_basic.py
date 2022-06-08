@@ -19,7 +19,7 @@ dataset = DataRegistry('tests/datasets').get_set('ML-100K-Sample')
 filter_kwargs = {'dataset': dataset, 'matrix_name': 'user-movie-rating'}
 
 class TestFilterAge:
-    """Creates a filter object and a dummy data frame to test age filter."""
+    """Create a filter object and a dummy data frame to test age filter."""
 
     df_source = DataFrame({"id": [1, 2, 3, 4, 5], "age": [24, 0, -1, 45, 102]})
     filter_obj = NumericalFilter('', {}, **filter_kwargs)
@@ -141,7 +141,7 @@ class TestFilterCountry:
 
 
 class TestFilterCount:
-    """Creates a filter object and a dummy data frame to test count filter."""
+    """Create a filter object and a dummy data frame to test count filter."""
 
     df_source = DataFrame({"id":[1, 2, 3, 4, 5, 6, 7],
                            "country": ["NL", "NL", "NL", "BE", "NL", "BE", "FR"]})
