@@ -55,18 +55,51 @@ filter_factory = create_filter_factory(dataset_registry)
 
 @pytest.mark.parametrize('dataset_name, matrix_name', dataset_matrices)
 def test_categorical_filter(dataset_name, matrix_name):
-    dataframe = dataset_registry.get_set(dataset_name).load_matrix(matrix_name)
+    """Test categorical filter on unique and total number of values per condition and as a whole.
+    
+    Tests all sample datasets. Default options should contain all values, 
+    i.e. the aggregation of the conditions equals the original dataframe.
+    """
+
+    og_dataframe = dataset_registry.get_set(dataset_name).load_matrix(matrix_name)
     filter_dataset_factory = filter_factory.get_factory(dataset_name).get_factory(matrix_name)
-    config_list = filter_dataset_factory.get_available()
-    for input in config_list:
+    data_config_list = filter_dataset_factory.get_available()
+    for input in data_config_list:
         col_name = input['name']
-        if 'gender' not in col_name.split('_')[-1] and 'country' not in col_name.split('_')[-1]:
+        if col_name.split('_')[-1] not in ['gender', 'country']:
             continue
         conditions = input['params']['options'][0]['default']
-        res = []
+        df_lengths = []
+        unique_vals = []
         for condition in conditions:
             filterobj = filter_dataset_factory.create(col_name, {'values': [condition]})
-            df_x = filterobj.run(dataframe)
-            res.append(len(df_x))
-        assert len(dataframe) == sum(res)
+            df_x = filterobj.run(og_dataframe)
+            df_lengths.append(len(df_x))
+            df_x_with_col = add_dataset_columns(dataset_registry.get_set(dataset_name), matrix_name, df_x, [col_name])
+            unique_vals.append(len(pandas.unique(df_x_with_col[col_name])))
+        assert len(og_dataframe) == sum(df_lengths)
+        og_df = add_dataset_columns(dataset_registry.get_set(dataset_name), matrix_name, og_dataframe, [col_name])
+        assert og_df[col_name].nunique(False) == sum(unique_vals)
+
+@pytest.mark.parametrize('dataset_name, matrix_name', dataset_matrices)
+def test_numerical_filter(dataset_name, matrix_name):
+    """Test categorical filter on unique and total number of values per condition and as a whole.
+    
+    Tests all sample datasets. The default values should include all entries of
+    the original dataframe.
+    """
+
+    og_dataframe = dataset_registry.get_set(dataset_name).load_matrix(matrix_name)
+    filter_dataset_factory = filter_factory.get_factory(dataset_name).get_factory(matrix_name)
+    data_config_list = filter_dataset_factory.get_available()
+    for input in data_config_list:
+        col_name = input['name']
+        if col_name.split('_')[-1] not in ['age', 'rating', 'timestamp']:
+            continue
+        default_vals = input['params']['values'][0]['default']
+        filterobj = filter_dataset_factory.create(col_name, {'values': default_vals})
+        df_x = filterobj.run(og_dataframe)
+        df_x_with_col = add_dataset_columns(dataset_registry.get_set(dataset_name), matrix_name, df_x, [col_name])
+        og_df_with_col = add_dataset_columns(dataset_registry.get_set(dataset_name), matrix_name, og_dataframe, [col_name])
+        assert (og_df_with_col[col_name].min(), og_df_with_col[col_name].max()) == (df_x_with_col[col_name].min(), df_x_with_col[col_name].max())
 
