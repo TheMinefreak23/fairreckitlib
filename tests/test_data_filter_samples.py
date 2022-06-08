@@ -15,19 +15,14 @@ from src.fairreckitlib.data.set.dataset import add_dataset_columns
 
 
 dataset_registry = DataRegistry('tests/datasets')
-movie_matrices = [
+dataset_matrices = [
     ('ML-100K-Sample', 'user-movie-rating'),
     ('ML-25M-Sample', 'user-movie-rating'),
-]
-artist_matrices = [
     ('LFM-360K-Sample', 'user-artist-count'),
     ('LFM-1B-Sample', 'user-artist-count'),
     ('LFM-2B-Sample', 'user-artist-count'),
+    ('LFM-2B-Sample', 'user-track-count')
 ]
-track_matrices = [
-    ('LFM-2B-Sample', 'user-track-count'),
-]
-dataset_matrices = movie_matrices + artist_matrices + track_matrices
 
 filter_factory = create_filter_factory(dataset_registry)
 
