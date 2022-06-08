@@ -6,6 +6,7 @@ Modules:
     model_config_parsing: parse model configuration(s).
     model_event: event ids, event args and a print switch for the model pipeline.
     model_pipeline: base model pipeline class.
+    model_pipeline_surprise: model pipeline classes for the surprise package.
     model_run: run (multiple) model pipelines.
     prediction_pipeline: model pipeline class for predictions.
     recommendation_pipeline: model pipeline class for recommendations.

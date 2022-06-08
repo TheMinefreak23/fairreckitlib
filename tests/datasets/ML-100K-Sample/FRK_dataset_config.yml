@@ -4,11 +4,11 @@ matrices:
     idx_item:
       file: user-movie-rating_item_indices.hdf5
       key: movie_id
-      num_records: 403
+      num_records: 100
     idx_user:
       file: user-movie-rating_user_indices.hdf5
       key: user_id
-      num_records: 5
+      num_records: 50
     matrix:
       columns:
       - matrix_rating
@@ -19,7 +19,7 @@ matrices:
       foreign_keys:
       - user_id
       - movie_id
-      num_records: 517
+      num_records: 1388
       primary_key:
       - user_id
       - movie_id
@@ -37,7 +37,7 @@ tables:
       compression: bz2
       encoding: ISO-8859-1
       name: ML-100K_movie.tsv.bz2
-    num_records: 403
+    num_records: 100
     primary_key:
     - movie_id
   user:
@@ -49,6 +49,6 @@ tables:
     file:
       compression: bz2
       name: ML-100K_user.tsv.bz2
-    num_records: 5
+    num_records: 50
     primary_key:
     - user_id

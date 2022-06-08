@@ -24,7 +24,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from typing import Any, Dict, Tuple
+from typing import Any, Dict
 
 import pandas as pd
 
@@ -38,7 +38,7 @@ class KLConverter(RatingConverter):
     Applies the Kullback-Leibler formula to the rating column of the dataframe.
     """
 
-    def run(self, dataframe: pd.DataFrame) -> Tuple[pd.DataFrame, str]:
+    def run(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Apply the Kullback-Leibler formula to convert ratings.
 
         Args:

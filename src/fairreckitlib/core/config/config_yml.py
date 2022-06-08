@@ -7,6 +7,7 @@ Classes:
 Functions:
 
     format_yml_config_dict: convert dict of YmlConfig's to an yml format.
+    format_yml_config_dict_list: convert dict with list of YmlConfig's to an yml format.
     format_yml_config_list: convert list of YmlConfig's to an yml format.
 
 This program has been developed by students from the bachelor Computer Science at
@@ -43,6 +44,21 @@ def format_yml_config_dict(yml_configs: Dict[str, YmlConfig]) -> Dict[str, Any]:
 
     for name, config in yml_configs.items():
         yml_format[name] = config.to_yml_format()
+
+    return yml_format
+
+
+def format_yml_config_dict_list(
+        yml_config_lists: Dict[str, List[YmlConfig]]) -> Dict[str, List[Dict[str, Any]]]:
+    """Format yml configuration dictionary with list values.
+
+    Returns:
+        a dictionary containing the lists of yml configurations.
+    """
+    yml_format = {}
+
+    for key_name, list_config in yml_config_lists.items():
+        yml_format[key_name] = format_yml_config_list(list_config)
 
     return yml_format
 

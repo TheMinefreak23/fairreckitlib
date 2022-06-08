@@ -22,7 +22,7 @@ Utrecht University within the Software Project course.
 from dataclasses import dataclass
 from typing import Callable, Dict, List
 
-from .event_args import MessageEventArgs
+from .event_args import EventArgs, MessageEventArgs
 
 ON_FAILURE_ERROR = 'Error.on_failure'
 ON_RAISE_ERROR = 'Error.on_raise'
@@ -50,7 +50,7 @@ def get_error_events() -> List[str]:
     ]
 
 
-def get_error_event_print_switch() -> Dict[str, Callable[[ErrorEventArgs], None]]:
+def get_error_event_print_switch() -> Dict[str, Callable[[EventArgs], None]]:
     """Get a switch that prints error event IDs.
 
     Returns:

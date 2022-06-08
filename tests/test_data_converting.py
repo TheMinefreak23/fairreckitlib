@@ -1,7 +1,12 @@
 """This module tests the dataframe rating conversion functionality.
 
+Classes:
+
+    DummyConverter: dummy converter to test not implemented errors.
+
 Functions:
 
+    test_converter_interface_error: test interface error for not implemented functions.
     test_converter_factory: test if factories and converters are created correctly.
     test_apc_alc: test is listen count <= play count.
     test_to_explicit: test if ratings are converted correctly.
@@ -11,6 +16,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+import pandas as pd
 import pytest
 
 from src.fairreckitlib.core.config.config_factories import GroupFactory
@@ -24,7 +30,6 @@ from src.fairreckitlib.data.ratings import count
 from src.fairreckitlib.data.set.dataset_registry import DataRegistry
 
 # dataset matrices to run rating converters with
-dataset_registry = DataRegistry('tests/datasets')
 movie_matrices = [
     ('ML-100K-Sample', 'user-movie-rating'),
     ('ML-25M-Sample', 'user-movie-rating'),
@@ -39,16 +44,36 @@ track_matrices = [
 ]
 dataset_matrices = movie_matrices + artist_matrices + track_matrices
 
-converter_factory = create_rating_converter_factory(dataset_registry)
 rating_modifiers = [1.0, 5.0, 10.0, 1000.0]
 
 
-def test_converter_factory():
+class DummyConverter(RatingConverter):
+    """Dummy converter to test not implemented errors."""
+
+    def __init__(self):
+        """Construct dummy converter."""
+        RatingConverter.__init__(self, 'converter', {})
+
+    def run(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        """Raise NotImplementedError."""
+        return RatingConverter.run(self, dataframe)
+
+
+def test_converter_interface_error() -> None:
+    """Test rating converter interface error for not implemented functions."""
+    converter = DummyConverter()
+
+    pytest.raises(NotImplementedError, converter.run, None)
+
+
+def test_converter_factory(data_registry: DataRegistry) -> None:
     """Test all dataset/matrix group factories and rating converters in the converter factory."""
+    converter_factory = create_rating_converter_factory(data_registry)
     assert isinstance(converter_factory, GroupFactory), \
         'expected converter factory to be a group of dataset factories'
+
     for dataset_name in converter_factory.get_available_names():
-        assert dataset_name in dataset_registry.get_available_sets(), \
+        assert dataset_name in data_registry.get_available_sets(), \
             'expected dataset converter factory to be available for ' + dataset_name
 
         dataset_converter_factory = converter_factory.get_factory(dataset_name)
@@ -56,7 +81,7 @@ def test_converter_factory():
             'expected dataset converter factory to be a group of matrix factories'
 
         for matrix_name in dataset_converter_factory.get_available_names():
-            assert matrix_name in dataset_registry.get_set(dataset_name).get_available_matrices(),\
+            assert matrix_name in data_registry.get_set(dataset_name).get_available_matrices(),\
                 'expected matrix converter factory to be available for ' + matrix_name
 
             matrix_converter_factory = dataset_converter_factory.get_factory(matrix_name)
@@ -77,11 +102,11 @@ def test_converter_factory():
 
 @pytest.mark.parametrize('dataset_name, matrix_name', artist_matrices)
 
-def test_apc_alc(dataset_name: str, matrix_name: str) -> None:
+def test_apc_alc(data_registry: DataRegistry, dataset_name: str, matrix_name: str) -> None:
     """Test if alc is always <= apc."""
     print('Testing APC/ALC for', dataset_name, matrix_name)
 
-    dataframe = dataset_registry.get_set(dataset_name).load_matrix(matrix_name)
+    dataframe = data_registry.get_set(dataset_name).load_matrix(matrix_name)
     play = count.calculate_apc(dataframe)
     listen = count.calculate_alc(dataframe)
     for key, value in listen.items():
@@ -92,16 +117,19 @@ def test_apc_alc(dataset_name: str, matrix_name: str) -> None:
 @pytest.mark.parametrize('dataset_name, matrix_name', dataset_matrices)
 @pytest.mark.parametrize('modifier', rating_modifiers)
 
-def test_range_converter(dataset_name, matrix_name, modifier):
+def test_range_converter(
+        data_registry: DataRegistry, dataset_name: str, matrix_name: str, modifier: float) -> None:
     """Test if the ratings are converted to a range of [0...modifier]."""
     print('Testing', CONVERTER_RANGE, 'converter for',
           dataset_name, matrix_name, '=> upper bound', modifier)
 
+    converter_factory = create_rating_converter_factory(data_registry)
     dataset_converter_factory = converter_factory.get_factory(dataset_name)
     matrix_converter_factory = dataset_converter_factory.get_factory(matrix_name)
+
     converter = matrix_converter_factory.create(CONVERTER_RANGE, {'upper_bound': modifier})
-    dataframe = dataset_registry.get_set(dataset_name).load_matrix(matrix_name)
-    (converted_df, _) = converter.run(dataframe)
+    dataframe = data_registry.get_set(dataset_name).load_matrix(matrix_name)
+    converted_df = converter.run(dataframe)
     for _, row in converted_df.iterrows():
         assert 0 < row['rating'] <= modifier, \
             f'Rating {0} should be 0<x<{1} : {2}'.format(row['rating'],

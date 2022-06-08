@@ -35,19 +35,24 @@ from typing import Callable
 from ..core.config.config_factories import Factory, GroupFactory
 from ..core.core_constants import TYPE_PREDICTION, TYPE_RECOMMENDATION
 from ..core.events.event_dispatcher import EventDispatcher
+from ..data.data_transition import DataTransition
 from .algorithms.implicit import implicit_factory
 from .algorithms.lenskit import lenskit_factory
 from .algorithms.surprise import surprise_factory
 from .pipeline.model_pipeline import ModelPipeline
+from .pipeline.model_pipeline_surprise import \
+    PredictionPipelineSurprise, RecommendationPipelineSurprise
 from .pipeline.prediction_pipeline import PredictionPipeline
-from .pipeline.recommendation_pipeline import RecommendationPipeline
+from .pipeline.recommendation_pipeline import RecommendationPipeline, RecommendationPipelineCSR
 
 KEY_MODELS = 'models'
 
 
 def create_algorithm_pipeline_factory(
         algo_factory: Factory,
-        create_pipeline: Callable[[Factory, EventDispatcher], ModelPipeline]) -> Factory:
+        create_pipeline: Callable[
+            [Factory, DataTransition, EventDispatcher], ModelPipeline
+        ]) -> Factory:
     """Create an algorithm pipeline factory.
 
     Args:
@@ -93,7 +98,7 @@ def create_prediction_model_factory() -> GroupFactory:
     # surprise predictors
     model_factory.add_factory(create_algorithm_pipeline_factory(
         surprise_factory.create_predictor_factory(),
-        PredictionPipeline
+        PredictionPipelineSurprise
     ))
 
     return model_factory
@@ -120,12 +125,12 @@ def create_recommendation_model_factory() -> GroupFactory:
     # implicit recommenders
     model_factory.add_factory(create_algorithm_pipeline_factory(
         implicit_factory.create_recommender_factory(),
-        RecommendationPipeline
+        RecommendationPipelineCSR
     ))
     # surprise recommenders
     model_factory.add_factory(create_algorithm_pipeline_factory(
         surprise_factory.create_recommender_factory(),
-        RecommendationPipeline
+        RecommendationPipelineSurprise
     ))
 
     return model_factory

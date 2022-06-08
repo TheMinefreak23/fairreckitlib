@@ -57,7 +57,7 @@ class Parser:
 
     def parse_experiment_config(
             self,
-            experiment_config: Dict[str, Any],
+            experiment_config: Any,
             data_registry: DataRegistry,
             experiment_factory: GroupFactory
         ) -> Optional[Union[PredictorExperimentConfig, RecommenderExperimentConfig]]:
@@ -189,7 +189,7 @@ class Parser:
         """Parse the name of the experiment.
 
         Args:
-            experiment_config(dict): the experiment's total configuration.
+            experiment_config: the experiment's total configuration.
 
         Returns:
             the name of the experiment or None on failure.
