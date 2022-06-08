@@ -57,7 +57,8 @@ class CountFilter(DataFilter):
 
     def _filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Private filter used in run(). Requires configuration file."""
-        return self.filter(dataframe, self.get_name().removesuffix('_' + FILTER_COUNT),
+        return self.filter(dataframe,
+                           self.get_name()[:-len(('_' + FILTER_COUNT))],
                            self.params['threshold'])
 
 
