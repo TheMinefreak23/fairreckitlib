@@ -11,7 +11,7 @@ Utrecht University within the Software Project course.
 
 import os
 import time
-from typing import Callable, List, Optional, Tuple
+from typing import Callable, Optional, Tuple
 
 import pandas as pd
 
@@ -21,6 +21,7 @@ from ...core.events.event_error import ON_FAILURE_ERROR, ErrorEventArgs
 from ...core.io.io_create import create_dir
 from ...core.pipeline.core_pipeline import CorePipeline
 from ..data_transition import DataTransition
+from ..filter.filter_config import DataSubsetConfig
 from ..filter.filter_event import FilterDataframeEventArgs
 from ..ratings.convert_config import ConvertConfig
 from ..ratings.convert_event import ConvertRatingsEventArgs
@@ -77,16 +78,16 @@ class DataPipeline(CorePipeline):
             is_running: Callable[[], bool]) -> Optional[DataTransition]:
         """Run the entire data pipeline from beginning to end.
 
-        Two errors can be raised during execution of the pipeline:
-        FileNotFoundError is raised if the dataset matrix file does not exist.
-        RuntimeError is raised if any data modifiers are not found in their respective factories.
-
         Args:
             output_dir: the path of the directory to store the output.
             dataset: the dataset to run the pipeline on.
             data_config: the dataset matrix configurations.
             is_running: function that returns whether the pipeline
                 is still running. Stops early when False is returned.
+
+        Raises:
+            FileNotFoundError: when the dataset matrix file does not exist.
+            RuntimeError: when any data modifiers are not found in their respective factories.
 
         Returns:
             the data transition output of the pipeline.
@@ -107,8 +108,7 @@ class DataPipeline(CorePipeline):
             return None
 
         # step 3
-        dataframe = self.filter_rows(dataframe,
-                                     data_config.prefilters)
+        dataframe = self.filter_rows(dataframe, data_config)
         if not is_running():
             return None
 
@@ -137,6 +137,7 @@ class DataPipeline(CorePipeline):
 
         data_output = DataTransition(
             dataset,
+            data_config.matrix,
             data_dir,
             train_set_path,
             test_set_path,
@@ -168,17 +169,18 @@ class DataPipeline(CorePipeline):
     def load_from_dataset(self, dataset: Dataset, matrix_name: str) -> pd.DataFrame:
         """Load in the desired dataset matrix into a dataframe.
 
-        It raises a FileNotFoundError when the dataset matrix file does not exist.
+        The loaded dataframe contains at least three columns 'user', 'item', 'rating'.
+        In addition, the 'timestamp' column can be present when available in the specified dataset.
 
         Args:
             dataset: the dataset to load a matrix dataframe from.
             matrix_name: the name of the matrix to load from the dataset.
 
+        Raises:
+            FileNotFoundError: when the dataset matrix file does not exist.
+
         Returns:
-            dataframe: belonging to the specified dataset. The
-                dataframe contains at least three columns 'user', 'item', 'rating'.
-                In addition, the 'timestamp' column can be present when
-                available in the specified dataset.
+            the dataframe belonging to the specified dataset.
         """
         self.event_dispatcher.dispatch(DatasetMatrixEventArgs(
             ON_BEGIN_LOAD_DATASET,
@@ -212,24 +214,26 @@ class DataPipeline(CorePipeline):
 
     def filter_rows(self,
                     dataframe: pd.DataFrame,
-                    prefilters: List) -> pd.DataFrame:
-        """Apply the specified filters to the dataframe.
+                    subset: DataSubsetConfig) -> pd.DataFrame:
+        """Apply the specified subset filters to the dataframe.
+
+        The subset is created by applying multiple filter passes to the dataframe individually.
+        These filter passes are then combined to form the resulting dataframe.
 
         Args:
-            dataframe: the dataset to filter with at least
-                two columns: 'user', 'item'.
-            prefilters: list of user/item filters to apply to the dataframe.
+            dataframe: the dataframe to filter with at least two columns: 'user', 'item'.
+            subset: the subset to create of to the dataframe.
 
         Returns:
-            the dataframe with the specified filters applied to it.
+            the dataframe with the specified subgroup filters applied to it.
         """
         # early exit, because no filtering is needed
-        if len(prefilters) == 0:
+        if len(subset.filter_passes) == 0:
             return dataframe
 
         self.event_dispatcher.dispatch(FilterDataframeEventArgs(
             ON_BEGIN_FILTER_DATASET,
-            prefilters
+            subset
         ))
 
         start = time.time()
@@ -238,7 +242,7 @@ class DataPipeline(CorePipeline):
 
         self.event_dispatcher.dispatch(FilterDataframeEventArgs(
             ON_END_FILTER_DATASET,
-            prefilters
+            subset
         ), elapsed_time=end - start)
 
         return dataframe
@@ -250,14 +254,15 @@ class DataPipeline(CorePipeline):
                         convert_config: ConvertConfig) -> pd.DataFrame:
         """Convert the ratings in the dataframe with the specified rating modifier.
 
-        It raises a RuntimeError when the converter specified by the configuration is not available.
-
         Args:
             dataset: the dataset to load the matrix and rating_type from.
             matrix_name: the name of the dataset matrix.
             dataframe: the dataframe to convert the ratings of.
                 At the least a 'rating' column is expected to be present.
             convert_config: the configuration of the converter to apply to the 'rating' column.
+
+        Raises:
+            RuntimeError: when the converter specified by the configuration is not available.
 
         Returns:
             the converted dataframe or the input dataframe when no converter is specified.
@@ -302,17 +307,18 @@ class DataPipeline(CorePipeline):
         """Split the dataframe into a train and test set.
 
         This will be split 80/20 (or a similar ratio), and be done either random, or timestamp-wise.
-        It raises a RuntimeError when the splitter specified by the configuration is not available.
+        The dataframe is expected to have at least three columns: 'user', 'item', 'rating'.
+        In addition, the 'timestamp' column is required for temporal splits.
 
         Args:
-            dataframe: the dataset to split with at least
-                three columns: 'user', 'item', 'rating'. In addition, the 'timestamp' column
-                is required for temporal splits.
+            dataframe: the dataframe to split into a train and test set.
             split_config: the dataset splitting configuration.
 
+        Raises:
+            RuntimeError: when the splitter specified by the configuration is not available.
+
         Returns:
-            train_set: the train set split of the specified dataframe.
-            test_set: the test set split of the specified dataframe.
+            the train and test set split of the specified dataframe.
         """
         self.event_dispatcher.dispatch(SplitDataframeEventArgs(
             ON_BEGIN_SPLIT_DATASET,
@@ -349,10 +355,8 @@ class DataPipeline(CorePipeline):
 
         Args:
             output_dir: the path of the directory to store both sets.
-            train_set: the train set to save with at least
-                three columns: 'user', 'item', 'rating'.
-            test_set: the test set to save with at least
-                three columns: 'user', 'item', 'rating'.
+            train_set: the train set to save with at least three columns: 'user', 'item', 'rating'.
+            test_set: the test set to save with at least three columns: 'user', 'item', 'rating'.
 
         Returns:
             the paths where the train and test set are stored.

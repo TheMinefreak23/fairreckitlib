@@ -40,7 +40,7 @@ class RangeConverter(RatingConverter):
             dataframe: a df that should contain a 'rating' column.
 
         Returns:
-            the converted dataframe and the type of rating, either 'explicit' or 'implicit'.
+            the converted dataframe.
         """
         upper_bound = self.params['upper_bound']
         max_rating = dataframe.max()['rating']
@@ -69,7 +69,7 @@ def create_range_converter_params(**kwargs) -> ConfigParameters:
     Returns:
         the configuration parameters of the converter.
     """
-    max_rating = kwargs['dataset'].get_matrix_config(kwargs['matrix_name']).rating_max
+    max_rating = kwargs['dataset'].get_matrix_config(kwargs['matrix_name']).ratings.rating_max
 
     params = ConfigParameters()
     params.add_number('upper_bound', float, max_rating, (1.0, max_rating))

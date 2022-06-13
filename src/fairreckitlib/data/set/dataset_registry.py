@@ -12,8 +12,8 @@ Utrecht University within the Software Project course.
 import os
 from typing import Any, Dict, List, Optional
 
-from ...core.io.io_utility import load_yml, save_yml
-from .dataset_config_parsing import parse_dataset_config
+from ...core.io.io_utility import save_yml
+from .dataset_config_parser import DatasetConfigParser
 from .dataset_constants import DATASET_CONFIG_FILE
 from .dataset import Dataset
 from .processor.dataset_processor_lfm1b import DatasetProcessorLFM1B
@@ -45,11 +45,12 @@ class DataRegistry:
     get_set
     """
 
-    def __init__(self, data_dir: str):
+    def __init__(self, data_dir: str, verbose: bool=True):
         """Construct the data registry and scan for available datasets.
 
         Args:
             data_dir: path to the directory that contains the datasets.
+            verbose: whether the dataset parser should give verbose output.
         """
         if not os.path.isdir(data_dir):
             raise IOError()
@@ -83,7 +84,12 @@ class DataRegistry:
 
                 save_yml(config_file_path, config.to_yml_format())
             else:
-                config = parse_dataset_config(load_yml(config_file_path))
+                parser = DatasetConfigParser(verbose)
+                config = parser.parse_dataset_config_from_yml(
+                    dataset_dir,
+                    DATASET_CONFIG_FILE,
+                    self.get_available_sets()
+                )
                 if config is None:
                     print('Parsing dataset configuration failed:', file_name)
                     continue

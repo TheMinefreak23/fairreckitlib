@@ -7,6 +7,7 @@ Classes:
 Functions:
 
     test_splitter_interface_error: test interface error for not implemented functions.
+    test_splitter_min_max_test_ratio: test min and max test ratio to be sufficient.
     test_split_factory: test split factory.
     test_split_classes: test split classes.
     test_temp_split: test temporal splitter.
@@ -26,6 +27,7 @@ from src.fairreckitlib.core.config.config_factories import Factory
 from src.fairreckitlib.data.set.dataset_registry import DataRegistry
 from src.fairreckitlib.data.split.split_constants import DEFAULT_SPLIT_TEST_RATIO
 from src.fairreckitlib.data.split.split_constants import KEY_SPLIT_TEST_RATIO
+from src.fairreckitlib.data.split.split_constants import MIN_TEST_RATIO, MAX_TEST_RATIO
 from src.fairreckitlib.data.split.split_constants import SPLIT_RANDOM, SPLIT_TEMPORAL
 from src.fairreckitlib.data.split.split_factory import create_split_factory
 from src.fairreckitlib.data.split.base_splitter import DataSplitter
@@ -50,7 +52,7 @@ split_kwargs = {KEY_SPLIT_TEST_RATIO: DEFAULT_SPLIT_TEST_RATIO}
 
 # the list of test ratios to test splitting with
 # should be a 0.0 < float < 1.0
-ratios = [0.01, 0.2, 0.5, 0.8, 0.99]
+ratios = [MIN_TEST_RATIO, 0.2, 0.5, 0.8, MAX_TEST_RATIO]
 
 
 class DummySplitter(DataSplitter):
@@ -72,6 +74,12 @@ def test_splitter_interface_error() -> None:
     pytest.raises(NotImplementedError, splitter.run, None)
 
 
+def test_splitter_min_max_test_ratio() -> None:
+    """Test the minimum and maximum test ratio to be sensible values."""
+    assert MIN_TEST_RATIO > 0.0, 'expected minimum test ratio to be greater than zero'
+    assert MAX_TEST_RATIO < 1.0, 'expected maximum test ratio to be less than one'
+
+
 def test_split_factory():
     """Test if all splitters in the factory are derived from the correct base class."""
     assert isinstance(split_factory, Factory)
@@ -79,10 +87,10 @@ def test_split_factory():
         splitter = split_factory.create(splitter_name, None, **split_kwargs)
         assert isinstance(splitter, DataSplitter)
 
+
 @pytest.mark.parametrize('splitter_name, splitter_type', [
     (SPLIT_RANDOM, RandomSplitter), (SPLIT_TEMPORAL, TemporalSplitter)
 ])
-
 def test_split_classes(splitter_name, splitter_type):
     """Test if the created splitters are an instance of that class."""
     splitter = split_factory.create(splitter_name, None, **split_kwargs)
@@ -90,12 +98,14 @@ def test_split_classes(splitter_name, splitter_type):
 
     # test failure on edge cases of the test ratio's accepted values
     with pytest.raises(RuntimeError):
-        split_factory.create(splitter_name, None, **{KEY_SPLIT_TEST_RATIO: 0.009})
-        split_factory.create(splitter_name, None, **{KEY_SPLIT_TEST_RATIO: 0.991})
+        split_factory.create(splitter_name, None,
+                             **{KEY_SPLIT_TEST_RATIO: MIN_TEST_RATIO - 0.00001})
+        split_factory.create(splitter_name, None,
+                             **{KEY_SPLIT_TEST_RATIO: MAX_TEST_RATIO + 0.00001})
+
 
 @pytest.mark.parametrize('dataset_name, matrix_name', timestamp_matrices)
 @pytest.mark.parametrize('ratio', ratios)
-
 def test_temp_split(
         data_registry: DataRegistry, dataset_name: str, matrix_name: str, ratio: float) -> None:
     """Test if the temporal split returns a tuple with the correct ratio.
@@ -126,9 +136,9 @@ def test_temp_split(
             if row['user'] == row_['user']:
                 assert row['timestamp'] <= row_['timestamp']
 
+
 @pytest.mark.parametrize('dataset_name, matrix_name', dataset_matrices)
 @pytest.mark.parametrize('ratio', ratios)
-
 def test_random_split(
         data_registry: DataRegistry, dataset_name: str, matrix_name: str, ratio: float) -> None:
     """Test if the random split returns a tuple with the correct raio.

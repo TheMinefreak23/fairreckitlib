@@ -45,7 +45,7 @@ class KLConverter(RatingConverter):
             dataframe: with 'user', 'item' and 'rating' columns.
 
         Returns:
-            the converted dataframe and the type of rating, either 'explicit' or 'implicit'.
+            the converted dataframe.
         """
         # TODO apply kullback-leibler formula on the rating column. Needs APC/ALC arg.
         # method = self.params['method']
@@ -57,8 +57,8 @@ class KLConverter(RatingConverter):
         #           KL(Q||P) = sum(A.C    * np.log(A.C    / A.C(u)))
         #   note that the above is a slightly abstract and incomplete notation,
         #   please consult the paper linked at the top.
-        # return (converted_dataframe, 'explicit')
-        raise NotImplementedError()
+        # return converted_dataframe
+        raise RuntimeError()
 
 
 def create_kl_converter(name: str, params: Dict[str, Any], **_) -> KLConverter:
@@ -75,16 +75,13 @@ def create_kl_converter(name: str, params: Dict[str, Any], **_) -> KLConverter:
     return KLConverter(name, params)
 
 
-def create_kl_converter_params(**kwargs) -> ConfigParameters:
+def create_kl_converter_params(**_) -> ConfigParameters:
     """Create the parameters of the kl converter.
 
     Returns:
         the configuration parameters of the converter.
     """
-    if kwargs['dataset'].get_matrix_config(kwargs['matrix_name']).item.key == 'artist_id':
-        methods = ['APC', 'ALC']
-    else:
-        methods = ['None']
+    methods = ['APC', 'ALC']
 
     params = ConfigParameters()
     params.add_single_option('method', str, methods[0], methods)

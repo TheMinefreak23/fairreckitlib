@@ -12,11 +12,16 @@ Modules:
     test_core_parsing_obj_params: test the object (parameters) parsing functionality.
     test_core_pipeline: test the core pipeline functionality.
     test_core_threading: test the threading base/processor functionality.
+    test_data_config: test the formatting/parsing of the data (matrix) configurations.
     test_data_converting: test the dataframe rating conversion functionality.
+    test_data_converting_config: test the formatting/parsing of the dataset converting config.
     test_data_factory: test the data (modifier) factories.
     test_data_splitting: test the dataframe splitting functionality.
+    test_data_splitting_config: test the formatting/parsing of the dataset splitting config.
+    test_data_subset_config: tests the formatting/parsing of the data subset configuration.
     test_evaluation_config: test the formatting/parsing of the eval config of the experiment.
     test_evaluation_factory: test the evaluation (type/category) factories.
+    text_experiment-config: test the formatting/parsing of the experiment configurations.
     test_model_algorithm_matrices: test the interface of the algorithm matrices.
     test_model_algorithms: test the interface of predictors/recommenders.
     test_model_config: test the formatting/parsing of the model config of the experiment.

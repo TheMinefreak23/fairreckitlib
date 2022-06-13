@@ -29,7 +29,8 @@ def parse_config_object(
         obj_factory: Union[Factory, GroupFactory],
         event_dispatcher: EventDispatcher,
         *,
-        params: Dict[str, ConfigParam]=None) -> Union[Tuple[ObjectConfig, str], Tuple[None, None]]:
+        params: Dict[str, ConfigParam]=None,
+        default_config: ObjectConfig=None) -> Union[Tuple[ObjectConfig, str], Tuple[None, None]]:
     """Parse an object name and parameters configuration.
 
     Args:
@@ -38,26 +39,31 @@ def parse_config_object(
         obj_factory: the object (group) factory related to the object config.
         event_dispatcher: to dispatch the parse event on failure.
         params: dictionary with params that will override validation of existing config params.
+        default_config: the default configuration (used as default parse event arg on failure).
 
     Returns:
         the parsed configuration and object name or None on failure.
     """
+    default_obj_name = default_config.name if bool(default_config) else None
+    parse_fail = 'PARSE WARNING: ' if bool(default_config) else 'PARSE ERROR: '
     # assert obj_config is a dict
     if not assert_is_type(
         obj_config,
         dict,
         event_dispatcher,
-        'PARSE ERROR: ' + obj_factory.get_name() + ' ' + obj_type_name + ' invalid config value'
-    ): return None, None
+        parse_fail + obj_factory.get_name() + ' ' + obj_type_name + ' invalid config value',
+        default_value=default_config
+    ): return None, default_obj_name
 
     # assert obj name is present
     if not assert_is_key_in_dict(
         KEY_NAME,
         obj_config,
         event_dispatcher,
-        'PARSE ERROR: ' + obj_factory.get_name() + ' ' + obj_type_name +
-        ' missing key \'' + KEY_NAME + '\''
-    ): return None, None
+        parse_fail + obj_factory.get_name() + ' ' + obj_type_name +
+        ' missing key \'' + KEY_NAME + '\'',
+        default_value=default_obj_name
+    ): return None, default_obj_name
 
     obj_name = obj_config[KEY_NAME]
     # attempt to resolve the factory that creates the object
@@ -66,10 +72,11 @@ def parse_config_object(
     # assert object name is available in the object factory
     if not assert_is_one_of_list(
         obj_name,
-        [] if obj_create_factory is None else obj_create_factory.get_available_names(),
+        (obj_factory if obj_create_factory is None else obj_create_factory).get_available_names(),
         event_dispatcher,
-        'PARSE ERROR: ' + obj_factory.get_name() + ' ' + obj_type_name +
-        ' unknown name: \'' + str(obj_name) + '\''
+        parse_fail + obj_factory.get_name() + ' ' + obj_type_name +
+        ' unknown name: \'' + str(obj_name) + '\'',
+        default_value=default_obj_name
     ): return None, obj_name
 
     obj_config_params = obj_create_factory.create_params(obj_name)
@@ -88,7 +95,8 @@ def parse_config_object(
         KEY_PARAMS,
         obj_config,
         event_dispatcher,
-        'PARSE WARNING: ' + obj_type_name + ' ' + obj_name + ' missing key \'' + KEY_PARAMS + '\'',
+        'PARSE WARNING: ' + obj_type_name + ' \'' + obj_name +
+        '\' missing key \'' + KEY_PARAMS + '\'',
         default_value=obj_params
     ):
         # parse the object parameters

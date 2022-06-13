@@ -21,6 +21,7 @@ class DataTransition:
     """Data Transition to transfer pipeline data.
 
     dataset: the dataset that was used for the data transition.
+    matrix_name: the dataset matrix name that was used for the data transition.
     output_dir: the output directory of the data transition.
     train_set_path: the train set path in the output directory.
     test_set_path: the test set path in the output directory.
@@ -28,6 +29,7 @@ class DataTransition:
     """
 
     dataset : Dataset
+    matrix_name: str
     output_dir: str
     train_set_path: str
     test_set_path: str

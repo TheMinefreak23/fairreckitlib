@@ -52,7 +52,7 @@ from .test_model_algorithm_matrices import MATRIX_DIR, MATRIX_FILE, MATRIX_RATIN
 from .test_model_algorithms import DummyPredictor, DummyRecommender
 
 model_kwargs = {'num_items': DEFAULT_TOP_K, 'num_threads': 1, KEY_RATED_ITEMS_FILTER: True}
-unknown_data_transition = DataTransition(None, 'unknown', 'unknown', 'unknown', (0, 0))
+unknown_data_transition = DataTransition(None, 'unknown', 'unknown', 'unknown', 'unknown', (0, 0))
 
 
 class DummyModelPipeline(ModelPipeline):
@@ -112,7 +112,8 @@ def test_model_pipeline_errors(
         # reload model pipeline that loads the train and test set successfully
         model_pipeline = api_algo_factory.create_pipeline(
             api_algo_factory,
-            DataTransition(None, MATRIX_DIR, MATRIX_FILE, MATRIX_FILE, MATRIX_RATING_SCALE),
+            DataTransition(None, 'user-movie-rating', MATRIX_DIR,
+                           MATRIX_FILE, MATRIX_FILE, MATRIX_RATING_SCALE),
             model_event_dispatcher
         )
 
