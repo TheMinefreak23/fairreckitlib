@@ -296,7 +296,7 @@ class DatasetProcessorLFM360K(DatasetProcessorLFM):
         dataframe = dataframe[dataframe['matrix_count'] > 0]
 
         dataframe.drop_duplicates(subset=['user_sha', 'artist_name'], inplace=True)
-        print(dataframe)
+
         # extract user/item indirection arrays
         self.user_list = list(dataframe['user_sha'].cat.categories)
         self.artist_list = list(dataframe['artist_name'].cat.categories)

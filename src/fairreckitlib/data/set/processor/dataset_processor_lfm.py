@@ -177,9 +177,9 @@ class DatasetProcessorLFM(DatasetProcessorBase, metaclass=ABCMeta):
 
         # update table configuration
         user_table_config.file.name = TABLE_FILE_PREFIX + self.dataset_name + '_users.tsv.bz2'
-        user_table_config.file.compression = 'bz2'
-        user_table_config.file.header = False
-        user_table_config.file.sep = None
+        user_table_config.file.options.compression = 'bz2'
+        user_table_config.file.options.header = False
+        user_table_config.file.options.sep = None
 
         # store the resulting user table
         user_table_config.save_table(user_table, self.dataset_dir)
