@@ -43,10 +43,9 @@ DATASET_RATINGS_IMPLICIT = 'implicit'
 
 
 @dataclass
-class DatasetFileConfig(YmlConfig):
-    r"""Dataset File Configuration.
+class FileOptionsConfig(YmlConfig):
+    r"""File Options Configuration.
 
-    name: the file name.
     sep: the separator in the file or None for \t.
     compression: the (optional) compression of the file.
     encoding: the encoding of the file or None for 'utf-8'.
@@ -54,7 +53,6 @@ class DatasetFileConfig(YmlConfig):
     indexed: are the row indices the table's primary key.
     """
 
-    name: str
     sep: Optional[str]
     compression: Optional[str]
     encoding: Optional[str]
@@ -62,12 +60,12 @@ class DatasetFileConfig(YmlConfig):
     indexed: bool
 
     def to_yml_format(self):
-        """Format dataset file configuration to a yml compatible dictionary.
+        """Format file settings configuration to a yml compatible dictionary.
 
         Returns:
             a dictionary containing the dataset file configuration.
         """
-        yml_format = {KEY_NAME: self.name}
+        yml_format = {}
 
         if self.header:
             yml_format[TABLE_HEADER] = self.header
@@ -80,6 +78,28 @@ class DatasetFileConfig(YmlConfig):
         if self.encoding is not None:
             yml_format[TABLE_ENCODING] = self.encoding
 
+        return yml_format
+
+
+@dataclass
+class DatasetFileConfig(YmlConfig):
+    """Dataset File Configuration.
+
+    name: the file name.
+    options: the file options.
+    """
+
+    name: str
+    options: FileOptionsConfig
+
+    def to_yml_format(self):
+        """Format dataset file configuration to a yml compatible dictionary.
+
+        Returns:
+            a dictionary containing the dataset file configuration.
+        """
+        yml_format = {KEY_NAME: self.name}
+        yml_format.update(self.options.to_yml_format())
         return yml_format
 
 
@@ -125,19 +145,21 @@ class DatasetTableConfig(YmlConfig):
             the resulting table (iterator).
         """
         names = self.columns
-        if not self.file.indexed:
+        if not self.file.options.indexed:
             names = self.primary_key + names
         if self.foreign_keys is not None:
             names += [key for key in self.foreign_keys if key not in self.primary_key]
 
         dataset_table = pd.read_table(
             os.path.join(dataset_dir, self.file.name),
-            sep=self.file.sep if self.file.sep is not None else '\t',
-            header=0 if self.file.header else None,
+            sep=self.file.options.sep if self.file.options.sep is not None else '\t',
+            header=0 if self.file.options.header else None,
             names=names,
             usecols=columns,
-            encoding=self.file.encoding if self.file.encoding is not None else 'utf-8',
-            compression=self.file.compression if self.file.compression is not None else 'infer',
+            encoding=self.file.options.encoding
+            if self.file.options.encoding is not None else 'utf-8',
+            compression=self.file.options.compression
+            if self.file.options.compression is not None else 'infer',
             chunksize=chunk_size,
             iterator=bool(chunk_size)
         )
@@ -153,11 +175,13 @@ class DatasetTableConfig(YmlConfig):
         """
         dataset_table.to_csv(
             os.path.join(dataset_dir, self.file.name),
-            sep=self.file.sep if self.file.sep else '\t',
-            header=self.file.header,
+            sep=self.file.options.sep if self.file.options.sep else '\t',
+            header=self.file.options.header,
             index=False,
-            encoding=self.file.encoding if self.file.encoding else 'utf-8',
-            compression=self.file.compression if self.file.compression else 'infer',
+            encoding=self.file.options.encoding
+            if self.file.options.encoding else 'utf-8',
+            compression=self.file.options.compression
+            if self.file.options.compression else 'infer',
         )
 
     def to_yml_format(self) -> Dict[str, Any]:
@@ -243,21 +267,44 @@ class DatasetIndexConfig(YmlConfig):
 
 
 @dataclass
+class RatingMatrixConfig(YmlConfig):
+    """Rating Matrix Configuration.
+
+    rating_min: the minimum rating in the matrix.
+    rating_max: the maximum rating in the matrix.
+    rating_type: the type of the rating in the matrix, either 'explicit' or 'implicit'.
+    """
+
+    rating_min: float
+    rating_max: float
+    rating_type: str
+
+    def to_yml_format(self) -> Dict[str, Any]:
+        """Format rating matrix configuration to a yml compatible dictionary.
+
+        Returns:
+            a dictionary containing the dataset matrix configuration.
+        """
+        return {
+            KEY_RATING_MIN: self.rating_min,
+            KEY_RATING_MAX: self.rating_max,
+            KEY_RATING_TYPE: self.rating_type,
+        }
+
+
+
+@dataclass
 class DatasetMatrixConfig(YmlConfig):
     """Dataset Matrix Configuration.
 
     table: the table configuration of the matrix.
-    rating_min: the minimum rating in the matrix.
-    rating_max: the maximum rating in the matrix.
-    rating_type: the type of the rating in the matrix, either 'explicit' or 'implicit'.
+    rating_matrix: the ratings of the matrix.
     user: the dataset index configuration for the users in the matrix.
     item: the dataset index configuration for the items in the matrix.
     """
 
     table: DatasetTableConfig
-    rating_min: float
-    rating_max: float
-    rating_type: str
+    ratings: RatingMatrixConfig
     user: DatasetIndexConfig
     item: DatasetIndexConfig
 
@@ -288,14 +335,13 @@ class DatasetMatrixConfig(YmlConfig):
         Returns:
             a dictionary containing the dataset matrix configuration.
         """
-        return {
+        yml_format = self.ratings.to_yml_format()
+        yml_format.update({
             KEY_IDX_ITEM: self.item.to_yml_format(),
             KEY_IDX_USER: self.user.to_yml_format(),
-            KEY_MATRIX: self.table.to_yml_format(),
-            KEY_RATING_MIN: self.rating_min,
-            KEY_RATING_MAX: self.rating_max,
-            KEY_RATING_TYPE: self.rating_type,
-        }
+            KEY_MATRIX: self.table.to_yml_format()
+        })
+        return yml_format
 
 
 @dataclass
@@ -397,10 +443,12 @@ def create_dataset_table_config(
         num_records,
         DatasetFileConfig(
             file_name,
-            sep,
-            compression,
-            encoding,
-            header,
-            indexed
+            FileOptionsConfig(
+                sep,
+                compression,
+                encoding,
+                header,
+                indexed
+            )
         )
     )

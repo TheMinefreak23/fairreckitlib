@@ -14,7 +14,7 @@ from typing import Callable, List, Optional, Tuple
 
 import pandas as pd
 
-from ..dataset_config import DATASET_RATINGS_IMPLICIT
+from ..dataset_config import DATASET_RATINGS_IMPLICIT, RatingMatrixConfig
 from ..dataset_config import DatasetIndexConfig, DatasetMatrixConfig, DatasetTableConfig
 from ..dataset_constants import TABLE_FILE_PREFIX
 from .dataset_processor_base import DatasetProcessorBase
@@ -130,9 +130,11 @@ class DatasetProcessorLFM(DatasetProcessorBase, metaclass=ABCMeta):
 
         return DatasetMatrixConfig(
             matrix_table_config,
-            rating_min,
-            rating_max,
-            DATASET_RATINGS_IMPLICIT,
+            RatingMatrixConfig(
+                rating_min,
+                rating_max,
+                DATASET_RATINGS_IMPLICIT
+            ),
             DatasetIndexConfig(
                 user_idx_file,
                 user_id,

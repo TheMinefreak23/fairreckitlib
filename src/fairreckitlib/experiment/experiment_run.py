@@ -51,7 +51,7 @@ class ExperimentPipelineConfig:
 def run_experiment_pipelines(
         pipeline_config: ExperimentPipelineConfig,
         event_dispatcher: EventDispatcher,
-        is_running: Callable[[], bool]) -> None:
+        is_running: Callable[[], bool]) -> bool:
     """Run the experiment pipeline several runs according to the specified pipeline configuration.
 
     Args:
@@ -60,6 +60,8 @@ def run_experiment_pipelines(
         is_running: function that returns whether the pipelines
             are still running. Stops early when False is returned.
 
+    Returns:
+        whether running the experiment pipelines succeeded.
     """
     if not os.path.isdir(pipeline_config.output_dir):
         # create result output directory
@@ -84,12 +86,17 @@ def run_experiment_pipelines(
 
     # run the pipeline
     for run in range(start_run, end_run):
-        experiment_pipeline.run(
-            os.path.join(pipeline_config.output_dir, 'run_' + str(run)),
-            pipeline_config.experiment_config,
-            pipeline_config.num_threads,
-            is_running
-        )
+        try:
+            experiment_pipeline.run(
+                os.path.join(pipeline_config.output_dir, 'run_' + str(run)),
+                pipeline_config.experiment_config,
+                pipeline_config.num_threads,
+                is_running
+            )
+        except RuntimeError:
+            return False
+
+    return True
 
 
 def resolve_experiment_start_run(result_dir: str) -> int:

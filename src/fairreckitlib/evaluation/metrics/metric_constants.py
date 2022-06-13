@@ -3,6 +3,7 @@
 Constants:
 
     KEY_METRIC_PARAM_K: the key that is used for the metric parameter K.
+    KEY_METRIC_SUBGROUP: the key that is used to identify a metric subgroup.
 
 Enumerations:
 
@@ -17,6 +18,7 @@ Utrecht University within the Software Project course.
 import enum
 
 KEY_METRIC_PARAM_K = 'K'
+KEY_METRIC_SUBGROUP = 'subgroup'
 
 
 class MetricCategory(enum.Enum):

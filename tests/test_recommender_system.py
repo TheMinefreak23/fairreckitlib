@@ -17,15 +17,14 @@ import pytest
 from src.fairreckitlib.core.config.config_factories import GroupFactory
 from src.fairreckitlib.core.events.event_dispatcher import EventDispatcher
 from src.fairreckitlib.core.io.io_create import create_json
-from src.fairreckitlib.core.io.io_delete import delete_dir, delete_file
+from src.fairreckitlib.core.io.io_delete import delete_file
 from src.fairreckitlib.core.io.io_utility import load_json
 from src.fairreckitlib.core.threading.thread_processor import ThreadProcessor
 from src.fairreckitlib.recommender_system import RecommenderSystem
 from .conftest import DATASET_DIR
 
 
-def test_recommender_system_constructor(
-        io_tmp_dir: str, io_event_dispatcher: EventDispatcher) -> None:
+def test_recommender_system_constructor(io_tmp_dir: str) -> None:
     """Test the constructor of the recommender system."""
     unknown_dir = os.path.join(io_tmp_dir, 'unknown')
     # test failure on unknown dataset directory
@@ -48,9 +47,6 @@ def test_recommender_system_constructor(
     assert len(recommender_system.get_active_computations()) == 0, \
         'did not expect any active computations on construction'
 
-    # clean up
-    delete_dir(unknown_dir, io_event_dispatcher)
-
 
 def test_recommender_system_availability(
         io_tmp_dir: str, io_event_dispatcher: EventDispatcher) -> None:
@@ -67,6 +63,7 @@ def test_recommender_system_availability(
 
     for available_name, func_available in available_funcs:
         availability = func_available()
+        # assert availability with JSON (which implies compatibility with YML as well)
         json_path = os.path.join(io_tmp_dir, 'available_' + available_name + '.json')
         create_json(json_path, availability, io_event_dispatcher)
         assert availability == load_json(json_path), 'expected availability to be JSON compatible'

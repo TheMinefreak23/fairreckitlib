@@ -69,7 +69,7 @@ class ThreadExperiment(ThreadBase):
 
         start = time.time()
 
-        run_experiment_pipelines(pipeline_config, self.event_dispatcher, self.is_running)
+        success = run_experiment_pipelines(pipeline_config, self.event_dispatcher, self.is_running)
 
         end = time.time()
 
@@ -78,7 +78,7 @@ class ThreadExperiment(ThreadBase):
             pipeline_config.experiment_config.name,
             pipeline_config.num_runs,
             self.is_running()
-        ), elapsed_time=end - start)
+        ), elapsed_time=end - start, success=success)
 
 
 def handle_experiment_event(

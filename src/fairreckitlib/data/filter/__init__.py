@@ -5,6 +5,8 @@ Modules:
     base_filter: Base class for data filters.
     categorical_filter: Class to filter on categorical data.
     count_filter: Class to filter on the number of appearances of each value of a column.
+    filter_config: subset/filter(pass) configuration classes.
+    filter_config_parsing: parse data subset/filter(pass) configurations.
     filter_constants: Constants to be used in other modules.
     filter_event: Event args and a print function for a filter event.
     filter_factory: Create filter factory with available data filters.

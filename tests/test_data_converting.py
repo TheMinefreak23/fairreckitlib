@@ -96,9 +96,10 @@ def test_converter_factory(data_registry: DataRegistry) -> None:
             converter = matrix_converter_factory.create(CONVERTER_RANGE)
             assert bool(converter) and isinstance(converter, RangeConverter), \
                 'expected the range converter to be present'
-            converter = matrix_converter_factory.create(CONVERTER_KL)
-            assert bool(converter) and isinstance(converter, KLConverter), \
-                'expected the kl converter to be present'
+            if 'artist' in matrix_name:
+                converter = matrix_converter_factory.create(CONVERTER_KL)
+                assert bool(converter) and isinstance(converter, KLConverter), \
+                    'expected the kl converter to be present'
 
 @pytest.mark.parametrize('dataset_name, matrix_name', artist_matrices)
 

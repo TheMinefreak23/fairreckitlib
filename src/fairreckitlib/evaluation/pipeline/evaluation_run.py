@@ -60,6 +60,8 @@ def run_evaluation_pipelines(
         event_dispatcher
     )
 
+    # TODO filter model dirs that do not belong to the data transition
+
     for model_dir in pipeline_config.model_dirs:
         rating_set_path = os.path.join(model_dir, MODEL_RATINGS_FILE)
         output_path = os.path.join(model_dir, 'evaluations.json')

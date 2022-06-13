@@ -126,7 +126,7 @@ def parse_config_param(
             ON_PARSE,
             'PARSE WARNING: ' + parent_name + ' modified param \'' + param.name + '\'' +
             '\n\t' + error_msg,
-            actual_type=type(config_value)
+            actual_type=config_value
         ))
 
     return success, value

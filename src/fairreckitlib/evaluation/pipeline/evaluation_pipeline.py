@@ -14,13 +14,14 @@ Utrecht University within the Software Project course.
 """
 
 import time
-from typing import Callable, List
+from typing import Callable, List, Optional
 
 from ...core.config.config_factories import Factory, GroupFactory, resolve_factory
 from ...core.events.event_dispatcher import EventDispatcher
 from ...core.events.event_error import ON_FAILURE_ERROR, ON_RAISE_ERROR, ErrorEventArgs
 from ...core.io.io_utility import load_json, save_json
 from ...core.pipeline.core_pipeline import CorePipeline
+from ...data.filter.filter_config import DataSubsetConfig
 from ...data.filter.filter_event import FilterDataframeEventArgs
 from ...data.set.dataset import Dataset
 from ..metrics.metric_base import BaseMetric
@@ -182,7 +183,7 @@ class EvaluationPipeline(CorePipeline):
 
         eval_sets = self.filter_set_rows(
             eval_sets,
-            metric_config.prefilters
+            metric_config.subgroup
         )
 
         evaluation = self.compute_metric_evaluation(
@@ -243,23 +244,26 @@ class EvaluationPipeline(CorePipeline):
     def filter_set_rows(
             self,
             eval_sets: EvaluationSets,
-            prefilters: List) -> EvaluationSets:
-        """Filter the evaluation set rows for the specified filters.
+            subgroup: Optional[DataSubsetConfig]) -> EvaluationSets:
+        """Filter the evaluation set rows for the specified subgroup.
+
+        The subset is created by applying multiple filter passes to the evaluation sets
+        individually. These filter passes are then combined to form the resulting sets.
 
         Args:
             eval_sets: the evaluation sets to filter.
-            prefilters: the filters to apply to the evaluation sets.
+            subgroup: the subgroup to create of the evaluation sets.
 
         Returns:
             the filtered evaluation sets.
         """
         # early exit, because no filtering is needed
-        if len(prefilters) == 0:
+        if subgroup is None or len(subgroup.filter_passes) == 0:
             return eval_sets
 
         self.event_dispatcher.dispatch(FilterDataframeEventArgs(
             ON_BEGIN_FILTER_RECS,
-            prefilters
+            subgroup
         ))
 
         start = time.time()
@@ -268,7 +272,7 @@ class EvaluationPipeline(CorePipeline):
 
         self.event_dispatcher.dispatch(FilterDataframeEventArgs(
             ON_END_FILTER_RECS,
-            prefilters
+            subgroup
         ), elapsed_time=end - start)
 
         return eval_sets

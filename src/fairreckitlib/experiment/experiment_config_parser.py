@@ -2,7 +2,7 @@
 
 Classes:
 
-    Parser: parse an experiment configuration from a dictionary or yml.
+    ExperimentConfigParser: parse an experiment configuration from a dictionary or yml.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
@@ -12,18 +12,18 @@ Utrecht University within the Software Project course.
 from typing import Any, Dict, Optional, Union
 
 from ..core.config.config_factories import GroupFactory
-from ..core.config.config_option_param import ConfigSingleOptionParam
+from ..core.config.config_option_param import create_bool_param
 from ..core.config.config_value_param import ConfigNumberParam
 from ..core.core_constants import KEY_TYPE, TYPE_PREDICTION, TYPE_RECOMMENDATION, VALID_TYPES
-from ..core.core_constants import KEY_NAME, KEY_TOP_K, DEFAULT_TOP_K
+from ..core.core_constants import KEY_NAME, KEY_TOP_K, DEFAULT_TOP_K, MIN_TOP_K, MAX_TOP_K
 from ..core.core_constants import KEY_RATED_ITEMS_FILTER, DEFAULT_RATED_ITEMS_FILTER
 from ..core.events.event_dispatcher import EventDispatcher
 from ..core.io.io_utility import load_yml
-from ..core.parsing.parse_assert import assert_is_type
-from ..core.parsing.parse_assert import assert_is_key_in_dict, assert_is_one_of_list
+from ..core.parsing.parse_assert import assert_is_type, assert_is_key_in_dict,assert_is_one_of_list
+from ..core.parsing.parse_event import ON_PARSE, print_parse_event
 from ..core.parsing.parse_config_params import parse_config_param
-from ..core.parsing.parse_event import ON_PARSE, ParseEventArgs, print_parse_event
 from ..data.data_factory import KEY_DATA
+from ..data.filter.filter_constants import KEY_DATA_SUBSET
 from ..data.pipeline.data_config_parsing import parse_data_config
 from ..data.set.dataset_registry import DataRegistry
 from ..evaluation.evaluation_factory import KEY_EVALUATION
@@ -33,7 +33,7 @@ from ..model.pipeline.model_config_parsing import parse_models_config
 from .experiment_config import PredictorExperimentConfig, RecommenderExperimentConfig
 
 
-class Parser:
+class ExperimentConfigParser:
     """Experiment Configuration Parser.
 
     Public methods:
@@ -43,7 +43,7 @@ class Parser:
     """
 
     def __init__(self, verbose: bool):
-        """Construct the Parser.
+        """Construct the ExperimentConfigParser.
 
         Args:
             verbose: whether the parser should give verbose output.
@@ -79,39 +79,39 @@ class Parser:
             'PARSE ERROR: invalid experiment config type'
         ): return None
 
-        # attempt to parse experiment name
+        # attempt to parse experiment name (required)
         experiment_name = self.parse_experiment_name(experiment_config)
         if experiment_name is None:
             return None
 
-        # attempt to parse experiment type
+        # attempt to parse experiment type (required)
         experiment_type = self.parse_experiment_type(experiment_config)
         if experiment_type is None:
             return None
 
-        # attempt to parse experiment datasets
+        # attempt to parse experiment datasets (required)
         experiment_datasets = parse_data_config(
             experiment_config,
             data_registry,
             experiment_factory.get_factory(KEY_DATA),
             self.event_dispatcher
         )
-        # experiment requires datasets
         if experiment_datasets is None:
             return None
 
-        # attempt to parse experiment models
+        # attempt to parse experiment models (required)
         experiment_models = parse_models_config(
             experiment_config,
             experiment_factory.get_factory(KEY_MODELS).get_factory(experiment_type),
             self.event_dispatcher
         )
-        # experiment requires models
         if experiment_models is None:
             return None
 
         # attempt to parse experiment evaluation (optional)
         experiment_evaluation = parse_evaluation_config(
+            data_registry,
+            experiment_factory.get_factory(KEY_DATA).get_factory(KEY_DATA_SUBSET),
             experiment_config,
             experiment_factory.get_factory(KEY_EVALUATION).get_factory(experiment_type),
             self.event_dispatcher
@@ -128,40 +128,18 @@ class Parser:
                 experiment_type
             )
         elif experiment_type == TYPE_RECOMMENDATION:
-            # parse top k
-            _, experiment_top_k = parse_config_param(
-                experiment_config,
-                'recommender experiment',
-                ConfigNumberParam(
-                    KEY_TOP_K,
-                    int,
-                    DEFAULT_TOP_K,
-                    (1, 100)
-                ),
-                self.event_dispatcher
-            )
-
-            # parse rated items filter
-            _, experiment_rated_items_filter = parse_config_param(
-                experiment_config,
-                'recommender experiment',
-                ConfigSingleOptionParam(
-                    KEY_RATED_ITEMS_FILTER,
-                    bool,
-                    DEFAULT_RATED_ITEMS_FILTER,
-                    [True, False]
-                ),
-                self.event_dispatcher
-            )
-
             parsed_config = RecommenderExperimentConfig(
                 experiment_datasets,
                 experiment_models,
                 experiment_evaluation,
                 experiment_name,
                 experiment_type,
-                experiment_top_k,
-                experiment_rated_items_filter
+                self.parse_experiment_top_k(
+                    experiment_config
+                ),
+                self.parse_experiment_rated_items_filter(
+                    experiment_config
+                )
             )
 
         return parsed_config
@@ -210,6 +188,25 @@ class Parser:
 
         return experiment_config[KEY_NAME]
 
+    def parse_experiment_rated_items_filter(
+            self, recommender_experiment_config: Dict[str, Any]) -> bool:
+        """Parse the rated items filter of the recommender experiment.
+
+        Args:
+            recommender_experiment_config: the experiment's total configuration.
+
+        Returns:
+            the rated items filter of the experiment or True on failure.
+        """
+        _, experiment_rated_items_filter = parse_config_param(
+            recommender_experiment_config,
+            'recommender experiment',
+            create_bool_param(KEY_RATED_ITEMS_FILTER, DEFAULT_RATED_ITEMS_FILTER),
+            self.event_dispatcher
+        )
+
+        return experiment_rated_items_filter
+
     def parse_experiment_top_k(self, recommender_experiment_config: Dict[str, Any]) -> int:
         """Parse the top K of the recommender experiment.
 
@@ -219,18 +216,19 @@ class Parser:
         Returns:
             the topK of the experiment or default_top_k on failure.
         """
-        top_k = DEFAULT_TOP_K
+        _, experiment_top_k = parse_config_param(
+            recommender_experiment_config,
+            'recommender experiment',
+            ConfigNumberParam(
+                KEY_TOP_K,
+                int,
+                DEFAULT_TOP_K,
+                (MIN_TOP_K, MAX_TOP_K)
+            ),
+            self.event_dispatcher
+        )
 
-        if recommender_experiment_config.get(KEY_TOP_K) is None:
-            self.event_dispatcher.dispatch(ParseEventArgs(
-                ON_PARSE,
-                'PARSE WARNING: missing experiment key \'' + KEY_TOP_K + '\'',
-                default_value=top_k
-            ))
-        else:
-            top_k = recommender_experiment_config[KEY_TOP_K]
-
-        return top_k
+        return experiment_top_k
 
     def parse_experiment_type(self, experiment_config: Dict[str, Any]) -> Optional[str]:
         """Parse the type of the experiment.

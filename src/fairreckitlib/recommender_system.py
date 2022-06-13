@@ -15,13 +15,13 @@ from typing import Any, Dict, Callable, List, Union
 
 from .core.threading.thread_processor import ThreadProcessor
 from .data.data_factory import KEY_DATA
-from .data.filter.filter_constants import KEY_DATA_FILTERS
+from .data.filter.filter_constants import KEY_DATA_SUBSET
 from .data.ratings.convert_constants import KEY_RATING_CONVERTER
 from .data.set.dataset_registry import DataRegistry
 from .data.split.split_constants import KEY_SPLITTING
 from .evaluation.evaluation_factory import KEY_EVALUATION
 from .experiment.experiment_config import PredictorExperimentConfig, RecommenderExperimentConfig
-from .experiment.experiment_config_parsing import Parser
+from .experiment.experiment_config_parser import ExperimentConfigParser
 from .experiment.experiment_factory import create_experiment_factory
 from .experiment.experiment_run import ExperimentPipelineConfig, resolve_experiment_start_run
 from .experiment.experiment_thread import ThreadExperiment
@@ -48,7 +48,7 @@ class RecommenderSystem:
     get_available_splitters
     """
 
-    def __init__(self, data_dir: str, result_dir: str):
+    def __init__(self, data_dir: str, result_dir: str, verbose: bool=True):
         """Construct the RecommenderSystem.
 
         Initializes the data registry with available datasets on which the
@@ -59,9 +59,10 @@ class RecommenderSystem:
         Args:
             data_dir: path to the directory that contains the datasets.
             result_dir: path to the directory to store computation results.
+            verbose: whether the data registry should give verbose output on startup.
         """
         try:
-            self.data_registry = DataRegistry(data_dir)
+            self.data_registry = DataRegistry(data_dir, verbose=verbose)
         except IOError as err:
             raise IOError('Failed to initialize DataRegistry: '
                           'unknown data directory => ' + data_dir) from err
@@ -132,7 +133,7 @@ class RecommenderSystem:
             raise TypeError('Invalid experiment configuration type.')
 
         if validate_config:
-            parser = Parser(verbose)
+            parser = ExperimentConfigParser(verbose)
             config = parser.parse_experiment_config(config.to_yml_format(),
                                                     self.data_registry,
                                                     self.experiment_factory)
@@ -184,7 +185,7 @@ class RecommenderSystem:
             whether the experiment successfully started.
         """
         try:
-            parser = Parser(verbose)
+            parser = ExperimentConfigParser(verbose)
             config = parser.parse_experiment_config_from_yml(file_path,
                                                              self.data_registry,
                                                              self.experiment_factory)
@@ -237,7 +238,7 @@ class RecommenderSystem:
 
         config_path = os.path.join(result_dir, 'config')
         try:
-            parser = Parser(verbose)
+            parser = ExperimentConfigParser(verbose)
             config = parser.parse_experiment_config_from_yml(config_path,
                                                              self.data_registry,
                                                              self.experiment_factory)
@@ -303,7 +304,7 @@ class RecommenderSystem:
         """
         return self.experiment_factory.get_sub_availability(
             KEY_DATA,
-            sub_type=KEY_DATA_FILTERS
+            sub_type=KEY_DATA_SUBSET
         )
 
     def get_available_metrics(self, eval_type: str = None) -> Dict[str, Any]:

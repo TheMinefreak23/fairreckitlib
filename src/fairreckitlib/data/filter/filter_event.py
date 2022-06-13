@@ -14,9 +14,9 @@ Utrecht University within the Software Project course.
 """
 
 from dataclasses import dataclass
-from typing import Any, List
 
 from ...core.events.event_dispatcher import EventArgs
+from .filter_config import DataSubsetConfig
 
 
 @dataclass
@@ -24,10 +24,10 @@ class FilterDataframeEventArgs(EventArgs):
     """Filter Dataframe Event Arguments.
 
     message: the message describing the parsing failure.
-    prefilters: list of filters that is used on the dataframe.
+    subset: the subset that is created from the dataframe.
     """
 
-    prefilters: List[Any]
+    subset: DataSubsetConfig
 
 
 def print_filter_event_args(event_args: FilterDataframeEventArgs, elapsed_time: float=None) -> None:
@@ -40,6 +40,6 @@ def print_filter_event_args(event_args: FilterDataframeEventArgs, elapsed_time: 
         elapsed_time: the time that has passed since the filtering started, expressed in seconds.
     """
     if elapsed_time is None:
-        print('Filtering dataframe:', event_args.prefilters)
+        print('Filtering dataframe:', event_args.subset)
     else:
         print(f'Filtered dataframe in {elapsed_time:1.4f}s')
