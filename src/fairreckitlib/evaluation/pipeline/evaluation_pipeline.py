@@ -19,6 +19,7 @@ from typing import Callable, List, Optional
 from ...core.config.config_factories import Factory, GroupFactory, resolve_factory
 from ...core.events.event_dispatcher import EventDispatcher
 from ...core.events.event_error import ON_FAILURE_ERROR, ON_RAISE_ERROR, ErrorEventArgs
+from ...core.io.io_create import create_json
 from ...core.io.io_utility import load_json, save_json
 from ...core.pipeline.core_pipeline import CorePipeline
 from ...data.filter.filter_config import DataSubsetConfig
@@ -60,17 +61,20 @@ class EvaluationPipeline(CorePipeline):
     def __init__(
             self,
             dataset: Dataset,
+            data_filter_factory: GroupFactory,
             metric_category_factory: GroupFactory,
             event_dispatcher: EventDispatcher):
         """Construct the evaluation pipeline.
 
         Args:
             dataset: the dataset that is associated with the evaluation of the rating sets.
+            data_filter_factory: the factory with available filters for all dataset-matrix pairs.
             metric_category_factory: the metric category factory with available metric factories.
             event_dispatcher: used to dispatch model/IO events when running the pipeline.
         """
         CorePipeline.__init__(self, event_dispatcher)
         self.dataset = dataset
+        self.data_filter_factory = data_filter_factory
         self.metric_category_factory = metric_category_factory
 
     def run(self,
@@ -81,6 +85,8 @@ class EvaluationPipeline(CorePipeline):
         """Run the entire pipeline from beginning to end.
 
         Effectively running all computations of the specified metrics.
+        All the specified metric configurations that have a subgroup are expected
+        to be related to the dataset that was used to construct the pipeline.
 
         Args:
             output_path: the path of the json file to store the output.
@@ -95,6 +101,14 @@ class EvaluationPipeline(CorePipeline):
         ))
 
         start = time.time()
+
+        # Create evaluations file
+        create_json(
+            output_path,
+            {'evaluations': []},
+            self.event_dispatcher,
+            indent=4
+        )
 
         for metric_config in metrics:
             if not is_running():
@@ -153,14 +167,17 @@ class EvaluationPipeline(CorePipeline):
             metric_config: MetricConfig) -> None:
         """Run the evaluation computation for the specified metric configuration.
 
-        Several possible errors can be raised during the metric computation run:
-        ArithmeticError, FileNotFoundError, MemoryError and RuntimeError.
-
         Args:
             output_path: the path of the json file to store the output.
             metric_factory: the factory that contains the specified metric.
             eval_set_paths: the file paths of the evaluation sets.
             metric_config: the metric evaluation configuration.
+
+        Raises:
+            ArithmeticError: possibly raised by a metric on construction or evaluation.
+            MemoryError: possibly raised by a metric on construction or evaluation.
+            RuntimeError: possibly raised by a metric on construction or evaluation.
+            FileNotFoundError: when the file of one of the evaluation sets does not exist.
         """
         self.event_dispatcher.dispatch(MetricEventArgs(
             ON_BEGIN_METRIC,
@@ -212,6 +229,9 @@ class EvaluationPipeline(CorePipeline):
             eval_set_paths: the file paths of the evaluation sets.
             train_set_required: whether the train set is required for the evaluation.
             test_set_required: whether the test set is required for the evaluation.
+
+        Raises:
+            FileNotFoundError: when the file of one of the evaluation sets does not exist.
 
         Returns:
             the loaded evaluation sets.
@@ -289,6 +309,11 @@ class EvaluationPipeline(CorePipeline):
             eval_sets: the evaluation sets to compute the performance of.
             metric_config: the metric configuration that is associated with the metric.
 
+        Raises:
+            ArithmeticError: possibly raised by a metric on evaluation.
+            MemoryError: possibly raised by a metric on evaluation.
+            RuntimeError: possibly raised by a metric on evaluation.
+
         Returns:
             the computed evaluation of the metric.
         """
@@ -322,9 +347,10 @@ def add_evaluation_to_file(
         evaluation_value: the evaluation result.
         metric_config: the metric configuration used for the evaluation.
     """
+    subgroup = {} if metric_config.subgroup is None else metric_config.subgroup.to_yml_format()
     evaluation = {'name': metric_config.name,
                   'params': metric_config.params,
-                  'evaluation': {'global': str(evaluation_value), 'filtered': []}}
+                  'evaluation': {'value': str(evaluation_value), 'subgroup': subgroup}}
 
     evaluations = load_json(file_path)
     evaluations['evaluations'].append(evaluation)
