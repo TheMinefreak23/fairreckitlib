@@ -214,7 +214,7 @@ class DatasetProcessorLFM1B(DatasetProcessorLFM):
                 artist_table_config.columns += ['artist_genres']
 
         artist_table_config.file.name = TABLE_FILE_PREFIX + self.dataset_name + '_artists.tsv.bz2'
-        artist_table_config.file.compression = 'bz2'
+        artist_table_config.file.options.compression = 'bz2'
         artist_table_config.num_records = len(artist_table)
 
         # store generated artist table

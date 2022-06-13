@@ -116,8 +116,8 @@ class DatasetProcessorML100K(DatasetProcessorML):
 
         # update movie table definition
         movie_table_config.file.name = TABLE_FILE_PREFIX + self.dataset_name + '_movies.tsv.bz2'
-        movie_table_config.file.compression = 'bz2'
-        movie_table_config.file.sep = None
+        movie_table_config.file.options.compression = 'bz2'
+        movie_table_config.file.options.sep = None
         movie_table_config.columns = movie_columns + [genre_column]
         movie_table_config.num_records = len(movie_table)
 
@@ -153,8 +153,8 @@ class DatasetProcessorML100K(DatasetProcessorML):
 
         # update user table configuration
         user_table_config.file.name = TABLE_FILE_PREFIX + self.dataset_name + '_users.tsv.bz2'
-        user_table_config.file.compression = 'bz2'
-        user_table_config.file.sep = None
+        user_table_config.file.options.compression = 'bz2'
+        user_table_config.file.options.sep = None
 
         # store the generated user table
         user_table_config.save_table(user_table, self.dataset_dir)

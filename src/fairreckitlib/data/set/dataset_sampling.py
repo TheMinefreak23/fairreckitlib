@@ -134,7 +134,7 @@ def create_dataset_table_samples(
                 table_config.primary_key,
                 table_config.columns,
                 compression='bz2',
-                encoding=table_config.file.encoding,
+                encoding=table_config.file.options.encoding,
                 foreign_keys=table_config.foreign_keys,
                 num_records=len(table)
             )
@@ -195,7 +195,7 @@ def create_matrix_sample_config(
         matrix_config.table.primary_key,
         matrix_config.table.columns,
         compression='bz2',
-        encoding=matrix_config.table.file.settings.encoding,
+        encoding=matrix_config.table.file.options.encoding,
         foreign_keys=matrix_config.table.foreign_keys,
         num_records=len(sample)
     )

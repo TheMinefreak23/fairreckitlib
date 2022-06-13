@@ -150,9 +150,9 @@ class DatasetProcessorML25M(DatasetProcessorML):
 
             # update movie table configuration
             movie_table_config.file.name = TABLE_FILE_PREFIX + self.dataset_name + '_movies.tsv.bz2'
-            movie_table_config.file.sep = None
-            movie_table_config.file.compression = 'bz2'
-            movie_table_config.file.header = False
+            movie_table_config.file.options.sep = None
+            movie_table_config.file.options.compression = 'bz2'
+            movie_table_config.file.options.header = False
             movie_table_config.columns += link_table_config.columns
 
             # store the extended movie table

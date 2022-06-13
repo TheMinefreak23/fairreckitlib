@@ -234,13 +234,13 @@ class DatasetConfigParser:
             the parsed configuration or None on failure.
         """
         # attempt to parse the (required) file name
-        file_name = parse_file_name(
+        success, file_name = parse_file_name(
             data_dir,
             file_config,
             KEY_NAME,
             self.event_dispatcher
         )
-        if file_name is None:
+        if not success:
             return None
 
         # attempt to parse the file options
@@ -264,14 +264,14 @@ class DatasetConfigParser:
             the parsed configuration or None on failure.
         """
         # attempt to parse (optional) file name
-        file_name = parse_file_name(
+        success, file_name = parse_file_name(
             data_dir,
             index_config,
             TABLE_FILE,
             self.event_dispatcher,
             required=False
         )
-        if file_name is None:
+        if not success:
             return None
 
         # attempt to parse the key that is associated with the index
@@ -406,7 +406,7 @@ def parse_file_name(
         file_key: str,
         event_dispatcher: EventDispatcher,
         *,
-        required: bool=True) -> Optional[str]:
+        required: bool=True) -> Tuple[bool, Optional[str]]:
     """Parse the file name from the configuration.
 
     In addition, when the file name is parsed correctly it is checked
@@ -420,23 +420,24 @@ def parse_file_name(
         required: whether the parsing is required to succeed.
 
     Returns:
-        the parsed file name or None on failure.
+        whether the parsing succeeded and the parsed file name or None on failure.
     """
     if required and not assert_is_key_in_dict(
         file_key,
         file_config,
         event_dispatcher,
         'PARSE ERROR: file configuration missing key \'' + file_key + '\''
-    ): return None
+    ): return False, None
 
     file_name = file_config.get(file_key)
+
     if file_name is not None:
         if not assert_is_type(
             file_name,
             str,
             event_dispatcher,
             'PARSE ERROR: file configuration contains invalid name'
-        ): return None
+        ): return False, None
 
         file_path = os.path.join(data_dir, file_name)
         if not os.path.isfile(file_path):
@@ -444,9 +445,9 @@ def parse_file_name(
                 ON_PARSE,
                 'PARSE ERROR: file configuration file name does not exist: ' + file_path
             ))
-            return None
+            return False, None
 
-    return file_name
+    return True, file_name
 
 
 def parse_float(
