@@ -10,6 +10,7 @@ Constants:
 
     KEY_NAME: the key that is used for a name.
     KEY_PARAMS: the key that is used for params.
+    KEY_RANDOM_SEED: the key that is used for a random seed param.
     KEY_TYPE: the key that is used for types.
 
     TYPE_PREDICTION: the prediction experiment type.
@@ -22,6 +23,9 @@ Constants:
 
     DEFAULT_TOP_K: the default top k for recommender experiments.
     DEFAULT_RATED_ITEMS_FILTER: the default rated items filter for recommender experiments.
+
+    MIN_TOP_K: the minimum top k for recommender experiments.
+    MAX_TOP_K: the maximum top k for recommender experiments.
 
     MODEL_USER_BATCH_SIZE: the batch size of users that is used when model computations are done.
     MODEL_RATINGS_FILE: the file that is used to store the computed model ratings.
@@ -39,6 +43,7 @@ SURPRISE_API = 'Surprise'
 
 KEY_NAME = 'name'
 KEY_PARAMS = 'params'
+KEY_RANDOM_SEED = 'seed'
 KEY_TYPE = 'type'
 
 TYPE_PREDICTION = 'prediction'
@@ -51,6 +56,9 @@ KEY_RATED_ITEMS_FILTER = 'rated_items_filter'
 
 DEFAULT_TOP_K = 10
 DEFAULT_RATED_ITEMS_FILTER = True
+
+MIN_TOP_K = 1
+MAX_TOP_K = 100
 
 MODEL_USER_BATCH_SIZE = 10000
 MODEL_RATINGS_FILE = 'ratings.tsv'

@@ -53,9 +53,24 @@ class LensKitRecommender(Recommender):
                              kwargs['num_threads'], kwargs['rated_items_filter'])
         self.algo = algo
 
-    def on_train(self) -> None:
-        """Fit the lenskit algorithm on the train set."""
-        self.algo.fit(self.train_set)
+    def on_train(self, train_set: pd.DataFrame) -> None:
+        """Fit the lenskit algorithm on the train set.
+
+        The recommender should be trained with a dataframe matrix.
+
+        Args:
+            train_set: the set to train the recommender with.
+
+        Raises:
+            ArithmeticError: possibly raised by an algorithm on training.
+            MemoryError: possibly raised by an algorithm on training.
+            RuntimeError: possibly raised by an algorithm on training.
+            TypeError: when the train set is not a pandas dataframe.
+        """
+        if not isinstance(train_set, pd.DataFrame):
+            raise TypeError('Expected recommender to be trained with a dataframe matrix')
+
+        self.algo.fit(train_set)
 
     def on_recommend(self, user: int, num_items: int) -> pd.DataFrame:
         """Compute item recommendations for the specified user.
@@ -66,6 +81,11 @@ class LensKitRecommender(Recommender):
         Args:
             user: the user ID to compute recommendations for.
             num_items: the number of item recommendations to produce.
+
+        Raises:
+            ArithmeticError: possibly raised by a recommender on testing.
+            MemoryError: possibly raised by a recommender on testing.
+            RuntimeError: when the recommender is not trained yet.
 
         Returns:
             dataframe with the columns: 'item' and 'score'.
@@ -86,6 +106,11 @@ class LensKitRecommender(Recommender):
         Args:
             users: the user ID's to compute recommendations for.
             num_items: the number of item recommendations to produce.
+
+        Raises:
+            ArithmeticError: possibly raised by a recommender on testing.
+            MemoryError: possibly raised by a recommender on testing.
+            RuntimeError: when the recommender is not trained yet.
 
         Returns:
             dataframe with the columns: 'rank', 'user', 'item', 'score'.

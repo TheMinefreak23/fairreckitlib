@@ -54,15 +54,21 @@ class BasePredictor(BaseAlgorithm, metaclass=ABCMeta):
             user: the user ID.
             item: the item ID.
 
+        Raises:
+            ArithmeticError: possibly raised by a predictor on testing.
+            MemoryError: possibly raised by a predictor on testing.
+            RuntimeError: when the predictor is not trained yet.
+
         Returns:
             the predicted rating or NaN when impossible.
         """
-        if user not in self.users:
-            return math.nan
-        if item not in self.items:
-            return math.nan
+        if self.train_set is None:
+            raise RuntimeError('Predictor is not trained for predictions')
 
-        return self.on_predict(user, item)
+        if self.train_set.knows_user(user) and self.train_set.knows_item(item):
+            return self.on_predict(user, item)
+
+        return math.nan
 
     @abstractmethod
     def on_predict(self, user: int, item: int) -> float:
@@ -76,6 +82,11 @@ class BasePredictor(BaseAlgorithm, metaclass=ABCMeta):
         Args:
             user: the user ID.
             item: the item ID.
+
+        Raises:
+            ArithmeticError: possibly raised by a predictor on testing.
+            MemoryError: possibly raised by a predictor on testing.
+            RuntimeError: when the predictor is not trained yet.
 
         Returns:
             the predicted rating or NaN when impossible.
@@ -91,12 +102,20 @@ class BasePredictor(BaseAlgorithm, metaclass=ABCMeta):
         Args:
             user_item_pairs: with at least two columns: 'user' and 'item'.
 
+        Raises:
+            ArithmeticError: possibly raised by a predictor on testing.
+            MemoryError: possibly raised by a predictor on testing.
+            RuntimeError: when the predictor is not trained yet.
+
         Returns:
             a dataFrame with the columns: 'user', 'item', 'prediction'.
         """
+        if self.train_set is None:
+            raise RuntimeError('Predictor is not trained for predictions')
+
         user_item_pairs = user_item_pairs[['user', 'item']]
-        user_item_pairs = user_item_pairs[user_item_pairs['user'].isin(self.users)]
-        user_item_pairs = user_item_pairs[user_item_pairs['item'].isin(self.items)]
+        user_item_pairs = user_item_pairs[self.train_set.knows_user_list(user_item_pairs['user'])]
+        user_item_pairs = user_item_pairs[self.train_set.knows_item_list(user_item_pairs['item'])]
         if len(user_item_pairs) == 0:
             return user_item_pairs
 
@@ -112,6 +131,11 @@ class BasePredictor(BaseAlgorithm, metaclass=ABCMeta):
 
         Args:
             user_item_pairs: with two columns: 'user' and 'item'.
+
+        Raises:
+            ArithmeticError: possibly raised by a predictor on testing.
+            MemoryError: possibly raised by a predictor on testing.
+            RuntimeError: when the predictor is not trained yet.
 
         Returns:
             a dataFrame with the columns: 'user', 'item', 'prediction'.

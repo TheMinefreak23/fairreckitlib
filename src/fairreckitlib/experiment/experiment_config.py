@@ -14,23 +14,23 @@ Utrecht University within the Software Project course.
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
-from ..core.config.config_yml import format_yml_config_list
+from ..core.config.config_yml import format_yml_config_dict_list, format_yml_config_list
 from ..core.core_constants import KEY_NAME, KEY_TYPE, KEY_TOP_K, KEY_RATED_ITEMS_FILTER
 from ..data.data_factory import KEY_DATA
 from ..data.pipeline.data_config import DataMatrixConfig
 from ..evaluation.evaluation_factory import KEY_EVALUATION
 from ..evaluation.pipeline.evaluation_config import MetricConfig
 from ..model.model_factory import KEY_MODELS
-from ..model.pipeline.model_config import ModelConfig, api_models_to_yml_format
+from ..model.pipeline.model_config import ModelConfig
 
 
 @dataclass
 class ExperimentConfig:
     """Base Experiment Configuration."""
 
-    datasets: [DataMatrixConfig]
+    datasets: List[DataMatrixConfig]
     models: Dict[str, List[ModelConfig]]
-    evaluation: [MetricConfig]
+    evaluation: List[MetricConfig]
     name: str
     type: str
 
@@ -44,7 +44,7 @@ class ExperimentConfig:
             KEY_NAME: self.name,
             KEY_TYPE: self.type,
             KEY_DATA: format_yml_config_list(self.datasets),
-            KEY_MODELS: api_models_to_yml_format(self.models)
+            KEY_MODELS: format_yml_config_dict_list(self.models)
         }
 
         # only include evaluation if it is present

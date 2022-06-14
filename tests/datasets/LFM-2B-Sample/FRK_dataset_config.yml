@@ -22,8 +22,8 @@ matrices:
       primary_key:
       - user_id
       - artist_id
-    rating_max: 767
-    rating_min: 1
+    rating_max: 767.0
+    rating_min: 1.0
     rating_type: implicit
   user-track-count:
     idx_item:
@@ -47,8 +47,8 @@ matrices:
       primary_key:
       - user_id
       - track_id
-    rating_max: 525
-    rating_min: 1
+    rating_max: 525.0
+    rating_min: 1.0
     rating_type: implicit
 tables:
   artist:

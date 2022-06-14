@@ -75,6 +75,11 @@ class BaseMetric(metaclass=ABCMeta):
         Args:
             eval_sets: the sets to use for computing the performance of the metric.
 
+        Raises:
+            ArithmeticError: possibly raised by a metric on evaluation.
+            MemoryError: possibly raised by a metric on evaluation.
+            RuntimeError: possibly raised by a metric on evaluation.
+
         Returns:
             the evaluated performance.
         """

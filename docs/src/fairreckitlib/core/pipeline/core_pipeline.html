@@ -65,7 +65,7 @@ src<wbr>.<a href="./../../../fairreckitlib.html">fairreckitlib</a><wbr>.<a href=
 
 <p>Classes:</p>
 
-<pre><code>CorePipeline:
+<pre><code>CorePipeline: base pipeline class with shared IO functionality.
 </code></pre>
 
 <p>This program has been developed by students from the bachelor Computer Science at
@@ -81,7 +81,7 @@ Utrecht University within the Software Project course.
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">Classes:</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="sd">    CorePipeline:</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="sd">    CorePipeline: base pipeline class with shared IO functionality.</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a>
 </span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="sd">This program has been developed by students from the bachelor Computer Science at</span>
 </span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="sd">Utrecht University within the Software Project course.</span>
@@ -132,69 +132,72 @@ Utrecht University within the Software Project course.
 </span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">            event_id_on_end: the event_id to dispatch when loading is finished.</span>
 </span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">            names: the column names of the dataframe or None to infer them from the header.</span>
 </span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">        Returns:</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">            the loaded dataframe.</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">DataframeEventArgs</span><span class="p">(</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>            <span class="n">event_id_on_begin</span><span class="p">,</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>            <span class="n">dataframe_path</span><span class="p">,</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>            <span class="n">dataframe_name</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>        <span class="p">))</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>        <span class="k">try</span><span class="p">:</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>            <span class="n">dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>                <span class="n">dataframe_path</span><span class="p">,</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>                <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>                <span class="n">header</span><span class="o">=</span><span class="s1">&#39;infer&#39;</span> <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>                <span class="n">names</span><span class="o">=</span><span class="n">names</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>            <span class="p">)</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>        <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">ErrorEventArgs</span><span class="p">(</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>                <span class="n">ON_RAISE_ERROR</span><span class="p">,</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>                <span class="s1">&#39;FileNotFoundError: raised while trying to load the &#39;</span> <span class="o">+</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>                <span class="n">dataframe_name</span> <span class="o">+</span> <span class="s1">&#39; from &#39;</span> <span class="o">+</span> <span class="n">dataframe_path</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>            <span class="p">))</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>            <span class="k">raise</span> <span class="n">err</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>        <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">DataframeEventArgs</span><span class="p">(</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>            <span class="n">event_id_on_end</span><span class="p">,</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>            <span class="n">dataframe_path</span><span class="p">,</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>            <span class="n">dataframe_name</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>        <span class="p">),</span> <span class="n">elapsed_time</span><span class="o">=</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>        <span class="k">return</span> <span class="n">dataframe</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="k">def</span> <span class="nf">write_dataframe</span><span class="p">(</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>            <span class="bp">self</span><span class="p">,</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>            <span class="n">dataframe_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>            <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>            <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="sd">&quot;&quot;&quot;Write a dataframe to the disk.</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">        This function is intended to write (append) a dataframe in chunks,</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">        including the header of the dataframe.</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">        It is assumed that when the header is True that the dataframe file</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">        has been created, which in turn will dispatch the IO event.</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">        Args:</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">            dataframe_path: path to the dataframe file.</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">            dataframe: the dataframe to append to the file.</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">            header: whether to include the header.</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>        <span class="n">dataframe</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>            <span class="n">dataframe_path</span><span class="p">,</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>            <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>            <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>            <span class="n">index</span><span class="o">=</span><span class="kc">False</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>        <span class="p">)</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>        <span class="c1"># header is the first line meaning the file has just been created</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>        <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">FileEventArgs</span><span class="p">(</span><span class="n">ON_CREATE_FILE</span><span class="p">,</span> <span class="n">dataframe_path</span><span class="p">))</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">        Raises:</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">            FileNotFoundError: when the dataframe file is not found.</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">        Returns:</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">            the loaded dataframe.</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">DataframeEventArgs</span><span class="p">(</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>            <span class="n">event_id_on_begin</span><span class="p">,</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>            <span class="n">dataframe_path</span><span class="p">,</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>            <span class="n">dataframe_name</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>        <span class="p">))</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>        <span class="k">try</span><span class="p">:</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>            <span class="n">dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>                <span class="n">dataframe_path</span><span class="p">,</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>                <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>                <span class="n">header</span><span class="o">=</span><span class="s1">&#39;infer&#39;</span> <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>                <span class="n">names</span><span class="o">=</span><span class="n">names</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>            <span class="p">)</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>        <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">ErrorEventArgs</span><span class="p">(</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>                <span class="n">ON_RAISE_ERROR</span><span class="p">,</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>                <span class="s1">&#39;FileNotFoundError: raised while trying to load the &#39;</span> <span class="o">+</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>                <span class="n">dataframe_name</span> <span class="o">+</span> <span class="s1">&#39; from &#39;</span> <span class="o">+</span> <span class="n">dataframe_path</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>            <span class="p">))</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>            <span class="k">raise</span> <span class="n">err</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>        <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">DataframeEventArgs</span><span class="p">(</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>            <span class="n">event_id_on_end</span><span class="p">,</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>            <span class="n">dataframe_path</span><span class="p">,</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>            <span class="n">dataframe_name</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="p">),</span> <span class="n">elapsed_time</span><span class="o">=</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>        <span class="k">return</span> <span class="n">dataframe</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="k">def</span> <span class="nf">write_dataframe</span><span class="p">(</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>            <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>            <span class="n">dataframe_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>            <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>            <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="sd">&quot;&quot;&quot;Write a dataframe to the disk.</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">        This function is intended to write (append) a dataframe in chunks,</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">        including the header of the dataframe.</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">        It is assumed that when the header is True that the dataframe file</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">        has been created, which in turn will dispatch the IO event.</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">        Args:</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">            dataframe_path: path to the dataframe file.</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">            dataframe: the dataframe to append to the file.</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">            header: whether to include the header.</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>        <span class="n">dataframe</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>            <span class="n">dataframe_path</span><span class="p">,</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>            <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>            <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>            <span class="n">index</span><span class="o">=</span><span class="kc">False</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>        <span class="p">)</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>        <span class="c1"># header is the first line meaning the file has just been created</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>        <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">FileEventArgs</span><span class="p">(</span><span class="n">ON_CREATE_FILE</span><span class="p">,</span> <span class="n">dataframe_path</span><span class="p">))</span>
 </span></pre></div>
 
 
@@ -245,69 +248,72 @@ Utrecht University within the Software Project course.
 </span><span id="CorePipeline-54"><a href="#CorePipeline-54"><span class="linenos"> 54</span></a><span class="sd">            event_id_on_end: the event_id to dispatch when loading is finished.</span>
 </span><span id="CorePipeline-55"><a href="#CorePipeline-55"><span class="linenos"> 55</span></a><span class="sd">            names: the column names of the dataframe or None to infer them from the header.</span>
 </span><span id="CorePipeline-56"><a href="#CorePipeline-56"><span class="linenos"> 56</span></a>
-</span><span id="CorePipeline-57"><a href="#CorePipeline-57"><span class="linenos"> 57</span></a><span class="sd">        Returns:</span>
-</span><span id="CorePipeline-58"><a href="#CorePipeline-58"><span class="linenos"> 58</span></a><span class="sd">            the loaded dataframe.</span>
-</span><span id="CorePipeline-59"><a href="#CorePipeline-59"><span class="linenos"> 59</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="CorePipeline-60"><a href="#CorePipeline-60"><span class="linenos"> 60</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">DataframeEventArgs</span><span class="p">(</span>
-</span><span id="CorePipeline-61"><a href="#CorePipeline-61"><span class="linenos"> 61</span></a>            <span class="n">event_id_on_begin</span><span class="p">,</span>
-</span><span id="CorePipeline-62"><a href="#CorePipeline-62"><span class="linenos"> 62</span></a>            <span class="n">dataframe_path</span><span class="p">,</span>
-</span><span id="CorePipeline-63"><a href="#CorePipeline-63"><span class="linenos"> 63</span></a>            <span class="n">dataframe_name</span>
-</span><span id="CorePipeline-64"><a href="#CorePipeline-64"><span class="linenos"> 64</span></a>        <span class="p">))</span>
-</span><span id="CorePipeline-65"><a href="#CorePipeline-65"><span class="linenos"> 65</span></a>
-</span><span id="CorePipeline-66"><a href="#CorePipeline-66"><span class="linenos"> 66</span></a>        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-</span><span id="CorePipeline-67"><a href="#CorePipeline-67"><span class="linenos"> 67</span></a>
-</span><span id="CorePipeline-68"><a href="#CorePipeline-68"><span class="linenos"> 68</span></a>        <span class="k">try</span><span class="p">:</span>
-</span><span id="CorePipeline-69"><a href="#CorePipeline-69"><span class="linenos"> 69</span></a>            <span class="n">dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
-</span><span id="CorePipeline-70"><a href="#CorePipeline-70"><span class="linenos"> 70</span></a>                <span class="n">dataframe_path</span><span class="p">,</span>
-</span><span id="CorePipeline-71"><a href="#CorePipeline-71"><span class="linenos"> 71</span></a>                <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
-</span><span id="CorePipeline-72"><a href="#CorePipeline-72"><span class="linenos"> 72</span></a>                <span class="n">header</span><span class="o">=</span><span class="s1">&#39;infer&#39;</span> <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="CorePipeline-73"><a href="#CorePipeline-73"><span class="linenos"> 73</span></a>                <span class="n">names</span><span class="o">=</span><span class="n">names</span>
-</span><span id="CorePipeline-74"><a href="#CorePipeline-74"><span class="linenos"> 74</span></a>            <span class="p">)</span>
-</span><span id="CorePipeline-75"><a href="#CorePipeline-75"><span class="linenos"> 75</span></a>        <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-</span><span id="CorePipeline-76"><a href="#CorePipeline-76"><span class="linenos"> 76</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">ErrorEventArgs</span><span class="p">(</span>
-</span><span id="CorePipeline-77"><a href="#CorePipeline-77"><span class="linenos"> 77</span></a>                <span class="n">ON_RAISE_ERROR</span><span class="p">,</span>
-</span><span id="CorePipeline-78"><a href="#CorePipeline-78"><span class="linenos"> 78</span></a>                <span class="s1">&#39;FileNotFoundError: raised while trying to load the &#39;</span> <span class="o">+</span>
-</span><span id="CorePipeline-79"><a href="#CorePipeline-79"><span class="linenos"> 79</span></a>                <span class="n">dataframe_name</span> <span class="o">+</span> <span class="s1">&#39; from &#39;</span> <span class="o">+</span> <span class="n">dataframe_path</span>
-</span><span id="CorePipeline-80"><a href="#CorePipeline-80"><span class="linenos"> 80</span></a>            <span class="p">))</span>
-</span><span id="CorePipeline-81"><a href="#CorePipeline-81"><span class="linenos"> 81</span></a>            <span class="k">raise</span> <span class="n">err</span>
-</span><span id="CorePipeline-82"><a href="#CorePipeline-82"><span class="linenos"> 82</span></a>
-</span><span id="CorePipeline-83"><a href="#CorePipeline-83"><span class="linenos"> 83</span></a>        <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-</span><span id="CorePipeline-84"><a href="#CorePipeline-84"><span class="linenos"> 84</span></a>
-</span><span id="CorePipeline-85"><a href="#CorePipeline-85"><span class="linenos"> 85</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">DataframeEventArgs</span><span class="p">(</span>
-</span><span id="CorePipeline-86"><a href="#CorePipeline-86"><span class="linenos"> 86</span></a>            <span class="n">event_id_on_end</span><span class="p">,</span>
-</span><span id="CorePipeline-87"><a href="#CorePipeline-87"><span class="linenos"> 87</span></a>            <span class="n">dataframe_path</span><span class="p">,</span>
-</span><span id="CorePipeline-88"><a href="#CorePipeline-88"><span class="linenos"> 88</span></a>            <span class="n">dataframe_name</span>
-</span><span id="CorePipeline-89"><a href="#CorePipeline-89"><span class="linenos"> 89</span></a>        <span class="p">),</span> <span class="n">elapsed_time</span><span class="o">=</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
-</span><span id="CorePipeline-90"><a href="#CorePipeline-90"><span class="linenos"> 90</span></a>
-</span><span id="CorePipeline-91"><a href="#CorePipeline-91"><span class="linenos"> 91</span></a>        <span class="k">return</span> <span class="n">dataframe</span>
-</span><span id="CorePipeline-92"><a href="#CorePipeline-92"><span class="linenos"> 92</span></a>
-</span><span id="CorePipeline-93"><a href="#CorePipeline-93"><span class="linenos"> 93</span></a>    <span class="k">def</span> <span class="nf">write_dataframe</span><span class="p">(</span>
-</span><span id="CorePipeline-94"><a href="#CorePipeline-94"><span class="linenos"> 94</span></a>            <span class="bp">self</span><span class="p">,</span>
-</span><span id="CorePipeline-95"><a href="#CorePipeline-95"><span class="linenos"> 95</span></a>            <span class="n">dataframe_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="CorePipeline-96"><a href="#CorePipeline-96"><span class="linenos"> 96</span></a>            <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-</span><span id="CorePipeline-97"><a href="#CorePipeline-97"><span class="linenos"> 97</span></a>            <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="CorePipeline-98"><a href="#CorePipeline-98"><span class="linenos"> 98</span></a>        <span class="sd">&quot;&quot;&quot;Write a dataframe to the disk.</span>
-</span><span id="CorePipeline-99"><a href="#CorePipeline-99"><span class="linenos"> 99</span></a>
-</span><span id="CorePipeline-100"><a href="#CorePipeline-100"><span class="linenos">100</span></a><span class="sd">        This function is intended to write (append) a dataframe in chunks,</span>
-</span><span id="CorePipeline-101"><a href="#CorePipeline-101"><span class="linenos">101</span></a><span class="sd">        including the header of the dataframe.</span>
-</span><span id="CorePipeline-102"><a href="#CorePipeline-102"><span class="linenos">102</span></a><span class="sd">        It is assumed that when the header is True that the dataframe file</span>
-</span><span id="CorePipeline-103"><a href="#CorePipeline-103"><span class="linenos">103</span></a><span class="sd">        has been created, which in turn will dispatch the IO event.</span>
-</span><span id="CorePipeline-104"><a href="#CorePipeline-104"><span class="linenos">104</span></a>
-</span><span id="CorePipeline-105"><a href="#CorePipeline-105"><span class="linenos">105</span></a><span class="sd">        Args:</span>
-</span><span id="CorePipeline-106"><a href="#CorePipeline-106"><span class="linenos">106</span></a><span class="sd">            dataframe_path: path to the dataframe file.</span>
-</span><span id="CorePipeline-107"><a href="#CorePipeline-107"><span class="linenos">107</span></a><span class="sd">            dataframe: the dataframe to append to the file.</span>
-</span><span id="CorePipeline-108"><a href="#CorePipeline-108"><span class="linenos">108</span></a><span class="sd">            header: whether to include the header.</span>
-</span><span id="CorePipeline-109"><a href="#CorePipeline-109"><span class="linenos">109</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="CorePipeline-110"><a href="#CorePipeline-110"><span class="linenos">110</span></a>        <span class="n">dataframe</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
-</span><span id="CorePipeline-111"><a href="#CorePipeline-111"><span class="linenos">111</span></a>            <span class="n">dataframe_path</span><span class="p">,</span>
-</span><span id="CorePipeline-112"><a href="#CorePipeline-112"><span class="linenos">112</span></a>            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span>
-</span><span id="CorePipeline-113"><a href="#CorePipeline-113"><span class="linenos">113</span></a>            <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
-</span><span id="CorePipeline-114"><a href="#CorePipeline-114"><span class="linenos">114</span></a>            <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
-</span><span id="CorePipeline-115"><a href="#CorePipeline-115"><span class="linenos">115</span></a>            <span class="n">index</span><span class="o">=</span><span class="kc">False</span>
-</span><span id="CorePipeline-116"><a href="#CorePipeline-116"><span class="linenos">116</span></a>        <span class="p">)</span>
-</span><span id="CorePipeline-117"><a href="#CorePipeline-117"><span class="linenos">117</span></a>        <span class="c1"># header is the first line meaning the file has just been created</span>
-</span><span id="CorePipeline-118"><a href="#CorePipeline-118"><span class="linenos">118</span></a>        <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
-</span><span id="CorePipeline-119"><a href="#CorePipeline-119"><span class="linenos">119</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">FileEventArgs</span><span class="p">(</span><span class="n">ON_CREATE_FILE</span><span class="p">,</span> <span class="n">dataframe_path</span><span class="p">))</span>
+</span><span id="CorePipeline-57"><a href="#CorePipeline-57"><span class="linenos"> 57</span></a><span class="sd">        Raises:</span>
+</span><span id="CorePipeline-58"><a href="#CorePipeline-58"><span class="linenos"> 58</span></a><span class="sd">            FileNotFoundError: when the dataframe file is not found.</span>
+</span><span id="CorePipeline-59"><a href="#CorePipeline-59"><span class="linenos"> 59</span></a>
+</span><span id="CorePipeline-60"><a href="#CorePipeline-60"><span class="linenos"> 60</span></a><span class="sd">        Returns:</span>
+</span><span id="CorePipeline-61"><a href="#CorePipeline-61"><span class="linenos"> 61</span></a><span class="sd">            the loaded dataframe.</span>
+</span><span id="CorePipeline-62"><a href="#CorePipeline-62"><span class="linenos"> 62</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CorePipeline-63"><a href="#CorePipeline-63"><span class="linenos"> 63</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">DataframeEventArgs</span><span class="p">(</span>
+</span><span id="CorePipeline-64"><a href="#CorePipeline-64"><span class="linenos"> 64</span></a>            <span class="n">event_id_on_begin</span><span class="p">,</span>
+</span><span id="CorePipeline-65"><a href="#CorePipeline-65"><span class="linenos"> 65</span></a>            <span class="n">dataframe_path</span><span class="p">,</span>
+</span><span id="CorePipeline-66"><a href="#CorePipeline-66"><span class="linenos"> 66</span></a>            <span class="n">dataframe_name</span>
+</span><span id="CorePipeline-67"><a href="#CorePipeline-67"><span class="linenos"> 67</span></a>        <span class="p">))</span>
+</span><span id="CorePipeline-68"><a href="#CorePipeline-68"><span class="linenos"> 68</span></a>
+</span><span id="CorePipeline-69"><a href="#CorePipeline-69"><span class="linenos"> 69</span></a>        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span id="CorePipeline-70"><a href="#CorePipeline-70"><span class="linenos"> 70</span></a>
+</span><span id="CorePipeline-71"><a href="#CorePipeline-71"><span class="linenos"> 71</span></a>        <span class="k">try</span><span class="p">:</span>
+</span><span id="CorePipeline-72"><a href="#CorePipeline-72"><span class="linenos"> 72</span></a>            <span class="n">dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+</span><span id="CorePipeline-73"><a href="#CorePipeline-73"><span class="linenos"> 73</span></a>                <span class="n">dataframe_path</span><span class="p">,</span>
+</span><span id="CorePipeline-74"><a href="#CorePipeline-74"><span class="linenos"> 74</span></a>                <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
+</span><span id="CorePipeline-75"><a href="#CorePipeline-75"><span class="linenos"> 75</span></a>                <span class="n">header</span><span class="o">=</span><span class="s1">&#39;infer&#39;</span> <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="CorePipeline-76"><a href="#CorePipeline-76"><span class="linenos"> 76</span></a>                <span class="n">names</span><span class="o">=</span><span class="n">names</span>
+</span><span id="CorePipeline-77"><a href="#CorePipeline-77"><span class="linenos"> 77</span></a>            <span class="p">)</span>
+</span><span id="CorePipeline-78"><a href="#CorePipeline-78"><span class="linenos"> 78</span></a>        <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+</span><span id="CorePipeline-79"><a href="#CorePipeline-79"><span class="linenos"> 79</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">ErrorEventArgs</span><span class="p">(</span>
+</span><span id="CorePipeline-80"><a href="#CorePipeline-80"><span class="linenos"> 80</span></a>                <span class="n">ON_RAISE_ERROR</span><span class="p">,</span>
+</span><span id="CorePipeline-81"><a href="#CorePipeline-81"><span class="linenos"> 81</span></a>                <span class="s1">&#39;FileNotFoundError: raised while trying to load the &#39;</span> <span class="o">+</span>
+</span><span id="CorePipeline-82"><a href="#CorePipeline-82"><span class="linenos"> 82</span></a>                <span class="n">dataframe_name</span> <span class="o">+</span> <span class="s1">&#39; from &#39;</span> <span class="o">+</span> <span class="n">dataframe_path</span>
+</span><span id="CorePipeline-83"><a href="#CorePipeline-83"><span class="linenos"> 83</span></a>            <span class="p">))</span>
+</span><span id="CorePipeline-84"><a href="#CorePipeline-84"><span class="linenos"> 84</span></a>            <span class="k">raise</span> <span class="n">err</span>
+</span><span id="CorePipeline-85"><a href="#CorePipeline-85"><span class="linenos"> 85</span></a>
+</span><span id="CorePipeline-86"><a href="#CorePipeline-86"><span class="linenos"> 86</span></a>        <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span id="CorePipeline-87"><a href="#CorePipeline-87"><span class="linenos"> 87</span></a>
+</span><span id="CorePipeline-88"><a href="#CorePipeline-88"><span class="linenos"> 88</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">DataframeEventArgs</span><span class="p">(</span>
+</span><span id="CorePipeline-89"><a href="#CorePipeline-89"><span class="linenos"> 89</span></a>            <span class="n">event_id_on_end</span><span class="p">,</span>
+</span><span id="CorePipeline-90"><a href="#CorePipeline-90"><span class="linenos"> 90</span></a>            <span class="n">dataframe_path</span><span class="p">,</span>
+</span><span id="CorePipeline-91"><a href="#CorePipeline-91"><span class="linenos"> 91</span></a>            <span class="n">dataframe_name</span>
+</span><span id="CorePipeline-92"><a href="#CorePipeline-92"><span class="linenos"> 92</span></a>        <span class="p">),</span> <span class="n">elapsed_time</span><span class="o">=</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
+</span><span id="CorePipeline-93"><a href="#CorePipeline-93"><span class="linenos"> 93</span></a>
+</span><span id="CorePipeline-94"><a href="#CorePipeline-94"><span class="linenos"> 94</span></a>        <span class="k">return</span> <span class="n">dataframe</span>
+</span><span id="CorePipeline-95"><a href="#CorePipeline-95"><span class="linenos"> 95</span></a>
+</span><span id="CorePipeline-96"><a href="#CorePipeline-96"><span class="linenos"> 96</span></a>    <span class="k">def</span> <span class="nf">write_dataframe</span><span class="p">(</span>
+</span><span id="CorePipeline-97"><a href="#CorePipeline-97"><span class="linenos"> 97</span></a>            <span class="bp">self</span><span class="p">,</span>
+</span><span id="CorePipeline-98"><a href="#CorePipeline-98"><span class="linenos"> 98</span></a>            <span class="n">dataframe_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="CorePipeline-99"><a href="#CorePipeline-99"><span class="linenos"> 99</span></a>            <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+</span><span id="CorePipeline-100"><a href="#CorePipeline-100"><span class="linenos">100</span></a>            <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="CorePipeline-101"><a href="#CorePipeline-101"><span class="linenos">101</span></a>        <span class="sd">&quot;&quot;&quot;Write a dataframe to the disk.</span>
+</span><span id="CorePipeline-102"><a href="#CorePipeline-102"><span class="linenos">102</span></a>
+</span><span id="CorePipeline-103"><a href="#CorePipeline-103"><span class="linenos">103</span></a><span class="sd">        This function is intended to write (append) a dataframe in chunks,</span>
+</span><span id="CorePipeline-104"><a href="#CorePipeline-104"><span class="linenos">104</span></a><span class="sd">        including the header of the dataframe.</span>
+</span><span id="CorePipeline-105"><a href="#CorePipeline-105"><span class="linenos">105</span></a><span class="sd">        It is assumed that when the header is True that the dataframe file</span>
+</span><span id="CorePipeline-106"><a href="#CorePipeline-106"><span class="linenos">106</span></a><span class="sd">        has been created, which in turn will dispatch the IO event.</span>
+</span><span id="CorePipeline-107"><a href="#CorePipeline-107"><span class="linenos">107</span></a>
+</span><span id="CorePipeline-108"><a href="#CorePipeline-108"><span class="linenos">108</span></a><span class="sd">        Args:</span>
+</span><span id="CorePipeline-109"><a href="#CorePipeline-109"><span class="linenos">109</span></a><span class="sd">            dataframe_path: path to the dataframe file.</span>
+</span><span id="CorePipeline-110"><a href="#CorePipeline-110"><span class="linenos">110</span></a><span class="sd">            dataframe: the dataframe to append to the file.</span>
+</span><span id="CorePipeline-111"><a href="#CorePipeline-111"><span class="linenos">111</span></a><span class="sd">            header: whether to include the header.</span>
+</span><span id="CorePipeline-112"><a href="#CorePipeline-112"><span class="linenos">112</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CorePipeline-113"><a href="#CorePipeline-113"><span class="linenos">113</span></a>        <span class="n">dataframe</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
+</span><span id="CorePipeline-114"><a href="#CorePipeline-114"><span class="linenos">114</span></a>            <span class="n">dataframe_path</span><span class="p">,</span>
+</span><span id="CorePipeline-115"><a href="#CorePipeline-115"><span class="linenos">115</span></a>            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span>
+</span><span id="CorePipeline-116"><a href="#CorePipeline-116"><span class="linenos">116</span></a>            <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
+</span><span id="CorePipeline-117"><a href="#CorePipeline-117"><span class="linenos">117</span></a>            <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+</span><span id="CorePipeline-118"><a href="#CorePipeline-118"><span class="linenos">118</span></a>            <span class="n">index</span><span class="o">=</span><span class="kc">False</span>
+</span><span id="CorePipeline-119"><a href="#CorePipeline-119"><span class="linenos">119</span></a>        <span class="p">)</span>
+</span><span id="CorePipeline-120"><a href="#CorePipeline-120"><span class="linenos">120</span></a>        <span class="c1"># header is the first line meaning the file has just been created</span>
+</span><span id="CorePipeline-121"><a href="#CorePipeline-121"><span class="linenos">121</span></a>        <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
+</span><span id="CorePipeline-122"><a href="#CorePipeline-122"><span class="linenos">122</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">FileEventArgs</span><span class="p">(</span><span class="n">ON_CREATE_FILE</span><span class="p">,</span> <span class="n">dataframe_path</span><span class="p">))</span>
 </span></pre></div>
 
 
@@ -377,41 +383,44 @@ pipelines to read and/or write dataframes.</p>
 </span><span id="CorePipeline.read_dataframe-54"><a href="#CorePipeline.read_dataframe-54"><span class="linenos">54</span></a><span class="sd">            event_id_on_end: the event_id to dispatch when loading is finished.</span>
 </span><span id="CorePipeline.read_dataframe-55"><a href="#CorePipeline.read_dataframe-55"><span class="linenos">55</span></a><span class="sd">            names: the column names of the dataframe or None to infer them from the header.</span>
 </span><span id="CorePipeline.read_dataframe-56"><a href="#CorePipeline.read_dataframe-56"><span class="linenos">56</span></a>
-</span><span id="CorePipeline.read_dataframe-57"><a href="#CorePipeline.read_dataframe-57"><span class="linenos">57</span></a><span class="sd">        Returns:</span>
-</span><span id="CorePipeline.read_dataframe-58"><a href="#CorePipeline.read_dataframe-58"><span class="linenos">58</span></a><span class="sd">            the loaded dataframe.</span>
-</span><span id="CorePipeline.read_dataframe-59"><a href="#CorePipeline.read_dataframe-59"><span class="linenos">59</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="CorePipeline.read_dataframe-60"><a href="#CorePipeline.read_dataframe-60"><span class="linenos">60</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">DataframeEventArgs</span><span class="p">(</span>
-</span><span id="CorePipeline.read_dataframe-61"><a href="#CorePipeline.read_dataframe-61"><span class="linenos">61</span></a>            <span class="n">event_id_on_begin</span><span class="p">,</span>
-</span><span id="CorePipeline.read_dataframe-62"><a href="#CorePipeline.read_dataframe-62"><span class="linenos">62</span></a>            <span class="n">dataframe_path</span><span class="p">,</span>
-</span><span id="CorePipeline.read_dataframe-63"><a href="#CorePipeline.read_dataframe-63"><span class="linenos">63</span></a>            <span class="n">dataframe_name</span>
-</span><span id="CorePipeline.read_dataframe-64"><a href="#CorePipeline.read_dataframe-64"><span class="linenos">64</span></a>        <span class="p">))</span>
-</span><span id="CorePipeline.read_dataframe-65"><a href="#CorePipeline.read_dataframe-65"><span class="linenos">65</span></a>
-</span><span id="CorePipeline.read_dataframe-66"><a href="#CorePipeline.read_dataframe-66"><span class="linenos">66</span></a>        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-</span><span id="CorePipeline.read_dataframe-67"><a href="#CorePipeline.read_dataframe-67"><span class="linenos">67</span></a>
-</span><span id="CorePipeline.read_dataframe-68"><a href="#CorePipeline.read_dataframe-68"><span class="linenos">68</span></a>        <span class="k">try</span><span class="p">:</span>
-</span><span id="CorePipeline.read_dataframe-69"><a href="#CorePipeline.read_dataframe-69"><span class="linenos">69</span></a>            <span class="n">dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
-</span><span id="CorePipeline.read_dataframe-70"><a href="#CorePipeline.read_dataframe-70"><span class="linenos">70</span></a>                <span class="n">dataframe_path</span><span class="p">,</span>
-</span><span id="CorePipeline.read_dataframe-71"><a href="#CorePipeline.read_dataframe-71"><span class="linenos">71</span></a>                <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
-</span><span id="CorePipeline.read_dataframe-72"><a href="#CorePipeline.read_dataframe-72"><span class="linenos">72</span></a>                <span class="n">header</span><span class="o">=</span><span class="s1">&#39;infer&#39;</span> <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="CorePipeline.read_dataframe-73"><a href="#CorePipeline.read_dataframe-73"><span class="linenos">73</span></a>                <span class="n">names</span><span class="o">=</span><span class="n">names</span>
-</span><span id="CorePipeline.read_dataframe-74"><a href="#CorePipeline.read_dataframe-74"><span class="linenos">74</span></a>            <span class="p">)</span>
-</span><span id="CorePipeline.read_dataframe-75"><a href="#CorePipeline.read_dataframe-75"><span class="linenos">75</span></a>        <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-</span><span id="CorePipeline.read_dataframe-76"><a href="#CorePipeline.read_dataframe-76"><span class="linenos">76</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">ErrorEventArgs</span><span class="p">(</span>
-</span><span id="CorePipeline.read_dataframe-77"><a href="#CorePipeline.read_dataframe-77"><span class="linenos">77</span></a>                <span class="n">ON_RAISE_ERROR</span><span class="p">,</span>
-</span><span id="CorePipeline.read_dataframe-78"><a href="#CorePipeline.read_dataframe-78"><span class="linenos">78</span></a>                <span class="s1">&#39;FileNotFoundError: raised while trying to load the &#39;</span> <span class="o">+</span>
-</span><span id="CorePipeline.read_dataframe-79"><a href="#CorePipeline.read_dataframe-79"><span class="linenos">79</span></a>                <span class="n">dataframe_name</span> <span class="o">+</span> <span class="s1">&#39; from &#39;</span> <span class="o">+</span> <span class="n">dataframe_path</span>
-</span><span id="CorePipeline.read_dataframe-80"><a href="#CorePipeline.read_dataframe-80"><span class="linenos">80</span></a>            <span class="p">))</span>
-</span><span id="CorePipeline.read_dataframe-81"><a href="#CorePipeline.read_dataframe-81"><span class="linenos">81</span></a>            <span class="k">raise</span> <span class="n">err</span>
-</span><span id="CorePipeline.read_dataframe-82"><a href="#CorePipeline.read_dataframe-82"><span class="linenos">82</span></a>
-</span><span id="CorePipeline.read_dataframe-83"><a href="#CorePipeline.read_dataframe-83"><span class="linenos">83</span></a>        <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-</span><span id="CorePipeline.read_dataframe-84"><a href="#CorePipeline.read_dataframe-84"><span class="linenos">84</span></a>
-</span><span id="CorePipeline.read_dataframe-85"><a href="#CorePipeline.read_dataframe-85"><span class="linenos">85</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">DataframeEventArgs</span><span class="p">(</span>
-</span><span id="CorePipeline.read_dataframe-86"><a href="#CorePipeline.read_dataframe-86"><span class="linenos">86</span></a>            <span class="n">event_id_on_end</span><span class="p">,</span>
-</span><span id="CorePipeline.read_dataframe-87"><a href="#CorePipeline.read_dataframe-87"><span class="linenos">87</span></a>            <span class="n">dataframe_path</span><span class="p">,</span>
-</span><span id="CorePipeline.read_dataframe-88"><a href="#CorePipeline.read_dataframe-88"><span class="linenos">88</span></a>            <span class="n">dataframe_name</span>
-</span><span id="CorePipeline.read_dataframe-89"><a href="#CorePipeline.read_dataframe-89"><span class="linenos">89</span></a>        <span class="p">),</span> <span class="n">elapsed_time</span><span class="o">=</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
-</span><span id="CorePipeline.read_dataframe-90"><a href="#CorePipeline.read_dataframe-90"><span class="linenos">90</span></a>
-</span><span id="CorePipeline.read_dataframe-91"><a href="#CorePipeline.read_dataframe-91"><span class="linenos">91</span></a>        <span class="k">return</span> <span class="n">dataframe</span>
+</span><span id="CorePipeline.read_dataframe-57"><a href="#CorePipeline.read_dataframe-57"><span class="linenos">57</span></a><span class="sd">        Raises:</span>
+</span><span id="CorePipeline.read_dataframe-58"><a href="#CorePipeline.read_dataframe-58"><span class="linenos">58</span></a><span class="sd">            FileNotFoundError: when the dataframe file is not found.</span>
+</span><span id="CorePipeline.read_dataframe-59"><a href="#CorePipeline.read_dataframe-59"><span class="linenos">59</span></a>
+</span><span id="CorePipeline.read_dataframe-60"><a href="#CorePipeline.read_dataframe-60"><span class="linenos">60</span></a><span class="sd">        Returns:</span>
+</span><span id="CorePipeline.read_dataframe-61"><a href="#CorePipeline.read_dataframe-61"><span class="linenos">61</span></a><span class="sd">            the loaded dataframe.</span>
+</span><span id="CorePipeline.read_dataframe-62"><a href="#CorePipeline.read_dataframe-62"><span class="linenos">62</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CorePipeline.read_dataframe-63"><a href="#CorePipeline.read_dataframe-63"><span class="linenos">63</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">DataframeEventArgs</span><span class="p">(</span>
+</span><span id="CorePipeline.read_dataframe-64"><a href="#CorePipeline.read_dataframe-64"><span class="linenos">64</span></a>            <span class="n">event_id_on_begin</span><span class="p">,</span>
+</span><span id="CorePipeline.read_dataframe-65"><a href="#CorePipeline.read_dataframe-65"><span class="linenos">65</span></a>            <span class="n">dataframe_path</span><span class="p">,</span>
+</span><span id="CorePipeline.read_dataframe-66"><a href="#CorePipeline.read_dataframe-66"><span class="linenos">66</span></a>            <span class="n">dataframe_name</span>
+</span><span id="CorePipeline.read_dataframe-67"><a href="#CorePipeline.read_dataframe-67"><span class="linenos">67</span></a>        <span class="p">))</span>
+</span><span id="CorePipeline.read_dataframe-68"><a href="#CorePipeline.read_dataframe-68"><span class="linenos">68</span></a>
+</span><span id="CorePipeline.read_dataframe-69"><a href="#CorePipeline.read_dataframe-69"><span class="linenos">69</span></a>        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span id="CorePipeline.read_dataframe-70"><a href="#CorePipeline.read_dataframe-70"><span class="linenos">70</span></a>
+</span><span id="CorePipeline.read_dataframe-71"><a href="#CorePipeline.read_dataframe-71"><span class="linenos">71</span></a>        <span class="k">try</span><span class="p">:</span>
+</span><span id="CorePipeline.read_dataframe-72"><a href="#CorePipeline.read_dataframe-72"><span class="linenos">72</span></a>            <span class="n">dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+</span><span id="CorePipeline.read_dataframe-73"><a href="#CorePipeline.read_dataframe-73"><span class="linenos">73</span></a>                <span class="n">dataframe_path</span><span class="p">,</span>
+</span><span id="CorePipeline.read_dataframe-74"><a href="#CorePipeline.read_dataframe-74"><span class="linenos">74</span></a>                <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
+</span><span id="CorePipeline.read_dataframe-75"><a href="#CorePipeline.read_dataframe-75"><span class="linenos">75</span></a>                <span class="n">header</span><span class="o">=</span><span class="s1">&#39;infer&#39;</span> <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="CorePipeline.read_dataframe-76"><a href="#CorePipeline.read_dataframe-76"><span class="linenos">76</span></a>                <span class="n">names</span><span class="o">=</span><span class="n">names</span>
+</span><span id="CorePipeline.read_dataframe-77"><a href="#CorePipeline.read_dataframe-77"><span class="linenos">77</span></a>            <span class="p">)</span>
+</span><span id="CorePipeline.read_dataframe-78"><a href="#CorePipeline.read_dataframe-78"><span class="linenos">78</span></a>        <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+</span><span id="CorePipeline.read_dataframe-79"><a href="#CorePipeline.read_dataframe-79"><span class="linenos">79</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">ErrorEventArgs</span><span class="p">(</span>
+</span><span id="CorePipeline.read_dataframe-80"><a href="#CorePipeline.read_dataframe-80"><span class="linenos">80</span></a>                <span class="n">ON_RAISE_ERROR</span><span class="p">,</span>
+</span><span id="CorePipeline.read_dataframe-81"><a href="#CorePipeline.read_dataframe-81"><span class="linenos">81</span></a>                <span class="s1">&#39;FileNotFoundError: raised while trying to load the &#39;</span> <span class="o">+</span>
+</span><span id="CorePipeline.read_dataframe-82"><a href="#CorePipeline.read_dataframe-82"><span class="linenos">82</span></a>                <span class="n">dataframe_name</span> <span class="o">+</span> <span class="s1">&#39; from &#39;</span> <span class="o">+</span> <span class="n">dataframe_path</span>
+</span><span id="CorePipeline.read_dataframe-83"><a href="#CorePipeline.read_dataframe-83"><span class="linenos">83</span></a>            <span class="p">))</span>
+</span><span id="CorePipeline.read_dataframe-84"><a href="#CorePipeline.read_dataframe-84"><span class="linenos">84</span></a>            <span class="k">raise</span> <span class="n">err</span>
+</span><span id="CorePipeline.read_dataframe-85"><a href="#CorePipeline.read_dataframe-85"><span class="linenos">85</span></a>
+</span><span id="CorePipeline.read_dataframe-86"><a href="#CorePipeline.read_dataframe-86"><span class="linenos">86</span></a>        <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span id="CorePipeline.read_dataframe-87"><a href="#CorePipeline.read_dataframe-87"><span class="linenos">87</span></a>
+</span><span id="CorePipeline.read_dataframe-88"><a href="#CorePipeline.read_dataframe-88"><span class="linenos">88</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">DataframeEventArgs</span><span class="p">(</span>
+</span><span id="CorePipeline.read_dataframe-89"><a href="#CorePipeline.read_dataframe-89"><span class="linenos">89</span></a>            <span class="n">event_id_on_end</span><span class="p">,</span>
+</span><span id="CorePipeline.read_dataframe-90"><a href="#CorePipeline.read_dataframe-90"><span class="linenos">90</span></a>            <span class="n">dataframe_path</span><span class="p">,</span>
+</span><span id="CorePipeline.read_dataframe-91"><a href="#CorePipeline.read_dataframe-91"><span class="linenos">91</span></a>            <span class="n">dataframe_name</span>
+</span><span id="CorePipeline.read_dataframe-92"><a href="#CorePipeline.read_dataframe-92"><span class="linenos">92</span></a>        <span class="p">),</span> <span class="n">elapsed_time</span><span class="o">=</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
+</span><span id="CorePipeline.read_dataframe-93"><a href="#CorePipeline.read_dataframe-93"><span class="linenos">93</span></a>
+</span><span id="CorePipeline.read_dataframe-94"><a href="#CorePipeline.read_dataframe-94"><span class="linenos">94</span></a>        <span class="k">return</span> <span class="n">dataframe</span>
 </span></pre></div>
 
 
@@ -426,6 +435,9 @@ and thereafter the error is raised once more.</p>
     event_id_on_begin: the event_id to dispatch when loading starts.
     event_id_on_end: the event_id to dispatch when loading is finished.
     names: the column names of the dataframe or None to infer them from the header.</p>
+
+<p>Raises:
+    FileNotFoundError: when the dataframe file is not found.</p>
 
 <p>Returns:
     the loaded dataframe.</p>
@@ -444,33 +456,33 @@ and thereafter the error is raised once more.</p>
 
     </div>
     <a class="headerlink" href="#CorePipeline.write_dataframe"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="CorePipeline.write_dataframe-93"><a href="#CorePipeline.write_dataframe-93"><span class="linenos"> 93</span></a>    <span class="k">def</span> <span class="nf">write_dataframe</span><span class="p">(</span>
-</span><span id="CorePipeline.write_dataframe-94"><a href="#CorePipeline.write_dataframe-94"><span class="linenos"> 94</span></a>            <span class="bp">self</span><span class="p">,</span>
-</span><span id="CorePipeline.write_dataframe-95"><a href="#CorePipeline.write_dataframe-95"><span class="linenos"> 95</span></a>            <span class="n">dataframe_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="CorePipeline.write_dataframe-96"><a href="#CorePipeline.write_dataframe-96"><span class="linenos"> 96</span></a>            <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
-</span><span id="CorePipeline.write_dataframe-97"><a href="#CorePipeline.write_dataframe-97"><span class="linenos"> 97</span></a>            <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="CorePipeline.write_dataframe-98"><a href="#CorePipeline.write_dataframe-98"><span class="linenos"> 98</span></a>        <span class="sd">&quot;&quot;&quot;Write a dataframe to the disk.</span>
-</span><span id="CorePipeline.write_dataframe-99"><a href="#CorePipeline.write_dataframe-99"><span class="linenos"> 99</span></a>
-</span><span id="CorePipeline.write_dataframe-100"><a href="#CorePipeline.write_dataframe-100"><span class="linenos">100</span></a><span class="sd">        This function is intended to write (append) a dataframe in chunks,</span>
-</span><span id="CorePipeline.write_dataframe-101"><a href="#CorePipeline.write_dataframe-101"><span class="linenos">101</span></a><span class="sd">        including the header of the dataframe.</span>
-</span><span id="CorePipeline.write_dataframe-102"><a href="#CorePipeline.write_dataframe-102"><span class="linenos">102</span></a><span class="sd">        It is assumed that when the header is True that the dataframe file</span>
-</span><span id="CorePipeline.write_dataframe-103"><a href="#CorePipeline.write_dataframe-103"><span class="linenos">103</span></a><span class="sd">        has been created, which in turn will dispatch the IO event.</span>
-</span><span id="CorePipeline.write_dataframe-104"><a href="#CorePipeline.write_dataframe-104"><span class="linenos">104</span></a>
-</span><span id="CorePipeline.write_dataframe-105"><a href="#CorePipeline.write_dataframe-105"><span class="linenos">105</span></a><span class="sd">        Args:</span>
-</span><span id="CorePipeline.write_dataframe-106"><a href="#CorePipeline.write_dataframe-106"><span class="linenos">106</span></a><span class="sd">            dataframe_path: path to the dataframe file.</span>
-</span><span id="CorePipeline.write_dataframe-107"><a href="#CorePipeline.write_dataframe-107"><span class="linenos">107</span></a><span class="sd">            dataframe: the dataframe to append to the file.</span>
-</span><span id="CorePipeline.write_dataframe-108"><a href="#CorePipeline.write_dataframe-108"><span class="linenos">108</span></a><span class="sd">            header: whether to include the header.</span>
-</span><span id="CorePipeline.write_dataframe-109"><a href="#CorePipeline.write_dataframe-109"><span class="linenos">109</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="CorePipeline.write_dataframe-110"><a href="#CorePipeline.write_dataframe-110"><span class="linenos">110</span></a>        <span class="n">dataframe</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
-</span><span id="CorePipeline.write_dataframe-111"><a href="#CorePipeline.write_dataframe-111"><span class="linenos">111</span></a>            <span class="n">dataframe_path</span><span class="p">,</span>
-</span><span id="CorePipeline.write_dataframe-112"><a href="#CorePipeline.write_dataframe-112"><span class="linenos">112</span></a>            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span>
-</span><span id="CorePipeline.write_dataframe-113"><a href="#CorePipeline.write_dataframe-113"><span class="linenos">113</span></a>            <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
-</span><span id="CorePipeline.write_dataframe-114"><a href="#CorePipeline.write_dataframe-114"><span class="linenos">114</span></a>            <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
-</span><span id="CorePipeline.write_dataframe-115"><a href="#CorePipeline.write_dataframe-115"><span class="linenos">115</span></a>            <span class="n">index</span><span class="o">=</span><span class="kc">False</span>
-</span><span id="CorePipeline.write_dataframe-116"><a href="#CorePipeline.write_dataframe-116"><span class="linenos">116</span></a>        <span class="p">)</span>
-</span><span id="CorePipeline.write_dataframe-117"><a href="#CorePipeline.write_dataframe-117"><span class="linenos">117</span></a>        <span class="c1"># header is the first line meaning the file has just been created</span>
-</span><span id="CorePipeline.write_dataframe-118"><a href="#CorePipeline.write_dataframe-118"><span class="linenos">118</span></a>        <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
-</span><span id="CorePipeline.write_dataframe-119"><a href="#CorePipeline.write_dataframe-119"><span class="linenos">119</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">FileEventArgs</span><span class="p">(</span><span class="n">ON_CREATE_FILE</span><span class="p">,</span> <span class="n">dataframe_path</span><span class="p">))</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CorePipeline.write_dataframe-96"><a href="#CorePipeline.write_dataframe-96"><span class="linenos"> 96</span></a>    <span class="k">def</span> <span class="nf">write_dataframe</span><span class="p">(</span>
+</span><span id="CorePipeline.write_dataframe-97"><a href="#CorePipeline.write_dataframe-97"><span class="linenos"> 97</span></a>            <span class="bp">self</span><span class="p">,</span>
+</span><span id="CorePipeline.write_dataframe-98"><a href="#CorePipeline.write_dataframe-98"><span class="linenos"> 98</span></a>            <span class="n">dataframe_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="CorePipeline.write_dataframe-99"><a href="#CorePipeline.write_dataframe-99"><span class="linenos"> 99</span></a>            <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+</span><span id="CorePipeline.write_dataframe-100"><a href="#CorePipeline.write_dataframe-100"><span class="linenos">100</span></a>            <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="CorePipeline.write_dataframe-101"><a href="#CorePipeline.write_dataframe-101"><span class="linenos">101</span></a>        <span class="sd">&quot;&quot;&quot;Write a dataframe to the disk.</span>
+</span><span id="CorePipeline.write_dataframe-102"><a href="#CorePipeline.write_dataframe-102"><span class="linenos">102</span></a>
+</span><span id="CorePipeline.write_dataframe-103"><a href="#CorePipeline.write_dataframe-103"><span class="linenos">103</span></a><span class="sd">        This function is intended to write (append) a dataframe in chunks,</span>
+</span><span id="CorePipeline.write_dataframe-104"><a href="#CorePipeline.write_dataframe-104"><span class="linenos">104</span></a><span class="sd">        including the header of the dataframe.</span>
+</span><span id="CorePipeline.write_dataframe-105"><a href="#CorePipeline.write_dataframe-105"><span class="linenos">105</span></a><span class="sd">        It is assumed that when the header is True that the dataframe file</span>
+</span><span id="CorePipeline.write_dataframe-106"><a href="#CorePipeline.write_dataframe-106"><span class="linenos">106</span></a><span class="sd">        has been created, which in turn will dispatch the IO event.</span>
+</span><span id="CorePipeline.write_dataframe-107"><a href="#CorePipeline.write_dataframe-107"><span class="linenos">107</span></a>
+</span><span id="CorePipeline.write_dataframe-108"><a href="#CorePipeline.write_dataframe-108"><span class="linenos">108</span></a><span class="sd">        Args:</span>
+</span><span id="CorePipeline.write_dataframe-109"><a href="#CorePipeline.write_dataframe-109"><span class="linenos">109</span></a><span class="sd">            dataframe_path: path to the dataframe file.</span>
+</span><span id="CorePipeline.write_dataframe-110"><a href="#CorePipeline.write_dataframe-110"><span class="linenos">110</span></a><span class="sd">            dataframe: the dataframe to append to the file.</span>
+</span><span id="CorePipeline.write_dataframe-111"><a href="#CorePipeline.write_dataframe-111"><span class="linenos">111</span></a><span class="sd">            header: whether to include the header.</span>
+</span><span id="CorePipeline.write_dataframe-112"><a href="#CorePipeline.write_dataframe-112"><span class="linenos">112</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CorePipeline.write_dataframe-113"><a href="#CorePipeline.write_dataframe-113"><span class="linenos">113</span></a>        <span class="n">dataframe</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
+</span><span id="CorePipeline.write_dataframe-114"><a href="#CorePipeline.write_dataframe-114"><span class="linenos">114</span></a>            <span class="n">dataframe_path</span><span class="p">,</span>
+</span><span id="CorePipeline.write_dataframe-115"><a href="#CorePipeline.write_dataframe-115"><span class="linenos">115</span></a>            <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span>
+</span><span id="CorePipeline.write_dataframe-116"><a href="#CorePipeline.write_dataframe-116"><span class="linenos">116</span></a>            <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
+</span><span id="CorePipeline.write_dataframe-117"><a href="#CorePipeline.write_dataframe-117"><span class="linenos">117</span></a>            <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+</span><span id="CorePipeline.write_dataframe-118"><a href="#CorePipeline.write_dataframe-118"><span class="linenos">118</span></a>            <span class="n">index</span><span class="o">=</span><span class="kc">False</span>
+</span><span id="CorePipeline.write_dataframe-119"><a href="#CorePipeline.write_dataframe-119"><span class="linenos">119</span></a>        <span class="p">)</span>
+</span><span id="CorePipeline.write_dataframe-120"><a href="#CorePipeline.write_dataframe-120"><span class="linenos">120</span></a>        <span class="c1"># header is the first line meaning the file has just been created</span>
+</span><span id="CorePipeline.write_dataframe-121"><a href="#CorePipeline.write_dataframe-121"><span class="linenos">121</span></a>        <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
+</span><span id="CorePipeline.write_dataframe-122"><a href="#CorePipeline.write_dataframe-122"><span class="linenos">122</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">event_dispatcher</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="n">FileEventArgs</span><span class="p">(</span><span class="n">ON_CREATE_FILE</span><span class="p">,</span> <span class="n">dataframe_path</span><span class="p">))</span>
 </span></pre></div>
 
 

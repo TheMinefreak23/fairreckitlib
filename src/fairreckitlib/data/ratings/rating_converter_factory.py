@@ -35,12 +35,14 @@ def create_rating_converter_factory(data_registry: DataRegistry) -> GroupFactory
             _: the dataset associated with the matrix factory.
 
         """
-        # add kl converter
-        matrix_factory.add_obj(
-            CONVERTER_KL,
-            create_kl_converter,
-            create_kl_converter_params
-        )
+        if 'artist' in matrix_factory.get_name():
+            # add kl converter
+            matrix_factory.add_obj(
+                CONVERTER_KL,
+                create_kl_converter,
+                create_kl_converter_params
+            )
+
         # add range converter
         matrix_factory.add_obj(
             CONVERTER_RANGE,

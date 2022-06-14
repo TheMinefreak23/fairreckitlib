@@ -14,7 +14,7 @@ from typing import Callable, List, Optional, Tuple
 
 import numpy as np
 
-from ..dataset_config import DATASET_RATINGS_EXPLICIT
+from ..dataset_config import DATASET_RATINGS_EXPLICIT, RatingMatrixConfig
 from ..dataset_config import DatasetIndexConfig, DatasetMatrixConfig, DatasetTableConfig
 from ..dataset_constants import TABLE_FILE_PREFIX
 from .dataset_processor_base import DatasetProcessorBase
@@ -82,18 +82,20 @@ class DatasetProcessorML(DatasetProcessorBase, metaclass=ABCMeta):
             # update matrix configuration
             user_movie_matrix_table_config.file.name = \
                 TABLE_FILE_PREFIX + self.dataset_name + '_user-movie-rating_matrix.tsv.bz2'
-            user_movie_matrix_table_config.file.sep = None
-            user_movie_matrix_table_config.file.compression = 'bz2'
-            user_movie_matrix_table_config.file.header = False
+            user_movie_matrix_table_config.file.options.sep = None
+            user_movie_matrix_table_config.file.options.compression = 'bz2'
+            user_movie_matrix_table_config.file.options.header = False
 
             # store resulting matrix
             user_movie_matrix_table_config.save_table(user_movie_matrix, self.dataset_dir)
 
         return DatasetMatrixConfig(
             user_movie_matrix_table_config,
-            user_movie_matrix[rating_column].min(),
-            user_movie_matrix[rating_column].max(),
-            DATASET_RATINGS_EXPLICIT,
+            RatingMatrixConfig(
+                user_movie_matrix[rating_column].min(),
+                user_movie_matrix[rating_column].max(),
+                DATASET_RATINGS_EXPLICIT
+            ),
             DatasetIndexConfig(
                 None,
                 user_id,

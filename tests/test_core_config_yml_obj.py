@@ -19,7 +19,7 @@ from typing import Any, Dict
 
 from src.fairreckitlib.core.config.config_object import ObjectConfig
 from src.fairreckitlib.core.config.config_yml import YmlConfig, \
-    format_yml_config_dict, format_yml_config_list
+    format_yml_config_dict, format_yml_config_dict_list, format_yml_config_list
 from src.fairreckitlib.core.core_constants import KEY_NAME, KEY_PARAMS
 
 
@@ -43,23 +43,49 @@ class DummyConfig(YmlConfig):
 
 
 def test_config_yml() -> None:
-    """Test base yml configuration formatting."""
-    yml_config_dict, yml_config_list = {}, []
+    """Test base yml configuration formatting with containers."""
+    yml_config_dict, yml_config_dict_list, yml_config_list = {}, {}, []
     for i in range(0, 10):
         dummy_config = DummyConfig(i, float(i))
+        key_name = str(i)
 
-        yml_config_dict[str(i)] = dummy_config
+        yml_config_dict[key_name] = dummy_config
         yml_config_list.append(dummy_config)
+        yml_config_dict_list[key_name] = list(yml_config_list)
 
+    # test dict with yml config
     yml_dict_format = format_yml_config_dict(yml_config_dict)
-    assert len(yml_dict_format) == len(yml_config_dict)
+    assert len(yml_dict_format) == len(yml_config_dict), \
+        'expected the format dictionary to be of the same length as the config dictionary'
+    for key_name, _ in yml_dict_format.items():
+        assert key_name in yml_config_dict, \
+            'expected key in the format dictionary to be present in the config dictionary'
 
+    # test dict with list of yml configs
+    yml_dict_list_format = format_yml_config_dict_list(yml_config_dict_list)
+    assert len(yml_dict_list_format) == len(yml_config_dict_list), \
+        'expected the format dictionary to be of the same length as the config dictionary'
+    for key_name, yml_list_format in yml_dict_list_format.items():
+        assert key_name in yml_config_dict_list, \
+            'expected key in the format dictionary to be present in the config dictionary'
+        assert len(yml_list_format) == len(yml_config_dict_list[key_name]), \
+            'expected format list to be the same length as the config list'
+
+    # test list of yml configs
     yml_list_format = format_yml_config_list(yml_config_list)
-    assert len(yml_list_format) == len(yml_config_list)
+    assert len(yml_list_format) == len(yml_config_list), \
+        'expected the format list to be of the same length as the config list'
 
+    # test values of all three yml containers
     for i in range(0, 10):
-        assert yml_dict_format[str(i)] == yml_config_dict[str(i)].to_yml_format()
-        assert yml_list_format[i] == yml_config_list[i].to_yml_format()
+        key_name = str(i)
+        assert yml_dict_format[key_name] == yml_config_dict[key_name].to_yml_format(), \
+            'expected format dictionary entry to be the same as in the config dictionary'
+        assert yml_list_format[i] == yml_config_list[i].to_yml_format(), \
+            'expected format list entry to be the same as in the config list'
+        for j, yml_config in enumerate(yml_dict_list_format[key_name]):
+            assert yml_config == yml_config_dict_list[key_name][j].to_yml_format(), \
+                'expected format dictionary list entry to be the same as in the config list'
 
 
 def test_config_object() -> None:

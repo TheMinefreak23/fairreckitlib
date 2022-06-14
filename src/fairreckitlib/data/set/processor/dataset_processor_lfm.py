@@ -14,7 +14,7 @@ from typing import Callable, List, Optional, Tuple
 
 import pandas as pd
 
-from ..dataset_config import DATASET_RATINGS_IMPLICIT
+from ..dataset_config import DATASET_RATINGS_IMPLICIT, RatingMatrixConfig
 from ..dataset_config import DatasetIndexConfig, DatasetMatrixConfig, DatasetTableConfig
 from ..dataset_constants import TABLE_FILE_PREFIX
 from .dataset_processor_base import DatasetProcessorBase
@@ -130,9 +130,11 @@ class DatasetProcessorLFM(DatasetProcessorBase, metaclass=ABCMeta):
 
         return DatasetMatrixConfig(
             matrix_table_config,
-            rating_min,
-            rating_max,
-            DATASET_RATINGS_IMPLICIT,
+            RatingMatrixConfig(
+                rating_min,
+                rating_max,
+                DATASET_RATINGS_IMPLICIT
+            ),
             DatasetIndexConfig(
                 user_idx_file,
                 user_id,
@@ -175,9 +177,9 @@ class DatasetProcessorLFM(DatasetProcessorBase, metaclass=ABCMeta):
 
         # update table configuration
         user_table_config.file.name = TABLE_FILE_PREFIX + self.dataset_name + '_users.tsv.bz2'
-        user_table_config.file.compression = 'bz2'
-        user_table_config.file.header = False
-        user_table_config.file.sep = None
+        user_table_config.file.options.compression = 'bz2'
+        user_table_config.file.options.header = False
+        user_table_config.file.options.sep = None
 
         # store the resulting user table
         user_table_config.save_table(user_table, self.dataset_dir)

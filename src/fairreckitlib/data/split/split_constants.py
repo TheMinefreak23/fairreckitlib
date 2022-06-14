@@ -8,6 +8,8 @@ Constants:
     SPLIT_TEMPORAL: name of the temporal splitter.
     DEFAULT_SPLIT_NAME: the name of the default splitter.
     DEFAULT_SPLIT_TEST_RATIO: the default split test ratio.
+    MIN_TEST_RATIO: the minimum allowed split test ratio.
+    MAX_TEST_RATIO: the maximum allowed split test ratio.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
@@ -22,3 +24,6 @@ KEY_SPLIT_TEST_RATIO = 'test_ratio'
 
 DEFAULT_SPLIT_NAME = SPLIT_RANDOM
 DEFAULT_SPLIT_TEST_RATIO = 0.2
+
+MIN_TEST_RATIO = 0.01
+MAX_TEST_RATIO = 0.99

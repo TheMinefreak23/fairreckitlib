@@ -2,7 +2,7 @@
 
 Classes:
 
-    CorePipeline:
+    CorePipeline: base pipeline class with shared IO functionality.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
@@ -52,6 +52,9 @@ class CorePipeline:
             event_id_on_begin: the event_id to dispatch when loading starts.
             event_id_on_end: the event_id to dispatch when loading is finished.
             names: the column names of the dataframe or None to infer them from the header.
+
+        Raises:
+            FileNotFoundError: when the dataframe file is not found.
 
         Returns:
             the loaded dataframe.

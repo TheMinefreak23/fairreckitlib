@@ -14,7 +14,7 @@ from ..set.dataset_registry import DataRegistry
 from ..data_modifier import DataModifierFactory, create_data_modifier_factory
 from ..filter.filter_params import (
     create_params_categorical, create_params_numerical, create_params_count)
-from .filter_constants import KEY_DATA_FILTERS
+from .filter_constants import KEY_DATA_SUBSET
 from .numerical_filter import create_numerical_filter
 from .categorical_filter import create_categorical_filter
 from .count_filter import create_count_filter
@@ -74,4 +74,4 @@ def create_filter_factory(data_registry: DataRegistry) -> GroupFactory:
                     create_params_categorical
                     )
 
-    return create_data_modifier_factory(data_registry, KEY_DATA_FILTERS, on_add_entries)
+    return create_data_modifier_factory(data_registry, KEY_DATA_SUBSET, on_add_entries)

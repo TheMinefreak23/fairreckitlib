@@ -34,7 +34,7 @@
                     <a class="class" href="#PredictionPipeline">PredictionPipeline</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="function" href="#PredictionPipeline.get_ratings_dataframe">get_ratings_dataframe</a>
+                                <a class="function" href="#PredictionPipeline.load_test_set_users">load_test_set_users</a>
                         </li>
                         <li>
                                 <a class="function" href="#PredictionPipeline.test_model_ratings">test_model_ratings</a>
@@ -85,7 +85,7 @@ Utrecht University within the Software Project course.
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">© Copyright Utrecht University (Department of Information and Computing Sciences)</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
@@ -99,45 +99,38 @@ Utrecht University within the Software Project course.
 </span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">    The (user,item) prediction will be computed and for each pair that is present in the test set.</span>
 </span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="k">def</span> <span class="nf">get_ratings_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>        <span class="sd">&quot;&quot;&quot;Get the dataframe that contains the original ratings.</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="k">def</span> <span class="nf">load_test_set_users</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>        <span class="sd">&quot;&quot;&quot;Load the test set users that all models can use for testing.</span>
 </span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">        For the prediction pipeline only the ratings from the test set are necessary.</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">        Predictions are made for every user-item pair in the test set.</span>
 </span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">        Returns:</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">            dataframe containing the &#39;user&#39;, &#39;item&#39;, &#39;rating&#39;, columns.</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">        Raises:</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">            FileNotFoundError: when the test set file is not found.</span>
 </span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_set</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">test_set_users</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_test_set_dataframe</span><span class="p">(</span><span class="s1">&#39;prediction test set&#39;</span><span class="p">)</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="k">def</span> <span class="nf">test_model_ratings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>                           <span class="n">model</span><span class="p">:</span> <span class="n">BasePredictor</span><span class="p">,</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>                           <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>                           <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>                           <span class="n">is_running</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">bool</span><span class="p">],</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>                           <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>        <span class="sd">&quot;&quot;&quot;Test the specified model for rating predictions.</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="sd">        Predict ratings for each user-item pair that is present in the test set.</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="sd">        Args:</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="sd">            model: the model that needs to be tested.</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="sd">            output_path: path to the file where the ratings will be stored.</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="sd">            batch_size: number of users to test ratings for in a batch.</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="sd">            is_running: function that returns whether the pipeline</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="sd">                is still running. Stops early when False is returned.</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>        <span class="n">start_index</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>        <span class="k">while</span> <span class="n">start_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_set</span><span class="p">):</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_running</span><span class="p">():</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>                <span class="k">return</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>            <span class="n">user_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_set</span><span class="p">[</span><span class="n">start_index</span> <span class="p">:</span> <span class="n">start_index</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>            <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">user_batch</span><span class="p">)</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_running</span><span class="p">():</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>                <span class="k">return</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">write_dataframe</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">start_index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>            <span class="n">start_index</span> <span class="o">+=</span> <span class="n">batch_size</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="k">def</span> <span class="nf">test_model_ratings</span><span class="p">(</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>            <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>            <span class="n">model</span><span class="p">:</span> <span class="n">BasePredictor</span><span class="p">,</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>            <span class="n">user_batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>        <span class="sd">&quot;&quot;&quot;Test the specified model for rating predictions.</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="sd">        Predict ratings for each user-item pair that is present in the test set.</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="sd">        Args:</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="sd">            model: the model that needs to be tested.</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="sd">            user_batch: the user batch to compute model ratings for.</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="sd">        Raises:</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="sd">            ArithmeticError: possibly raised by a predictor model on testing.</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="sd">            MemoryError: possibly raised by a predictor model on testing.</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="sd">            RuntimeError: possibly raised by a predictor model on testing.</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="sd">        Returns:</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="sd">            a dataframe containing the computed rating predictions.</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">user_batch</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -159,45 +152,38 @@ Utrecht University within the Software Project course.
 </span><span id="PredictionPipeline-24"><a href="#PredictionPipeline-24"><span class="linenos">24</span></a><span class="sd">    The (user,item) prediction will be computed and for each pair that is present in the test set.</span>
 </span><span id="PredictionPipeline-25"><a href="#PredictionPipeline-25"><span class="linenos">25</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="PredictionPipeline-26"><a href="#PredictionPipeline-26"><span class="linenos">26</span></a>
-</span><span id="PredictionPipeline-27"><a href="#PredictionPipeline-27"><span class="linenos">27</span></a>    <span class="k">def</span> <span class="nf">get_ratings_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="PredictionPipeline-28"><a href="#PredictionPipeline-28"><span class="linenos">28</span></a>        <span class="sd">&quot;&quot;&quot;Get the dataframe that contains the original ratings.</span>
+</span><span id="PredictionPipeline-27"><a href="#PredictionPipeline-27"><span class="linenos">27</span></a>    <span class="k">def</span> <span class="nf">load_test_set_users</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="PredictionPipeline-28"><a href="#PredictionPipeline-28"><span class="linenos">28</span></a>        <span class="sd">&quot;&quot;&quot;Load the test set users that all models can use for testing.</span>
 </span><span id="PredictionPipeline-29"><a href="#PredictionPipeline-29"><span class="linenos">29</span></a>
-</span><span id="PredictionPipeline-30"><a href="#PredictionPipeline-30"><span class="linenos">30</span></a><span class="sd">        For the prediction pipeline only the ratings from the test set are necessary.</span>
+</span><span id="PredictionPipeline-30"><a href="#PredictionPipeline-30"><span class="linenos">30</span></a><span class="sd">        Predictions are made for every user-item pair in the test set.</span>
 </span><span id="PredictionPipeline-31"><a href="#PredictionPipeline-31"><span class="linenos">31</span></a>
-</span><span id="PredictionPipeline-32"><a href="#PredictionPipeline-32"><span class="linenos">32</span></a><span class="sd">        Returns:</span>
-</span><span id="PredictionPipeline-33"><a href="#PredictionPipeline-33"><span class="linenos">33</span></a><span class="sd">            dataframe containing the &#39;user&#39;, &#39;item&#39;, &#39;rating&#39;, columns.</span>
+</span><span id="PredictionPipeline-32"><a href="#PredictionPipeline-32"><span class="linenos">32</span></a><span class="sd">        Raises:</span>
+</span><span id="PredictionPipeline-33"><a href="#PredictionPipeline-33"><span class="linenos">33</span></a><span class="sd">            FileNotFoundError: when the test set file is not found.</span>
 </span><span id="PredictionPipeline-34"><a href="#PredictionPipeline-34"><span class="linenos">34</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PredictionPipeline-35"><a href="#PredictionPipeline-35"><span class="linenos">35</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_set</span>
+</span><span id="PredictionPipeline-35"><a href="#PredictionPipeline-35"><span class="linenos">35</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">test_set_users</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_test_set_dataframe</span><span class="p">(</span><span class="s1">&#39;prediction test set&#39;</span><span class="p">)</span>
 </span><span id="PredictionPipeline-36"><a href="#PredictionPipeline-36"><span class="linenos">36</span></a>
-</span><span id="PredictionPipeline-37"><a href="#PredictionPipeline-37"><span class="linenos">37</span></a>    <span class="k">def</span> <span class="nf">test_model_ratings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-</span><span id="PredictionPipeline-38"><a href="#PredictionPipeline-38"><span class="linenos">38</span></a>                           <span class="n">model</span><span class="p">:</span> <span class="n">BasePredictor</span><span class="p">,</span>
-</span><span id="PredictionPipeline-39"><a href="#PredictionPipeline-39"><span class="linenos">39</span></a>                           <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="PredictionPipeline-40"><a href="#PredictionPipeline-40"><span class="linenos">40</span></a>                           <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-</span><span id="PredictionPipeline-41"><a href="#PredictionPipeline-41"><span class="linenos">41</span></a>                           <span class="n">is_running</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">bool</span><span class="p">],</span>
-</span><span id="PredictionPipeline-42"><a href="#PredictionPipeline-42"><span class="linenos">42</span></a>                           <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PredictionPipeline-43"><a href="#PredictionPipeline-43"><span class="linenos">43</span></a>        <span class="sd">&quot;&quot;&quot;Test the specified model for rating predictions.</span>
-</span><span id="PredictionPipeline-44"><a href="#PredictionPipeline-44"><span class="linenos">44</span></a>
-</span><span id="PredictionPipeline-45"><a href="#PredictionPipeline-45"><span class="linenos">45</span></a><span class="sd">        Predict ratings for each user-item pair that is present in the test set.</span>
-</span><span id="PredictionPipeline-46"><a href="#PredictionPipeline-46"><span class="linenos">46</span></a>
-</span><span id="PredictionPipeline-47"><a href="#PredictionPipeline-47"><span class="linenos">47</span></a><span class="sd">        Args:</span>
-</span><span id="PredictionPipeline-48"><a href="#PredictionPipeline-48"><span class="linenos">48</span></a><span class="sd">            model: the model that needs to be tested.</span>
-</span><span id="PredictionPipeline-49"><a href="#PredictionPipeline-49"><span class="linenos">49</span></a><span class="sd">            output_path: path to the file where the ratings will be stored.</span>
-</span><span id="PredictionPipeline-50"><a href="#PredictionPipeline-50"><span class="linenos">50</span></a><span class="sd">            batch_size: number of users to test ratings for in a batch.</span>
-</span><span id="PredictionPipeline-51"><a href="#PredictionPipeline-51"><span class="linenos">51</span></a><span class="sd">            is_running: function that returns whether the pipeline</span>
-</span><span id="PredictionPipeline-52"><a href="#PredictionPipeline-52"><span class="linenos">52</span></a><span class="sd">                is still running. Stops early when False is returned.</span>
-</span><span id="PredictionPipeline-53"><a href="#PredictionPipeline-53"><span class="linenos">53</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PredictionPipeline-54"><a href="#PredictionPipeline-54"><span class="linenos">54</span></a>        <span class="n">start_index</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="PredictionPipeline-55"><a href="#PredictionPipeline-55"><span class="linenos">55</span></a>        <span class="k">while</span> <span class="n">start_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_set</span><span class="p">):</span>
-</span><span id="PredictionPipeline-56"><a href="#PredictionPipeline-56"><span class="linenos">56</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_running</span><span class="p">():</span>
-</span><span id="PredictionPipeline-57"><a href="#PredictionPipeline-57"><span class="linenos">57</span></a>                <span class="k">return</span>
-</span><span id="PredictionPipeline-58"><a href="#PredictionPipeline-58"><span class="linenos">58</span></a>
-</span><span id="PredictionPipeline-59"><a href="#PredictionPipeline-59"><span class="linenos">59</span></a>            <span class="n">user_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_set</span><span class="p">[</span><span class="n">start_index</span> <span class="p">:</span> <span class="n">start_index</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span>
-</span><span id="PredictionPipeline-60"><a href="#PredictionPipeline-60"><span class="linenos">60</span></a>            <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">user_batch</span><span class="p">)</span>
-</span><span id="PredictionPipeline-61"><a href="#PredictionPipeline-61"><span class="linenos">61</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_running</span><span class="p">():</span>
-</span><span id="PredictionPipeline-62"><a href="#PredictionPipeline-62"><span class="linenos">62</span></a>                <span class="k">return</span>
-</span><span id="PredictionPipeline-63"><a href="#PredictionPipeline-63"><span class="linenos">63</span></a>
-</span><span id="PredictionPipeline-64"><a href="#PredictionPipeline-64"><span class="linenos">64</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">write_dataframe</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">start_index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-</span><span id="PredictionPipeline-65"><a href="#PredictionPipeline-65"><span class="linenos">65</span></a>            <span class="n">start_index</span> <span class="o">+=</span> <span class="n">batch_size</span>
+</span><span id="PredictionPipeline-37"><a href="#PredictionPipeline-37"><span class="linenos">37</span></a>    <span class="k">def</span> <span class="nf">test_model_ratings</span><span class="p">(</span>
+</span><span id="PredictionPipeline-38"><a href="#PredictionPipeline-38"><span class="linenos">38</span></a>            <span class="bp">self</span><span class="p">,</span>
+</span><span id="PredictionPipeline-39"><a href="#PredictionPipeline-39"><span class="linenos">39</span></a>            <span class="n">model</span><span class="p">:</span> <span class="n">BasePredictor</span><span class="p">,</span>
+</span><span id="PredictionPipeline-40"><a href="#PredictionPipeline-40"><span class="linenos">40</span></a>            <span class="n">user_batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+</span><span id="PredictionPipeline-41"><a href="#PredictionPipeline-41"><span class="linenos">41</span></a>            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="PredictionPipeline-42"><a href="#PredictionPipeline-42"><span class="linenos">42</span></a>        <span class="sd">&quot;&quot;&quot;Test the specified model for rating predictions.</span>
+</span><span id="PredictionPipeline-43"><a href="#PredictionPipeline-43"><span class="linenos">43</span></a>
+</span><span id="PredictionPipeline-44"><a href="#PredictionPipeline-44"><span class="linenos">44</span></a><span class="sd">        Predict ratings for each user-item pair that is present in the test set.</span>
+</span><span id="PredictionPipeline-45"><a href="#PredictionPipeline-45"><span class="linenos">45</span></a>
+</span><span id="PredictionPipeline-46"><a href="#PredictionPipeline-46"><span class="linenos">46</span></a><span class="sd">        Args:</span>
+</span><span id="PredictionPipeline-47"><a href="#PredictionPipeline-47"><span class="linenos">47</span></a><span class="sd">            model: the model that needs to be tested.</span>
+</span><span id="PredictionPipeline-48"><a href="#PredictionPipeline-48"><span class="linenos">48</span></a><span class="sd">            user_batch: the user batch to compute model ratings for.</span>
+</span><span id="PredictionPipeline-49"><a href="#PredictionPipeline-49"><span class="linenos">49</span></a>
+</span><span id="PredictionPipeline-50"><a href="#PredictionPipeline-50"><span class="linenos">50</span></a><span class="sd">        Raises:</span>
+</span><span id="PredictionPipeline-51"><a href="#PredictionPipeline-51"><span class="linenos">51</span></a><span class="sd">            ArithmeticError: possibly raised by a predictor model on testing.</span>
+</span><span id="PredictionPipeline-52"><a href="#PredictionPipeline-52"><span class="linenos">52</span></a><span class="sd">            MemoryError: possibly raised by a predictor model on testing.</span>
+</span><span id="PredictionPipeline-53"><a href="#PredictionPipeline-53"><span class="linenos">53</span></a><span class="sd">            RuntimeError: possibly raised by a predictor model on testing.</span>
+</span><span id="PredictionPipeline-54"><a href="#PredictionPipeline-54"><span class="linenos">54</span></a>
+</span><span id="PredictionPipeline-55"><a href="#PredictionPipeline-55"><span class="linenos">55</span></a><span class="sd">        Returns:</span>
+</span><span id="PredictionPipeline-56"><a href="#PredictionPipeline-56"><span class="linenos">56</span></a><span class="sd">            a dataframe containing the computed rating predictions.</span>
+</span><span id="PredictionPipeline-57"><a href="#PredictionPipeline-57"><span class="linenos">57</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PredictionPipeline-58"><a href="#PredictionPipeline-58"><span class="linenos">58</span></a>        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">user_batch</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -207,35 +193,35 @@ Utrecht University within the Software Project course.
 </div>
 
 
-                            <div id="PredictionPipeline.get_ratings_dataframe" class="classattr">
-                                        <input id="PredictionPipeline.get_ratings_dataframe-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="PredictionPipeline.load_test_set_users" class="classattr">
+                                        <input id="PredictionPipeline.load_test_set_users-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_ratings_dataframe</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>:</span></span>
+        <span class="name">load_test_set_users</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
-                <label class="view-source-button" for="PredictionPipeline.get_ratings_dataframe-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="PredictionPipeline.load_test_set_users-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#PredictionPipeline.get_ratings_dataframe"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PredictionPipeline.get_ratings_dataframe-27"><a href="#PredictionPipeline.get_ratings_dataframe-27"><span class="linenos">27</span></a>    <span class="k">def</span> <span class="nf">get_ratings_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="PredictionPipeline.get_ratings_dataframe-28"><a href="#PredictionPipeline.get_ratings_dataframe-28"><span class="linenos">28</span></a>        <span class="sd">&quot;&quot;&quot;Get the dataframe that contains the original ratings.</span>
-</span><span id="PredictionPipeline.get_ratings_dataframe-29"><a href="#PredictionPipeline.get_ratings_dataframe-29"><span class="linenos">29</span></a>
-</span><span id="PredictionPipeline.get_ratings_dataframe-30"><a href="#PredictionPipeline.get_ratings_dataframe-30"><span class="linenos">30</span></a><span class="sd">        For the prediction pipeline only the ratings from the test set are necessary.</span>
-</span><span id="PredictionPipeline.get_ratings_dataframe-31"><a href="#PredictionPipeline.get_ratings_dataframe-31"><span class="linenos">31</span></a>
-</span><span id="PredictionPipeline.get_ratings_dataframe-32"><a href="#PredictionPipeline.get_ratings_dataframe-32"><span class="linenos">32</span></a><span class="sd">        Returns:</span>
-</span><span id="PredictionPipeline.get_ratings_dataframe-33"><a href="#PredictionPipeline.get_ratings_dataframe-33"><span class="linenos">33</span></a><span class="sd">            dataframe containing the &#39;user&#39;, &#39;item&#39;, &#39;rating&#39;, columns.</span>
-</span><span id="PredictionPipeline.get_ratings_dataframe-34"><a href="#PredictionPipeline.get_ratings_dataframe-34"><span class="linenos">34</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PredictionPipeline.get_ratings_dataframe-35"><a href="#PredictionPipeline.get_ratings_dataframe-35"><span class="linenos">35</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_set</span>
+    <a class="headerlink" href="#PredictionPipeline.load_test_set_users"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PredictionPipeline.load_test_set_users-27"><a href="#PredictionPipeline.load_test_set_users-27"><span class="linenos">27</span></a>    <span class="k">def</span> <span class="nf">load_test_set_users</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="PredictionPipeline.load_test_set_users-28"><a href="#PredictionPipeline.load_test_set_users-28"><span class="linenos">28</span></a>        <span class="sd">&quot;&quot;&quot;Load the test set users that all models can use for testing.</span>
+</span><span id="PredictionPipeline.load_test_set_users-29"><a href="#PredictionPipeline.load_test_set_users-29"><span class="linenos">29</span></a>
+</span><span id="PredictionPipeline.load_test_set_users-30"><a href="#PredictionPipeline.load_test_set_users-30"><span class="linenos">30</span></a><span class="sd">        Predictions are made for every user-item pair in the test set.</span>
+</span><span id="PredictionPipeline.load_test_set_users-31"><a href="#PredictionPipeline.load_test_set_users-31"><span class="linenos">31</span></a>
+</span><span id="PredictionPipeline.load_test_set_users-32"><a href="#PredictionPipeline.load_test_set_users-32"><span class="linenos">32</span></a><span class="sd">        Raises:</span>
+</span><span id="PredictionPipeline.load_test_set_users-33"><a href="#PredictionPipeline.load_test_set_users-33"><span class="linenos">33</span></a><span class="sd">            FileNotFoundError: when the test set file is not found.</span>
+</span><span id="PredictionPipeline.load_test_set_users-34"><a href="#PredictionPipeline.load_test_set_users-34"><span class="linenos">34</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PredictionPipeline.load_test_set_users-35"><a href="#PredictionPipeline.load_test_set_users-35"><span class="linenos">35</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">test_set_users</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_test_set_dataframe</span><span class="p">(</span><span class="s1">&#39;prediction test set&#39;</span><span class="p">)</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Get the dataframe that contains the original ratings.</p>
+            <div class="docstring"><p>Load the test set users that all models can use for testing.</p>
 
-<p>For the prediction pipeline only the ratings from the test set are necessary.</p>
+<p>Predictions are made for every user-item pair in the test set.</p>
 
-<p>Returns:
-    dataframe containing the 'user', 'item', 'rating', columns.</p>
+<p>Raises:
+    FileNotFoundError: when the test set file is not found.</p>
 </div>
 
 
@@ -245,41 +231,34 @@ Utrecht University within the Software Project course.
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">test_model_ratings</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">algorithms</span><span class="o">.</span><span class="n">base_predictor</span><span class="o">.</span><span class="n">BasePredictor</span>,</span><span class="param">	<span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span>,</span><span class="param">	<span class="n">is_running</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">bool</span><span class="p">]</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+        <span class="name">test_model_ratings</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">algorithms</span><span class="o">.</span><span class="n">base_predictor</span><span class="o">.</span><span class="n">BasePredictor</span>,</span><span class="param">	<span class="n">user_batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>:</span></span>
 
                 <label class="view-source-button" for="PredictionPipeline.test_model_ratings-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#PredictionPipeline.test_model_ratings"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PredictionPipeline.test_model_ratings-37"><a href="#PredictionPipeline.test_model_ratings-37"><span class="linenos">37</span></a>    <span class="k">def</span> <span class="nf">test_model_ratings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-</span><span id="PredictionPipeline.test_model_ratings-38"><a href="#PredictionPipeline.test_model_ratings-38"><span class="linenos">38</span></a>                           <span class="n">model</span><span class="p">:</span> <span class="n">BasePredictor</span><span class="p">,</span>
-</span><span id="PredictionPipeline.test_model_ratings-39"><a href="#PredictionPipeline.test_model_ratings-39"><span class="linenos">39</span></a>                           <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="PredictionPipeline.test_model_ratings-40"><a href="#PredictionPipeline.test_model_ratings-40"><span class="linenos">40</span></a>                           <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-</span><span id="PredictionPipeline.test_model_ratings-41"><a href="#PredictionPipeline.test_model_ratings-41"><span class="linenos">41</span></a>                           <span class="n">is_running</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">bool</span><span class="p">],</span>
-</span><span id="PredictionPipeline.test_model_ratings-42"><a href="#PredictionPipeline.test_model_ratings-42"><span class="linenos">42</span></a>                           <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PredictionPipeline.test_model_ratings-43"><a href="#PredictionPipeline.test_model_ratings-43"><span class="linenos">43</span></a>        <span class="sd">&quot;&quot;&quot;Test the specified model for rating predictions.</span>
-</span><span id="PredictionPipeline.test_model_ratings-44"><a href="#PredictionPipeline.test_model_ratings-44"><span class="linenos">44</span></a>
-</span><span id="PredictionPipeline.test_model_ratings-45"><a href="#PredictionPipeline.test_model_ratings-45"><span class="linenos">45</span></a><span class="sd">        Predict ratings for each user-item pair that is present in the test set.</span>
-</span><span id="PredictionPipeline.test_model_ratings-46"><a href="#PredictionPipeline.test_model_ratings-46"><span class="linenos">46</span></a>
-</span><span id="PredictionPipeline.test_model_ratings-47"><a href="#PredictionPipeline.test_model_ratings-47"><span class="linenos">47</span></a><span class="sd">        Args:</span>
-</span><span id="PredictionPipeline.test_model_ratings-48"><a href="#PredictionPipeline.test_model_ratings-48"><span class="linenos">48</span></a><span class="sd">            model: the model that needs to be tested.</span>
-</span><span id="PredictionPipeline.test_model_ratings-49"><a href="#PredictionPipeline.test_model_ratings-49"><span class="linenos">49</span></a><span class="sd">            output_path: path to the file where the ratings will be stored.</span>
-</span><span id="PredictionPipeline.test_model_ratings-50"><a href="#PredictionPipeline.test_model_ratings-50"><span class="linenos">50</span></a><span class="sd">            batch_size: number of users to test ratings for in a batch.</span>
-</span><span id="PredictionPipeline.test_model_ratings-51"><a href="#PredictionPipeline.test_model_ratings-51"><span class="linenos">51</span></a><span class="sd">            is_running: function that returns whether the pipeline</span>
-</span><span id="PredictionPipeline.test_model_ratings-52"><a href="#PredictionPipeline.test_model_ratings-52"><span class="linenos">52</span></a><span class="sd">                is still running. Stops early when False is returned.</span>
-</span><span id="PredictionPipeline.test_model_ratings-53"><a href="#PredictionPipeline.test_model_ratings-53"><span class="linenos">53</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PredictionPipeline.test_model_ratings-54"><a href="#PredictionPipeline.test_model_ratings-54"><span class="linenos">54</span></a>        <span class="n">start_index</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="PredictionPipeline.test_model_ratings-55"><a href="#PredictionPipeline.test_model_ratings-55"><span class="linenos">55</span></a>        <span class="k">while</span> <span class="n">start_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_set</span><span class="p">):</span>
-</span><span id="PredictionPipeline.test_model_ratings-56"><a href="#PredictionPipeline.test_model_ratings-56"><span class="linenos">56</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_running</span><span class="p">():</span>
-</span><span id="PredictionPipeline.test_model_ratings-57"><a href="#PredictionPipeline.test_model_ratings-57"><span class="linenos">57</span></a>                <span class="k">return</span>
-</span><span id="PredictionPipeline.test_model_ratings-58"><a href="#PredictionPipeline.test_model_ratings-58"><span class="linenos">58</span></a>
-</span><span id="PredictionPipeline.test_model_ratings-59"><a href="#PredictionPipeline.test_model_ratings-59"><span class="linenos">59</span></a>            <span class="n">user_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_set</span><span class="p">[</span><span class="n">start_index</span> <span class="p">:</span> <span class="n">start_index</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span>
-</span><span id="PredictionPipeline.test_model_ratings-60"><a href="#PredictionPipeline.test_model_ratings-60"><span class="linenos">60</span></a>            <span class="n">predictions</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">user_batch</span><span class="p">)</span>
-</span><span id="PredictionPipeline.test_model_ratings-61"><a href="#PredictionPipeline.test_model_ratings-61"><span class="linenos">61</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_running</span><span class="p">():</span>
-</span><span id="PredictionPipeline.test_model_ratings-62"><a href="#PredictionPipeline.test_model_ratings-62"><span class="linenos">62</span></a>                <span class="k">return</span>
-</span><span id="PredictionPipeline.test_model_ratings-63"><a href="#PredictionPipeline.test_model_ratings-63"><span class="linenos">63</span></a>
-</span><span id="PredictionPipeline.test_model_ratings-64"><a href="#PredictionPipeline.test_model_ratings-64"><span class="linenos">64</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">write_dataframe</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">predictions</span><span class="p">,</span> <span class="n">start_index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-</span><span id="PredictionPipeline.test_model_ratings-65"><a href="#PredictionPipeline.test_model_ratings-65"><span class="linenos">65</span></a>            <span class="n">start_index</span> <span class="o">+=</span> <span class="n">batch_size</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PredictionPipeline.test_model_ratings-37"><a href="#PredictionPipeline.test_model_ratings-37"><span class="linenos">37</span></a>    <span class="k">def</span> <span class="nf">test_model_ratings</span><span class="p">(</span>
+</span><span id="PredictionPipeline.test_model_ratings-38"><a href="#PredictionPipeline.test_model_ratings-38"><span class="linenos">38</span></a>            <span class="bp">self</span><span class="p">,</span>
+</span><span id="PredictionPipeline.test_model_ratings-39"><a href="#PredictionPipeline.test_model_ratings-39"><span class="linenos">39</span></a>            <span class="n">model</span><span class="p">:</span> <span class="n">BasePredictor</span><span class="p">,</span>
+</span><span id="PredictionPipeline.test_model_ratings-40"><a href="#PredictionPipeline.test_model_ratings-40"><span class="linenos">40</span></a>            <span class="n">user_batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+</span><span id="PredictionPipeline.test_model_ratings-41"><a href="#PredictionPipeline.test_model_ratings-41"><span class="linenos">41</span></a>            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="PredictionPipeline.test_model_ratings-42"><a href="#PredictionPipeline.test_model_ratings-42"><span class="linenos">42</span></a>        <span class="sd">&quot;&quot;&quot;Test the specified model for rating predictions.</span>
+</span><span id="PredictionPipeline.test_model_ratings-43"><a href="#PredictionPipeline.test_model_ratings-43"><span class="linenos">43</span></a>
+</span><span id="PredictionPipeline.test_model_ratings-44"><a href="#PredictionPipeline.test_model_ratings-44"><span class="linenos">44</span></a><span class="sd">        Predict ratings for each user-item pair that is present in the test set.</span>
+</span><span id="PredictionPipeline.test_model_ratings-45"><a href="#PredictionPipeline.test_model_ratings-45"><span class="linenos">45</span></a>
+</span><span id="PredictionPipeline.test_model_ratings-46"><a href="#PredictionPipeline.test_model_ratings-46"><span class="linenos">46</span></a><span class="sd">        Args:</span>
+</span><span id="PredictionPipeline.test_model_ratings-47"><a href="#PredictionPipeline.test_model_ratings-47"><span class="linenos">47</span></a><span class="sd">            model: the model that needs to be tested.</span>
+</span><span id="PredictionPipeline.test_model_ratings-48"><a href="#PredictionPipeline.test_model_ratings-48"><span class="linenos">48</span></a><span class="sd">            user_batch: the user batch to compute model ratings for.</span>
+</span><span id="PredictionPipeline.test_model_ratings-49"><a href="#PredictionPipeline.test_model_ratings-49"><span class="linenos">49</span></a>
+</span><span id="PredictionPipeline.test_model_ratings-50"><a href="#PredictionPipeline.test_model_ratings-50"><span class="linenos">50</span></a><span class="sd">        Raises:</span>
+</span><span id="PredictionPipeline.test_model_ratings-51"><a href="#PredictionPipeline.test_model_ratings-51"><span class="linenos">51</span></a><span class="sd">            ArithmeticError: possibly raised by a predictor model on testing.</span>
+</span><span id="PredictionPipeline.test_model_ratings-52"><a href="#PredictionPipeline.test_model_ratings-52"><span class="linenos">52</span></a><span class="sd">            MemoryError: possibly raised by a predictor model on testing.</span>
+</span><span id="PredictionPipeline.test_model_ratings-53"><a href="#PredictionPipeline.test_model_ratings-53"><span class="linenos">53</span></a><span class="sd">            RuntimeError: possibly raised by a predictor model on testing.</span>
+</span><span id="PredictionPipeline.test_model_ratings-54"><a href="#PredictionPipeline.test_model_ratings-54"><span class="linenos">54</span></a>
+</span><span id="PredictionPipeline.test_model_ratings-55"><a href="#PredictionPipeline.test_model_ratings-55"><span class="linenos">55</span></a><span class="sd">        Returns:</span>
+</span><span id="PredictionPipeline.test_model_ratings-56"><a href="#PredictionPipeline.test_model_ratings-56"><span class="linenos">56</span></a><span class="sd">            a dataframe containing the computed rating predictions.</span>
+</span><span id="PredictionPipeline.test_model_ratings-57"><a href="#PredictionPipeline.test_model_ratings-57"><span class="linenos">57</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PredictionPipeline.test_model_ratings-58"><a href="#PredictionPipeline.test_model_ratings-58"><span class="linenos">58</span></a>        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">user_batch</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -289,10 +268,15 @@ Utrecht University within the Software Project course.
 
 <p>Args:
     model: the model that needs to be tested.
-    output_path: path to the file where the ratings will be stored.
-    batch_size: number of users to test ratings for in a batch.
-    is_running: function that returns whether the pipeline
-        is still running. Stops early when False is returned.</p>
+    user_batch: the user batch to compute model ratings for.</p>
+
+<p>Raises:
+    ArithmeticError: possibly raised by a predictor model on testing.
+    MemoryError: possibly raised by a predictor model on testing.
+    RuntimeError: possibly raised by a predictor model on testing.</p>
+
+<p>Returns:
+    a dataframe containing the computed rating predictions.</p>
 </div>
 
 
@@ -306,10 +290,12 @@ Utrecht University within the Software Project course.
                 <dd id="PredictionPipeline.run_model" class="function"><a href="model_pipeline.html#ModelPipeline.run_model">run_model</a></dd>
                 <dd id="PredictionPipeline.begin_model" class="function"><a href="model_pipeline.html#ModelPipeline.begin_model">begin_model</a></dd>
                 <dd id="PredictionPipeline.create_model_output_dir" class="function"><a href="model_pipeline.html#ModelPipeline.create_model_output_dir">create_model_output_dir</a></dd>
+                <dd id="PredictionPipeline.get_model_output_dir" class="function"><a href="model_pipeline.html#ModelPipeline.get_model_output_dir">get_model_output_dir</a></dd>
                 <dd id="PredictionPipeline.end_model" class="function"><a href="model_pipeline.html#ModelPipeline.end_model">end_model</a></dd>
-                <dd id="PredictionPipeline.load_test_set" class="function"><a href="model_pipeline.html#ModelPipeline.load_test_set">load_test_set</a></dd>
-                <dd id="PredictionPipeline.load_train_set" class="function"><a href="model_pipeline.html#ModelPipeline.load_train_set">load_train_set</a></dd>
-                <dd id="PredictionPipeline.load_train_and_test_set" class="function"><a href="model_pipeline.html#ModelPipeline.load_train_and_test_set">load_train_and_test_set</a></dd>
+                <dd id="PredictionPipeline.on_load_train_set_matrix" class="function"><a href="model_pipeline.html#ModelPipeline.on_load_train_set_matrix">on_load_train_set_matrix</a></dd>
+                <dd id="PredictionPipeline.load_train_set_matrix" class="function"><a href="model_pipeline.html#ModelPipeline.load_train_set_matrix">load_train_set_matrix</a></dd>
+                <dd id="PredictionPipeline.load_train_set_dataframe" class="function"><a href="model_pipeline.html#ModelPipeline.load_train_set_dataframe">load_train_set_dataframe</a></dd>
+                <dd id="PredictionPipeline.load_test_set_dataframe" class="function"><a href="model_pipeline.html#ModelPipeline.load_test_set_dataframe">load_test_set_dataframe</a></dd>
                 <dd id="PredictionPipeline.reconstruct_ratings" class="function"><a href="model_pipeline.html#ModelPipeline.reconstruct_ratings">reconstruct_ratings</a></dd>
                 <dd id="PredictionPipeline.test_model" class="function"><a href="model_pipeline.html#ModelPipeline.test_model">test_model</a></dd>
                 <dd id="PredictionPipeline.train_model" class="function"><a href="model_pipeline.html#ModelPipeline.train_model">train_model</a></dd>

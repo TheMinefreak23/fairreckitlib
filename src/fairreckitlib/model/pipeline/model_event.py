@@ -5,12 +5,14 @@ Constants:
     ON_BEGIN_LOAD_TEST_SET: id of the event that is used when a test set is being loaded.
     ON_BEGIN_LOAD_TRAIN_SET: id of the event that is used when a train set is being loaded.
     ON_BEGIN_MODEL_PIPELINE: id of the event that is used when the model pipeline starts.
+    ON_BEGIN_RECONSTRUCT_RATINGS: id of the event that is used when reconstructing ratings starts.
     ON_BEGIN_TEST_MODEL: id of the event that is used when testing a model started.
     ON_BEGIN_TRAIN_MODEL: id of the event that is used when training a model started.
     ON_BEGIN_MODEL: id of the event that is used when a model computation started.
     ON_END_LOAD_TEST_SET: id of the event that is used when a test set has been loaded.
     ON_END_LOAD_TRAIN_SET: id of the event that is used when a train set has been loaded.
     ON_END_MODEL_PIPELINE: id of the event that is used when the model pipeline ends.
+    ON_END_RECONSTRUCT_RATINGS: id of the event that is used when reconstructing ratings finishes.
     ON_END_TEST_MODEL: id of the event that is used when testing a model finishes.
     ON_END_TRAIN_MODEL: id of the event that is used when training a model finishes.
     ON_END_MODEL: id of the event that is used when a model computation finishes.
@@ -40,12 +42,14 @@ from .model_config import ModelConfig
 ON_BEGIN_LOAD_TEST_SET = 'ModelPipeline.on_begin_load_test_set'
 ON_BEGIN_LOAD_TRAIN_SET = 'ModelPipeline.on_begin_load_train_set'
 ON_BEGIN_MODEL_PIPELINE = 'ModelPipeline.on_begin'
+ON_BEGIN_RECONSTRUCT_RATINGS = 'ModelPipeline.on_begin_reconstruct_ratings'
 ON_BEGIN_TEST_MODEL = 'ModelPipeline.on_begin_model_test'
 ON_BEGIN_TRAIN_MODEL = 'ModelPipeline.on_begin_model_train'
 ON_BEGIN_MODEL = 'ModelPipeline.on_begin_model'
 ON_END_LOAD_TEST_SET = 'ModelPipeline.on_end_load_test_set'
 ON_END_LOAD_TRAIN_SET = 'ModelPipeline.on_end_load_train_set'
 ON_END_MODEL_PIPELINE = 'ModelPipeline.on_end'
+ON_END_RECONSTRUCT_RATINGS = 'ModelPipeline.on_end_reconstruct_ratings'
 ON_END_TEST_MODEL = 'ModelPipeline.on_end_test_model'
 ON_END_TRAIN_MODEL = 'ModelPipeline.on_end_train_model'
 ON_END_MODEL = 'ModelPipeline.on_end_model'
@@ -84,6 +88,9 @@ def get_model_events() -> List[str]:
         a list of unique model pipeline event IDs.
     """
     return [
+        # FileEventArgs
+        ON_BEGIN_RECONSTRUCT_RATINGS,
+        ON_END_RECONSTRUCT_RATINGS,
         # DataframeEventArgs
         ON_BEGIN_LOAD_TRAIN_SET,
         ON_END_LOAD_TRAIN_SET,
@@ -119,6 +126,8 @@ def get_model_event_print_switch(elapsed_time: float=None) -> Dict[str,Callable[
                                 'to process', len(args.models_config), 'model(s)'),
         ON_BEGIN_MODEL:
             lambda args: print('Starting model:', args.model_name),
+        ON_BEGIN_RECONSTRUCT_RATINGS:
+            lambda args: print('Reconstructing ratings for:', args.file_path),
         ON_BEGIN_TEST_MODEL:
             lambda args: print('Testing model:', args.model_name),
         ON_BEGIN_TRAIN_MODEL:
@@ -133,6 +142,9 @@ def get_model_event_print_switch(elapsed_time: float=None) -> Dict[str,Callable[
         ON_END_MODEL:
             lambda args: print('Finished model:', args.model_name,
                                 f'in {elapsed_time:1.4f}s'),
+        ON_END_RECONSTRUCT_RATINGS:
+            lambda args: print(f'Reconstructed ratings in {elapsed_time:1.4f}s for:',
+                               args.file_path),
         ON_END_TEST_MODEL:
             lambda args: print(f'Tested model in {elapsed_time:1.4f}s'),
         ON_END_TRAIN_MODEL:

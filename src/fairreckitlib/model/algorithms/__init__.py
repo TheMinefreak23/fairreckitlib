@@ -5,6 +5,7 @@ Modules:
     base_algorithm: base class for all algorithms.
     base_predictor: (base) class for prediction algorithms.
     base_recommender: (base) class for recommender algorithms.
+    matrix: matrix classes that can be used for algorithm training.
     top_k_recommender: class to wrap a predictor as a recommender.
 
 Packages:

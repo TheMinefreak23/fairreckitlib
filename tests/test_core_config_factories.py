@@ -10,6 +10,7 @@ Functions:
     test_factory_create_from_tuples: test creation from tuple list.
     test_factory_name: check if names are correct.
     test_group_factory_add_and_available: test adding and checking objects in group factory.
+    test_resolve_factory: test resolving a (group) factory based on an object name.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
@@ -19,7 +20,7 @@ Utrecht University within the Software Project course.
 import pytest
 
 from src.fairreckitlib.core.config.config_factories import \
-    Factory, GroupFactory, create_factory_from_list
+    Factory, GroupFactory, create_factory_from_list, resolve_factory
 from src.fairreckitlib.core.core_constants import KEY_NAME, KEY_PARAMS
 from src.fairreckitlib.core.config.config_parameters import \
     ConfigParameters, create_empty_parameters
@@ -174,3 +175,27 @@ def test_group_factory_add_and_available(create_child_factory):
         else:
             assert factory_name in dummy_names, 'factory name should be in the original list'
             assert len(factory_availability) == 0, 'each original factory has no availability'
+
+
+def test_resolve_factory():
+    """Test resolving a (group) factory based on an object name."""
+    obj_name = 'obj'
+
+    factory = GroupFactory('resolve_failure')
+    assert resolve_factory(obj_name, factory) is None, \
+        'did not expected factory to be resolved for unknown object'
+
+    factory = Factory('factory')
+    factory.add_obj(obj_name, lambda n, ps: None, None)
+
+    group_factory = None
+    sub_group_factory = factory
+    for i in range(0, 10):
+        if group_factory is not None:
+            sub_group_factory = group_factory
+
+        group_factory = GroupFactory('group' + str(i))
+        group_factory.add_factory(sub_group_factory)
+
+        assert resolve_factory(obj_name, group_factory) == factory, \
+            'expected factory to be resolved with ' + str(i) + ' layers'

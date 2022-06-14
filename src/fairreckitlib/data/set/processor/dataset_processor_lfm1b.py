@@ -17,8 +17,9 @@ import numpy as np
 import pandas as pd
 from scipy import sparse
 
-from ..dataset_config import DatasetIndexConfig, DatasetMatrixConfig, DatasetTableConfig
-from ..dataset_config import DATASET_RATINGS_IMPLICIT, create_dataset_table_config
+from ..dataset_config import DATASET_RATINGS_IMPLICIT, RatingMatrixConfig
+from ..dataset_config import \
+    DatasetIndexConfig, DatasetMatrixConfig, DatasetTableConfig, create_dataset_table_config
 from ..dataset_constants import TABLE_FILE_PREFIX
 from .dataset_processor_lfm import DatasetProcessorLFM
 
@@ -213,7 +214,7 @@ class DatasetProcessorLFM1B(DatasetProcessorLFM):
                 artist_table_config.columns += ['artist_genres']
 
         artist_table_config.file.name = TABLE_FILE_PREFIX + self.dataset_name + '_artists.tsv.bz2'
-        artist_table_config.file.compression = 'bz2'
+        artist_table_config.file.options.compression = 'bz2'
         artist_table_config.num_records = len(artist_table)
 
         # store generated artist table
@@ -319,9 +320,11 @@ class DatasetProcessorLFM1B(DatasetProcessorLFM):
 
         return DatasetMatrixConfig(
             user_artist_table_config,
-            user_artist_matrix['matrix_count'].min(),
-            user_artist_matrix['matrix_count'].max(),
-            DATASET_RATINGS_IMPLICIT,
+            RatingMatrixConfig(
+                user_artist_matrix['matrix_count'].min(),
+                user_artist_matrix['matrix_count'].max(),
+                DATASET_RATINGS_IMPLICIT
+            ),
             user_index_config,
             artist_index_config
         )

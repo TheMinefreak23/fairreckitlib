@@ -73,11 +73,15 @@ def run_model_pipelines(
             ))
             continue
 
+        model_pipeline = api_factory.create_pipeline(
+            api_factory,
+            pipeline_config.data_transition,
+            event_dispatcher
+        )
+
         try:
-            model_pipeline = api_factory.create_pipeline(api_factory, event_dispatcher)
             dirs = model_pipeline.run(
                 pipeline_config.output_dir,
-                pipeline_config.data_transition,
                 models,
                 is_running,
                 **kwargs

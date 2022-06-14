@@ -50,7 +50,8 @@ def print_parse_event(event_args: ParseEventArgs) -> None:
     Args:
         event_args: the arguments to print.
     """
-    print(event_args.message)
+    if len(event_args.message) > 0:
+        print(event_args.message)
     if event_args.one_of_list is not None:
         print('\texpected one of: ' + str(event_args.one_of_list))
     if event_args.expected_type is not None:

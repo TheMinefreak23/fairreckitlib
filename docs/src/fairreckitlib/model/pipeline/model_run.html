@@ -154,24 +154,28 @@ Utrecht University within the Software Project course.
 </span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a>            <span class="p">))</span>
 </span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>            <span class="k">continue</span>
 </span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>
-</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>        <span class="k">try</span><span class="p">:</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>            <span class="n">model_pipeline</span> <span class="o">=</span> <span class="n">api_factory</span><span class="o">.</span><span class="n">create_pipeline</span><span class="p">(</span><span class="n">api_factory</span><span class="p">,</span> <span class="n">event_dispatcher</span><span class="p">)</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>            <span class="n">dirs</span> <span class="o">=</span> <span class="n">model_pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>                <span class="n">pipeline_config</span><span class="o">.</span><span class="n">output_dir</span><span class="p">,</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>                <span class="n">pipeline_config</span><span class="o">.</span><span class="n">data_transition</span><span class="p">,</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>                <span class="n">models</span><span class="p">,</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>                <span class="n">is_running</span><span class="p">,</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>                <span class="o">**</span><span class="n">kwargs</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>            <span class="p">)</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>            <span class="k">continue</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>
-</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>        <span class="n">model_dirs</span> <span class="o">+=</span> <span class="n">dirs</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a>
-</span><span id="L-90"><a href="#L-90"><span class="linenos">90</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_running</span><span class="p">():</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos">91</span></a>            <span class="k">return</span> <span class="n">model_dirs</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos">92</span></a>
-</span><span id="L-93"><a href="#L-93"><span class="linenos">93</span></a>    <span class="k">return</span> <span class="n">model_dirs</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>        <span class="n">model_pipeline</span> <span class="o">=</span> <span class="n">api_factory</span><span class="o">.</span><span class="n">create_pipeline</span><span class="p">(</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a>            <span class="n">api_factory</span><span class="p">,</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>            <span class="n">pipeline_config</span><span class="o">.</span><span class="n">data_transition</span><span class="p">,</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a>            <span class="n">event_dispatcher</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a>        <span class="p">)</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>        <span class="k">try</span><span class="p">:</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a>            <span class="n">dirs</span> <span class="o">=</span> <span class="n">model_pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos">84</span></a>                <span class="n">pipeline_config</span><span class="o">.</span><span class="n">output_dir</span><span class="p">,</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos">85</span></a>                <span class="n">models</span><span class="p">,</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos">86</span></a>                <span class="n">is_running</span><span class="p">,</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos">87</span></a>                <span class="o">**</span><span class="n">kwargs</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos">88</span></a>            <span class="p">)</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos">89</span></a>        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos">90</span></a>            <span class="k">continue</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos">91</span></a>
+</span><span id="L-92"><a href="#L-92"><span class="linenos">92</span></a>        <span class="n">model_dirs</span> <span class="o">+=</span> <span class="n">dirs</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos">93</span></a>
+</span><span id="L-94"><a href="#L-94"><span class="linenos">94</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_running</span><span class="p">():</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos">95</span></a>            <span class="k">return</span> <span class="n">model_dirs</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos">96</span></a>
+</span><span id="L-97"><a href="#L-97"><span class="linenos">97</span></a>    <span class="k">return</span> <span class="n">model_dirs</span>
 </span></pre></div>
 
 
@@ -272,24 +276,28 @@ models: dictionary with api model configurations to compute.</p>
 </span><span id="run_model_pipelines-74"><a href="#run_model_pipelines-74"><span class="linenos">74</span></a>            <span class="p">))</span>
 </span><span id="run_model_pipelines-75"><a href="#run_model_pipelines-75"><span class="linenos">75</span></a>            <span class="k">continue</span>
 </span><span id="run_model_pipelines-76"><a href="#run_model_pipelines-76"><span class="linenos">76</span></a>
-</span><span id="run_model_pipelines-77"><a href="#run_model_pipelines-77"><span class="linenos">77</span></a>        <span class="k">try</span><span class="p">:</span>
-</span><span id="run_model_pipelines-78"><a href="#run_model_pipelines-78"><span class="linenos">78</span></a>            <span class="n">model_pipeline</span> <span class="o">=</span> <span class="n">api_factory</span><span class="o">.</span><span class="n">create_pipeline</span><span class="p">(</span><span class="n">api_factory</span><span class="p">,</span> <span class="n">event_dispatcher</span><span class="p">)</span>
-</span><span id="run_model_pipelines-79"><a href="#run_model_pipelines-79"><span class="linenos">79</span></a>            <span class="n">dirs</span> <span class="o">=</span> <span class="n">model_pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-</span><span id="run_model_pipelines-80"><a href="#run_model_pipelines-80"><span class="linenos">80</span></a>                <span class="n">pipeline_config</span><span class="o">.</span><span class="n">output_dir</span><span class="p">,</span>
-</span><span id="run_model_pipelines-81"><a href="#run_model_pipelines-81"><span class="linenos">81</span></a>                <span class="n">pipeline_config</span><span class="o">.</span><span class="n">data_transition</span><span class="p">,</span>
-</span><span id="run_model_pipelines-82"><a href="#run_model_pipelines-82"><span class="linenos">82</span></a>                <span class="n">models</span><span class="p">,</span>
-</span><span id="run_model_pipelines-83"><a href="#run_model_pipelines-83"><span class="linenos">83</span></a>                <span class="n">is_running</span><span class="p">,</span>
-</span><span id="run_model_pipelines-84"><a href="#run_model_pipelines-84"><span class="linenos">84</span></a>                <span class="o">**</span><span class="n">kwargs</span>
-</span><span id="run_model_pipelines-85"><a href="#run_model_pipelines-85"><span class="linenos">85</span></a>            <span class="p">)</span>
-</span><span id="run_model_pipelines-86"><a href="#run_model_pipelines-86"><span class="linenos">86</span></a>        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
-</span><span id="run_model_pipelines-87"><a href="#run_model_pipelines-87"><span class="linenos">87</span></a>            <span class="k">continue</span>
-</span><span id="run_model_pipelines-88"><a href="#run_model_pipelines-88"><span class="linenos">88</span></a>
-</span><span id="run_model_pipelines-89"><a href="#run_model_pipelines-89"><span class="linenos">89</span></a>        <span class="n">model_dirs</span> <span class="o">+=</span> <span class="n">dirs</span>
-</span><span id="run_model_pipelines-90"><a href="#run_model_pipelines-90"><span class="linenos">90</span></a>
-</span><span id="run_model_pipelines-91"><a href="#run_model_pipelines-91"><span class="linenos">91</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_running</span><span class="p">():</span>
-</span><span id="run_model_pipelines-92"><a href="#run_model_pipelines-92"><span class="linenos">92</span></a>            <span class="k">return</span> <span class="n">model_dirs</span>
-</span><span id="run_model_pipelines-93"><a href="#run_model_pipelines-93"><span class="linenos">93</span></a>
-</span><span id="run_model_pipelines-94"><a href="#run_model_pipelines-94"><span class="linenos">94</span></a>    <span class="k">return</span> <span class="n">model_dirs</span>
+</span><span id="run_model_pipelines-77"><a href="#run_model_pipelines-77"><span class="linenos">77</span></a>        <span class="n">model_pipeline</span> <span class="o">=</span> <span class="n">api_factory</span><span class="o">.</span><span class="n">create_pipeline</span><span class="p">(</span>
+</span><span id="run_model_pipelines-78"><a href="#run_model_pipelines-78"><span class="linenos">78</span></a>            <span class="n">api_factory</span><span class="p">,</span>
+</span><span id="run_model_pipelines-79"><a href="#run_model_pipelines-79"><span class="linenos">79</span></a>            <span class="n">pipeline_config</span><span class="o">.</span><span class="n">data_transition</span><span class="p">,</span>
+</span><span id="run_model_pipelines-80"><a href="#run_model_pipelines-80"><span class="linenos">80</span></a>            <span class="n">event_dispatcher</span>
+</span><span id="run_model_pipelines-81"><a href="#run_model_pipelines-81"><span class="linenos">81</span></a>        <span class="p">)</span>
+</span><span id="run_model_pipelines-82"><a href="#run_model_pipelines-82"><span class="linenos">82</span></a>
+</span><span id="run_model_pipelines-83"><a href="#run_model_pipelines-83"><span class="linenos">83</span></a>        <span class="k">try</span><span class="p">:</span>
+</span><span id="run_model_pipelines-84"><a href="#run_model_pipelines-84"><span class="linenos">84</span></a>            <span class="n">dirs</span> <span class="o">=</span> <span class="n">model_pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+</span><span id="run_model_pipelines-85"><a href="#run_model_pipelines-85"><span class="linenos">85</span></a>                <span class="n">pipeline_config</span><span class="o">.</span><span class="n">output_dir</span><span class="p">,</span>
+</span><span id="run_model_pipelines-86"><a href="#run_model_pipelines-86"><span class="linenos">86</span></a>                <span class="n">models</span><span class="p">,</span>
+</span><span id="run_model_pipelines-87"><a href="#run_model_pipelines-87"><span class="linenos">87</span></a>                <span class="n">is_running</span><span class="p">,</span>
+</span><span id="run_model_pipelines-88"><a href="#run_model_pipelines-88"><span class="linenos">88</span></a>                <span class="o">**</span><span class="n">kwargs</span>
+</span><span id="run_model_pipelines-89"><a href="#run_model_pipelines-89"><span class="linenos">89</span></a>            <span class="p">)</span>
+</span><span id="run_model_pipelines-90"><a href="#run_model_pipelines-90"><span class="linenos">90</span></a>        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+</span><span id="run_model_pipelines-91"><a href="#run_model_pipelines-91"><span class="linenos">91</span></a>            <span class="k">continue</span>
+</span><span id="run_model_pipelines-92"><a href="#run_model_pipelines-92"><span class="linenos">92</span></a>
+</span><span id="run_model_pipelines-93"><a href="#run_model_pipelines-93"><span class="linenos">93</span></a>        <span class="n">model_dirs</span> <span class="o">+=</span> <span class="n">dirs</span>
+</span><span id="run_model_pipelines-94"><a href="#run_model_pipelines-94"><span class="linenos">94</span></a>
+</span><span id="run_model_pipelines-95"><a href="#run_model_pipelines-95"><span class="linenos">95</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_running</span><span class="p">():</span>
+</span><span id="run_model_pipelines-96"><a href="#run_model_pipelines-96"><span class="linenos">96</span></a>            <span class="k">return</span> <span class="n">model_dirs</span>
+</span><span id="run_model_pipelines-97"><a href="#run_model_pipelines-97"><span class="linenos">97</span></a>
+</span><span id="run_model_pipelines-98"><a href="#run_model_pipelines-98"><span class="linenos">98</span></a>    <span class="k">return</span> <span class="n">model_dirs</span>
 </span></pre></div>
 
 
