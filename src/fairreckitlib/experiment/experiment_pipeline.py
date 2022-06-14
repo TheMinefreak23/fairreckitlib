@@ -21,6 +21,7 @@ from ..core.config.config_factories import GroupFactory
 from ..core.events.event_dispatcher import EventDispatcher
 from ..core.events.event_error import ON_FAILURE_ERROR, ErrorEventArgs
 from ..core.io.io_create import create_dir, create_json
+from ..data.filter.filter_factory import KEY_DATA_SUBSET
 from ..data.data_factory import KEY_DATA
 from ..data.pipeline.data_run import DataPipelineConfig, run_data_pipelines
 from ..data.set.dataset_registry import DataRegistry
@@ -85,12 +86,13 @@ class ExperimentPipeline:
         # prepare experiment pipeline
         results, start_time = self.start_run(output_dir, experiment_config)
 
+        data_factory = self.experiment_factory.get_factory(KEY_DATA)
         # run all data pipelines
         data_result = run_data_pipelines(
             DataPipelineConfig(
                 output_dir,
                 self.data_registry,
-                self.experiment_factory.get_factory(KEY_DATA),
+                data_factory,
                 experiment_config.datasets
             ),
             self.event_dispatcher,
@@ -137,6 +139,7 @@ class ExperimentPipeline:
                     EvaluationPipelineConfig(
                         model_dirs,
                         data_transition,
+                        data_factory.get_factory(KEY_DATA_SUBSET),
                         evaluation_factory.get_factory(experiment_config.type),
                         experiment_config.evaluation
                     ),
