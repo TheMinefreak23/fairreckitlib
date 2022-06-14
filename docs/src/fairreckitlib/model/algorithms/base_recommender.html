@@ -173,124 +173,150 @@ Utrecht University within the Software Project course.
 </span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">            user: the user ID to compute recommendations for.</span>
 </span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
 </span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">        Returns:</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">            a dataframe with the columns: &#39;item&#39; and &#39;score&#39;.</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>        <span class="k">if</span> <span class="n">user</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="p">:</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">])</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_recommend</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>    <span class="k">def</span> <span class="nf">on_recommend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>        <span class="sd">&quot;&quot;&quot;Compute item recommendations for the specified user.</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">        The user is assumed to be present in the train set that the</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">        recommender was trained on.</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">        Derived implementations are expected to return a dataframe</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">        with the &#39;score&#39; column in descending order.</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">        Args:</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">            user: the user ID to compute recommendations for.</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">        Returns:</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="sd">            a dataframe with the columns: &#39;item&#39; and &#39;score&#39;.</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>    <span class="k">def</span> <span class="nf">recommend_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">users</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>        <span class="sd">&quot;&quot;&quot;Compute the items recommendations for each of the specified users.</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">        Raises:</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">            ArithmeticError: possibly raised by a recommender on testing.</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">            MemoryError: possibly raised by a recommender on testing.</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">            RuntimeError: when the recommender is not trained yet.</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">        Returns:</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">            a dataframe with the columns: &#39;item&#39; and &#39;score&#39;.</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Recommender is not trained for item recommendations&#39;</span><span class="p">)</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span><span class="o">.</span><span class="n">knows_user</span><span class="p">(</span><span class="n">user</span><span class="p">):</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">])</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_recommend</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>    <span class="k">def</span> <span class="nf">on_recommend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>        <span class="sd">&quot;&quot;&quot;Compute item recommendations for the specified user.</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="sd">        The user is assumed to be present in the train set that the</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">        recommender was trained on.</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="sd">        Derived implementations are expected to return a dataframe</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">        with the &#39;score&#39; column in descending order.</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">        Args:</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">            user: the user ID to compute recommendations for.</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">        All the users that are not present in the train set that the recommender</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">        was trained on are filtered before recommendations are made.</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">        Args:</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">            users: the user ID&#39;s to compute recommendations for.</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">        Returns:</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">            a dataframe with the columns: &#39;rank&#39;, &#39;user&#39;, &#39;item&#39;, &#39;score&#39;.</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>        <span class="n">users</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">users</span> <span class="k">if</span> <span class="n">u</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="p">]</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">users</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rank&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">])</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_recommend_batch</span><span class="p">(</span><span class="n">users</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">        Raises:</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">            ArithmeticError: possibly raised by a recommender on testing.</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">            MemoryError: possibly raised by a recommender on testing.</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">            RuntimeError: when the recommender is not trained yet.</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">        Returns:</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">            a dataframe with the columns: &#39;item&#39; and &#39;score&#39;.</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>    <span class="k">def</span> <span class="nf">recommend_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">users</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>        <span class="sd">&quot;&quot;&quot;Compute the items recommendations for each of the specified users.</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        All the users that are not present in the train set that the recommender</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">        was trained on are filtered before recommendations are made.</span>
 </span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>    <span class="k">def</span> <span class="nf">on_recommend_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">users</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>        <span class="sd">&quot;&quot;&quot;Compute the items recommendations for each of the specified users.</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">        All the users are assumed to be present in the train set that</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">        the recommender was trained on.</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">        A standard batch implementation is provided, but derived classes are</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">        allowed to override batching with their own logic.</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">        Args:</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">            users: the user ID&#39;s to compute recommendations for.</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">        Returns:</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">            a dataframe with the columns: &#39;rank&#39;, &#39;user&#39;, &#39;item&#39;, &#39;score&#39;.</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">user</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">users</span><span class="p">):</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>            <span class="n">item_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recommend</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
-</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>            <span class="n">item_scores</span><span class="p">[</span><span class="s1">&#39;rank&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">num_items</span><span class="p">)</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>            <span class="n">item_scores</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">num_items</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
-</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>
-</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a>                <span class="n">item_scores</span><span class="p">[[</span><span class="s1">&#39;rank&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">]],</span>
-</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a>                <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a>            <span class="p">)</span>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>        <span class="k">return</span> <span class="n">result</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a><span class="k">class</span> <span class="nc">Recommender</span><span class="p">(</span><span class="n">BaseRecommender</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>    <span class="sd">&quot;&quot;&quot;Recommender that implements basic shared functionality.&quot;&quot;&quot;</span>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">num_threads</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a>                 <span class="n">rated_items_filter</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a>        <span class="sd">&quot;&quot;&quot;Construct the recommender.</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">        Args:</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">            users: the user ID&#39;s to compute recommendations for.</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">        Raises:</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">            ArithmeticError: possibly raised by a recommender on testing.</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">            MemoryError: possibly raised by a recommender on testing.</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">            RuntimeError: when the recommender is not trained yet.</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">        Returns:</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">            a dataframe with the columns: &#39;rank&#39;, &#39;user&#39;, &#39;item&#39;, &#39;score&#39;.</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Recommender is not trained for item recommendations&#39;</span><span class="p">)</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>        <span class="n">users</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">users</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span><span class="o">.</span><span class="n">knows_user</span><span class="p">(</span><span class="n">u</span><span class="p">)]</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">users</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rank&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">])</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_recommend_batch</span><span class="p">(</span><span class="n">users</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>    <span class="k">def</span> <span class="nf">on_recommend_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">users</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>        <span class="sd">&quot;&quot;&quot;Compute the items recommendations for each of the specified users.</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>
+</span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a><span class="sd">        All the users are assumed to be present in the train set that</span>
+</span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="sd">        the recommender was trained on.</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="sd">        A standard batch implementation is provided, but derived classes are</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="sd">        allowed to override batching with their own logic.</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a><span class="sd">        Args:</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a><span class="sd">            users: the user ID&#39;s to compute recommendations for.</span>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="sd">        Raises:</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a><span class="sd">            ArithmeticError: possibly raised by a recommender on testing.</span>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="sd">            MemoryError: possibly raised by a recommender on testing.</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="sd">            RuntimeError: when the recommender is not trained yet.</span>
 </span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="sd">        Args:</span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">            name: the name of the recommender.</span>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">            params: the parameters of the recommender.</span>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="sd">            num_threads: the max number of threads the recommender can use.</span>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a><span class="sd">            rated_items_filter: whether to filter already rated items when</span>
-</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a><span class="sd">                producing item recommendations.</span>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>        <span class="n">BaseRecommender</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rated_items_filter</span><span class="p">)</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span> <span class="o">=</span> <span class="n">num_threads</span>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">recommender_name</span> <span class="o">=</span> <span class="n">name</span>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the recommender.</span>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">        Returns:</span>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a><span class="sd">            the recommender name.</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">recommender_name</span>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>
-</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>    <span class="k">def</span> <span class="nf">get_num_threads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>        <span class="sd">&quot;&quot;&quot;Get the max number of threads the recommender can use.</span>
-</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="sd">        Returns:</span>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="sd">            the number of threads.</span>
-</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span>
-</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>
-</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the recommender.</span>
-</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>
-</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="sd">        Returns:</span>
-</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a><span class="sd">            the recommender parameters.</span>
-</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="sd">        Returns:</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">            a dataframe with the columns: &#39;rank&#39;, &#39;user&#39;, &#39;item&#39;, &#39;score&#39;.</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>
+</span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>        <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="p">:</span>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>            <span class="n">item_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recommend</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>            <span class="n">item_scores</span><span class="p">[</span><span class="s1">&#39;rank&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">num_items</span><span class="p">)</span>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>            <span class="n">item_scores</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">num_items</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>                <span class="n">item_scores</span><span class="p">[[</span><span class="s1">&#39;rank&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">]],</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>                <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a>            <span class="p">)</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>        <span class="k">return</span> <span class="n">result</span>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="k">class</span> <span class="nc">Recommender</span><span class="p">(</span><span class="n">BaseRecommender</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+</span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>    <span class="sd">&quot;&quot;&quot;Recommender that implements basic shared functionality.&quot;&quot;&quot;</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">num_threads</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>                 <span class="n">rated_items_filter</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>        <span class="sd">&quot;&quot;&quot;Construct the recommender.</span>
+</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>
+</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a><span class="sd">        Args:</span>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a><span class="sd">            name: the name of the recommender.</span>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a><span class="sd">            params: the parameters of the recommender.</span>
+</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a><span class="sd">            num_threads: the max number of threads the recommender can use.</span>
+</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a><span class="sd">            rated_items_filter: whether to filter already rated items when</span>
+</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="sd">                producing item recommendations.</span>
+</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a>        <span class="n">BaseRecommender</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rated_items_filter</span><span class="p">)</span>
+</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span> <span class="o">=</span> <span class="n">num_threads</span>
+</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">recommender_name</span> <span class="o">=</span> <span class="n">name</span>
+</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a>
+</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the recommender.</span>
+</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a>
+</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a><span class="sd">        Returns:</span>
+</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a><span class="sd">            the recommender name.</span>
+</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">recommender_name</span>
+</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>
+</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a>    <span class="k">def</span> <span class="nf">get_num_threads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>        <span class="sd">&quot;&quot;&quot;Get the max number of threads the recommender can use.</span>
+</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>
+</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a><span class="sd">        Returns:</span>
+</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="sd">            the number of threads.</span>
+</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span>
+</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a>
+</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the recommender.</span>
+</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a>
+</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a><span class="sd">        Returns:</span>
+</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a><span class="sd">            the recommender parameters.</span>
+</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -353,80 +379,106 @@ Utrecht University within the Software Project course.
 </span><span id="BaseRecommender-67"><a href="#BaseRecommender-67"><span class="linenos"> 67</span></a><span class="sd">            user: the user ID to compute recommendations for.</span>
 </span><span id="BaseRecommender-68"><a href="#BaseRecommender-68"><span class="linenos"> 68</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
 </span><span id="BaseRecommender-69"><a href="#BaseRecommender-69"><span class="linenos"> 69</span></a>
-</span><span id="BaseRecommender-70"><a href="#BaseRecommender-70"><span class="linenos"> 70</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseRecommender-71"><a href="#BaseRecommender-71"><span class="linenos"> 71</span></a><span class="sd">            a dataframe with the columns: &#39;item&#39; and &#39;score&#39;.</span>
-</span><span id="BaseRecommender-72"><a href="#BaseRecommender-72"><span class="linenos"> 72</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseRecommender-73"><a href="#BaseRecommender-73"><span class="linenos"> 73</span></a>        <span class="k">if</span> <span class="n">user</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="p">:</span>
-</span><span id="BaseRecommender-74"><a href="#BaseRecommender-74"><span class="linenos"> 74</span></a>            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">])</span>
-</span><span id="BaseRecommender-75"><a href="#BaseRecommender-75"><span class="linenos"> 75</span></a>
-</span><span id="BaseRecommender-76"><a href="#BaseRecommender-76"><span class="linenos"> 76</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_recommend</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
-</span><span id="BaseRecommender-77"><a href="#BaseRecommender-77"><span class="linenos"> 77</span></a>
-</span><span id="BaseRecommender-78"><a href="#BaseRecommender-78"><span class="linenos"> 78</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseRecommender-79"><a href="#BaseRecommender-79"><span class="linenos"> 79</span></a>    <span class="k">def</span> <span class="nf">on_recommend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="BaseRecommender-80"><a href="#BaseRecommender-80"><span class="linenos"> 80</span></a>        <span class="sd">&quot;&quot;&quot;Compute item recommendations for the specified user.</span>
-</span><span id="BaseRecommender-81"><a href="#BaseRecommender-81"><span class="linenos"> 81</span></a>
-</span><span id="BaseRecommender-82"><a href="#BaseRecommender-82"><span class="linenos"> 82</span></a><span class="sd">        The user is assumed to be present in the train set that the</span>
-</span><span id="BaseRecommender-83"><a href="#BaseRecommender-83"><span class="linenos"> 83</span></a><span class="sd">        recommender was trained on.</span>
-</span><span id="BaseRecommender-84"><a href="#BaseRecommender-84"><span class="linenos"> 84</span></a><span class="sd">        Derived implementations are expected to return a dataframe</span>
-</span><span id="BaseRecommender-85"><a href="#BaseRecommender-85"><span class="linenos"> 85</span></a><span class="sd">        with the &#39;score&#39; column in descending order.</span>
-</span><span id="BaseRecommender-86"><a href="#BaseRecommender-86"><span class="linenos"> 86</span></a>
-</span><span id="BaseRecommender-87"><a href="#BaseRecommender-87"><span class="linenos"> 87</span></a><span class="sd">        Args:</span>
-</span><span id="BaseRecommender-88"><a href="#BaseRecommender-88"><span class="linenos"> 88</span></a><span class="sd">            user: the user ID to compute recommendations for.</span>
-</span><span id="BaseRecommender-89"><a href="#BaseRecommender-89"><span class="linenos"> 89</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
-</span><span id="BaseRecommender-90"><a href="#BaseRecommender-90"><span class="linenos"> 90</span></a>
-</span><span id="BaseRecommender-91"><a href="#BaseRecommender-91"><span class="linenos"> 91</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseRecommender-92"><a href="#BaseRecommender-92"><span class="linenos"> 92</span></a><span class="sd">            a dataframe with the columns: &#39;item&#39; and &#39;score&#39;.</span>
-</span><span id="BaseRecommender-93"><a href="#BaseRecommender-93"><span class="linenos"> 93</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseRecommender-94"><a href="#BaseRecommender-94"><span class="linenos"> 94</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-</span><span id="BaseRecommender-95"><a href="#BaseRecommender-95"><span class="linenos"> 95</span></a>
-</span><span id="BaseRecommender-96"><a href="#BaseRecommender-96"><span class="linenos"> 96</span></a>    <span class="k">def</span> <span class="nf">recommend_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">users</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="BaseRecommender-97"><a href="#BaseRecommender-97"><span class="linenos"> 97</span></a>        <span class="sd">&quot;&quot;&quot;Compute the items recommendations for each of the specified users.</span>
+</span><span id="BaseRecommender-70"><a href="#BaseRecommender-70"><span class="linenos"> 70</span></a><span class="sd">        Raises:</span>
+</span><span id="BaseRecommender-71"><a href="#BaseRecommender-71"><span class="linenos"> 71</span></a><span class="sd">            ArithmeticError: possibly raised by a recommender on testing.</span>
+</span><span id="BaseRecommender-72"><a href="#BaseRecommender-72"><span class="linenos"> 72</span></a><span class="sd">            MemoryError: possibly raised by a recommender on testing.</span>
+</span><span id="BaseRecommender-73"><a href="#BaseRecommender-73"><span class="linenos"> 73</span></a><span class="sd">            RuntimeError: when the recommender is not trained yet.</span>
+</span><span id="BaseRecommender-74"><a href="#BaseRecommender-74"><span class="linenos"> 74</span></a>
+</span><span id="BaseRecommender-75"><a href="#BaseRecommender-75"><span class="linenos"> 75</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseRecommender-76"><a href="#BaseRecommender-76"><span class="linenos"> 76</span></a><span class="sd">            a dataframe with the columns: &#39;item&#39; and &#39;score&#39;.</span>
+</span><span id="BaseRecommender-77"><a href="#BaseRecommender-77"><span class="linenos"> 77</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseRecommender-78"><a href="#BaseRecommender-78"><span class="linenos"> 78</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseRecommender-79"><a href="#BaseRecommender-79"><span class="linenos"> 79</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Recommender is not trained for item recommendations&#39;</span><span class="p">)</span>
+</span><span id="BaseRecommender-80"><a href="#BaseRecommender-80"><span class="linenos"> 80</span></a>
+</span><span id="BaseRecommender-81"><a href="#BaseRecommender-81"><span class="linenos"> 81</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span><span class="o">.</span><span class="n">knows_user</span><span class="p">(</span><span class="n">user</span><span class="p">):</span>
+</span><span id="BaseRecommender-82"><a href="#BaseRecommender-82"><span class="linenos"> 82</span></a>            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">])</span>
+</span><span id="BaseRecommender-83"><a href="#BaseRecommender-83"><span class="linenos"> 83</span></a>
+</span><span id="BaseRecommender-84"><a href="#BaseRecommender-84"><span class="linenos"> 84</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_recommend</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
+</span><span id="BaseRecommender-85"><a href="#BaseRecommender-85"><span class="linenos"> 85</span></a>
+</span><span id="BaseRecommender-86"><a href="#BaseRecommender-86"><span class="linenos"> 86</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseRecommender-87"><a href="#BaseRecommender-87"><span class="linenos"> 87</span></a>    <span class="k">def</span> <span class="nf">on_recommend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="BaseRecommender-88"><a href="#BaseRecommender-88"><span class="linenos"> 88</span></a>        <span class="sd">&quot;&quot;&quot;Compute item recommendations for the specified user.</span>
+</span><span id="BaseRecommender-89"><a href="#BaseRecommender-89"><span class="linenos"> 89</span></a>
+</span><span id="BaseRecommender-90"><a href="#BaseRecommender-90"><span class="linenos"> 90</span></a><span class="sd">        The user is assumed to be present in the train set that the</span>
+</span><span id="BaseRecommender-91"><a href="#BaseRecommender-91"><span class="linenos"> 91</span></a><span class="sd">        recommender was trained on.</span>
+</span><span id="BaseRecommender-92"><a href="#BaseRecommender-92"><span class="linenos"> 92</span></a><span class="sd">        Derived implementations are expected to return a dataframe</span>
+</span><span id="BaseRecommender-93"><a href="#BaseRecommender-93"><span class="linenos"> 93</span></a><span class="sd">        with the &#39;score&#39; column in descending order.</span>
+</span><span id="BaseRecommender-94"><a href="#BaseRecommender-94"><span class="linenos"> 94</span></a>
+</span><span id="BaseRecommender-95"><a href="#BaseRecommender-95"><span class="linenos"> 95</span></a><span class="sd">        Args:</span>
+</span><span id="BaseRecommender-96"><a href="#BaseRecommender-96"><span class="linenos"> 96</span></a><span class="sd">            user: the user ID to compute recommendations for.</span>
+</span><span id="BaseRecommender-97"><a href="#BaseRecommender-97"><span class="linenos"> 97</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
 </span><span id="BaseRecommender-98"><a href="#BaseRecommender-98"><span class="linenos"> 98</span></a>
-</span><span id="BaseRecommender-99"><a href="#BaseRecommender-99"><span class="linenos"> 99</span></a><span class="sd">        All the users that are not present in the train set that the recommender</span>
-</span><span id="BaseRecommender-100"><a href="#BaseRecommender-100"><span class="linenos">100</span></a><span class="sd">        was trained on are filtered before recommendations are made.</span>
-</span><span id="BaseRecommender-101"><a href="#BaseRecommender-101"><span class="linenos">101</span></a>
-</span><span id="BaseRecommender-102"><a href="#BaseRecommender-102"><span class="linenos">102</span></a><span class="sd">        Args:</span>
-</span><span id="BaseRecommender-103"><a href="#BaseRecommender-103"><span class="linenos">103</span></a><span class="sd">            users: the user ID&#39;s to compute recommendations for.</span>
-</span><span id="BaseRecommender-104"><a href="#BaseRecommender-104"><span class="linenos">104</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
-</span><span id="BaseRecommender-105"><a href="#BaseRecommender-105"><span class="linenos">105</span></a>
-</span><span id="BaseRecommender-106"><a href="#BaseRecommender-106"><span class="linenos">106</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseRecommender-107"><a href="#BaseRecommender-107"><span class="linenos">107</span></a><span class="sd">            a dataframe with the columns: &#39;rank&#39;, &#39;user&#39;, &#39;item&#39;, &#39;score&#39;.</span>
-</span><span id="BaseRecommender-108"><a href="#BaseRecommender-108"><span class="linenos">108</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseRecommender-109"><a href="#BaseRecommender-109"><span class="linenos">109</span></a>        <span class="n">users</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">users</span> <span class="k">if</span> <span class="n">u</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="p">]</span>
-</span><span id="BaseRecommender-110"><a href="#BaseRecommender-110"><span class="linenos">110</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">users</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="BaseRecommender-111"><a href="#BaseRecommender-111"><span class="linenos">111</span></a>            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rank&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">])</span>
-</span><span id="BaseRecommender-112"><a href="#BaseRecommender-112"><span class="linenos">112</span></a>
-</span><span id="BaseRecommender-113"><a href="#BaseRecommender-113"><span class="linenos">113</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_recommend_batch</span><span class="p">(</span><span class="n">users</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
+</span><span id="BaseRecommender-99"><a href="#BaseRecommender-99"><span class="linenos"> 99</span></a><span class="sd">        Raises:</span>
+</span><span id="BaseRecommender-100"><a href="#BaseRecommender-100"><span class="linenos">100</span></a><span class="sd">            ArithmeticError: possibly raised by a recommender on testing.</span>
+</span><span id="BaseRecommender-101"><a href="#BaseRecommender-101"><span class="linenos">101</span></a><span class="sd">            MemoryError: possibly raised by a recommender on testing.</span>
+</span><span id="BaseRecommender-102"><a href="#BaseRecommender-102"><span class="linenos">102</span></a><span class="sd">            RuntimeError: when the recommender is not trained yet.</span>
+</span><span id="BaseRecommender-103"><a href="#BaseRecommender-103"><span class="linenos">103</span></a>
+</span><span id="BaseRecommender-104"><a href="#BaseRecommender-104"><span class="linenos">104</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseRecommender-105"><a href="#BaseRecommender-105"><span class="linenos">105</span></a><span class="sd">            a dataframe with the columns: &#39;item&#39; and &#39;score&#39;.</span>
+</span><span id="BaseRecommender-106"><a href="#BaseRecommender-106"><span class="linenos">106</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseRecommender-107"><a href="#BaseRecommender-107"><span class="linenos">107</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</span><span id="BaseRecommender-108"><a href="#BaseRecommender-108"><span class="linenos">108</span></a>
+</span><span id="BaseRecommender-109"><a href="#BaseRecommender-109"><span class="linenos">109</span></a>    <span class="k">def</span> <span class="nf">recommend_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">users</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="BaseRecommender-110"><a href="#BaseRecommender-110"><span class="linenos">110</span></a>        <span class="sd">&quot;&quot;&quot;Compute the items recommendations for each of the specified users.</span>
+</span><span id="BaseRecommender-111"><a href="#BaseRecommender-111"><span class="linenos">111</span></a>
+</span><span id="BaseRecommender-112"><a href="#BaseRecommender-112"><span class="linenos">112</span></a><span class="sd">        All the users that are not present in the train set that the recommender</span>
+</span><span id="BaseRecommender-113"><a href="#BaseRecommender-113"><span class="linenos">113</span></a><span class="sd">        was trained on are filtered before recommendations are made.</span>
 </span><span id="BaseRecommender-114"><a href="#BaseRecommender-114"><span class="linenos">114</span></a>
-</span><span id="BaseRecommender-115"><a href="#BaseRecommender-115"><span class="linenos">115</span></a>    <span class="k">def</span> <span class="nf">on_recommend_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">users</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="BaseRecommender-116"><a href="#BaseRecommender-116"><span class="linenos">116</span></a>        <span class="sd">&quot;&quot;&quot;Compute the items recommendations for each of the specified users.</span>
-</span><span id="BaseRecommender-117"><a href="#BaseRecommender-117"><span class="linenos">117</span></a>
-</span><span id="BaseRecommender-118"><a href="#BaseRecommender-118"><span class="linenos">118</span></a><span class="sd">        All the users are assumed to be present in the train set that</span>
-</span><span id="BaseRecommender-119"><a href="#BaseRecommender-119"><span class="linenos">119</span></a><span class="sd">        the recommender was trained on.</span>
-</span><span id="BaseRecommender-120"><a href="#BaseRecommender-120"><span class="linenos">120</span></a><span class="sd">        A standard batch implementation is provided, but derived classes are</span>
-</span><span id="BaseRecommender-121"><a href="#BaseRecommender-121"><span class="linenos">121</span></a><span class="sd">        allowed to override batching with their own logic.</span>
-</span><span id="BaseRecommender-122"><a href="#BaseRecommender-122"><span class="linenos">122</span></a>
-</span><span id="BaseRecommender-123"><a href="#BaseRecommender-123"><span class="linenos">123</span></a><span class="sd">        Args:</span>
-</span><span id="BaseRecommender-124"><a href="#BaseRecommender-124"><span class="linenos">124</span></a><span class="sd">            users: the user ID&#39;s to compute recommendations for.</span>
-</span><span id="BaseRecommender-125"><a href="#BaseRecommender-125"><span class="linenos">125</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
-</span><span id="BaseRecommender-126"><a href="#BaseRecommender-126"><span class="linenos">126</span></a>
-</span><span id="BaseRecommender-127"><a href="#BaseRecommender-127"><span class="linenos">127</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseRecommender-128"><a href="#BaseRecommender-128"><span class="linenos">128</span></a><span class="sd">            a dataframe with the columns: &#39;rank&#39;, &#39;user&#39;, &#39;item&#39;, &#39;score&#39;.</span>
-</span><span id="BaseRecommender-129"><a href="#BaseRecommender-129"><span class="linenos">129</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseRecommender-130"><a href="#BaseRecommender-130"><span class="linenos">130</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
-</span><span id="BaseRecommender-131"><a href="#BaseRecommender-131"><span class="linenos">131</span></a>
-</span><span id="BaseRecommender-132"><a href="#BaseRecommender-132"><span class="linenos">132</span></a>        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">user</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">users</span><span class="p">):</span>
-</span><span id="BaseRecommender-133"><a href="#BaseRecommender-133"><span class="linenos">133</span></a>            <span class="n">item_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recommend</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
-</span><span id="BaseRecommender-134"><a href="#BaseRecommender-134"><span class="linenos">134</span></a>
-</span><span id="BaseRecommender-135"><a href="#BaseRecommender-135"><span class="linenos">135</span></a>            <span class="n">item_scores</span><span class="p">[</span><span class="s1">&#39;rank&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">num_items</span><span class="p">)</span>
-</span><span id="BaseRecommender-136"><a href="#BaseRecommender-136"><span class="linenos">136</span></a>            <span class="n">item_scores</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">num_items</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
-</span><span id="BaseRecommender-137"><a href="#BaseRecommender-137"><span class="linenos">137</span></a>
-</span><span id="BaseRecommender-138"><a href="#BaseRecommender-138"><span class="linenos">138</span></a>            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span><span id="BaseRecommender-139"><a href="#BaseRecommender-139"><span class="linenos">139</span></a>                <span class="n">item_scores</span><span class="p">[[</span><span class="s1">&#39;rank&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">]],</span>
-</span><span id="BaseRecommender-140"><a href="#BaseRecommender-140"><span class="linenos">140</span></a>                <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
-</span><span id="BaseRecommender-141"><a href="#BaseRecommender-141"><span class="linenos">141</span></a>            <span class="p">)</span>
-</span><span id="BaseRecommender-142"><a href="#BaseRecommender-142"><span class="linenos">142</span></a>
-</span><span id="BaseRecommender-143"><a href="#BaseRecommender-143"><span class="linenos">143</span></a>        <span class="k">return</span> <span class="n">result</span>
+</span><span id="BaseRecommender-115"><a href="#BaseRecommender-115"><span class="linenos">115</span></a><span class="sd">        Args:</span>
+</span><span id="BaseRecommender-116"><a href="#BaseRecommender-116"><span class="linenos">116</span></a><span class="sd">            users: the user ID&#39;s to compute recommendations for.</span>
+</span><span id="BaseRecommender-117"><a href="#BaseRecommender-117"><span class="linenos">117</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
+</span><span id="BaseRecommender-118"><a href="#BaseRecommender-118"><span class="linenos">118</span></a>
+</span><span id="BaseRecommender-119"><a href="#BaseRecommender-119"><span class="linenos">119</span></a><span class="sd">        Raises:</span>
+</span><span id="BaseRecommender-120"><a href="#BaseRecommender-120"><span class="linenos">120</span></a><span class="sd">            ArithmeticError: possibly raised by a recommender on testing.</span>
+</span><span id="BaseRecommender-121"><a href="#BaseRecommender-121"><span class="linenos">121</span></a><span class="sd">            MemoryError: possibly raised by a recommender on testing.</span>
+</span><span id="BaseRecommender-122"><a href="#BaseRecommender-122"><span class="linenos">122</span></a><span class="sd">            RuntimeError: when the recommender is not trained yet.</span>
+</span><span id="BaseRecommender-123"><a href="#BaseRecommender-123"><span class="linenos">123</span></a>
+</span><span id="BaseRecommender-124"><a href="#BaseRecommender-124"><span class="linenos">124</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseRecommender-125"><a href="#BaseRecommender-125"><span class="linenos">125</span></a><span class="sd">            a dataframe with the columns: &#39;rank&#39;, &#39;user&#39;, &#39;item&#39;, &#39;score&#39;.</span>
+</span><span id="BaseRecommender-126"><a href="#BaseRecommender-126"><span class="linenos">126</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseRecommender-127"><a href="#BaseRecommender-127"><span class="linenos">127</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseRecommender-128"><a href="#BaseRecommender-128"><span class="linenos">128</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Recommender is not trained for item recommendations&#39;</span><span class="p">)</span>
+</span><span id="BaseRecommender-129"><a href="#BaseRecommender-129"><span class="linenos">129</span></a>
+</span><span id="BaseRecommender-130"><a href="#BaseRecommender-130"><span class="linenos">130</span></a>        <span class="n">users</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">users</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span><span class="o">.</span><span class="n">knows_user</span><span class="p">(</span><span class="n">u</span><span class="p">)]</span>
+</span><span id="BaseRecommender-131"><a href="#BaseRecommender-131"><span class="linenos">131</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">users</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="BaseRecommender-132"><a href="#BaseRecommender-132"><span class="linenos">132</span></a>            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rank&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">])</span>
+</span><span id="BaseRecommender-133"><a href="#BaseRecommender-133"><span class="linenos">133</span></a>
+</span><span id="BaseRecommender-134"><a href="#BaseRecommender-134"><span class="linenos">134</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_recommend_batch</span><span class="p">(</span><span class="n">users</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
+</span><span id="BaseRecommender-135"><a href="#BaseRecommender-135"><span class="linenos">135</span></a>
+</span><span id="BaseRecommender-136"><a href="#BaseRecommender-136"><span class="linenos">136</span></a>    <span class="k">def</span> <span class="nf">on_recommend_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">users</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="BaseRecommender-137"><a href="#BaseRecommender-137"><span class="linenos">137</span></a>        <span class="sd">&quot;&quot;&quot;Compute the items recommendations for each of the specified users.</span>
+</span><span id="BaseRecommender-138"><a href="#BaseRecommender-138"><span class="linenos">138</span></a>
+</span><span id="BaseRecommender-139"><a href="#BaseRecommender-139"><span class="linenos">139</span></a><span class="sd">        All the users are assumed to be present in the train set that</span>
+</span><span id="BaseRecommender-140"><a href="#BaseRecommender-140"><span class="linenos">140</span></a><span class="sd">        the recommender was trained on.</span>
+</span><span id="BaseRecommender-141"><a href="#BaseRecommender-141"><span class="linenos">141</span></a><span class="sd">        A standard batch implementation is provided, but derived classes are</span>
+</span><span id="BaseRecommender-142"><a href="#BaseRecommender-142"><span class="linenos">142</span></a><span class="sd">        allowed to override batching with their own logic.</span>
+</span><span id="BaseRecommender-143"><a href="#BaseRecommender-143"><span class="linenos">143</span></a>
+</span><span id="BaseRecommender-144"><a href="#BaseRecommender-144"><span class="linenos">144</span></a><span class="sd">        Args:</span>
+</span><span id="BaseRecommender-145"><a href="#BaseRecommender-145"><span class="linenos">145</span></a><span class="sd">            users: the user ID&#39;s to compute recommendations for.</span>
+</span><span id="BaseRecommender-146"><a href="#BaseRecommender-146"><span class="linenos">146</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
+</span><span id="BaseRecommender-147"><a href="#BaseRecommender-147"><span class="linenos">147</span></a>
+</span><span id="BaseRecommender-148"><a href="#BaseRecommender-148"><span class="linenos">148</span></a><span class="sd">        Raises:</span>
+</span><span id="BaseRecommender-149"><a href="#BaseRecommender-149"><span class="linenos">149</span></a><span class="sd">            ArithmeticError: possibly raised by a recommender on testing.</span>
+</span><span id="BaseRecommender-150"><a href="#BaseRecommender-150"><span class="linenos">150</span></a><span class="sd">            MemoryError: possibly raised by a recommender on testing.</span>
+</span><span id="BaseRecommender-151"><a href="#BaseRecommender-151"><span class="linenos">151</span></a><span class="sd">            RuntimeError: when the recommender is not trained yet.</span>
+</span><span id="BaseRecommender-152"><a href="#BaseRecommender-152"><span class="linenos">152</span></a>
+</span><span id="BaseRecommender-153"><a href="#BaseRecommender-153"><span class="linenos">153</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseRecommender-154"><a href="#BaseRecommender-154"><span class="linenos">154</span></a><span class="sd">            a dataframe with the columns: &#39;rank&#39;, &#39;user&#39;, &#39;item&#39;, &#39;score&#39;.</span>
+</span><span id="BaseRecommender-155"><a href="#BaseRecommender-155"><span class="linenos">155</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseRecommender-156"><a href="#BaseRecommender-156"><span class="linenos">156</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+</span><span id="BaseRecommender-157"><a href="#BaseRecommender-157"><span class="linenos">157</span></a>
+</span><span id="BaseRecommender-158"><a href="#BaseRecommender-158"><span class="linenos">158</span></a>        <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="p">:</span>
+</span><span id="BaseRecommender-159"><a href="#BaseRecommender-159"><span class="linenos">159</span></a>            <span class="n">item_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recommend</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
+</span><span id="BaseRecommender-160"><a href="#BaseRecommender-160"><span class="linenos">160</span></a>
+</span><span id="BaseRecommender-161"><a href="#BaseRecommender-161"><span class="linenos">161</span></a>            <span class="n">item_scores</span><span class="p">[</span><span class="s1">&#39;rank&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">num_items</span><span class="p">)</span>
+</span><span id="BaseRecommender-162"><a href="#BaseRecommender-162"><span class="linenos">162</span></a>            <span class="n">item_scores</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">num_items</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
+</span><span id="BaseRecommender-163"><a href="#BaseRecommender-163"><span class="linenos">163</span></a>
+</span><span id="BaseRecommender-164"><a href="#BaseRecommender-164"><span class="linenos">164</span></a>            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span id="BaseRecommender-165"><a href="#BaseRecommender-165"><span class="linenos">165</span></a>                <span class="n">item_scores</span><span class="p">[[</span><span class="s1">&#39;rank&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">]],</span>
+</span><span id="BaseRecommender-166"><a href="#BaseRecommender-166"><span class="linenos">166</span></a>                <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
+</span><span id="BaseRecommender-167"><a href="#BaseRecommender-167"><span class="linenos">167</span></a>            <span class="p">)</span>
+</span><span id="BaseRecommender-168"><a href="#BaseRecommender-168"><span class="linenos">168</span></a>
+</span><span id="BaseRecommender-169"><a href="#BaseRecommender-169"><span class="linenos">169</span></a>        <span class="k">return</span> <span class="n">result</span>
 </span></pre></div>
 
 
@@ -530,13 +582,21 @@ recommend_batch</p>
 </span><span id="BaseRecommender.recommend-67"><a href="#BaseRecommender.recommend-67"><span class="linenos">67</span></a><span class="sd">            user: the user ID to compute recommendations for.</span>
 </span><span id="BaseRecommender.recommend-68"><a href="#BaseRecommender.recommend-68"><span class="linenos">68</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
 </span><span id="BaseRecommender.recommend-69"><a href="#BaseRecommender.recommend-69"><span class="linenos">69</span></a>
-</span><span id="BaseRecommender.recommend-70"><a href="#BaseRecommender.recommend-70"><span class="linenos">70</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseRecommender.recommend-71"><a href="#BaseRecommender.recommend-71"><span class="linenos">71</span></a><span class="sd">            a dataframe with the columns: &#39;item&#39; and &#39;score&#39;.</span>
-</span><span id="BaseRecommender.recommend-72"><a href="#BaseRecommender.recommend-72"><span class="linenos">72</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseRecommender.recommend-73"><a href="#BaseRecommender.recommend-73"><span class="linenos">73</span></a>        <span class="k">if</span> <span class="n">user</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="p">:</span>
-</span><span id="BaseRecommender.recommend-74"><a href="#BaseRecommender.recommend-74"><span class="linenos">74</span></a>            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">])</span>
-</span><span id="BaseRecommender.recommend-75"><a href="#BaseRecommender.recommend-75"><span class="linenos">75</span></a>
-</span><span id="BaseRecommender.recommend-76"><a href="#BaseRecommender.recommend-76"><span class="linenos">76</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_recommend</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
+</span><span id="BaseRecommender.recommend-70"><a href="#BaseRecommender.recommend-70"><span class="linenos">70</span></a><span class="sd">        Raises:</span>
+</span><span id="BaseRecommender.recommend-71"><a href="#BaseRecommender.recommend-71"><span class="linenos">71</span></a><span class="sd">            ArithmeticError: possibly raised by a recommender on testing.</span>
+</span><span id="BaseRecommender.recommend-72"><a href="#BaseRecommender.recommend-72"><span class="linenos">72</span></a><span class="sd">            MemoryError: possibly raised by a recommender on testing.</span>
+</span><span id="BaseRecommender.recommend-73"><a href="#BaseRecommender.recommend-73"><span class="linenos">73</span></a><span class="sd">            RuntimeError: when the recommender is not trained yet.</span>
+</span><span id="BaseRecommender.recommend-74"><a href="#BaseRecommender.recommend-74"><span class="linenos">74</span></a>
+</span><span id="BaseRecommender.recommend-75"><a href="#BaseRecommender.recommend-75"><span class="linenos">75</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseRecommender.recommend-76"><a href="#BaseRecommender.recommend-76"><span class="linenos">76</span></a><span class="sd">            a dataframe with the columns: &#39;item&#39; and &#39;score&#39;.</span>
+</span><span id="BaseRecommender.recommend-77"><a href="#BaseRecommender.recommend-77"><span class="linenos">77</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseRecommender.recommend-78"><a href="#BaseRecommender.recommend-78"><span class="linenos">78</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseRecommender.recommend-79"><a href="#BaseRecommender.recommend-79"><span class="linenos">79</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Recommender is not trained for item recommendations&#39;</span><span class="p">)</span>
+</span><span id="BaseRecommender.recommend-80"><a href="#BaseRecommender.recommend-80"><span class="linenos">80</span></a>
+</span><span id="BaseRecommender.recommend-81"><a href="#BaseRecommender.recommend-81"><span class="linenos">81</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span><span class="o">.</span><span class="n">knows_user</span><span class="p">(</span><span class="n">user</span><span class="p">):</span>
+</span><span id="BaseRecommender.recommend-82"><a href="#BaseRecommender.recommend-82"><span class="linenos">82</span></a>            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">])</span>
+</span><span id="BaseRecommender.recommend-83"><a href="#BaseRecommender.recommend-83"><span class="linenos">83</span></a>
+</span><span id="BaseRecommender.recommend-84"><a href="#BaseRecommender.recommend-84"><span class="linenos">84</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_recommend</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -548,6 +608,11 @@ the unique users it was trained on and will return an empty dataframe.</p>
 <p>Args:
     user: the user ID to compute recommendations for.
     num_items: the number of item recommendations to produce.</p>
+
+<p>Raises:
+    ArithmeticError: possibly raised by a recommender on testing.
+    MemoryError: possibly raised by a recommender on testing.
+    RuntimeError: when the recommender is not trained yet.</p>
 
 <p>Returns:
     a dataframe with the columns: 'item' and 'score'.</p>
@@ -567,23 +632,28 @@ the unique users it was trained on and will return an empty dataframe.</p>
 
     </div>
     <a class="headerlink" href="#BaseRecommender.on_recommend"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseRecommender.on_recommend-78"><a href="#BaseRecommender.on_recommend-78"><span class="linenos">78</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseRecommender.on_recommend-79"><a href="#BaseRecommender.on_recommend-79"><span class="linenos">79</span></a>    <span class="k">def</span> <span class="nf">on_recommend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="BaseRecommender.on_recommend-80"><a href="#BaseRecommender.on_recommend-80"><span class="linenos">80</span></a>        <span class="sd">&quot;&quot;&quot;Compute item recommendations for the specified user.</span>
-</span><span id="BaseRecommender.on_recommend-81"><a href="#BaseRecommender.on_recommend-81"><span class="linenos">81</span></a>
-</span><span id="BaseRecommender.on_recommend-82"><a href="#BaseRecommender.on_recommend-82"><span class="linenos">82</span></a><span class="sd">        The user is assumed to be present in the train set that the</span>
-</span><span id="BaseRecommender.on_recommend-83"><a href="#BaseRecommender.on_recommend-83"><span class="linenos">83</span></a><span class="sd">        recommender was trained on.</span>
-</span><span id="BaseRecommender.on_recommend-84"><a href="#BaseRecommender.on_recommend-84"><span class="linenos">84</span></a><span class="sd">        Derived implementations are expected to return a dataframe</span>
-</span><span id="BaseRecommender.on_recommend-85"><a href="#BaseRecommender.on_recommend-85"><span class="linenos">85</span></a><span class="sd">        with the &#39;score&#39; column in descending order.</span>
-</span><span id="BaseRecommender.on_recommend-86"><a href="#BaseRecommender.on_recommend-86"><span class="linenos">86</span></a>
-</span><span id="BaseRecommender.on_recommend-87"><a href="#BaseRecommender.on_recommend-87"><span class="linenos">87</span></a><span class="sd">        Args:</span>
-</span><span id="BaseRecommender.on_recommend-88"><a href="#BaseRecommender.on_recommend-88"><span class="linenos">88</span></a><span class="sd">            user: the user ID to compute recommendations for.</span>
-</span><span id="BaseRecommender.on_recommend-89"><a href="#BaseRecommender.on_recommend-89"><span class="linenos">89</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
-</span><span id="BaseRecommender.on_recommend-90"><a href="#BaseRecommender.on_recommend-90"><span class="linenos">90</span></a>
-</span><span id="BaseRecommender.on_recommend-91"><a href="#BaseRecommender.on_recommend-91"><span class="linenos">91</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseRecommender.on_recommend-92"><a href="#BaseRecommender.on_recommend-92"><span class="linenos">92</span></a><span class="sd">            a dataframe with the columns: &#39;item&#39; and &#39;score&#39;.</span>
-</span><span id="BaseRecommender.on_recommend-93"><a href="#BaseRecommender.on_recommend-93"><span class="linenos">93</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseRecommender.on_recommend-94"><a href="#BaseRecommender.on_recommend-94"><span class="linenos">94</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseRecommender.on_recommend-86"><a href="#BaseRecommender.on_recommend-86"><span class="linenos"> 86</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseRecommender.on_recommend-87"><a href="#BaseRecommender.on_recommend-87"><span class="linenos"> 87</span></a>    <span class="k">def</span> <span class="nf">on_recommend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="BaseRecommender.on_recommend-88"><a href="#BaseRecommender.on_recommend-88"><span class="linenos"> 88</span></a>        <span class="sd">&quot;&quot;&quot;Compute item recommendations for the specified user.</span>
+</span><span id="BaseRecommender.on_recommend-89"><a href="#BaseRecommender.on_recommend-89"><span class="linenos"> 89</span></a>
+</span><span id="BaseRecommender.on_recommend-90"><a href="#BaseRecommender.on_recommend-90"><span class="linenos"> 90</span></a><span class="sd">        The user is assumed to be present in the train set that the</span>
+</span><span id="BaseRecommender.on_recommend-91"><a href="#BaseRecommender.on_recommend-91"><span class="linenos"> 91</span></a><span class="sd">        recommender was trained on.</span>
+</span><span id="BaseRecommender.on_recommend-92"><a href="#BaseRecommender.on_recommend-92"><span class="linenos"> 92</span></a><span class="sd">        Derived implementations are expected to return a dataframe</span>
+</span><span id="BaseRecommender.on_recommend-93"><a href="#BaseRecommender.on_recommend-93"><span class="linenos"> 93</span></a><span class="sd">        with the &#39;score&#39; column in descending order.</span>
+</span><span id="BaseRecommender.on_recommend-94"><a href="#BaseRecommender.on_recommend-94"><span class="linenos"> 94</span></a>
+</span><span id="BaseRecommender.on_recommend-95"><a href="#BaseRecommender.on_recommend-95"><span class="linenos"> 95</span></a><span class="sd">        Args:</span>
+</span><span id="BaseRecommender.on_recommend-96"><a href="#BaseRecommender.on_recommend-96"><span class="linenos"> 96</span></a><span class="sd">            user: the user ID to compute recommendations for.</span>
+</span><span id="BaseRecommender.on_recommend-97"><a href="#BaseRecommender.on_recommend-97"><span class="linenos"> 97</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
+</span><span id="BaseRecommender.on_recommend-98"><a href="#BaseRecommender.on_recommend-98"><span class="linenos"> 98</span></a>
+</span><span id="BaseRecommender.on_recommend-99"><a href="#BaseRecommender.on_recommend-99"><span class="linenos"> 99</span></a><span class="sd">        Raises:</span>
+</span><span id="BaseRecommender.on_recommend-100"><a href="#BaseRecommender.on_recommend-100"><span class="linenos">100</span></a><span class="sd">            ArithmeticError: possibly raised by a recommender on testing.</span>
+</span><span id="BaseRecommender.on_recommend-101"><a href="#BaseRecommender.on_recommend-101"><span class="linenos">101</span></a><span class="sd">            MemoryError: possibly raised by a recommender on testing.</span>
+</span><span id="BaseRecommender.on_recommend-102"><a href="#BaseRecommender.on_recommend-102"><span class="linenos">102</span></a><span class="sd">            RuntimeError: when the recommender is not trained yet.</span>
+</span><span id="BaseRecommender.on_recommend-103"><a href="#BaseRecommender.on_recommend-103"><span class="linenos">103</span></a>
+</span><span id="BaseRecommender.on_recommend-104"><a href="#BaseRecommender.on_recommend-104"><span class="linenos">104</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseRecommender.on_recommend-105"><a href="#BaseRecommender.on_recommend-105"><span class="linenos">105</span></a><span class="sd">            a dataframe with the columns: &#39;item&#39; and &#39;score&#39;.</span>
+</span><span id="BaseRecommender.on_recommend-106"><a href="#BaseRecommender.on_recommend-106"><span class="linenos">106</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseRecommender.on_recommend-107"><a href="#BaseRecommender.on_recommend-107"><span class="linenos">107</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -597,6 +667,11 @@ with the 'score' column in descending order.</p>
 <p>Args:
     user: the user ID to compute recommendations for.
     num_items: the number of item recommendations to produce.</p>
+
+<p>Raises:
+    ArithmeticError: possibly raised by a recommender on testing.
+    MemoryError: possibly raised by a recommender on testing.
+    RuntimeError: when the recommender is not trained yet.</p>
 
 <p>Returns:
     a dataframe with the columns: 'item' and 'score'.</p>
@@ -615,24 +690,32 @@ with the 'score' column in descending order.</p>
 
     </div>
     <a class="headerlink" href="#BaseRecommender.recommend_batch"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseRecommender.recommend_batch-96"><a href="#BaseRecommender.recommend_batch-96"><span class="linenos"> 96</span></a>    <span class="k">def</span> <span class="nf">recommend_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">users</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="BaseRecommender.recommend_batch-97"><a href="#BaseRecommender.recommend_batch-97"><span class="linenos"> 97</span></a>        <span class="sd">&quot;&quot;&quot;Compute the items recommendations for each of the specified users.</span>
-</span><span id="BaseRecommender.recommend_batch-98"><a href="#BaseRecommender.recommend_batch-98"><span class="linenos"> 98</span></a>
-</span><span id="BaseRecommender.recommend_batch-99"><a href="#BaseRecommender.recommend_batch-99"><span class="linenos"> 99</span></a><span class="sd">        All the users that are not present in the train set that the recommender</span>
-</span><span id="BaseRecommender.recommend_batch-100"><a href="#BaseRecommender.recommend_batch-100"><span class="linenos">100</span></a><span class="sd">        was trained on are filtered before recommendations are made.</span>
-</span><span id="BaseRecommender.recommend_batch-101"><a href="#BaseRecommender.recommend_batch-101"><span class="linenos">101</span></a>
-</span><span id="BaseRecommender.recommend_batch-102"><a href="#BaseRecommender.recommend_batch-102"><span class="linenos">102</span></a><span class="sd">        Args:</span>
-</span><span id="BaseRecommender.recommend_batch-103"><a href="#BaseRecommender.recommend_batch-103"><span class="linenos">103</span></a><span class="sd">            users: the user ID&#39;s to compute recommendations for.</span>
-</span><span id="BaseRecommender.recommend_batch-104"><a href="#BaseRecommender.recommend_batch-104"><span class="linenos">104</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
-</span><span id="BaseRecommender.recommend_batch-105"><a href="#BaseRecommender.recommend_batch-105"><span class="linenos">105</span></a>
-</span><span id="BaseRecommender.recommend_batch-106"><a href="#BaseRecommender.recommend_batch-106"><span class="linenos">106</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseRecommender.recommend_batch-107"><a href="#BaseRecommender.recommend_batch-107"><span class="linenos">107</span></a><span class="sd">            a dataframe with the columns: &#39;rank&#39;, &#39;user&#39;, &#39;item&#39;, &#39;score&#39;.</span>
-</span><span id="BaseRecommender.recommend_batch-108"><a href="#BaseRecommender.recommend_batch-108"><span class="linenos">108</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseRecommender.recommend_batch-109"><a href="#BaseRecommender.recommend_batch-109"><span class="linenos">109</span></a>        <span class="n">users</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">users</span> <span class="k">if</span> <span class="n">u</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="p">]</span>
-</span><span id="BaseRecommender.recommend_batch-110"><a href="#BaseRecommender.recommend_batch-110"><span class="linenos">110</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">users</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="BaseRecommender.recommend_batch-111"><a href="#BaseRecommender.recommend_batch-111"><span class="linenos">111</span></a>            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rank&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">])</span>
-</span><span id="BaseRecommender.recommend_batch-112"><a href="#BaseRecommender.recommend_batch-112"><span class="linenos">112</span></a>
-</span><span id="BaseRecommender.recommend_batch-113"><a href="#BaseRecommender.recommend_batch-113"><span class="linenos">113</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_recommend_batch</span><span class="p">(</span><span class="n">users</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseRecommender.recommend_batch-109"><a href="#BaseRecommender.recommend_batch-109"><span class="linenos">109</span></a>    <span class="k">def</span> <span class="nf">recommend_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">users</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="BaseRecommender.recommend_batch-110"><a href="#BaseRecommender.recommend_batch-110"><span class="linenos">110</span></a>        <span class="sd">&quot;&quot;&quot;Compute the items recommendations for each of the specified users.</span>
+</span><span id="BaseRecommender.recommend_batch-111"><a href="#BaseRecommender.recommend_batch-111"><span class="linenos">111</span></a>
+</span><span id="BaseRecommender.recommend_batch-112"><a href="#BaseRecommender.recommend_batch-112"><span class="linenos">112</span></a><span class="sd">        All the users that are not present in the train set that the recommender</span>
+</span><span id="BaseRecommender.recommend_batch-113"><a href="#BaseRecommender.recommend_batch-113"><span class="linenos">113</span></a><span class="sd">        was trained on are filtered before recommendations are made.</span>
+</span><span id="BaseRecommender.recommend_batch-114"><a href="#BaseRecommender.recommend_batch-114"><span class="linenos">114</span></a>
+</span><span id="BaseRecommender.recommend_batch-115"><a href="#BaseRecommender.recommend_batch-115"><span class="linenos">115</span></a><span class="sd">        Args:</span>
+</span><span id="BaseRecommender.recommend_batch-116"><a href="#BaseRecommender.recommend_batch-116"><span class="linenos">116</span></a><span class="sd">            users: the user ID&#39;s to compute recommendations for.</span>
+</span><span id="BaseRecommender.recommend_batch-117"><a href="#BaseRecommender.recommend_batch-117"><span class="linenos">117</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
+</span><span id="BaseRecommender.recommend_batch-118"><a href="#BaseRecommender.recommend_batch-118"><span class="linenos">118</span></a>
+</span><span id="BaseRecommender.recommend_batch-119"><a href="#BaseRecommender.recommend_batch-119"><span class="linenos">119</span></a><span class="sd">        Raises:</span>
+</span><span id="BaseRecommender.recommend_batch-120"><a href="#BaseRecommender.recommend_batch-120"><span class="linenos">120</span></a><span class="sd">            ArithmeticError: possibly raised by a recommender on testing.</span>
+</span><span id="BaseRecommender.recommend_batch-121"><a href="#BaseRecommender.recommend_batch-121"><span class="linenos">121</span></a><span class="sd">            MemoryError: possibly raised by a recommender on testing.</span>
+</span><span id="BaseRecommender.recommend_batch-122"><a href="#BaseRecommender.recommend_batch-122"><span class="linenos">122</span></a><span class="sd">            RuntimeError: when the recommender is not trained yet.</span>
+</span><span id="BaseRecommender.recommend_batch-123"><a href="#BaseRecommender.recommend_batch-123"><span class="linenos">123</span></a>
+</span><span id="BaseRecommender.recommend_batch-124"><a href="#BaseRecommender.recommend_batch-124"><span class="linenos">124</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseRecommender.recommend_batch-125"><a href="#BaseRecommender.recommend_batch-125"><span class="linenos">125</span></a><span class="sd">            a dataframe with the columns: &#39;rank&#39;, &#39;user&#39;, &#39;item&#39;, &#39;score&#39;.</span>
+</span><span id="BaseRecommender.recommend_batch-126"><a href="#BaseRecommender.recommend_batch-126"><span class="linenos">126</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseRecommender.recommend_batch-127"><a href="#BaseRecommender.recommend_batch-127"><span class="linenos">127</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseRecommender.recommend_batch-128"><a href="#BaseRecommender.recommend_batch-128"><span class="linenos">128</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Recommender is not trained for item recommendations&#39;</span><span class="p">)</span>
+</span><span id="BaseRecommender.recommend_batch-129"><a href="#BaseRecommender.recommend_batch-129"><span class="linenos">129</span></a>
+</span><span id="BaseRecommender.recommend_batch-130"><a href="#BaseRecommender.recommend_batch-130"><span class="linenos">130</span></a>        <span class="n">users</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">users</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span><span class="o">.</span><span class="n">knows_user</span><span class="p">(</span><span class="n">u</span><span class="p">)]</span>
+</span><span id="BaseRecommender.recommend_batch-131"><a href="#BaseRecommender.recommend_batch-131"><span class="linenos">131</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">users</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="BaseRecommender.recommend_batch-132"><a href="#BaseRecommender.recommend_batch-132"><span class="linenos">132</span></a>            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;rank&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">])</span>
+</span><span id="BaseRecommender.recommend_batch-133"><a href="#BaseRecommender.recommend_batch-133"><span class="linenos">133</span></a>
+</span><span id="BaseRecommender.recommend_batch-134"><a href="#BaseRecommender.recommend_batch-134"><span class="linenos">134</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_recommend_batch</span><span class="p">(</span><span class="n">users</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -644,6 +727,11 @@ was trained on are filtered before recommendations are made.</p>
 <p>Args:
     users: the user ID's to compute recommendations for.
     num_items: the number of item recommendations to produce.</p>
+
+<p>Raises:
+    ArithmeticError: possibly raised by a recommender on testing.
+    MemoryError: possibly raised by a recommender on testing.
+    RuntimeError: when the recommender is not trained yet.</p>
 
 <p>Returns:
     a dataframe with the columns: 'rank', 'user', 'item', 'score'.</p>
@@ -662,35 +750,40 @@ was trained on are filtered before recommendations are made.</p>
 
     </div>
     <a class="headerlink" href="#BaseRecommender.on_recommend_batch"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseRecommender.on_recommend_batch-115"><a href="#BaseRecommender.on_recommend_batch-115"><span class="linenos">115</span></a>    <span class="k">def</span> <span class="nf">on_recommend_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">users</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="BaseRecommender.on_recommend_batch-116"><a href="#BaseRecommender.on_recommend_batch-116"><span class="linenos">116</span></a>        <span class="sd">&quot;&quot;&quot;Compute the items recommendations for each of the specified users.</span>
-</span><span id="BaseRecommender.on_recommend_batch-117"><a href="#BaseRecommender.on_recommend_batch-117"><span class="linenos">117</span></a>
-</span><span id="BaseRecommender.on_recommend_batch-118"><a href="#BaseRecommender.on_recommend_batch-118"><span class="linenos">118</span></a><span class="sd">        All the users are assumed to be present in the train set that</span>
-</span><span id="BaseRecommender.on_recommend_batch-119"><a href="#BaseRecommender.on_recommend_batch-119"><span class="linenos">119</span></a><span class="sd">        the recommender was trained on.</span>
-</span><span id="BaseRecommender.on_recommend_batch-120"><a href="#BaseRecommender.on_recommend_batch-120"><span class="linenos">120</span></a><span class="sd">        A standard batch implementation is provided, but derived classes are</span>
-</span><span id="BaseRecommender.on_recommend_batch-121"><a href="#BaseRecommender.on_recommend_batch-121"><span class="linenos">121</span></a><span class="sd">        allowed to override batching with their own logic.</span>
-</span><span id="BaseRecommender.on_recommend_batch-122"><a href="#BaseRecommender.on_recommend_batch-122"><span class="linenos">122</span></a>
-</span><span id="BaseRecommender.on_recommend_batch-123"><a href="#BaseRecommender.on_recommend_batch-123"><span class="linenos">123</span></a><span class="sd">        Args:</span>
-</span><span id="BaseRecommender.on_recommend_batch-124"><a href="#BaseRecommender.on_recommend_batch-124"><span class="linenos">124</span></a><span class="sd">            users: the user ID&#39;s to compute recommendations for.</span>
-</span><span id="BaseRecommender.on_recommend_batch-125"><a href="#BaseRecommender.on_recommend_batch-125"><span class="linenos">125</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
-</span><span id="BaseRecommender.on_recommend_batch-126"><a href="#BaseRecommender.on_recommend_batch-126"><span class="linenos">126</span></a>
-</span><span id="BaseRecommender.on_recommend_batch-127"><a href="#BaseRecommender.on_recommend_batch-127"><span class="linenos">127</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseRecommender.on_recommend_batch-128"><a href="#BaseRecommender.on_recommend_batch-128"><span class="linenos">128</span></a><span class="sd">            a dataframe with the columns: &#39;rank&#39;, &#39;user&#39;, &#39;item&#39;, &#39;score&#39;.</span>
-</span><span id="BaseRecommender.on_recommend_batch-129"><a href="#BaseRecommender.on_recommend_batch-129"><span class="linenos">129</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseRecommender.on_recommend_batch-130"><a href="#BaseRecommender.on_recommend_batch-130"><span class="linenos">130</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
-</span><span id="BaseRecommender.on_recommend_batch-131"><a href="#BaseRecommender.on_recommend_batch-131"><span class="linenos">131</span></a>
-</span><span id="BaseRecommender.on_recommend_batch-132"><a href="#BaseRecommender.on_recommend_batch-132"><span class="linenos">132</span></a>        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">user</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">users</span><span class="p">):</span>
-</span><span id="BaseRecommender.on_recommend_batch-133"><a href="#BaseRecommender.on_recommend_batch-133"><span class="linenos">133</span></a>            <span class="n">item_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recommend</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
-</span><span id="BaseRecommender.on_recommend_batch-134"><a href="#BaseRecommender.on_recommend_batch-134"><span class="linenos">134</span></a>
-</span><span id="BaseRecommender.on_recommend_batch-135"><a href="#BaseRecommender.on_recommend_batch-135"><span class="linenos">135</span></a>            <span class="n">item_scores</span><span class="p">[</span><span class="s1">&#39;rank&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">num_items</span><span class="p">)</span>
-</span><span id="BaseRecommender.on_recommend_batch-136"><a href="#BaseRecommender.on_recommend_batch-136"><span class="linenos">136</span></a>            <span class="n">item_scores</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">num_items</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
-</span><span id="BaseRecommender.on_recommend_batch-137"><a href="#BaseRecommender.on_recommend_batch-137"><span class="linenos">137</span></a>
-</span><span id="BaseRecommender.on_recommend_batch-138"><a href="#BaseRecommender.on_recommend_batch-138"><span class="linenos">138</span></a>            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span><span id="BaseRecommender.on_recommend_batch-139"><a href="#BaseRecommender.on_recommend_batch-139"><span class="linenos">139</span></a>                <span class="n">item_scores</span><span class="p">[[</span><span class="s1">&#39;rank&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">]],</span>
-</span><span id="BaseRecommender.on_recommend_batch-140"><a href="#BaseRecommender.on_recommend_batch-140"><span class="linenos">140</span></a>                <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
-</span><span id="BaseRecommender.on_recommend_batch-141"><a href="#BaseRecommender.on_recommend_batch-141"><span class="linenos">141</span></a>            <span class="p">)</span>
-</span><span id="BaseRecommender.on_recommend_batch-142"><a href="#BaseRecommender.on_recommend_batch-142"><span class="linenos">142</span></a>
-</span><span id="BaseRecommender.on_recommend_batch-143"><a href="#BaseRecommender.on_recommend_batch-143"><span class="linenos">143</span></a>        <span class="k">return</span> <span class="n">result</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseRecommender.on_recommend_batch-136"><a href="#BaseRecommender.on_recommend_batch-136"><span class="linenos">136</span></a>    <span class="k">def</span> <span class="nf">on_recommend_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">users</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="BaseRecommender.on_recommend_batch-137"><a href="#BaseRecommender.on_recommend_batch-137"><span class="linenos">137</span></a>        <span class="sd">&quot;&quot;&quot;Compute the items recommendations for each of the specified users.</span>
+</span><span id="BaseRecommender.on_recommend_batch-138"><a href="#BaseRecommender.on_recommend_batch-138"><span class="linenos">138</span></a>
+</span><span id="BaseRecommender.on_recommend_batch-139"><a href="#BaseRecommender.on_recommend_batch-139"><span class="linenos">139</span></a><span class="sd">        All the users are assumed to be present in the train set that</span>
+</span><span id="BaseRecommender.on_recommend_batch-140"><a href="#BaseRecommender.on_recommend_batch-140"><span class="linenos">140</span></a><span class="sd">        the recommender was trained on.</span>
+</span><span id="BaseRecommender.on_recommend_batch-141"><a href="#BaseRecommender.on_recommend_batch-141"><span class="linenos">141</span></a><span class="sd">        A standard batch implementation is provided, but derived classes are</span>
+</span><span id="BaseRecommender.on_recommend_batch-142"><a href="#BaseRecommender.on_recommend_batch-142"><span class="linenos">142</span></a><span class="sd">        allowed to override batching with their own logic.</span>
+</span><span id="BaseRecommender.on_recommend_batch-143"><a href="#BaseRecommender.on_recommend_batch-143"><span class="linenos">143</span></a>
+</span><span id="BaseRecommender.on_recommend_batch-144"><a href="#BaseRecommender.on_recommend_batch-144"><span class="linenos">144</span></a><span class="sd">        Args:</span>
+</span><span id="BaseRecommender.on_recommend_batch-145"><a href="#BaseRecommender.on_recommend_batch-145"><span class="linenos">145</span></a><span class="sd">            users: the user ID&#39;s to compute recommendations for.</span>
+</span><span id="BaseRecommender.on_recommend_batch-146"><a href="#BaseRecommender.on_recommend_batch-146"><span class="linenos">146</span></a><span class="sd">            num_items: the number of item recommendations to produce.</span>
+</span><span id="BaseRecommender.on_recommend_batch-147"><a href="#BaseRecommender.on_recommend_batch-147"><span class="linenos">147</span></a>
+</span><span id="BaseRecommender.on_recommend_batch-148"><a href="#BaseRecommender.on_recommend_batch-148"><span class="linenos">148</span></a><span class="sd">        Raises:</span>
+</span><span id="BaseRecommender.on_recommend_batch-149"><a href="#BaseRecommender.on_recommend_batch-149"><span class="linenos">149</span></a><span class="sd">            ArithmeticError: possibly raised by a recommender on testing.</span>
+</span><span id="BaseRecommender.on_recommend_batch-150"><a href="#BaseRecommender.on_recommend_batch-150"><span class="linenos">150</span></a><span class="sd">            MemoryError: possibly raised by a recommender on testing.</span>
+</span><span id="BaseRecommender.on_recommend_batch-151"><a href="#BaseRecommender.on_recommend_batch-151"><span class="linenos">151</span></a><span class="sd">            RuntimeError: when the recommender is not trained yet.</span>
+</span><span id="BaseRecommender.on_recommend_batch-152"><a href="#BaseRecommender.on_recommend_batch-152"><span class="linenos">152</span></a>
+</span><span id="BaseRecommender.on_recommend_batch-153"><a href="#BaseRecommender.on_recommend_batch-153"><span class="linenos">153</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseRecommender.on_recommend_batch-154"><a href="#BaseRecommender.on_recommend_batch-154"><span class="linenos">154</span></a><span class="sd">            a dataframe with the columns: &#39;rank&#39;, &#39;user&#39;, &#39;item&#39;, &#39;score&#39;.</span>
+</span><span id="BaseRecommender.on_recommend_batch-155"><a href="#BaseRecommender.on_recommend_batch-155"><span class="linenos">155</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseRecommender.on_recommend_batch-156"><a href="#BaseRecommender.on_recommend_batch-156"><span class="linenos">156</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+</span><span id="BaseRecommender.on_recommend_batch-157"><a href="#BaseRecommender.on_recommend_batch-157"><span class="linenos">157</span></a>
+</span><span id="BaseRecommender.on_recommend_batch-158"><a href="#BaseRecommender.on_recommend_batch-158"><span class="linenos">158</span></a>        <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="p">:</span>
+</span><span id="BaseRecommender.on_recommend_batch-159"><a href="#BaseRecommender.on_recommend_batch-159"><span class="linenos">159</span></a>            <span class="n">item_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recommend</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
+</span><span id="BaseRecommender.on_recommend_batch-160"><a href="#BaseRecommender.on_recommend_batch-160"><span class="linenos">160</span></a>
+</span><span id="BaseRecommender.on_recommend_batch-161"><a href="#BaseRecommender.on_recommend_batch-161"><span class="linenos">161</span></a>            <span class="n">item_scores</span><span class="p">[</span><span class="s1">&#39;rank&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">num_items</span><span class="p">)</span>
+</span><span id="BaseRecommender.on_recommend_batch-162"><a href="#BaseRecommender.on_recommend_batch-162"><span class="linenos">162</span></a>            <span class="n">item_scores</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">num_items</span><span class="p">,</span> <span class="n">user</span><span class="p">)</span>
+</span><span id="BaseRecommender.on_recommend_batch-163"><a href="#BaseRecommender.on_recommend_batch-163"><span class="linenos">163</span></a>
+</span><span id="BaseRecommender.on_recommend_batch-164"><a href="#BaseRecommender.on_recommend_batch-164"><span class="linenos">164</span></a>            <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span id="BaseRecommender.on_recommend_batch-165"><a href="#BaseRecommender.on_recommend_batch-165"><span class="linenos">165</span></a>                <span class="n">item_scores</span><span class="p">[[</span><span class="s1">&#39;rank&#39;</span><span class="p">,</span> <span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;score&#39;</span><span class="p">]],</span>
+</span><span id="BaseRecommender.on_recommend_batch-166"><a href="#BaseRecommender.on_recommend_batch-166"><span class="linenos">166</span></a>                <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
+</span><span id="BaseRecommender.on_recommend_batch-167"><a href="#BaseRecommender.on_recommend_batch-167"><span class="linenos">167</span></a>            <span class="p">)</span>
+</span><span id="BaseRecommender.on_recommend_batch-168"><a href="#BaseRecommender.on_recommend_batch-168"><span class="linenos">168</span></a>
+</span><span id="BaseRecommender.on_recommend_batch-169"><a href="#BaseRecommender.on_recommend_batch-169"><span class="linenos">169</span></a>        <span class="k">return</span> <span class="n">result</span>
 </span></pre></div>
 
 
@@ -705,6 +798,11 @@ allowed to override batching with their own logic.</p>
     users: the user ID's to compute recommendations for.
     num_items: the number of item recommendations to produce.</p>
 
+<p>Raises:
+    ArithmeticError: possibly raised by a recommender on testing.
+    MemoryError: possibly raised by a recommender on testing.
+    RuntimeError: when the recommender is not trained yet.</p>
+
 <p>Returns:
     a dataframe with the columns: 'rank', 'user', 'item', 'score'.</p>
 </div>
@@ -718,8 +816,7 @@ allowed to override batching with their own logic.</p>
                                 <dd id="BaseRecommender.get_name" class="function"><a href="base_algorithm.html#BaseAlgorithm.get_name">get_name</a></dd>
                 <dd id="BaseRecommender.get_num_threads" class="function"><a href="base_algorithm.html#BaseAlgorithm.get_num_threads">get_num_threads</a></dd>
                 <dd id="BaseRecommender.get_params" class="function"><a href="base_algorithm.html#BaseAlgorithm.get_params">get_params</a></dd>
-                <dd id="BaseRecommender.get_items" class="function"><a href="base_algorithm.html#BaseAlgorithm.get_items">get_items</a></dd>
-                <dd id="BaseRecommender.get_users" class="function"><a href="base_algorithm.html#BaseAlgorithm.get_users">get_users</a></dd>
+                <dd id="BaseRecommender.get_train_set" class="function"><a href="base_algorithm.html#BaseAlgorithm.get_train_set">get_train_set</a></dd>
                 <dd id="BaseRecommender.train" class="function"><a href="base_algorithm.html#BaseAlgorithm.train">train</a></dd>
                 <dd id="BaseRecommender.on_train" class="function"><a href="base_algorithm.html#BaseAlgorithm.on_train">on_train</a></dd>
 
@@ -738,48 +835,48 @@ allowed to override batching with their own logic.</p>
 
     </div>
     <a class="headerlink" href="#Recommender"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Recommender-146"><a href="#Recommender-146"><span class="linenos">146</span></a><span class="k">class</span> <span class="nc">Recommender</span><span class="p">(</span><span class="n">BaseRecommender</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
-</span><span id="Recommender-147"><a href="#Recommender-147"><span class="linenos">147</span></a>    <span class="sd">&quot;&quot;&quot;Recommender that implements basic shared functionality.&quot;&quot;&quot;</span>
-</span><span id="Recommender-148"><a href="#Recommender-148"><span class="linenos">148</span></a>
-</span><span id="Recommender-149"><a href="#Recommender-149"><span class="linenos">149</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">num_threads</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-</span><span id="Recommender-150"><a href="#Recommender-150"><span class="linenos">150</span></a>                 <span class="n">rated_items_filter</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
-</span><span id="Recommender-151"><a href="#Recommender-151"><span class="linenos">151</span></a>        <span class="sd">&quot;&quot;&quot;Construct the recommender.</span>
-</span><span id="Recommender-152"><a href="#Recommender-152"><span class="linenos">152</span></a>
-</span><span id="Recommender-153"><a href="#Recommender-153"><span class="linenos">153</span></a><span class="sd">        Args:</span>
-</span><span id="Recommender-154"><a href="#Recommender-154"><span class="linenos">154</span></a><span class="sd">            name: the name of the recommender.</span>
-</span><span id="Recommender-155"><a href="#Recommender-155"><span class="linenos">155</span></a><span class="sd">            params: the parameters of the recommender.</span>
-</span><span id="Recommender-156"><a href="#Recommender-156"><span class="linenos">156</span></a><span class="sd">            num_threads: the max number of threads the recommender can use.</span>
-</span><span id="Recommender-157"><a href="#Recommender-157"><span class="linenos">157</span></a><span class="sd">            rated_items_filter: whether to filter already rated items when</span>
-</span><span id="Recommender-158"><a href="#Recommender-158"><span class="linenos">158</span></a><span class="sd">                producing item recommendations.</span>
-</span><span id="Recommender-159"><a href="#Recommender-159"><span class="linenos">159</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Recommender-160"><a href="#Recommender-160"><span class="linenos">160</span></a>        <span class="n">BaseRecommender</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rated_items_filter</span><span class="p">)</span>
-</span><span id="Recommender-161"><a href="#Recommender-161"><span class="linenos">161</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span> <span class="o">=</span> <span class="n">num_threads</span>
-</span><span id="Recommender-162"><a href="#Recommender-162"><span class="linenos">162</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">recommender_name</span> <span class="o">=</span> <span class="n">name</span>
-</span><span id="Recommender-163"><a href="#Recommender-163"><span class="linenos">163</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
-</span><span id="Recommender-164"><a href="#Recommender-164"><span class="linenos">164</span></a>
-</span><span id="Recommender-165"><a href="#Recommender-165"><span class="linenos">165</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="Recommender-166"><a href="#Recommender-166"><span class="linenos">166</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the recommender.</span>
-</span><span id="Recommender-167"><a href="#Recommender-167"><span class="linenos">167</span></a>
-</span><span id="Recommender-168"><a href="#Recommender-168"><span class="linenos">168</span></a><span class="sd">        Returns:</span>
-</span><span id="Recommender-169"><a href="#Recommender-169"><span class="linenos">169</span></a><span class="sd">            the recommender name.</span>
-</span><span id="Recommender-170"><a href="#Recommender-170"><span class="linenos">170</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Recommender-171"><a href="#Recommender-171"><span class="linenos">171</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">recommender_name</span>
-</span><span id="Recommender-172"><a href="#Recommender-172"><span class="linenos">172</span></a>
-</span><span id="Recommender-173"><a href="#Recommender-173"><span class="linenos">173</span></a>    <span class="k">def</span> <span class="nf">get_num_threads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="Recommender-174"><a href="#Recommender-174"><span class="linenos">174</span></a>        <span class="sd">&quot;&quot;&quot;Get the max number of threads the recommender can use.</span>
-</span><span id="Recommender-175"><a href="#Recommender-175"><span class="linenos">175</span></a>
-</span><span id="Recommender-176"><a href="#Recommender-176"><span class="linenos">176</span></a><span class="sd">        Returns:</span>
-</span><span id="Recommender-177"><a href="#Recommender-177"><span class="linenos">177</span></a><span class="sd">            the number of threads.</span>
-</span><span id="Recommender-178"><a href="#Recommender-178"><span class="linenos">178</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Recommender-179"><a href="#Recommender-179"><span class="linenos">179</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span>
-</span><span id="Recommender-180"><a href="#Recommender-180"><span class="linenos">180</span></a>
-</span><span id="Recommender-181"><a href="#Recommender-181"><span class="linenos">181</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span id="Recommender-182"><a href="#Recommender-182"><span class="linenos">182</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the recommender.</span>
-</span><span id="Recommender-183"><a href="#Recommender-183"><span class="linenos">183</span></a>
-</span><span id="Recommender-184"><a href="#Recommender-184"><span class="linenos">184</span></a><span class="sd">        Returns:</span>
-</span><span id="Recommender-185"><a href="#Recommender-185"><span class="linenos">185</span></a><span class="sd">            the recommender parameters.</span>
-</span><span id="Recommender-186"><a href="#Recommender-186"><span class="linenos">186</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Recommender-187"><a href="#Recommender-187"><span class="linenos">187</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Recommender-172"><a href="#Recommender-172"><span class="linenos">172</span></a><span class="k">class</span> <span class="nc">Recommender</span><span class="p">(</span><span class="n">BaseRecommender</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+</span><span id="Recommender-173"><a href="#Recommender-173"><span class="linenos">173</span></a>    <span class="sd">&quot;&quot;&quot;Recommender that implements basic shared functionality.&quot;&quot;&quot;</span>
+</span><span id="Recommender-174"><a href="#Recommender-174"><span class="linenos">174</span></a>
+</span><span id="Recommender-175"><a href="#Recommender-175"><span class="linenos">175</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">num_threads</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+</span><span id="Recommender-176"><a href="#Recommender-176"><span class="linenos">176</span></a>                 <span class="n">rated_items_filter</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+</span><span id="Recommender-177"><a href="#Recommender-177"><span class="linenos">177</span></a>        <span class="sd">&quot;&quot;&quot;Construct the recommender.</span>
+</span><span id="Recommender-178"><a href="#Recommender-178"><span class="linenos">178</span></a>
+</span><span id="Recommender-179"><a href="#Recommender-179"><span class="linenos">179</span></a><span class="sd">        Args:</span>
+</span><span id="Recommender-180"><a href="#Recommender-180"><span class="linenos">180</span></a><span class="sd">            name: the name of the recommender.</span>
+</span><span id="Recommender-181"><a href="#Recommender-181"><span class="linenos">181</span></a><span class="sd">            params: the parameters of the recommender.</span>
+</span><span id="Recommender-182"><a href="#Recommender-182"><span class="linenos">182</span></a><span class="sd">            num_threads: the max number of threads the recommender can use.</span>
+</span><span id="Recommender-183"><a href="#Recommender-183"><span class="linenos">183</span></a><span class="sd">            rated_items_filter: whether to filter already rated items when</span>
+</span><span id="Recommender-184"><a href="#Recommender-184"><span class="linenos">184</span></a><span class="sd">                producing item recommendations.</span>
+</span><span id="Recommender-185"><a href="#Recommender-185"><span class="linenos">185</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Recommender-186"><a href="#Recommender-186"><span class="linenos">186</span></a>        <span class="n">BaseRecommender</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rated_items_filter</span><span class="p">)</span>
+</span><span id="Recommender-187"><a href="#Recommender-187"><span class="linenos">187</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span> <span class="o">=</span> <span class="n">num_threads</span>
+</span><span id="Recommender-188"><a href="#Recommender-188"><span class="linenos">188</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">recommender_name</span> <span class="o">=</span> <span class="n">name</span>
+</span><span id="Recommender-189"><a href="#Recommender-189"><span class="linenos">189</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+</span><span id="Recommender-190"><a href="#Recommender-190"><span class="linenos">190</span></a>
+</span><span id="Recommender-191"><a href="#Recommender-191"><span class="linenos">191</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="Recommender-192"><a href="#Recommender-192"><span class="linenos">192</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the recommender.</span>
+</span><span id="Recommender-193"><a href="#Recommender-193"><span class="linenos">193</span></a>
+</span><span id="Recommender-194"><a href="#Recommender-194"><span class="linenos">194</span></a><span class="sd">        Returns:</span>
+</span><span id="Recommender-195"><a href="#Recommender-195"><span class="linenos">195</span></a><span class="sd">            the recommender name.</span>
+</span><span id="Recommender-196"><a href="#Recommender-196"><span class="linenos">196</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Recommender-197"><a href="#Recommender-197"><span class="linenos">197</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">recommender_name</span>
+</span><span id="Recommender-198"><a href="#Recommender-198"><span class="linenos">198</span></a>
+</span><span id="Recommender-199"><a href="#Recommender-199"><span class="linenos">199</span></a>    <span class="k">def</span> <span class="nf">get_num_threads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="Recommender-200"><a href="#Recommender-200"><span class="linenos">200</span></a>        <span class="sd">&quot;&quot;&quot;Get the max number of threads the recommender can use.</span>
+</span><span id="Recommender-201"><a href="#Recommender-201"><span class="linenos">201</span></a>
+</span><span id="Recommender-202"><a href="#Recommender-202"><span class="linenos">202</span></a><span class="sd">        Returns:</span>
+</span><span id="Recommender-203"><a href="#Recommender-203"><span class="linenos">203</span></a><span class="sd">            the number of threads.</span>
+</span><span id="Recommender-204"><a href="#Recommender-204"><span class="linenos">204</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Recommender-205"><a href="#Recommender-205"><span class="linenos">205</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span>
+</span><span id="Recommender-206"><a href="#Recommender-206"><span class="linenos">206</span></a>
+</span><span id="Recommender-207"><a href="#Recommender-207"><span class="linenos">207</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="Recommender-208"><a href="#Recommender-208"><span class="linenos">208</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the recommender.</span>
+</span><span id="Recommender-209"><a href="#Recommender-209"><span class="linenos">209</span></a>
+</span><span id="Recommender-210"><a href="#Recommender-210"><span class="linenos">210</span></a><span class="sd">        Returns:</span>
+</span><span id="Recommender-211"><a href="#Recommender-211"><span class="linenos">211</span></a><span class="sd">            the recommender parameters.</span>
+</span><span id="Recommender-212"><a href="#Recommender-212"><span class="linenos">212</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Recommender-213"><a href="#Recommender-213"><span class="linenos">213</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -797,21 +894,21 @@ allowed to override batching with their own logic.</p>
 
     </div>
     <a class="headerlink" href="#Recommender.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Recommender.__init__-149"><a href="#Recommender.__init__-149"><span class="linenos">149</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">num_threads</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-</span><span id="Recommender.__init__-150"><a href="#Recommender.__init__-150"><span class="linenos">150</span></a>                 <span class="n">rated_items_filter</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
-</span><span id="Recommender.__init__-151"><a href="#Recommender.__init__-151"><span class="linenos">151</span></a>        <span class="sd">&quot;&quot;&quot;Construct the recommender.</span>
-</span><span id="Recommender.__init__-152"><a href="#Recommender.__init__-152"><span class="linenos">152</span></a>
-</span><span id="Recommender.__init__-153"><a href="#Recommender.__init__-153"><span class="linenos">153</span></a><span class="sd">        Args:</span>
-</span><span id="Recommender.__init__-154"><a href="#Recommender.__init__-154"><span class="linenos">154</span></a><span class="sd">            name: the name of the recommender.</span>
-</span><span id="Recommender.__init__-155"><a href="#Recommender.__init__-155"><span class="linenos">155</span></a><span class="sd">            params: the parameters of the recommender.</span>
-</span><span id="Recommender.__init__-156"><a href="#Recommender.__init__-156"><span class="linenos">156</span></a><span class="sd">            num_threads: the max number of threads the recommender can use.</span>
-</span><span id="Recommender.__init__-157"><a href="#Recommender.__init__-157"><span class="linenos">157</span></a><span class="sd">            rated_items_filter: whether to filter already rated items when</span>
-</span><span id="Recommender.__init__-158"><a href="#Recommender.__init__-158"><span class="linenos">158</span></a><span class="sd">                producing item recommendations.</span>
-</span><span id="Recommender.__init__-159"><a href="#Recommender.__init__-159"><span class="linenos">159</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Recommender.__init__-160"><a href="#Recommender.__init__-160"><span class="linenos">160</span></a>        <span class="n">BaseRecommender</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rated_items_filter</span><span class="p">)</span>
-</span><span id="Recommender.__init__-161"><a href="#Recommender.__init__-161"><span class="linenos">161</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span> <span class="o">=</span> <span class="n">num_threads</span>
-</span><span id="Recommender.__init__-162"><a href="#Recommender.__init__-162"><span class="linenos">162</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">recommender_name</span> <span class="o">=</span> <span class="n">name</span>
-</span><span id="Recommender.__init__-163"><a href="#Recommender.__init__-163"><span class="linenos">163</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Recommender.__init__-175"><a href="#Recommender.__init__-175"><span class="linenos">175</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">num_threads</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+</span><span id="Recommender.__init__-176"><a href="#Recommender.__init__-176"><span class="linenos">176</span></a>                 <span class="n">rated_items_filter</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+</span><span id="Recommender.__init__-177"><a href="#Recommender.__init__-177"><span class="linenos">177</span></a>        <span class="sd">&quot;&quot;&quot;Construct the recommender.</span>
+</span><span id="Recommender.__init__-178"><a href="#Recommender.__init__-178"><span class="linenos">178</span></a>
+</span><span id="Recommender.__init__-179"><a href="#Recommender.__init__-179"><span class="linenos">179</span></a><span class="sd">        Args:</span>
+</span><span id="Recommender.__init__-180"><a href="#Recommender.__init__-180"><span class="linenos">180</span></a><span class="sd">            name: the name of the recommender.</span>
+</span><span id="Recommender.__init__-181"><a href="#Recommender.__init__-181"><span class="linenos">181</span></a><span class="sd">            params: the parameters of the recommender.</span>
+</span><span id="Recommender.__init__-182"><a href="#Recommender.__init__-182"><span class="linenos">182</span></a><span class="sd">            num_threads: the max number of threads the recommender can use.</span>
+</span><span id="Recommender.__init__-183"><a href="#Recommender.__init__-183"><span class="linenos">183</span></a><span class="sd">            rated_items_filter: whether to filter already rated items when</span>
+</span><span id="Recommender.__init__-184"><a href="#Recommender.__init__-184"><span class="linenos">184</span></a><span class="sd">                producing item recommendations.</span>
+</span><span id="Recommender.__init__-185"><a href="#Recommender.__init__-185"><span class="linenos">185</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Recommender.__init__-186"><a href="#Recommender.__init__-186"><span class="linenos">186</span></a>        <span class="n">BaseRecommender</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rated_items_filter</span><span class="p">)</span>
+</span><span id="Recommender.__init__-187"><a href="#Recommender.__init__-187"><span class="linenos">187</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span> <span class="o">=</span> <span class="n">num_threads</span>
+</span><span id="Recommender.__init__-188"><a href="#Recommender.__init__-188"><span class="linenos">188</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">recommender_name</span> <span class="o">=</span> <span class="n">name</span>
+</span><span id="Recommender.__init__-189"><a href="#Recommender.__init__-189"><span class="linenos">189</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
 </span></pre></div>
 
 
@@ -838,13 +935,13 @@ allowed to override batching with their own logic.</p>
 
     </div>
     <a class="headerlink" href="#Recommender.get_name"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Recommender.get_name-165"><a href="#Recommender.get_name-165"><span class="linenos">165</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="Recommender.get_name-166"><a href="#Recommender.get_name-166"><span class="linenos">166</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the recommender.</span>
-</span><span id="Recommender.get_name-167"><a href="#Recommender.get_name-167"><span class="linenos">167</span></a>
-</span><span id="Recommender.get_name-168"><a href="#Recommender.get_name-168"><span class="linenos">168</span></a><span class="sd">        Returns:</span>
-</span><span id="Recommender.get_name-169"><a href="#Recommender.get_name-169"><span class="linenos">169</span></a><span class="sd">            the recommender name.</span>
-</span><span id="Recommender.get_name-170"><a href="#Recommender.get_name-170"><span class="linenos">170</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Recommender.get_name-171"><a href="#Recommender.get_name-171"><span class="linenos">171</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">recommender_name</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Recommender.get_name-191"><a href="#Recommender.get_name-191"><span class="linenos">191</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="Recommender.get_name-192"><a href="#Recommender.get_name-192"><span class="linenos">192</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the recommender.</span>
+</span><span id="Recommender.get_name-193"><a href="#Recommender.get_name-193"><span class="linenos">193</span></a>
+</span><span id="Recommender.get_name-194"><a href="#Recommender.get_name-194"><span class="linenos">194</span></a><span class="sd">        Returns:</span>
+</span><span id="Recommender.get_name-195"><a href="#Recommender.get_name-195"><span class="linenos">195</span></a><span class="sd">            the recommender name.</span>
+</span><span id="Recommender.get_name-196"><a href="#Recommender.get_name-196"><span class="linenos">196</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Recommender.get_name-197"><a href="#Recommender.get_name-197"><span class="linenos">197</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">recommender_name</span>
 </span></pre></div>
 
 
@@ -867,13 +964,13 @@ allowed to override batching with their own logic.</p>
 
     </div>
     <a class="headerlink" href="#Recommender.get_num_threads"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Recommender.get_num_threads-173"><a href="#Recommender.get_num_threads-173"><span class="linenos">173</span></a>    <span class="k">def</span> <span class="nf">get_num_threads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="Recommender.get_num_threads-174"><a href="#Recommender.get_num_threads-174"><span class="linenos">174</span></a>        <span class="sd">&quot;&quot;&quot;Get the max number of threads the recommender can use.</span>
-</span><span id="Recommender.get_num_threads-175"><a href="#Recommender.get_num_threads-175"><span class="linenos">175</span></a>
-</span><span id="Recommender.get_num_threads-176"><a href="#Recommender.get_num_threads-176"><span class="linenos">176</span></a><span class="sd">        Returns:</span>
-</span><span id="Recommender.get_num_threads-177"><a href="#Recommender.get_num_threads-177"><span class="linenos">177</span></a><span class="sd">            the number of threads.</span>
-</span><span id="Recommender.get_num_threads-178"><a href="#Recommender.get_num_threads-178"><span class="linenos">178</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Recommender.get_num_threads-179"><a href="#Recommender.get_num_threads-179"><span class="linenos">179</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Recommender.get_num_threads-199"><a href="#Recommender.get_num_threads-199"><span class="linenos">199</span></a>    <span class="k">def</span> <span class="nf">get_num_threads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="Recommender.get_num_threads-200"><a href="#Recommender.get_num_threads-200"><span class="linenos">200</span></a>        <span class="sd">&quot;&quot;&quot;Get the max number of threads the recommender can use.</span>
+</span><span id="Recommender.get_num_threads-201"><a href="#Recommender.get_num_threads-201"><span class="linenos">201</span></a>
+</span><span id="Recommender.get_num_threads-202"><a href="#Recommender.get_num_threads-202"><span class="linenos">202</span></a><span class="sd">        Returns:</span>
+</span><span id="Recommender.get_num_threads-203"><a href="#Recommender.get_num_threads-203"><span class="linenos">203</span></a><span class="sd">            the number of threads.</span>
+</span><span id="Recommender.get_num_threads-204"><a href="#Recommender.get_num_threads-204"><span class="linenos">204</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Recommender.get_num_threads-205"><a href="#Recommender.get_num_threads-205"><span class="linenos">205</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span>
 </span></pre></div>
 
 
@@ -896,13 +993,13 @@ allowed to override batching with their own logic.</p>
 
     </div>
     <a class="headerlink" href="#Recommender.get_params"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="Recommender.get_params-181"><a href="#Recommender.get_params-181"><span class="linenos">181</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span id="Recommender.get_params-182"><a href="#Recommender.get_params-182"><span class="linenos">182</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the recommender.</span>
-</span><span id="Recommender.get_params-183"><a href="#Recommender.get_params-183"><span class="linenos">183</span></a>
-</span><span id="Recommender.get_params-184"><a href="#Recommender.get_params-184"><span class="linenos">184</span></a><span class="sd">        Returns:</span>
-</span><span id="Recommender.get_params-185"><a href="#Recommender.get_params-185"><span class="linenos">185</span></a><span class="sd">            the recommender parameters.</span>
-</span><span id="Recommender.get_params-186"><a href="#Recommender.get_params-186"><span class="linenos">186</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="Recommender.get_params-187"><a href="#Recommender.get_params-187"><span class="linenos">187</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="Recommender.get_params-207"><a href="#Recommender.get_params-207"><span class="linenos">207</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="Recommender.get_params-208"><a href="#Recommender.get_params-208"><span class="linenos">208</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the recommender.</span>
+</span><span id="Recommender.get_params-209"><a href="#Recommender.get_params-209"><span class="linenos">209</span></a>
+</span><span id="Recommender.get_params-210"><a href="#Recommender.get_params-210"><span class="linenos">210</span></a><span class="sd">        Returns:</span>
+</span><span id="Recommender.get_params-211"><a href="#Recommender.get_params-211"><span class="linenos">211</span></a><span class="sd">            the recommender parameters.</span>
+</span><span id="Recommender.get_params-212"><a href="#Recommender.get_params-212"><span class="linenos">212</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="Recommender.get_params-213"><a href="#Recommender.get_params-213"><span class="linenos">213</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -926,8 +1023,7 @@ allowed to override batching with their own logic.</p>
 
             </div>
             <div><dt><a href="base_algorithm.html#BaseAlgorithm">src.fairreckitlib.model.algorithms.base_algorithm.BaseAlgorithm</a></dt>
-                                <dd id="Recommender.get_items" class="function"><a href="base_algorithm.html#BaseAlgorithm.get_items">get_items</a></dd>
-                <dd id="Recommender.get_users" class="function"><a href="base_algorithm.html#BaseAlgorithm.get_users">get_users</a></dd>
+                                <dd id="Recommender.get_train_set" class="function"><a href="base_algorithm.html#BaseAlgorithm.get_train_set">get_train_set</a></dd>
                 <dd id="Recommender.train" class="function"><a href="base_algorithm.html#BaseAlgorithm.train">train</a></dd>
                 <dd id="Recommender.on_train" class="function"><a href="base_algorithm.html#BaseAlgorithm.on_train">on_train</a></dd>
 

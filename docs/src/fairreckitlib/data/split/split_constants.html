@@ -52,6 +52,8 @@ SPLIT_RANDOM: name of the random splitter.
 SPLIT_TEMPORAL: name of the temporal splitter.
 DEFAULT_SPLIT_NAME: the name of the default splitter.
 DEFAULT_SPLIT_TEST_RATIO: the default split test ratio.
+MIN_TEST_RATIO: the minimum allowed split test ratio.
+MAX_TEST_RATIO: the maximum allowed split test ratio.
 </code></pre>
 
 <p>This program has been developed by students from the bachelor Computer Science at
@@ -73,20 +75,25 @@ Utrecht University within the Software Project course.
 </span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">    SPLIT_TEMPORAL: name of the temporal splitter.</span>
 </span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">    DEFAULT_SPLIT_NAME: the name of the default splitter.</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">    DEFAULT_SPLIT_TEST_RATIO: the default split test ratio.</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="sd">This program has been developed by students from the bachelor Computer Science at</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="sd">Utrecht University within the Software Project course.</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">© Copyright Utrecht University (Department of Information and Computing Sciences)</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="n">SPLIT_RANDOM</span> <span class="o">=</span> <span class="s1">&#39;random&#39;</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="n">SPLIT_TEMPORAL</span> <span class="o">=</span> <span class="s1">&#39;temporal&#39;</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="n">KEY_SPLITTING</span> <span class="o">=</span> <span class="s1">&#39;splitting&#39;</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="n">KEY_SPLIT_TEST_RATIO</span> <span class="o">=</span> <span class="s1">&#39;test_ratio&#39;</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="n">DEFAULT_SPLIT_NAME</span> <span class="o">=</span> <span class="n">SPLIT_RANDOM</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="n">DEFAULT_SPLIT_TEST_RATIO</span> <span class="o">=</span> <span class="mf">0.2</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="sd">    MIN_TEST_RATIO: the minimum allowed split test ratio.</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="sd">    MAX_TEST_RATIO: the maximum allowed split test ratio.</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="sd">This program has been developed by students from the bachelor Computer Science at</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="sd">Utrecht University within the Software Project course.</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="sd">© Copyright Utrecht University (Department of Information and Computing Sciences)</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="n">SPLIT_RANDOM</span> <span class="o">=</span> <span class="s1">&#39;random&#39;</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="n">SPLIT_TEMPORAL</span> <span class="o">=</span> <span class="s1">&#39;temporal&#39;</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="n">KEY_SPLITTING</span> <span class="o">=</span> <span class="s1">&#39;splitting&#39;</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="n">KEY_SPLIT_TEST_RATIO</span> <span class="o">=</span> <span class="s1">&#39;test_ratio&#39;</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="n">DEFAULT_SPLIT_NAME</span> <span class="o">=</span> <span class="n">SPLIT_RANDOM</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="n">DEFAULT_SPLIT_TEST_RATIO</span> <span class="o">=</span> <span class="mf">0.2</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="n">MIN_TEST_RATIO</span> <span class="o">=</span> <span class="mf">0.01</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="n">MAX_TEST_RATIO</span> <span class="o">=</span> <span class="mf">0.99</span>
 </span></pre></div>
 
 

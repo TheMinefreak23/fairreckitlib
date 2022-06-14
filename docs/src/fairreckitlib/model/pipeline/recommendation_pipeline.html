@@ -34,10 +34,19 @@
                     <a class="class" href="#RecommendationPipeline">RecommendationPipeline</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="function" href="#RecommendationPipeline.get_ratings_dataframe">get_ratings_dataframe</a>
+                                <a class="function" href="#RecommendationPipeline.load_test_set_users">load_test_set_users</a>
                         </li>
                         <li>
                                 <a class="function" href="#RecommendationPipeline.test_model_ratings">test_model_ratings</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#RecommendationPipelineCSR">RecommendationPipelineCSR</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#RecommendationPipelineCSR.on_load_train_set_matrix">on_load_train_set_matrix</a>
                         </li>
                 </ul>
 
@@ -63,6 +72,7 @@ src<wbr>.<a href="./../../../fairreckitlib.html">fairreckitlib</a><wbr>.<a href=
 <p>Classes:</p>
 
 <pre><code>RecommendationPipeline: can batch recommendations from multiple models for a specific API.
+RecommendationPipelineCSR: recommendation pipeline with a csr matrix instead of a dataframe.
 </code></pre>
 
 <p>This program has been developed by students from the bachelor Computer Science at
@@ -79,69 +89,79 @@ Utrecht University within the Software Project course.
 </span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">Classes:</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
 </span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="sd">    RecommendationPipeline: can batch recommendations from multiple models for a specific API.</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="sd">This program has been developed by students from the bachelor Computer Science at</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">Utrecht University within the Software Project course.</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">© Copyright Utrecht University (Department of Information and Computing Sciences)</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>
-</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="kn">from</span> <span class="nn">..algorithms.base_recommender</span> <span class="kn">import</span> <span class="n">BaseRecommender</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="kn">from</span> <span class="nn">.model_pipeline</span> <span class="kn">import</span> <span class="n">ModelPipeline</span>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="k">class</span> <span class="nc">RecommendationPipeline</span><span class="p">(</span><span class="n">ModelPipeline</span><span class="p">):</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="sd">&quot;&quot;&quot;Recommendation Pipeline that computes item recommendations.</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">    The topK item recommendations will be computed for each user that is present in the test set.</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="k">def</span> <span class="nf">get_ratings_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>        <span class="sd">&quot;&quot;&quot;Get the dataframe that contains the original ratings.</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">        For the recommendation pipeline the ratings is the combination of the train and test set.</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="sd">    RecommendationPipelineCSR: recommendation pipeline with a csr matrix instead of a dataframe.</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="sd">This program has been developed by students from the bachelor Computer Science at</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="sd">Utrecht University within the Software Project course.</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="sd">© Copyright Utrecht University (Department of Information and Computing Sciences)</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="kn">from</span> <span class="nn">..algorithms.base_recommender</span> <span class="kn">import</span> <span class="n">BaseRecommender</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="kn">from</span> <span class="nn">..algorithms.matrix</span> <span class="kn">import</span> <span class="n">Matrix</span><span class="p">,</span> <span class="n">MatrixCSR</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="kn">from</span> <span class="nn">.model_pipeline</span> <span class="kn">import</span> <span class="n">ModelPipeline</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="k">class</span> <span class="nc">RecommendationPipeline</span><span class="p">(</span><span class="n">ModelPipeline</span><span class="p">):</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="sd">&quot;&quot;&quot;Recommendation Pipeline that computes item recommendations.</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">    The topK item recommendations will be computed for each user that is present in the test set.</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>    <span class="k">def</span> <span class="nf">load_test_set_users</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>        <span class="sd">&quot;&quot;&quot;Load the test set users that all models can use for testing.</span>
 </span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">        Returns:</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">            dataframe containing the &#39;user&#39;, &#39;item&#39;, &#39;rating&#39;, columns.</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">train_set</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_set</span><span class="p">])</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="k">def</span> <span class="nf">test_model_ratings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>                           <span class="n">model</span><span class="p">:</span> <span class="n">BaseRecommender</span><span class="p">,</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>                           <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>                           <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>                           <span class="n">is_running</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">bool</span><span class="p">],</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>                           <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>        <span class="sd">&quot;&quot;&quot;Test the specified model for rating recommendations.</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="sd">        Produce a top K number of item scores for each user that is present in the test set.</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">        Recommendations are made for every user in the test set.</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">        Raises:</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">            FileNotFoundError: when the test set file is not found.</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>        <span class="n">test_set</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_test_set_dataframe</span><span class="p">(</span><span class="s1">&#39;recommendation test set&#39;</span><span class="p">)</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">test_set_users</span> <span class="o">=</span> <span class="n">test_set</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>    <span class="k">def</span> <span class="nf">test_model_ratings</span><span class="p">(</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>            <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>            <span class="n">model</span><span class="p">:</span> <span class="n">BaseRecommender</span><span class="p">,</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>            <span class="n">user_batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>        <span class="sd">&quot;&quot;&quot;Test the specified model for rating recommendations.</span>
 </span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="sd">        Args:</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a><span class="sd">            model: the model that needs to be tested.</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="sd">            output_path: path to the file where the ratings will be stored.</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="sd">            batch_size: number of users to test ratings for in a batch.</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="sd">            is_running: function that returns whether the pipeline</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="sd">                is still running. Stops early when False is returned.</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>
-</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="sd">        Keyword Args:</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="sd">            num_items(int): the number of item recommendations to produce.</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>        <span class="n">test_users</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_set</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a>        <span class="n">start_index</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>        <span class="k">while</span> <span class="n">start_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_users</span><span class="p">):</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_running</span><span class="p">():</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>                <span class="k">return</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>
-</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>            <span class="n">user_batch</span> <span class="o">=</span> <span class="n">test_users</span><span class="p">[</span><span class="n">start_index</span> <span class="p">:</span> <span class="n">start_index</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>            <span class="n">recommendations</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">recommend_batch</span><span class="p">(</span><span class="n">user_batch</span><span class="p">,</span> <span class="n">num_items</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;num_items&#39;</span><span class="p">])</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_running</span><span class="p">():</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>                <span class="k">return</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>
-</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">write_dataframe</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">recommendations</span><span class="p">,</span> <span class="n">start_index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>            <span class="n">start_index</span> <span class="o">+=</span> <span class="n">batch_size</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="sd">        Produce a top K number of item scores for each user that is present in the test set.</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="sd">        Args:</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="sd">            model: the model that needs to be tested.</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a><span class="sd">            user_batch: the user batch to compute model ratings for.</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="sd">        Keyword Args:</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="sd">            num_items(int): the number of item recommendations to produce.</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="sd">        Raises:</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a><span class="sd">            ArithmeticError: possibly raised by a recommender model on testing.</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="sd">            MemoryError: possibly raised by a recommender model on testing.</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="sd">            RuntimeError: possibly raised by a recommender model on testing.</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a><span class="sd">        Returns:</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a><span class="sd">            a dataframe containing the computed item recommendations.</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">recommend_batch</span><span class="p">(</span><span class="n">user_batch</span><span class="p">,</span> <span class="n">num_items</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;num_items&#39;</span><span class="p">])</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="k">class</span> <span class="nc">RecommendationPipelineCSR</span><span class="p">(</span><span class="n">RecommendationPipeline</span><span class="p">):</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>    <span class="sd">&quot;&quot;&quot;Recommendation Pipeline implementation for a CSR matrix train set.&quot;&quot;&quot;</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>    <span class="k">def</span> <span class="nf">on_load_train_set_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix</span><span class="p">:</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a>        <span class="sd">&quot;&quot;&quot;Load the train set matrix that all models can use for training.</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a><span class="sd">        Raises:</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a><span class="sd">            FileNotFoundError: when the train set file is not found.</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a><span class="sd">        Returns:</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a><span class="sd">            the loaded train set csr matrix.</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a>        <span class="k">return</span> <span class="n">MatrixCSR</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_transition</span><span class="o">.</span><span class="n">train_set_path</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -157,55 +177,48 @@ Utrecht University within the Software Project course.
 
     </div>
     <a class="headerlink" href="#RecommendationPipeline"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RecommendationPipeline-21"><a href="#RecommendationPipeline-21"><span class="linenos">21</span></a><span class="k">class</span> <span class="nc">RecommendationPipeline</span><span class="p">(</span><span class="n">ModelPipeline</span><span class="p">):</span>
-</span><span id="RecommendationPipeline-22"><a href="#RecommendationPipeline-22"><span class="linenos">22</span></a>    <span class="sd">&quot;&quot;&quot;Recommendation Pipeline that computes item recommendations.</span>
-</span><span id="RecommendationPipeline-23"><a href="#RecommendationPipeline-23"><span class="linenos">23</span></a>
-</span><span id="RecommendationPipeline-24"><a href="#RecommendationPipeline-24"><span class="linenos">24</span></a><span class="sd">    The topK item recommendations will be computed for each user that is present in the test set.</span>
-</span><span id="RecommendationPipeline-25"><a href="#RecommendationPipeline-25"><span class="linenos">25</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="RecommendationPipeline-26"><a href="#RecommendationPipeline-26"><span class="linenos">26</span></a>
-</span><span id="RecommendationPipeline-27"><a href="#RecommendationPipeline-27"><span class="linenos">27</span></a>    <span class="k">def</span> <span class="nf">get_ratings_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="RecommendationPipeline-28"><a href="#RecommendationPipeline-28"><span class="linenos">28</span></a>        <span class="sd">&quot;&quot;&quot;Get the dataframe that contains the original ratings.</span>
-</span><span id="RecommendationPipeline-29"><a href="#RecommendationPipeline-29"><span class="linenos">29</span></a>
-</span><span id="RecommendationPipeline-30"><a href="#RecommendationPipeline-30"><span class="linenos">30</span></a><span class="sd">        For the recommendation pipeline the ratings is the combination of the train and test set.</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RecommendationPipeline-23"><a href="#RecommendationPipeline-23"><span class="linenos">23</span></a><span class="k">class</span> <span class="nc">RecommendationPipeline</span><span class="p">(</span><span class="n">ModelPipeline</span><span class="p">):</span>
+</span><span id="RecommendationPipeline-24"><a href="#RecommendationPipeline-24"><span class="linenos">24</span></a>    <span class="sd">&quot;&quot;&quot;Recommendation Pipeline that computes item recommendations.</span>
+</span><span id="RecommendationPipeline-25"><a href="#RecommendationPipeline-25"><span class="linenos">25</span></a>
+</span><span id="RecommendationPipeline-26"><a href="#RecommendationPipeline-26"><span class="linenos">26</span></a><span class="sd">    The topK item recommendations will be computed for each user that is present in the test set.</span>
+</span><span id="RecommendationPipeline-27"><a href="#RecommendationPipeline-27"><span class="linenos">27</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="RecommendationPipeline-28"><a href="#RecommendationPipeline-28"><span class="linenos">28</span></a>
+</span><span id="RecommendationPipeline-29"><a href="#RecommendationPipeline-29"><span class="linenos">29</span></a>    <span class="k">def</span> <span class="nf">load_test_set_users</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="RecommendationPipeline-30"><a href="#RecommendationPipeline-30"><span class="linenos">30</span></a>        <span class="sd">&quot;&quot;&quot;Load the test set users that all models can use for testing.</span>
 </span><span id="RecommendationPipeline-31"><a href="#RecommendationPipeline-31"><span class="linenos">31</span></a>
-</span><span id="RecommendationPipeline-32"><a href="#RecommendationPipeline-32"><span class="linenos">32</span></a><span class="sd">        Returns:</span>
-</span><span id="RecommendationPipeline-33"><a href="#RecommendationPipeline-33"><span class="linenos">33</span></a><span class="sd">            dataframe containing the &#39;user&#39;, &#39;item&#39;, &#39;rating&#39;, columns.</span>
-</span><span id="RecommendationPipeline-34"><a href="#RecommendationPipeline-34"><span class="linenos">34</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="RecommendationPipeline-35"><a href="#RecommendationPipeline-35"><span class="linenos">35</span></a>        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">train_set</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_set</span><span class="p">])</span>
-</span><span id="RecommendationPipeline-36"><a href="#RecommendationPipeline-36"><span class="linenos">36</span></a>
-</span><span id="RecommendationPipeline-37"><a href="#RecommendationPipeline-37"><span class="linenos">37</span></a>    <span class="k">def</span> <span class="nf">test_model_ratings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-</span><span id="RecommendationPipeline-38"><a href="#RecommendationPipeline-38"><span class="linenos">38</span></a>                           <span class="n">model</span><span class="p">:</span> <span class="n">BaseRecommender</span><span class="p">,</span>
-</span><span id="RecommendationPipeline-39"><a href="#RecommendationPipeline-39"><span class="linenos">39</span></a>                           <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="RecommendationPipeline-40"><a href="#RecommendationPipeline-40"><span class="linenos">40</span></a>                           <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-</span><span id="RecommendationPipeline-41"><a href="#RecommendationPipeline-41"><span class="linenos">41</span></a>                           <span class="n">is_running</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">bool</span><span class="p">],</span>
-</span><span id="RecommendationPipeline-42"><a href="#RecommendationPipeline-42"><span class="linenos">42</span></a>                           <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="RecommendationPipeline-43"><a href="#RecommendationPipeline-43"><span class="linenos">43</span></a>        <span class="sd">&quot;&quot;&quot;Test the specified model for rating recommendations.</span>
-</span><span id="RecommendationPipeline-44"><a href="#RecommendationPipeline-44"><span class="linenos">44</span></a>
-</span><span id="RecommendationPipeline-45"><a href="#RecommendationPipeline-45"><span class="linenos">45</span></a><span class="sd">        Produce a top K number of item scores for each user that is present in the test set.</span>
+</span><span id="RecommendationPipeline-32"><a href="#RecommendationPipeline-32"><span class="linenos">32</span></a><span class="sd">        Recommendations are made for every user in the test set.</span>
+</span><span id="RecommendationPipeline-33"><a href="#RecommendationPipeline-33"><span class="linenos">33</span></a>
+</span><span id="RecommendationPipeline-34"><a href="#RecommendationPipeline-34"><span class="linenos">34</span></a><span class="sd">        Raises:</span>
+</span><span id="RecommendationPipeline-35"><a href="#RecommendationPipeline-35"><span class="linenos">35</span></a><span class="sd">            FileNotFoundError: when the test set file is not found.</span>
+</span><span id="RecommendationPipeline-36"><a href="#RecommendationPipeline-36"><span class="linenos">36</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="RecommendationPipeline-37"><a href="#RecommendationPipeline-37"><span class="linenos">37</span></a>        <span class="n">test_set</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_test_set_dataframe</span><span class="p">(</span><span class="s1">&#39;recommendation test set&#39;</span><span class="p">)</span>
+</span><span id="RecommendationPipeline-38"><a href="#RecommendationPipeline-38"><span class="linenos">38</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">test_set_users</span> <span class="o">=</span> <span class="n">test_set</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+</span><span id="RecommendationPipeline-39"><a href="#RecommendationPipeline-39"><span class="linenos">39</span></a>
+</span><span id="RecommendationPipeline-40"><a href="#RecommendationPipeline-40"><span class="linenos">40</span></a>    <span class="k">def</span> <span class="nf">test_model_ratings</span><span class="p">(</span>
+</span><span id="RecommendationPipeline-41"><a href="#RecommendationPipeline-41"><span class="linenos">41</span></a>            <span class="bp">self</span><span class="p">,</span>
+</span><span id="RecommendationPipeline-42"><a href="#RecommendationPipeline-42"><span class="linenos">42</span></a>            <span class="n">model</span><span class="p">:</span> <span class="n">BaseRecommender</span><span class="p">,</span>
+</span><span id="RecommendationPipeline-43"><a href="#RecommendationPipeline-43"><span class="linenos">43</span></a>            <span class="n">user_batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+</span><span id="RecommendationPipeline-44"><a href="#RecommendationPipeline-44"><span class="linenos">44</span></a>            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="RecommendationPipeline-45"><a href="#RecommendationPipeline-45"><span class="linenos">45</span></a>        <span class="sd">&quot;&quot;&quot;Test the specified model for rating recommendations.</span>
 </span><span id="RecommendationPipeline-46"><a href="#RecommendationPipeline-46"><span class="linenos">46</span></a>
-</span><span id="RecommendationPipeline-47"><a href="#RecommendationPipeline-47"><span class="linenos">47</span></a><span class="sd">        Args:</span>
-</span><span id="RecommendationPipeline-48"><a href="#RecommendationPipeline-48"><span class="linenos">48</span></a><span class="sd">            model: the model that needs to be tested.</span>
-</span><span id="RecommendationPipeline-49"><a href="#RecommendationPipeline-49"><span class="linenos">49</span></a><span class="sd">            output_path: path to the file where the ratings will be stored.</span>
-</span><span id="RecommendationPipeline-50"><a href="#RecommendationPipeline-50"><span class="linenos">50</span></a><span class="sd">            batch_size: number of users to test ratings for in a batch.</span>
-</span><span id="RecommendationPipeline-51"><a href="#RecommendationPipeline-51"><span class="linenos">51</span></a><span class="sd">            is_running: function that returns whether the pipeline</span>
-</span><span id="RecommendationPipeline-52"><a href="#RecommendationPipeline-52"><span class="linenos">52</span></a><span class="sd">                is still running. Stops early when False is returned.</span>
-</span><span id="RecommendationPipeline-53"><a href="#RecommendationPipeline-53"><span class="linenos">53</span></a>
-</span><span id="RecommendationPipeline-54"><a href="#RecommendationPipeline-54"><span class="linenos">54</span></a><span class="sd">        Keyword Args:</span>
-</span><span id="RecommendationPipeline-55"><a href="#RecommendationPipeline-55"><span class="linenos">55</span></a><span class="sd">            num_items(int): the number of item recommendations to produce.</span>
-</span><span id="RecommendationPipeline-56"><a href="#RecommendationPipeline-56"><span class="linenos">56</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="RecommendationPipeline-57"><a href="#RecommendationPipeline-57"><span class="linenos">57</span></a>        <span class="n">test_users</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_set</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-</span><span id="RecommendationPipeline-58"><a href="#RecommendationPipeline-58"><span class="linenos">58</span></a>        <span class="n">start_index</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="RecommendationPipeline-59"><a href="#RecommendationPipeline-59"><span class="linenos">59</span></a>        <span class="k">while</span> <span class="n">start_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_users</span><span class="p">):</span>
-</span><span id="RecommendationPipeline-60"><a href="#RecommendationPipeline-60"><span class="linenos">60</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_running</span><span class="p">():</span>
-</span><span id="RecommendationPipeline-61"><a href="#RecommendationPipeline-61"><span class="linenos">61</span></a>                <span class="k">return</span>
-</span><span id="RecommendationPipeline-62"><a href="#RecommendationPipeline-62"><span class="linenos">62</span></a>
-</span><span id="RecommendationPipeline-63"><a href="#RecommendationPipeline-63"><span class="linenos">63</span></a>            <span class="n">user_batch</span> <span class="o">=</span> <span class="n">test_users</span><span class="p">[</span><span class="n">start_index</span> <span class="p">:</span> <span class="n">start_index</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span>
-</span><span id="RecommendationPipeline-64"><a href="#RecommendationPipeline-64"><span class="linenos">64</span></a>            <span class="n">recommendations</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">recommend_batch</span><span class="p">(</span><span class="n">user_batch</span><span class="p">,</span> <span class="n">num_items</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;num_items&#39;</span><span class="p">])</span>
-</span><span id="RecommendationPipeline-65"><a href="#RecommendationPipeline-65"><span class="linenos">65</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_running</span><span class="p">():</span>
-</span><span id="RecommendationPipeline-66"><a href="#RecommendationPipeline-66"><span class="linenos">66</span></a>                <span class="k">return</span>
-</span><span id="RecommendationPipeline-67"><a href="#RecommendationPipeline-67"><span class="linenos">67</span></a>
-</span><span id="RecommendationPipeline-68"><a href="#RecommendationPipeline-68"><span class="linenos">68</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">write_dataframe</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">recommendations</span><span class="p">,</span> <span class="n">start_index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-</span><span id="RecommendationPipeline-69"><a href="#RecommendationPipeline-69"><span class="linenos">69</span></a>            <span class="n">start_index</span> <span class="o">+=</span> <span class="n">batch_size</span>
+</span><span id="RecommendationPipeline-47"><a href="#RecommendationPipeline-47"><span class="linenos">47</span></a><span class="sd">        Produce a top K number of item scores for each user that is present in the test set.</span>
+</span><span id="RecommendationPipeline-48"><a href="#RecommendationPipeline-48"><span class="linenos">48</span></a>
+</span><span id="RecommendationPipeline-49"><a href="#RecommendationPipeline-49"><span class="linenos">49</span></a><span class="sd">        Args:</span>
+</span><span id="RecommendationPipeline-50"><a href="#RecommendationPipeline-50"><span class="linenos">50</span></a><span class="sd">            model: the model that needs to be tested.</span>
+</span><span id="RecommendationPipeline-51"><a href="#RecommendationPipeline-51"><span class="linenos">51</span></a><span class="sd">            user_batch: the user batch to compute model ratings for.</span>
+</span><span id="RecommendationPipeline-52"><a href="#RecommendationPipeline-52"><span class="linenos">52</span></a>
+</span><span id="RecommendationPipeline-53"><a href="#RecommendationPipeline-53"><span class="linenos">53</span></a><span class="sd">        Keyword Args:</span>
+</span><span id="RecommendationPipeline-54"><a href="#RecommendationPipeline-54"><span class="linenos">54</span></a><span class="sd">            num_items(int): the number of item recommendations to produce.</span>
+</span><span id="RecommendationPipeline-55"><a href="#RecommendationPipeline-55"><span class="linenos">55</span></a>
+</span><span id="RecommendationPipeline-56"><a href="#RecommendationPipeline-56"><span class="linenos">56</span></a><span class="sd">        Raises:</span>
+</span><span id="RecommendationPipeline-57"><a href="#RecommendationPipeline-57"><span class="linenos">57</span></a><span class="sd">            ArithmeticError: possibly raised by a recommender model on testing.</span>
+</span><span id="RecommendationPipeline-58"><a href="#RecommendationPipeline-58"><span class="linenos">58</span></a><span class="sd">            MemoryError: possibly raised by a recommender model on testing.</span>
+</span><span id="RecommendationPipeline-59"><a href="#RecommendationPipeline-59"><span class="linenos">59</span></a><span class="sd">            RuntimeError: possibly raised by a recommender model on testing.</span>
+</span><span id="RecommendationPipeline-60"><a href="#RecommendationPipeline-60"><span class="linenos">60</span></a>
+</span><span id="RecommendationPipeline-61"><a href="#RecommendationPipeline-61"><span class="linenos">61</span></a><span class="sd">        Returns:</span>
+</span><span id="RecommendationPipeline-62"><a href="#RecommendationPipeline-62"><span class="linenos">62</span></a><span class="sd">            a dataframe containing the computed item recommendations.</span>
+</span><span id="RecommendationPipeline-63"><a href="#RecommendationPipeline-63"><span class="linenos">63</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="RecommendationPipeline-64"><a href="#RecommendationPipeline-64"><span class="linenos">64</span></a>        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">recommend_batch</span><span class="p">(</span><span class="n">user_batch</span><span class="p">,</span> <span class="n">num_items</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;num_items&#39;</span><span class="p">])</span>
 </span></pre></div>
 
 
@@ -215,35 +228,36 @@ Utrecht University within the Software Project course.
 </div>
 
 
-                            <div id="RecommendationPipeline.get_ratings_dataframe" class="classattr">
-                                        <input id="RecommendationPipeline.get_ratings_dataframe-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="RecommendationPipeline.load_test_set_users" class="classattr">
+                                        <input id="RecommendationPipeline.load_test_set_users-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_ratings_dataframe</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>:</span></span>
+        <span class="name">load_test_set_users</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
-                <label class="view-source-button" for="RecommendationPipeline.get_ratings_dataframe-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="RecommendationPipeline.load_test_set_users-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#RecommendationPipeline.get_ratings_dataframe"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RecommendationPipeline.get_ratings_dataframe-27"><a href="#RecommendationPipeline.get_ratings_dataframe-27"><span class="linenos">27</span></a>    <span class="k">def</span> <span class="nf">get_ratings_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="RecommendationPipeline.get_ratings_dataframe-28"><a href="#RecommendationPipeline.get_ratings_dataframe-28"><span class="linenos">28</span></a>        <span class="sd">&quot;&quot;&quot;Get the dataframe that contains the original ratings.</span>
-</span><span id="RecommendationPipeline.get_ratings_dataframe-29"><a href="#RecommendationPipeline.get_ratings_dataframe-29"><span class="linenos">29</span></a>
-</span><span id="RecommendationPipeline.get_ratings_dataframe-30"><a href="#RecommendationPipeline.get_ratings_dataframe-30"><span class="linenos">30</span></a><span class="sd">        For the recommendation pipeline the ratings is the combination of the train and test set.</span>
-</span><span id="RecommendationPipeline.get_ratings_dataframe-31"><a href="#RecommendationPipeline.get_ratings_dataframe-31"><span class="linenos">31</span></a>
-</span><span id="RecommendationPipeline.get_ratings_dataframe-32"><a href="#RecommendationPipeline.get_ratings_dataframe-32"><span class="linenos">32</span></a><span class="sd">        Returns:</span>
-</span><span id="RecommendationPipeline.get_ratings_dataframe-33"><a href="#RecommendationPipeline.get_ratings_dataframe-33"><span class="linenos">33</span></a><span class="sd">            dataframe containing the &#39;user&#39;, &#39;item&#39;, &#39;rating&#39;, columns.</span>
-</span><span id="RecommendationPipeline.get_ratings_dataframe-34"><a href="#RecommendationPipeline.get_ratings_dataframe-34"><span class="linenos">34</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="RecommendationPipeline.get_ratings_dataframe-35"><a href="#RecommendationPipeline.get_ratings_dataframe-35"><span class="linenos">35</span></a>        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">train_set</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_set</span><span class="p">])</span>
+    <a class="headerlink" href="#RecommendationPipeline.load_test_set_users"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RecommendationPipeline.load_test_set_users-29"><a href="#RecommendationPipeline.load_test_set_users-29"><span class="linenos">29</span></a>    <span class="k">def</span> <span class="nf">load_test_set_users</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="RecommendationPipeline.load_test_set_users-30"><a href="#RecommendationPipeline.load_test_set_users-30"><span class="linenos">30</span></a>        <span class="sd">&quot;&quot;&quot;Load the test set users that all models can use for testing.</span>
+</span><span id="RecommendationPipeline.load_test_set_users-31"><a href="#RecommendationPipeline.load_test_set_users-31"><span class="linenos">31</span></a>
+</span><span id="RecommendationPipeline.load_test_set_users-32"><a href="#RecommendationPipeline.load_test_set_users-32"><span class="linenos">32</span></a><span class="sd">        Recommendations are made for every user in the test set.</span>
+</span><span id="RecommendationPipeline.load_test_set_users-33"><a href="#RecommendationPipeline.load_test_set_users-33"><span class="linenos">33</span></a>
+</span><span id="RecommendationPipeline.load_test_set_users-34"><a href="#RecommendationPipeline.load_test_set_users-34"><span class="linenos">34</span></a><span class="sd">        Raises:</span>
+</span><span id="RecommendationPipeline.load_test_set_users-35"><a href="#RecommendationPipeline.load_test_set_users-35"><span class="linenos">35</span></a><span class="sd">            FileNotFoundError: when the test set file is not found.</span>
+</span><span id="RecommendationPipeline.load_test_set_users-36"><a href="#RecommendationPipeline.load_test_set_users-36"><span class="linenos">36</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="RecommendationPipeline.load_test_set_users-37"><a href="#RecommendationPipeline.load_test_set_users-37"><span class="linenos">37</span></a>        <span class="n">test_set</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_test_set_dataframe</span><span class="p">(</span><span class="s1">&#39;recommendation test set&#39;</span><span class="p">)</span>
+</span><span id="RecommendationPipeline.load_test_set_users-38"><a href="#RecommendationPipeline.load_test_set_users-38"><span class="linenos">38</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">test_set_users</span> <span class="o">=</span> <span class="n">test_set</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Get the dataframe that contains the original ratings.</p>
+            <div class="docstring"><p>Load the test set users that all models can use for testing.</p>
 
-<p>For the recommendation pipeline the ratings is the combination of the train and test set.</p>
+<p>Recommendations are made for every user in the test set.</p>
 
-<p>Returns:
-    dataframe containing the 'user', 'item', 'rating', columns.</p>
+<p>Raises:
+    FileNotFoundError: when the test set file is not found.</p>
 </div>
 
 
@@ -253,45 +267,37 @@ Utrecht University within the Software Project course.
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">test_model_ratings</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">algorithms</span><span class="o">.</span><span class="n">base_recommender</span><span class="o">.</span><span class="n">BaseRecommender</span>,</span><span class="param">	<span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span>,</span><span class="param">	<span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span>,</span><span class="param">	<span class="n">is_running</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">bool</span><span class="p">]</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+        <span class="name">test_model_ratings</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">model</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">algorithms</span><span class="o">.</span><span class="n">base_recommender</span><span class="o">.</span><span class="n">BaseRecommender</span>,</span><span class="param">	<span class="n">user_batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>,</span><span class="param">	<span class="o">**</span><span class="n">kwargs</span></span><span class="return-annotation">) -> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>:</span></span>
 
                 <label class="view-source-button" for="RecommendationPipeline.test_model_ratings-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#RecommendationPipeline.test_model_ratings"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="RecommendationPipeline.test_model_ratings-37"><a href="#RecommendationPipeline.test_model_ratings-37"><span class="linenos">37</span></a>    <span class="k">def</span> <span class="nf">test_model_ratings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-</span><span id="RecommendationPipeline.test_model_ratings-38"><a href="#RecommendationPipeline.test_model_ratings-38"><span class="linenos">38</span></a>                           <span class="n">model</span><span class="p">:</span> <span class="n">BaseRecommender</span><span class="p">,</span>
-</span><span id="RecommendationPipeline.test_model_ratings-39"><a href="#RecommendationPipeline.test_model_ratings-39"><span class="linenos">39</span></a>                           <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="RecommendationPipeline.test_model_ratings-40"><a href="#RecommendationPipeline.test_model_ratings-40"><span class="linenos">40</span></a>                           <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-</span><span id="RecommendationPipeline.test_model_ratings-41"><a href="#RecommendationPipeline.test_model_ratings-41"><span class="linenos">41</span></a>                           <span class="n">is_running</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">bool</span><span class="p">],</span>
-</span><span id="RecommendationPipeline.test_model_ratings-42"><a href="#RecommendationPipeline.test_model_ratings-42"><span class="linenos">42</span></a>                           <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="RecommendationPipeline.test_model_ratings-43"><a href="#RecommendationPipeline.test_model_ratings-43"><span class="linenos">43</span></a>        <span class="sd">&quot;&quot;&quot;Test the specified model for rating recommendations.</span>
-</span><span id="RecommendationPipeline.test_model_ratings-44"><a href="#RecommendationPipeline.test_model_ratings-44"><span class="linenos">44</span></a>
-</span><span id="RecommendationPipeline.test_model_ratings-45"><a href="#RecommendationPipeline.test_model_ratings-45"><span class="linenos">45</span></a><span class="sd">        Produce a top K number of item scores for each user that is present in the test set.</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RecommendationPipeline.test_model_ratings-40"><a href="#RecommendationPipeline.test_model_ratings-40"><span class="linenos">40</span></a>    <span class="k">def</span> <span class="nf">test_model_ratings</span><span class="p">(</span>
+</span><span id="RecommendationPipeline.test_model_ratings-41"><a href="#RecommendationPipeline.test_model_ratings-41"><span class="linenos">41</span></a>            <span class="bp">self</span><span class="p">,</span>
+</span><span id="RecommendationPipeline.test_model_ratings-42"><a href="#RecommendationPipeline.test_model_ratings-42"><span class="linenos">42</span></a>            <span class="n">model</span><span class="p">:</span> <span class="n">BaseRecommender</span><span class="p">,</span>
+</span><span id="RecommendationPipeline.test_model_ratings-43"><a href="#RecommendationPipeline.test_model_ratings-43"><span class="linenos">43</span></a>            <span class="n">user_batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+</span><span id="RecommendationPipeline.test_model_ratings-44"><a href="#RecommendationPipeline.test_model_ratings-44"><span class="linenos">44</span></a>            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="RecommendationPipeline.test_model_ratings-45"><a href="#RecommendationPipeline.test_model_ratings-45"><span class="linenos">45</span></a>        <span class="sd">&quot;&quot;&quot;Test the specified model for rating recommendations.</span>
 </span><span id="RecommendationPipeline.test_model_ratings-46"><a href="#RecommendationPipeline.test_model_ratings-46"><span class="linenos">46</span></a>
-</span><span id="RecommendationPipeline.test_model_ratings-47"><a href="#RecommendationPipeline.test_model_ratings-47"><span class="linenos">47</span></a><span class="sd">        Args:</span>
-</span><span id="RecommendationPipeline.test_model_ratings-48"><a href="#RecommendationPipeline.test_model_ratings-48"><span class="linenos">48</span></a><span class="sd">            model: the model that needs to be tested.</span>
-</span><span id="RecommendationPipeline.test_model_ratings-49"><a href="#RecommendationPipeline.test_model_ratings-49"><span class="linenos">49</span></a><span class="sd">            output_path: path to the file where the ratings will be stored.</span>
-</span><span id="RecommendationPipeline.test_model_ratings-50"><a href="#RecommendationPipeline.test_model_ratings-50"><span class="linenos">50</span></a><span class="sd">            batch_size: number of users to test ratings for in a batch.</span>
-</span><span id="RecommendationPipeline.test_model_ratings-51"><a href="#RecommendationPipeline.test_model_ratings-51"><span class="linenos">51</span></a><span class="sd">            is_running: function that returns whether the pipeline</span>
-</span><span id="RecommendationPipeline.test_model_ratings-52"><a href="#RecommendationPipeline.test_model_ratings-52"><span class="linenos">52</span></a><span class="sd">                is still running. Stops early when False is returned.</span>
-</span><span id="RecommendationPipeline.test_model_ratings-53"><a href="#RecommendationPipeline.test_model_ratings-53"><span class="linenos">53</span></a>
-</span><span id="RecommendationPipeline.test_model_ratings-54"><a href="#RecommendationPipeline.test_model_ratings-54"><span class="linenos">54</span></a><span class="sd">        Keyword Args:</span>
-</span><span id="RecommendationPipeline.test_model_ratings-55"><a href="#RecommendationPipeline.test_model_ratings-55"><span class="linenos">55</span></a><span class="sd">            num_items(int): the number of item recommendations to produce.</span>
-</span><span id="RecommendationPipeline.test_model_ratings-56"><a href="#RecommendationPipeline.test_model_ratings-56"><span class="linenos">56</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="RecommendationPipeline.test_model_ratings-57"><a href="#RecommendationPipeline.test_model_ratings-57"><span class="linenos">57</span></a>        <span class="n">test_users</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_set</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-</span><span id="RecommendationPipeline.test_model_ratings-58"><a href="#RecommendationPipeline.test_model_ratings-58"><span class="linenos">58</span></a>        <span class="n">start_index</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="RecommendationPipeline.test_model_ratings-59"><a href="#RecommendationPipeline.test_model_ratings-59"><span class="linenos">59</span></a>        <span class="k">while</span> <span class="n">start_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_users</span><span class="p">):</span>
-</span><span id="RecommendationPipeline.test_model_ratings-60"><a href="#RecommendationPipeline.test_model_ratings-60"><span class="linenos">60</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_running</span><span class="p">():</span>
-</span><span id="RecommendationPipeline.test_model_ratings-61"><a href="#RecommendationPipeline.test_model_ratings-61"><span class="linenos">61</span></a>                <span class="k">return</span>
-</span><span id="RecommendationPipeline.test_model_ratings-62"><a href="#RecommendationPipeline.test_model_ratings-62"><span class="linenos">62</span></a>
-</span><span id="RecommendationPipeline.test_model_ratings-63"><a href="#RecommendationPipeline.test_model_ratings-63"><span class="linenos">63</span></a>            <span class="n">user_batch</span> <span class="o">=</span> <span class="n">test_users</span><span class="p">[</span><span class="n">start_index</span> <span class="p">:</span> <span class="n">start_index</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span>
-</span><span id="RecommendationPipeline.test_model_ratings-64"><a href="#RecommendationPipeline.test_model_ratings-64"><span class="linenos">64</span></a>            <span class="n">recommendations</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">recommend_batch</span><span class="p">(</span><span class="n">user_batch</span><span class="p">,</span> <span class="n">num_items</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;num_items&#39;</span><span class="p">])</span>
-</span><span id="RecommendationPipeline.test_model_ratings-65"><a href="#RecommendationPipeline.test_model_ratings-65"><span class="linenos">65</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_running</span><span class="p">():</span>
-</span><span id="RecommendationPipeline.test_model_ratings-66"><a href="#RecommendationPipeline.test_model_ratings-66"><span class="linenos">66</span></a>                <span class="k">return</span>
-</span><span id="RecommendationPipeline.test_model_ratings-67"><a href="#RecommendationPipeline.test_model_ratings-67"><span class="linenos">67</span></a>
-</span><span id="RecommendationPipeline.test_model_ratings-68"><a href="#RecommendationPipeline.test_model_ratings-68"><span class="linenos">68</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">write_dataframe</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="n">recommendations</span><span class="p">,</span> <span class="n">start_index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-</span><span id="RecommendationPipeline.test_model_ratings-69"><a href="#RecommendationPipeline.test_model_ratings-69"><span class="linenos">69</span></a>            <span class="n">start_index</span> <span class="o">+=</span> <span class="n">batch_size</span>
+</span><span id="RecommendationPipeline.test_model_ratings-47"><a href="#RecommendationPipeline.test_model_ratings-47"><span class="linenos">47</span></a><span class="sd">        Produce a top K number of item scores for each user that is present in the test set.</span>
+</span><span id="RecommendationPipeline.test_model_ratings-48"><a href="#RecommendationPipeline.test_model_ratings-48"><span class="linenos">48</span></a>
+</span><span id="RecommendationPipeline.test_model_ratings-49"><a href="#RecommendationPipeline.test_model_ratings-49"><span class="linenos">49</span></a><span class="sd">        Args:</span>
+</span><span id="RecommendationPipeline.test_model_ratings-50"><a href="#RecommendationPipeline.test_model_ratings-50"><span class="linenos">50</span></a><span class="sd">            model: the model that needs to be tested.</span>
+</span><span id="RecommendationPipeline.test_model_ratings-51"><a href="#RecommendationPipeline.test_model_ratings-51"><span class="linenos">51</span></a><span class="sd">            user_batch: the user batch to compute model ratings for.</span>
+</span><span id="RecommendationPipeline.test_model_ratings-52"><a href="#RecommendationPipeline.test_model_ratings-52"><span class="linenos">52</span></a>
+</span><span id="RecommendationPipeline.test_model_ratings-53"><a href="#RecommendationPipeline.test_model_ratings-53"><span class="linenos">53</span></a><span class="sd">        Keyword Args:</span>
+</span><span id="RecommendationPipeline.test_model_ratings-54"><a href="#RecommendationPipeline.test_model_ratings-54"><span class="linenos">54</span></a><span class="sd">            num_items(int): the number of item recommendations to produce.</span>
+</span><span id="RecommendationPipeline.test_model_ratings-55"><a href="#RecommendationPipeline.test_model_ratings-55"><span class="linenos">55</span></a>
+</span><span id="RecommendationPipeline.test_model_ratings-56"><a href="#RecommendationPipeline.test_model_ratings-56"><span class="linenos">56</span></a><span class="sd">        Raises:</span>
+</span><span id="RecommendationPipeline.test_model_ratings-57"><a href="#RecommendationPipeline.test_model_ratings-57"><span class="linenos">57</span></a><span class="sd">            ArithmeticError: possibly raised by a recommender model on testing.</span>
+</span><span id="RecommendationPipeline.test_model_ratings-58"><a href="#RecommendationPipeline.test_model_ratings-58"><span class="linenos">58</span></a><span class="sd">            MemoryError: possibly raised by a recommender model on testing.</span>
+</span><span id="RecommendationPipeline.test_model_ratings-59"><a href="#RecommendationPipeline.test_model_ratings-59"><span class="linenos">59</span></a><span class="sd">            RuntimeError: possibly raised by a recommender model on testing.</span>
+</span><span id="RecommendationPipeline.test_model_ratings-60"><a href="#RecommendationPipeline.test_model_ratings-60"><span class="linenos">60</span></a>
+</span><span id="RecommendationPipeline.test_model_ratings-61"><a href="#RecommendationPipeline.test_model_ratings-61"><span class="linenos">61</span></a><span class="sd">        Returns:</span>
+</span><span id="RecommendationPipeline.test_model_ratings-62"><a href="#RecommendationPipeline.test_model_ratings-62"><span class="linenos">62</span></a><span class="sd">            a dataframe containing the computed item recommendations.</span>
+</span><span id="RecommendationPipeline.test_model_ratings-63"><a href="#RecommendationPipeline.test_model_ratings-63"><span class="linenos">63</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="RecommendationPipeline.test_model_ratings-64"><a href="#RecommendationPipeline.test_model_ratings-64"><span class="linenos">64</span></a>        <span class="k">return</span> <span class="n">model</span><span class="o">.</span><span class="n">recommend_batch</span><span class="p">(</span><span class="n">user_batch</span><span class="p">,</span> <span class="n">num_items</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;num_items&#39;</span><span class="p">])</span>
 </span></pre></div>
 
 
@@ -301,13 +307,18 @@ Utrecht University within the Software Project course.
 
 <p>Args:
     model: the model that needs to be tested.
-    output_path: path to the file where the ratings will be stored.
-    batch_size: number of users to test ratings for in a batch.
-    is_running: function that returns whether the pipeline
-        is still running. Stops early when False is returned.</p>
+    user_batch: the user batch to compute model ratings for.</p>
 
 <p>Keyword Args:
     num_items(int): the number of item recommendations to produce.</p>
+
+<p>Raises:
+    ArithmeticError: possibly raised by a recommender model on testing.
+    MemoryError: possibly raised by a recommender model on testing.
+    RuntimeError: possibly raised by a recommender model on testing.</p>
+
+<p>Returns:
+    a dataframe containing the computed item recommendations.</p>
 </div>
 
 
@@ -321,10 +332,12 @@ Utrecht University within the Software Project course.
                 <dd id="RecommendationPipeline.run_model" class="function"><a href="model_pipeline.html#ModelPipeline.run_model">run_model</a></dd>
                 <dd id="RecommendationPipeline.begin_model" class="function"><a href="model_pipeline.html#ModelPipeline.begin_model">begin_model</a></dd>
                 <dd id="RecommendationPipeline.create_model_output_dir" class="function"><a href="model_pipeline.html#ModelPipeline.create_model_output_dir">create_model_output_dir</a></dd>
+                <dd id="RecommendationPipeline.get_model_output_dir" class="function"><a href="model_pipeline.html#ModelPipeline.get_model_output_dir">get_model_output_dir</a></dd>
                 <dd id="RecommendationPipeline.end_model" class="function"><a href="model_pipeline.html#ModelPipeline.end_model">end_model</a></dd>
-                <dd id="RecommendationPipeline.load_test_set" class="function"><a href="model_pipeline.html#ModelPipeline.load_test_set">load_test_set</a></dd>
-                <dd id="RecommendationPipeline.load_train_set" class="function"><a href="model_pipeline.html#ModelPipeline.load_train_set">load_train_set</a></dd>
-                <dd id="RecommendationPipeline.load_train_and_test_set" class="function"><a href="model_pipeline.html#ModelPipeline.load_train_and_test_set">load_train_and_test_set</a></dd>
+                <dd id="RecommendationPipeline.on_load_train_set_matrix" class="function"><a href="model_pipeline.html#ModelPipeline.on_load_train_set_matrix">on_load_train_set_matrix</a></dd>
+                <dd id="RecommendationPipeline.load_train_set_matrix" class="function"><a href="model_pipeline.html#ModelPipeline.load_train_set_matrix">load_train_set_matrix</a></dd>
+                <dd id="RecommendationPipeline.load_train_set_dataframe" class="function"><a href="model_pipeline.html#ModelPipeline.load_train_set_dataframe">load_train_set_dataframe</a></dd>
+                <dd id="RecommendationPipeline.load_test_set_dataframe" class="function"><a href="model_pipeline.html#ModelPipeline.load_test_set_dataframe">load_test_set_dataframe</a></dd>
                 <dd id="RecommendationPipeline.reconstruct_ratings" class="function"><a href="model_pipeline.html#ModelPipeline.reconstruct_ratings">reconstruct_ratings</a></dd>
                 <dd id="RecommendationPipeline.test_model" class="function"><a href="model_pipeline.html#ModelPipeline.test_model">test_model</a></dd>
                 <dd id="RecommendationPipeline.train_model" class="function"><a href="model_pipeline.html#ModelPipeline.train_model">train_model</a></dd>
@@ -334,6 +347,105 @@ Utrecht University within the Software Project course.
             <div><dt><a href="../../core/pipeline/core_pipeline.html#CorePipeline">src.fairreckitlib.core.pipeline.core_pipeline.CorePipeline</a></dt>
                                 <dd id="RecommendationPipeline.read_dataframe" class="function"><a href="../../core/pipeline/core_pipeline.html#CorePipeline.read_dataframe">read_dataframe</a></dd>
                 <dd id="RecommendationPipeline.write_dataframe" class="function"><a href="../../core/pipeline/core_pipeline.html#CorePipeline.write_dataframe">write_dataframe</a></dd>
+
+            </div>
+                                </dl>
+                            </div>
+                </section>
+                <section id="RecommendationPipelineCSR">
+                            <input id="RecommendationPipelineCSR-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">RecommendationPipelineCSR</span><wbr>(<span class="base"><a href="#RecommendationPipeline">RecommendationPipeline</a></span>):
+
+                <label class="view-source-button" for="RecommendationPipelineCSR-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#RecommendationPipelineCSR"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RecommendationPipelineCSR-67"><a href="#RecommendationPipelineCSR-67"><span class="linenos">67</span></a><span class="k">class</span> <span class="nc">RecommendationPipelineCSR</span><span class="p">(</span><span class="n">RecommendationPipeline</span><span class="p">):</span>
+</span><span id="RecommendationPipelineCSR-68"><a href="#RecommendationPipelineCSR-68"><span class="linenos">68</span></a>    <span class="sd">&quot;&quot;&quot;Recommendation Pipeline implementation for a CSR matrix train set.&quot;&quot;&quot;</span>
+</span><span id="RecommendationPipelineCSR-69"><a href="#RecommendationPipelineCSR-69"><span class="linenos">69</span></a>
+</span><span id="RecommendationPipelineCSR-70"><a href="#RecommendationPipelineCSR-70"><span class="linenos">70</span></a>    <span class="k">def</span> <span class="nf">on_load_train_set_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix</span><span class="p">:</span>
+</span><span id="RecommendationPipelineCSR-71"><a href="#RecommendationPipelineCSR-71"><span class="linenos">71</span></a>        <span class="sd">&quot;&quot;&quot;Load the train set matrix that all models can use for training.</span>
+</span><span id="RecommendationPipelineCSR-72"><a href="#RecommendationPipelineCSR-72"><span class="linenos">72</span></a>
+</span><span id="RecommendationPipelineCSR-73"><a href="#RecommendationPipelineCSR-73"><span class="linenos">73</span></a><span class="sd">        Raises:</span>
+</span><span id="RecommendationPipelineCSR-74"><a href="#RecommendationPipelineCSR-74"><span class="linenos">74</span></a><span class="sd">            FileNotFoundError: when the train set file is not found.</span>
+</span><span id="RecommendationPipelineCSR-75"><a href="#RecommendationPipelineCSR-75"><span class="linenos">75</span></a>
+</span><span id="RecommendationPipelineCSR-76"><a href="#RecommendationPipelineCSR-76"><span class="linenos">76</span></a><span class="sd">        Returns:</span>
+</span><span id="RecommendationPipelineCSR-77"><a href="#RecommendationPipelineCSR-77"><span class="linenos">77</span></a><span class="sd">            the loaded train set csr matrix.</span>
+</span><span id="RecommendationPipelineCSR-78"><a href="#RecommendationPipelineCSR-78"><span class="linenos">78</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="RecommendationPipelineCSR-79"><a href="#RecommendationPipelineCSR-79"><span class="linenos">79</span></a>        <span class="k">return</span> <span class="n">MatrixCSR</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_transition</span><span class="o">.</span><span class="n">train_set_path</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Recommendation Pipeline implementation for a CSR matrix train set.</p>
+</div>
+
+
+                            <div id="RecommendationPipelineCSR.on_load_train_set_matrix" class="classattr">
+                                        <input id="RecommendationPipelineCSR.on_load_train_set_matrix-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">on_load_train_set_matrix</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">algorithms</span><span class="o">.</span><span class="n">matrix</span><span class="o">.</span><span class="n">Matrix</span>:</span></span>
+
+                <label class="view-source-button" for="RecommendationPipelineCSR.on_load_train_set_matrix-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#RecommendationPipelineCSR.on_load_train_set_matrix"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="RecommendationPipelineCSR.on_load_train_set_matrix-70"><a href="#RecommendationPipelineCSR.on_load_train_set_matrix-70"><span class="linenos">70</span></a>    <span class="k">def</span> <span class="nf">on_load_train_set_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Matrix</span><span class="p">:</span>
+</span><span id="RecommendationPipelineCSR.on_load_train_set_matrix-71"><a href="#RecommendationPipelineCSR.on_load_train_set_matrix-71"><span class="linenos">71</span></a>        <span class="sd">&quot;&quot;&quot;Load the train set matrix that all models can use for training.</span>
+</span><span id="RecommendationPipelineCSR.on_load_train_set_matrix-72"><a href="#RecommendationPipelineCSR.on_load_train_set_matrix-72"><span class="linenos">72</span></a>
+</span><span id="RecommendationPipelineCSR.on_load_train_set_matrix-73"><a href="#RecommendationPipelineCSR.on_load_train_set_matrix-73"><span class="linenos">73</span></a><span class="sd">        Raises:</span>
+</span><span id="RecommendationPipelineCSR.on_load_train_set_matrix-74"><a href="#RecommendationPipelineCSR.on_load_train_set_matrix-74"><span class="linenos">74</span></a><span class="sd">            FileNotFoundError: when the train set file is not found.</span>
+</span><span id="RecommendationPipelineCSR.on_load_train_set_matrix-75"><a href="#RecommendationPipelineCSR.on_load_train_set_matrix-75"><span class="linenos">75</span></a>
+</span><span id="RecommendationPipelineCSR.on_load_train_set_matrix-76"><a href="#RecommendationPipelineCSR.on_load_train_set_matrix-76"><span class="linenos">76</span></a><span class="sd">        Returns:</span>
+</span><span id="RecommendationPipelineCSR.on_load_train_set_matrix-77"><a href="#RecommendationPipelineCSR.on_load_train_set_matrix-77"><span class="linenos">77</span></a><span class="sd">            the loaded train set csr matrix.</span>
+</span><span id="RecommendationPipelineCSR.on_load_train_set_matrix-78"><a href="#RecommendationPipelineCSR.on_load_train_set_matrix-78"><span class="linenos">78</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="RecommendationPipelineCSR.on_load_train_set_matrix-79"><a href="#RecommendationPipelineCSR.on_load_train_set_matrix-79"><span class="linenos">79</span></a>        <span class="k">return</span> <span class="n">MatrixCSR</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_transition</span><span class="o">.</span><span class="n">train_set_path</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Load the train set matrix that all models can use for training.</p>
+
+<p>Raises:
+    FileNotFoundError: when the train set file is not found.</p>
+
+<p>Returns:
+    the loaded train set csr matrix.</p>
+</div>
+
+
+                            </div>
+                            <div class="inherited">
+                                <h5>Inherited Members</h5>
+                                <dl>
+                                    <div><dt><a href="model_pipeline.html#ModelPipeline">src.fairreckitlib.model.pipeline.model_pipeline.ModelPipeline</a></dt>
+                                <dd id="RecommendationPipelineCSR.__init__" class="function"><a href="model_pipeline.html#ModelPipeline.__init__">ModelPipeline</a></dd>
+                <dd id="RecommendationPipelineCSR.run" class="function"><a href="model_pipeline.html#ModelPipeline.run">run</a></dd>
+                <dd id="RecommendationPipelineCSR.run_model" class="function"><a href="model_pipeline.html#ModelPipeline.run_model">run_model</a></dd>
+                <dd id="RecommendationPipelineCSR.begin_model" class="function"><a href="model_pipeline.html#ModelPipeline.begin_model">begin_model</a></dd>
+                <dd id="RecommendationPipelineCSR.create_model_output_dir" class="function"><a href="model_pipeline.html#ModelPipeline.create_model_output_dir">create_model_output_dir</a></dd>
+                <dd id="RecommendationPipelineCSR.get_model_output_dir" class="function"><a href="model_pipeline.html#ModelPipeline.get_model_output_dir">get_model_output_dir</a></dd>
+                <dd id="RecommendationPipelineCSR.end_model" class="function"><a href="model_pipeline.html#ModelPipeline.end_model">end_model</a></dd>
+                <dd id="RecommendationPipelineCSR.load_train_set_matrix" class="function"><a href="model_pipeline.html#ModelPipeline.load_train_set_matrix">load_train_set_matrix</a></dd>
+                <dd id="RecommendationPipelineCSR.load_train_set_dataframe" class="function"><a href="model_pipeline.html#ModelPipeline.load_train_set_dataframe">load_train_set_dataframe</a></dd>
+                <dd id="RecommendationPipelineCSR.load_test_set_dataframe" class="function"><a href="model_pipeline.html#ModelPipeline.load_test_set_dataframe">load_test_set_dataframe</a></dd>
+                <dd id="RecommendationPipelineCSR.reconstruct_ratings" class="function"><a href="model_pipeline.html#ModelPipeline.reconstruct_ratings">reconstruct_ratings</a></dd>
+                <dd id="RecommendationPipelineCSR.test_model" class="function"><a href="model_pipeline.html#ModelPipeline.test_model">test_model</a></dd>
+                <dd id="RecommendationPipelineCSR.train_model" class="function"><a href="model_pipeline.html#ModelPipeline.train_model">train_model</a></dd>
+                <dd id="RecommendationPipelineCSR.train_and_test_model" class="function"><a href="model_pipeline.html#ModelPipeline.train_and_test_model">train_and_test_model</a></dd>
+
+            </div>
+            <div><dt><a href="#RecommendationPipeline">RecommendationPipeline</a></dt>
+                                <dd id="RecommendationPipelineCSR.load_test_set_users" class="function"><a href="#RecommendationPipeline.load_test_set_users">load_test_set_users</a></dd>
+                <dd id="RecommendationPipelineCSR.test_model_ratings" class="function"><a href="#RecommendationPipeline.test_model_ratings">test_model_ratings</a></dd>
+
+            </div>
+            <div><dt><a href="../../core/pipeline/core_pipeline.html#CorePipeline">src.fairreckitlib.core.pipeline.core_pipeline.CorePipeline</a></dt>
+                                <dd id="RecommendationPipelineCSR.read_dataframe" class="function"><a href="../../core/pipeline/core_pipeline.html#CorePipeline.read_dataframe">read_dataframe</a></dd>
+                <dd id="RecommendationPipelineCSR.write_dataframe" class="function"><a href="../../core/pipeline/core_pipeline.html#CorePipeline.write_dataframe">write_dataframe</a></dd>
 
             </div>
                                 </dl>

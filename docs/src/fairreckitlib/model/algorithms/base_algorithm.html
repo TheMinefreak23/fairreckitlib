@@ -46,10 +46,7 @@
                                 <a class="function" href="#BaseAlgorithm.get_params">get_params</a>
                         </li>
                         <li>
-                                <a class="function" href="#BaseAlgorithm.get_items">get_items</a>
-                        </li>
-                        <li>
-                                <a class="function" href="#BaseAlgorithm.get_users">get_users</a>
+                                <a class="function" href="#BaseAlgorithm.get_train_set">get_train_set</a>
                         </li>
                         <li>
                                 <a class="function" href="#BaseAlgorithm.train">train</a>
@@ -104,9 +101,9 @@ Utrecht University within the Software Project course.
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>
 </span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
 </span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="kn">from</span> <span class="nn">.matrix</span> <span class="kn">import</span> <span class="n">Matrix</span>
 </span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>
 </span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>
 </span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="k">class</span> <span class="nc">BaseAlgorithm</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
@@ -121,83 +118,79 @@ Utrecht University within the Software Project course.
 </span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>
 </span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="sd">    Public methods:</span>
 </span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="sd">    get_items</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">    get_name</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="sd">    get_num_threads</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="sd">    get_params</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="sd">    get_users</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">    train</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>        <span class="sd">&quot;&quot;&quot;Construct the algorithm.&quot;&quot;&quot;</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">users</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the algorithm.</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="sd">        Returns:</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a><span class="sd">            the algorithm name.</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>    <span class="k">def</span> <span class="nf">get_num_threads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>        <span class="sd">&quot;&quot;&quot;Get the max number of threads the algorithm can use.</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">        Returns:</span>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">            the number of threads.</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the algorithm.</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="sd">        Returns:</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">            the algorithm parameters.</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="sd">    get_name</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">    get_num_threads</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="sd">    get_params</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="sd">    get_train_set</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="sd">    train</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>        <span class="sd">&quot;&quot;&quot;Construct the algorithm.&quot;&quot;&quot;</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the algorithm.</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">        Returns:</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="sd">            the algorithm name.</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>    <span class="k">def</span> <span class="nf">get_num_threads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>        <span class="sd">&quot;&quot;&quot;Get the max number of threads the algorithm can use.</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">        Returns:</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">            the number of threads.</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the algorithm.</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">        Returns:</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">            the algorithm parameters.</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>    <span class="k">def</span> <span class="nf">get_train_set</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Matrix</span><span class="p">]:</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>        <span class="sd">&quot;&quot;&quot;Get the train set that the algorithm was trained on.</span>
 </span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>    <span class="k">def</span> <span class="nf">get_items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>        <span class="sd">&quot;&quot;&quot;Get the (unique) items the algorithm was trained on.</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">        Returns:</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">            a list of unique item IDs or None if the algorithm is not trained yet.</span>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">        Returns:</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">            the train set matrix or None if the algorithm is not trained yet.</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_set</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>        <span class="sd">&quot;&quot;&quot;Train the algorithm on the specified train set.</span>
 </span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>    <span class="k">def</span> <span class="nf">get_users</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>        <span class="sd">&quot;&quot;&quot;Get the (unique) users the algorithm was trained on.</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">        Args:</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">            train_set: the matrix train set.</span>
 </span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">        Returns:</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">            a list of unique user IDs or None if the algorithm is not trained yet.</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">users</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_set</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>        <span class="sd">&quot;&quot;&quot;Train the algorithm on the specified train set.</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">        Args:</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="sd">            train_set: with at least three columns: &#39;user&#39;, &#39;item&#39;, &#39;rating&#39;.</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span> <span class="o">=</span> <span class="n">train_set</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">users</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">&#39;item&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">on_train</span><span class="p">()</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">        Raises:</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">            ArithmeticError: possibly raised by an algorithm on training.</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">            MemoryError: possibly raised by an algorithm on training.</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="sd">            RuntimeError: possibly raised by an algorithm on training.</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">            TypeError: when the specified train set does not have the correct matrix format.</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span> <span class="o">=</span> <span class="n">train_set</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">on_train</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_set</span><span class="o">.</span><span class="n">get_matrix</span><span class="p">())</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="k">def</span> <span class="nf">on_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_set</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>        <span class="sd">&quot;&quot;&quot;Train the algorithm on the train set.</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">        Derived classes should implement the training logic</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">        of the algorithm. The train set can be anything depending</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">        on the matrix that is used.</span>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="k">def</span> <span class="nf">on_train</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>        <span class="sd">&quot;&quot;&quot;Train the algorithm on the train set.</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">        Derived classes should implement the training logic</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">        of the algorithm.</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">        Args:</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">            train_set: the set to train the algorithm with.</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -225,83 +218,79 @@ Utrecht University within the Software Project course.
 </span><span id="BaseAlgorithm-28"><a href="#BaseAlgorithm-28"><span class="linenos"> 28</span></a>
 </span><span id="BaseAlgorithm-29"><a href="#BaseAlgorithm-29"><span class="linenos"> 29</span></a><span class="sd">    Public methods:</span>
 </span><span id="BaseAlgorithm-30"><a href="#BaseAlgorithm-30"><span class="linenos"> 30</span></a>
-</span><span id="BaseAlgorithm-31"><a href="#BaseAlgorithm-31"><span class="linenos"> 31</span></a><span class="sd">    get_items</span>
-</span><span id="BaseAlgorithm-32"><a href="#BaseAlgorithm-32"><span class="linenos"> 32</span></a><span class="sd">    get_name</span>
-</span><span id="BaseAlgorithm-33"><a href="#BaseAlgorithm-33"><span class="linenos"> 33</span></a><span class="sd">    get_num_threads</span>
-</span><span id="BaseAlgorithm-34"><a href="#BaseAlgorithm-34"><span class="linenos"> 34</span></a><span class="sd">    get_params</span>
-</span><span id="BaseAlgorithm-35"><a href="#BaseAlgorithm-35"><span class="linenos"> 35</span></a><span class="sd">    get_users</span>
-</span><span id="BaseAlgorithm-36"><a href="#BaseAlgorithm-36"><span class="linenos"> 36</span></a><span class="sd">    train</span>
-</span><span id="BaseAlgorithm-37"><a href="#BaseAlgorithm-37"><span class="linenos"> 37</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="BaseAlgorithm-38"><a href="#BaseAlgorithm-38"><span class="linenos"> 38</span></a>
-</span><span id="BaseAlgorithm-39"><a href="#BaseAlgorithm-39"><span class="linenos"> 39</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BaseAlgorithm-40"><a href="#BaseAlgorithm-40"><span class="linenos"> 40</span></a>        <span class="sd">&quot;&quot;&quot;Construct the algorithm.&quot;&quot;&quot;</span>
-</span><span id="BaseAlgorithm-41"><a href="#BaseAlgorithm-41"><span class="linenos"> 41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="BaseAlgorithm-42"><a href="#BaseAlgorithm-42"><span class="linenos"> 42</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">users</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="BaseAlgorithm-43"><a href="#BaseAlgorithm-43"><span class="linenos"> 43</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="BaseAlgorithm-44"><a href="#BaseAlgorithm-44"><span class="linenos"> 44</span></a>
-</span><span id="BaseAlgorithm-45"><a href="#BaseAlgorithm-45"><span class="linenos"> 45</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseAlgorithm-46"><a href="#BaseAlgorithm-46"><span class="linenos"> 46</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="BaseAlgorithm-47"><a href="#BaseAlgorithm-47"><span class="linenos"> 47</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the algorithm.</span>
-</span><span id="BaseAlgorithm-48"><a href="#BaseAlgorithm-48"><span class="linenos"> 48</span></a>
-</span><span id="BaseAlgorithm-49"><a href="#BaseAlgorithm-49"><span class="linenos"> 49</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseAlgorithm-50"><a href="#BaseAlgorithm-50"><span class="linenos"> 50</span></a><span class="sd">            the algorithm name.</span>
-</span><span id="BaseAlgorithm-51"><a href="#BaseAlgorithm-51"><span class="linenos"> 51</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseAlgorithm-52"><a href="#BaseAlgorithm-52"><span class="linenos"> 52</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-</span><span id="BaseAlgorithm-53"><a href="#BaseAlgorithm-53"><span class="linenos"> 53</span></a>
-</span><span id="BaseAlgorithm-54"><a href="#BaseAlgorithm-54"><span class="linenos"> 54</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseAlgorithm-55"><a href="#BaseAlgorithm-55"><span class="linenos"> 55</span></a>    <span class="k">def</span> <span class="nf">get_num_threads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="BaseAlgorithm-56"><a href="#BaseAlgorithm-56"><span class="linenos"> 56</span></a>        <span class="sd">&quot;&quot;&quot;Get the max number of threads the algorithm can use.</span>
-</span><span id="BaseAlgorithm-57"><a href="#BaseAlgorithm-57"><span class="linenos"> 57</span></a>
-</span><span id="BaseAlgorithm-58"><a href="#BaseAlgorithm-58"><span class="linenos"> 58</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseAlgorithm-59"><a href="#BaseAlgorithm-59"><span class="linenos"> 59</span></a><span class="sd">            the number of threads.</span>
-</span><span id="BaseAlgorithm-60"><a href="#BaseAlgorithm-60"><span class="linenos"> 60</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseAlgorithm-61"><a href="#BaseAlgorithm-61"><span class="linenos"> 61</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-</span><span id="BaseAlgorithm-62"><a href="#BaseAlgorithm-62"><span class="linenos"> 62</span></a>
-</span><span id="BaseAlgorithm-63"><a href="#BaseAlgorithm-63"><span class="linenos"> 63</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseAlgorithm-64"><a href="#BaseAlgorithm-64"><span class="linenos"> 64</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span id="BaseAlgorithm-65"><a href="#BaseAlgorithm-65"><span class="linenos"> 65</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the algorithm.</span>
-</span><span id="BaseAlgorithm-66"><a href="#BaseAlgorithm-66"><span class="linenos"> 66</span></a>
-</span><span id="BaseAlgorithm-67"><a href="#BaseAlgorithm-67"><span class="linenos"> 67</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseAlgorithm-68"><a href="#BaseAlgorithm-68"><span class="linenos"> 68</span></a><span class="sd">            the algorithm parameters.</span>
-</span><span id="BaseAlgorithm-69"><a href="#BaseAlgorithm-69"><span class="linenos"> 69</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseAlgorithm-70"><a href="#BaseAlgorithm-70"><span class="linenos"> 70</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</span><span id="BaseAlgorithm-31"><a href="#BaseAlgorithm-31"><span class="linenos"> 31</span></a><span class="sd">    get_name</span>
+</span><span id="BaseAlgorithm-32"><a href="#BaseAlgorithm-32"><span class="linenos"> 32</span></a><span class="sd">    get_num_threads</span>
+</span><span id="BaseAlgorithm-33"><a href="#BaseAlgorithm-33"><span class="linenos"> 33</span></a><span class="sd">    get_params</span>
+</span><span id="BaseAlgorithm-34"><a href="#BaseAlgorithm-34"><span class="linenos"> 34</span></a><span class="sd">    get_train_set</span>
+</span><span id="BaseAlgorithm-35"><a href="#BaseAlgorithm-35"><span class="linenos"> 35</span></a><span class="sd">    train</span>
+</span><span id="BaseAlgorithm-36"><a href="#BaseAlgorithm-36"><span class="linenos"> 36</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="BaseAlgorithm-37"><a href="#BaseAlgorithm-37"><span class="linenos"> 37</span></a>
+</span><span id="BaseAlgorithm-38"><a href="#BaseAlgorithm-38"><span class="linenos"> 38</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="BaseAlgorithm-39"><a href="#BaseAlgorithm-39"><span class="linenos"> 39</span></a>        <span class="sd">&quot;&quot;&quot;Construct the algorithm.&quot;&quot;&quot;</span>
+</span><span id="BaseAlgorithm-40"><a href="#BaseAlgorithm-40"><span class="linenos"> 40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="BaseAlgorithm-41"><a href="#BaseAlgorithm-41"><span class="linenos"> 41</span></a>
+</span><span id="BaseAlgorithm-42"><a href="#BaseAlgorithm-42"><span class="linenos"> 42</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseAlgorithm-43"><a href="#BaseAlgorithm-43"><span class="linenos"> 43</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="BaseAlgorithm-44"><a href="#BaseAlgorithm-44"><span class="linenos"> 44</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the algorithm.</span>
+</span><span id="BaseAlgorithm-45"><a href="#BaseAlgorithm-45"><span class="linenos"> 45</span></a>
+</span><span id="BaseAlgorithm-46"><a href="#BaseAlgorithm-46"><span class="linenos"> 46</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseAlgorithm-47"><a href="#BaseAlgorithm-47"><span class="linenos"> 47</span></a><span class="sd">            the algorithm name.</span>
+</span><span id="BaseAlgorithm-48"><a href="#BaseAlgorithm-48"><span class="linenos"> 48</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseAlgorithm-49"><a href="#BaseAlgorithm-49"><span class="linenos"> 49</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</span><span id="BaseAlgorithm-50"><a href="#BaseAlgorithm-50"><span class="linenos"> 50</span></a>
+</span><span id="BaseAlgorithm-51"><a href="#BaseAlgorithm-51"><span class="linenos"> 51</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseAlgorithm-52"><a href="#BaseAlgorithm-52"><span class="linenos"> 52</span></a>    <span class="k">def</span> <span class="nf">get_num_threads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="BaseAlgorithm-53"><a href="#BaseAlgorithm-53"><span class="linenos"> 53</span></a>        <span class="sd">&quot;&quot;&quot;Get the max number of threads the algorithm can use.</span>
+</span><span id="BaseAlgorithm-54"><a href="#BaseAlgorithm-54"><span class="linenos"> 54</span></a>
+</span><span id="BaseAlgorithm-55"><a href="#BaseAlgorithm-55"><span class="linenos"> 55</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseAlgorithm-56"><a href="#BaseAlgorithm-56"><span class="linenos"> 56</span></a><span class="sd">            the number of threads.</span>
+</span><span id="BaseAlgorithm-57"><a href="#BaseAlgorithm-57"><span class="linenos"> 57</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseAlgorithm-58"><a href="#BaseAlgorithm-58"><span class="linenos"> 58</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</span><span id="BaseAlgorithm-59"><a href="#BaseAlgorithm-59"><span class="linenos"> 59</span></a>
+</span><span id="BaseAlgorithm-60"><a href="#BaseAlgorithm-60"><span class="linenos"> 60</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseAlgorithm-61"><a href="#BaseAlgorithm-61"><span class="linenos"> 61</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="BaseAlgorithm-62"><a href="#BaseAlgorithm-62"><span class="linenos"> 62</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the algorithm.</span>
+</span><span id="BaseAlgorithm-63"><a href="#BaseAlgorithm-63"><span class="linenos"> 63</span></a>
+</span><span id="BaseAlgorithm-64"><a href="#BaseAlgorithm-64"><span class="linenos"> 64</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseAlgorithm-65"><a href="#BaseAlgorithm-65"><span class="linenos"> 65</span></a><span class="sd">            the algorithm parameters.</span>
+</span><span id="BaseAlgorithm-66"><a href="#BaseAlgorithm-66"><span class="linenos"> 66</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseAlgorithm-67"><a href="#BaseAlgorithm-67"><span class="linenos"> 67</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</span><span id="BaseAlgorithm-68"><a href="#BaseAlgorithm-68"><span class="linenos"> 68</span></a>
+</span><span id="BaseAlgorithm-69"><a href="#BaseAlgorithm-69"><span class="linenos"> 69</span></a>    <span class="k">def</span> <span class="nf">get_train_set</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Matrix</span><span class="p">]:</span>
+</span><span id="BaseAlgorithm-70"><a href="#BaseAlgorithm-70"><span class="linenos"> 70</span></a>        <span class="sd">&quot;&quot;&quot;Get the train set that the algorithm was trained on.</span>
 </span><span id="BaseAlgorithm-71"><a href="#BaseAlgorithm-71"><span class="linenos"> 71</span></a>
-</span><span id="BaseAlgorithm-72"><a href="#BaseAlgorithm-72"><span class="linenos"> 72</span></a>    <span class="k">def</span> <span class="nf">get_items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
-</span><span id="BaseAlgorithm-73"><a href="#BaseAlgorithm-73"><span class="linenos"> 73</span></a>        <span class="sd">&quot;&quot;&quot;Get the (unique) items the algorithm was trained on.</span>
-</span><span id="BaseAlgorithm-74"><a href="#BaseAlgorithm-74"><span class="linenos"> 74</span></a>
-</span><span id="BaseAlgorithm-75"><a href="#BaseAlgorithm-75"><span class="linenos"> 75</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseAlgorithm-76"><a href="#BaseAlgorithm-76"><span class="linenos"> 76</span></a><span class="sd">            a list of unique item IDs or None if the algorithm is not trained yet.</span>
-</span><span id="BaseAlgorithm-77"><a href="#BaseAlgorithm-77"><span class="linenos"> 77</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseAlgorithm-78"><a href="#BaseAlgorithm-78"><span class="linenos"> 78</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span>
+</span><span id="BaseAlgorithm-72"><a href="#BaseAlgorithm-72"><span class="linenos"> 72</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseAlgorithm-73"><a href="#BaseAlgorithm-73"><span class="linenos"> 73</span></a><span class="sd">            the train set matrix or None if the algorithm is not trained yet.</span>
+</span><span id="BaseAlgorithm-74"><a href="#BaseAlgorithm-74"><span class="linenos"> 74</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseAlgorithm-75"><a href="#BaseAlgorithm-75"><span class="linenos"> 75</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span>
+</span><span id="BaseAlgorithm-76"><a href="#BaseAlgorithm-76"><span class="linenos"> 76</span></a>
+</span><span id="BaseAlgorithm-77"><a href="#BaseAlgorithm-77"><span class="linenos"> 77</span></a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_set</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseAlgorithm-78"><a href="#BaseAlgorithm-78"><span class="linenos"> 78</span></a>        <span class="sd">&quot;&quot;&quot;Train the algorithm on the specified train set.</span>
 </span><span id="BaseAlgorithm-79"><a href="#BaseAlgorithm-79"><span class="linenos"> 79</span></a>
-</span><span id="BaseAlgorithm-80"><a href="#BaseAlgorithm-80"><span class="linenos"> 80</span></a>    <span class="k">def</span> <span class="nf">get_users</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
-</span><span id="BaseAlgorithm-81"><a href="#BaseAlgorithm-81"><span class="linenos"> 81</span></a>        <span class="sd">&quot;&quot;&quot;Get the (unique) users the algorithm was trained on.</span>
+</span><span id="BaseAlgorithm-80"><a href="#BaseAlgorithm-80"><span class="linenos"> 80</span></a><span class="sd">        Args:</span>
+</span><span id="BaseAlgorithm-81"><a href="#BaseAlgorithm-81"><span class="linenos"> 81</span></a><span class="sd">            train_set: the matrix train set.</span>
 </span><span id="BaseAlgorithm-82"><a href="#BaseAlgorithm-82"><span class="linenos"> 82</span></a>
-</span><span id="BaseAlgorithm-83"><a href="#BaseAlgorithm-83"><span class="linenos"> 83</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseAlgorithm-84"><a href="#BaseAlgorithm-84"><span class="linenos"> 84</span></a><span class="sd">            a list of unique user IDs or None if the algorithm is not trained yet.</span>
-</span><span id="BaseAlgorithm-85"><a href="#BaseAlgorithm-85"><span class="linenos"> 85</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseAlgorithm-86"><a href="#BaseAlgorithm-86"><span class="linenos"> 86</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">users</span>
-</span><span id="BaseAlgorithm-87"><a href="#BaseAlgorithm-87"><span class="linenos"> 87</span></a>
-</span><span id="BaseAlgorithm-88"><a href="#BaseAlgorithm-88"><span class="linenos"> 88</span></a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_set</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="BaseAlgorithm-89"><a href="#BaseAlgorithm-89"><span class="linenos"> 89</span></a>        <span class="sd">&quot;&quot;&quot;Train the algorithm on the specified train set.</span>
-</span><span id="BaseAlgorithm-90"><a href="#BaseAlgorithm-90"><span class="linenos"> 90</span></a>
-</span><span id="BaseAlgorithm-91"><a href="#BaseAlgorithm-91"><span class="linenos"> 91</span></a><span class="sd">        Args:</span>
-</span><span id="BaseAlgorithm-92"><a href="#BaseAlgorithm-92"><span class="linenos"> 92</span></a><span class="sd">            train_set: with at least three columns: &#39;user&#39;, &#39;item&#39;, &#39;rating&#39;.</span>
-</span><span id="BaseAlgorithm-93"><a href="#BaseAlgorithm-93"><span class="linenos"> 93</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseAlgorithm-94"><a href="#BaseAlgorithm-94"><span class="linenos"> 94</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span> <span class="o">=</span> <span class="n">train_set</span>
-</span><span id="BaseAlgorithm-95"><a href="#BaseAlgorithm-95"><span class="linenos"> 95</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">users</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-</span><span id="BaseAlgorithm-96"><a href="#BaseAlgorithm-96"><span class="linenos"> 96</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">&#39;item&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-</span><span id="BaseAlgorithm-97"><a href="#BaseAlgorithm-97"><span class="linenos"> 97</span></a>
-</span><span id="BaseAlgorithm-98"><a href="#BaseAlgorithm-98"><span class="linenos"> 98</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">on_train</span><span class="p">()</span>
+</span><span id="BaseAlgorithm-83"><a href="#BaseAlgorithm-83"><span class="linenos"> 83</span></a><span class="sd">        Raises:</span>
+</span><span id="BaseAlgorithm-84"><a href="#BaseAlgorithm-84"><span class="linenos"> 84</span></a><span class="sd">            ArithmeticError: possibly raised by an algorithm on training.</span>
+</span><span id="BaseAlgorithm-85"><a href="#BaseAlgorithm-85"><span class="linenos"> 85</span></a><span class="sd">            MemoryError: possibly raised by an algorithm on training.</span>
+</span><span id="BaseAlgorithm-86"><a href="#BaseAlgorithm-86"><span class="linenos"> 86</span></a><span class="sd">            RuntimeError: possibly raised by an algorithm on training.</span>
+</span><span id="BaseAlgorithm-87"><a href="#BaseAlgorithm-87"><span class="linenos"> 87</span></a><span class="sd">            TypeError: when the specified train set does not have the correct matrix format.</span>
+</span><span id="BaseAlgorithm-88"><a href="#BaseAlgorithm-88"><span class="linenos"> 88</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseAlgorithm-89"><a href="#BaseAlgorithm-89"><span class="linenos"> 89</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span> <span class="o">=</span> <span class="n">train_set</span>
+</span><span id="BaseAlgorithm-90"><a href="#BaseAlgorithm-90"><span class="linenos"> 90</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">on_train</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_set</span><span class="o">.</span><span class="n">get_matrix</span><span class="p">())</span>
+</span><span id="BaseAlgorithm-91"><a href="#BaseAlgorithm-91"><span class="linenos"> 91</span></a>
+</span><span id="BaseAlgorithm-92"><a href="#BaseAlgorithm-92"><span class="linenos"> 92</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseAlgorithm-93"><a href="#BaseAlgorithm-93"><span class="linenos"> 93</span></a>    <span class="k">def</span> <span class="nf">on_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_set</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseAlgorithm-94"><a href="#BaseAlgorithm-94"><span class="linenos"> 94</span></a>        <span class="sd">&quot;&quot;&quot;Train the algorithm on the train set.</span>
+</span><span id="BaseAlgorithm-95"><a href="#BaseAlgorithm-95"><span class="linenos"> 95</span></a>
+</span><span id="BaseAlgorithm-96"><a href="#BaseAlgorithm-96"><span class="linenos"> 96</span></a><span class="sd">        Derived classes should implement the training logic</span>
+</span><span id="BaseAlgorithm-97"><a href="#BaseAlgorithm-97"><span class="linenos"> 97</span></a><span class="sd">        of the algorithm. The train set can be anything depending</span>
+</span><span id="BaseAlgorithm-98"><a href="#BaseAlgorithm-98"><span class="linenos"> 98</span></a><span class="sd">        on the matrix that is used.</span>
 </span><span id="BaseAlgorithm-99"><a href="#BaseAlgorithm-99"><span class="linenos"> 99</span></a>
-</span><span id="BaseAlgorithm-100"><a href="#BaseAlgorithm-100"><span class="linenos">100</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseAlgorithm-101"><a href="#BaseAlgorithm-101"><span class="linenos">101</span></a>    <span class="k">def</span> <span class="nf">on_train</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="BaseAlgorithm-102"><a href="#BaseAlgorithm-102"><span class="linenos">102</span></a>        <span class="sd">&quot;&quot;&quot;Train the algorithm on the train set.</span>
-</span><span id="BaseAlgorithm-103"><a href="#BaseAlgorithm-103"><span class="linenos">103</span></a>
-</span><span id="BaseAlgorithm-104"><a href="#BaseAlgorithm-104"><span class="linenos">104</span></a><span class="sd">        Derived classes should implement the training logic</span>
-</span><span id="BaseAlgorithm-105"><a href="#BaseAlgorithm-105"><span class="linenos">105</span></a><span class="sd">        of the algorithm.</span>
-</span><span id="BaseAlgorithm-106"><a href="#BaseAlgorithm-106"><span class="linenos">106</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseAlgorithm-107"><a href="#BaseAlgorithm-107"><span class="linenos">107</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</span><span id="BaseAlgorithm-100"><a href="#BaseAlgorithm-100"><span class="linenos">100</span></a><span class="sd">        Args:</span>
+</span><span id="BaseAlgorithm-101"><a href="#BaseAlgorithm-101"><span class="linenos">101</span></a><span class="sd">            train_set: the set to train the algorithm with.</span>
+</span><span id="BaseAlgorithm-102"><a href="#BaseAlgorithm-102"><span class="linenos">102</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseAlgorithm-103"><a href="#BaseAlgorithm-103"><span class="linenos">103</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -316,11 +305,10 @@ Derived algorithms are expected to implement the abstract interface.</p>
 
 <p>Public methods:</p>
 
-<p>get_items
-get_name
+<p>get_name
 get_num_threads
 get_params
-get_users
+get_train_set
 train</p>
 </div>
 
@@ -335,11 +323,9 @@ train</p>
 
     </div>
     <a class="headerlink" href="#BaseAlgorithm.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAlgorithm.__init__-39"><a href="#BaseAlgorithm.__init__-39"><span class="linenos">39</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BaseAlgorithm.__init__-40"><a href="#BaseAlgorithm.__init__-40"><span class="linenos">40</span></a>        <span class="sd">&quot;&quot;&quot;Construct the algorithm.&quot;&quot;&quot;</span>
-</span><span id="BaseAlgorithm.__init__-41"><a href="#BaseAlgorithm.__init__-41"><span class="linenos">41</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="BaseAlgorithm.__init__-42"><a href="#BaseAlgorithm.__init__-42"><span class="linenos">42</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">users</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="BaseAlgorithm.__init__-43"><a href="#BaseAlgorithm.__init__-43"><span class="linenos">43</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="kc">None</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAlgorithm.__init__-38"><a href="#BaseAlgorithm.__init__-38"><span class="linenos">38</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="BaseAlgorithm.__init__-39"><a href="#BaseAlgorithm.__init__-39"><span class="linenos">39</span></a>        <span class="sd">&quot;&quot;&quot;Construct the algorithm.&quot;&quot;&quot;</span>
+</span><span id="BaseAlgorithm.__init__-40"><a href="#BaseAlgorithm.__init__-40"><span class="linenos">40</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span> <span class="o">=</span> <span class="kc">None</span>
 </span></pre></div>
 
 
@@ -360,14 +346,14 @@ train</p>
 
     </div>
     <a class="headerlink" href="#BaseAlgorithm.get_name"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAlgorithm.get_name-45"><a href="#BaseAlgorithm.get_name-45"><span class="linenos">45</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseAlgorithm.get_name-46"><a href="#BaseAlgorithm.get_name-46"><span class="linenos">46</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="BaseAlgorithm.get_name-47"><a href="#BaseAlgorithm.get_name-47"><span class="linenos">47</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the algorithm.</span>
-</span><span id="BaseAlgorithm.get_name-48"><a href="#BaseAlgorithm.get_name-48"><span class="linenos">48</span></a>
-</span><span id="BaseAlgorithm.get_name-49"><a href="#BaseAlgorithm.get_name-49"><span class="linenos">49</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseAlgorithm.get_name-50"><a href="#BaseAlgorithm.get_name-50"><span class="linenos">50</span></a><span class="sd">            the algorithm name.</span>
-</span><span id="BaseAlgorithm.get_name-51"><a href="#BaseAlgorithm.get_name-51"><span class="linenos">51</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseAlgorithm.get_name-52"><a href="#BaseAlgorithm.get_name-52"><span class="linenos">52</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAlgorithm.get_name-42"><a href="#BaseAlgorithm.get_name-42"><span class="linenos">42</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseAlgorithm.get_name-43"><a href="#BaseAlgorithm.get_name-43"><span class="linenos">43</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="BaseAlgorithm.get_name-44"><a href="#BaseAlgorithm.get_name-44"><span class="linenos">44</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the algorithm.</span>
+</span><span id="BaseAlgorithm.get_name-45"><a href="#BaseAlgorithm.get_name-45"><span class="linenos">45</span></a>
+</span><span id="BaseAlgorithm.get_name-46"><a href="#BaseAlgorithm.get_name-46"><span class="linenos">46</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseAlgorithm.get_name-47"><a href="#BaseAlgorithm.get_name-47"><span class="linenos">47</span></a><span class="sd">            the algorithm name.</span>
+</span><span id="BaseAlgorithm.get_name-48"><a href="#BaseAlgorithm.get_name-48"><span class="linenos">48</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseAlgorithm.get_name-49"><a href="#BaseAlgorithm.get_name-49"><span class="linenos">49</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -391,14 +377,14 @@ train</p>
 
     </div>
     <a class="headerlink" href="#BaseAlgorithm.get_num_threads"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAlgorithm.get_num_threads-54"><a href="#BaseAlgorithm.get_num_threads-54"><span class="linenos">54</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseAlgorithm.get_num_threads-55"><a href="#BaseAlgorithm.get_num_threads-55"><span class="linenos">55</span></a>    <span class="k">def</span> <span class="nf">get_num_threads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="BaseAlgorithm.get_num_threads-56"><a href="#BaseAlgorithm.get_num_threads-56"><span class="linenos">56</span></a>        <span class="sd">&quot;&quot;&quot;Get the max number of threads the algorithm can use.</span>
-</span><span id="BaseAlgorithm.get_num_threads-57"><a href="#BaseAlgorithm.get_num_threads-57"><span class="linenos">57</span></a>
-</span><span id="BaseAlgorithm.get_num_threads-58"><a href="#BaseAlgorithm.get_num_threads-58"><span class="linenos">58</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseAlgorithm.get_num_threads-59"><a href="#BaseAlgorithm.get_num_threads-59"><span class="linenos">59</span></a><span class="sd">            the number of threads.</span>
-</span><span id="BaseAlgorithm.get_num_threads-60"><a href="#BaseAlgorithm.get_num_threads-60"><span class="linenos">60</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseAlgorithm.get_num_threads-61"><a href="#BaseAlgorithm.get_num_threads-61"><span class="linenos">61</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAlgorithm.get_num_threads-51"><a href="#BaseAlgorithm.get_num_threads-51"><span class="linenos">51</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseAlgorithm.get_num_threads-52"><a href="#BaseAlgorithm.get_num_threads-52"><span class="linenos">52</span></a>    <span class="k">def</span> <span class="nf">get_num_threads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="BaseAlgorithm.get_num_threads-53"><a href="#BaseAlgorithm.get_num_threads-53"><span class="linenos">53</span></a>        <span class="sd">&quot;&quot;&quot;Get the max number of threads the algorithm can use.</span>
+</span><span id="BaseAlgorithm.get_num_threads-54"><a href="#BaseAlgorithm.get_num_threads-54"><span class="linenos">54</span></a>
+</span><span id="BaseAlgorithm.get_num_threads-55"><a href="#BaseAlgorithm.get_num_threads-55"><span class="linenos">55</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseAlgorithm.get_num_threads-56"><a href="#BaseAlgorithm.get_num_threads-56"><span class="linenos">56</span></a><span class="sd">            the number of threads.</span>
+</span><span id="BaseAlgorithm.get_num_threads-57"><a href="#BaseAlgorithm.get_num_threads-57"><span class="linenos">57</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseAlgorithm.get_num_threads-58"><a href="#BaseAlgorithm.get_num_threads-58"><span class="linenos">58</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -422,14 +408,14 @@ train</p>
 
     </div>
     <a class="headerlink" href="#BaseAlgorithm.get_params"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAlgorithm.get_params-63"><a href="#BaseAlgorithm.get_params-63"><span class="linenos">63</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseAlgorithm.get_params-64"><a href="#BaseAlgorithm.get_params-64"><span class="linenos">64</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span id="BaseAlgorithm.get_params-65"><a href="#BaseAlgorithm.get_params-65"><span class="linenos">65</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the algorithm.</span>
-</span><span id="BaseAlgorithm.get_params-66"><a href="#BaseAlgorithm.get_params-66"><span class="linenos">66</span></a>
-</span><span id="BaseAlgorithm.get_params-67"><a href="#BaseAlgorithm.get_params-67"><span class="linenos">67</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseAlgorithm.get_params-68"><a href="#BaseAlgorithm.get_params-68"><span class="linenos">68</span></a><span class="sd">            the algorithm parameters.</span>
-</span><span id="BaseAlgorithm.get_params-69"><a href="#BaseAlgorithm.get_params-69"><span class="linenos">69</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseAlgorithm.get_params-70"><a href="#BaseAlgorithm.get_params-70"><span class="linenos">70</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAlgorithm.get_params-60"><a href="#BaseAlgorithm.get_params-60"><span class="linenos">60</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseAlgorithm.get_params-61"><a href="#BaseAlgorithm.get_params-61"><span class="linenos">61</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="BaseAlgorithm.get_params-62"><a href="#BaseAlgorithm.get_params-62"><span class="linenos">62</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the algorithm.</span>
+</span><span id="BaseAlgorithm.get_params-63"><a href="#BaseAlgorithm.get_params-63"><span class="linenos">63</span></a>
+</span><span id="BaseAlgorithm.get_params-64"><a href="#BaseAlgorithm.get_params-64"><span class="linenos">64</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseAlgorithm.get_params-65"><a href="#BaseAlgorithm.get_params-65"><span class="linenos">65</span></a><span class="sd">            the algorithm parameters.</span>
+</span><span id="BaseAlgorithm.get_params-66"><a href="#BaseAlgorithm.get_params-66"><span class="linenos">66</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseAlgorithm.get_params-67"><a href="#BaseAlgorithm.get_params-67"><span class="linenos">67</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -441,60 +427,31 @@ train</p>
 
 
                             </div>
-                            <div id="BaseAlgorithm.get_items" class="classattr">
-                                        <input id="BaseAlgorithm.get_items-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="BaseAlgorithm.get_train_set" class="classattr">
+                                        <input id="BaseAlgorithm.get_train_set-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_items</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>:</span></span>
+        <span class="name">get_train_set</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">Optional</span><span class="p">[</span><span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">algorithms</span><span class="o">.</span><span class="n">matrix</span><span class="o">.</span><span class="n">Matrix</span><span class="p">]</span>:</span></span>
 
-                <label class="view-source-button" for="BaseAlgorithm.get_items-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="BaseAlgorithm.get_train_set-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#BaseAlgorithm.get_items"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAlgorithm.get_items-72"><a href="#BaseAlgorithm.get_items-72"><span class="linenos">72</span></a>    <span class="k">def</span> <span class="nf">get_items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
-</span><span id="BaseAlgorithm.get_items-73"><a href="#BaseAlgorithm.get_items-73"><span class="linenos">73</span></a>        <span class="sd">&quot;&quot;&quot;Get the (unique) items the algorithm was trained on.</span>
-</span><span id="BaseAlgorithm.get_items-74"><a href="#BaseAlgorithm.get_items-74"><span class="linenos">74</span></a>
-</span><span id="BaseAlgorithm.get_items-75"><a href="#BaseAlgorithm.get_items-75"><span class="linenos">75</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseAlgorithm.get_items-76"><a href="#BaseAlgorithm.get_items-76"><span class="linenos">76</span></a><span class="sd">            a list of unique item IDs or None if the algorithm is not trained yet.</span>
-</span><span id="BaseAlgorithm.get_items-77"><a href="#BaseAlgorithm.get_items-77"><span class="linenos">77</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseAlgorithm.get_items-78"><a href="#BaseAlgorithm.get_items-78"><span class="linenos">78</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span>
+    <a class="headerlink" href="#BaseAlgorithm.get_train_set"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAlgorithm.get_train_set-69"><a href="#BaseAlgorithm.get_train_set-69"><span class="linenos">69</span></a>    <span class="k">def</span> <span class="nf">get_train_set</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Matrix</span><span class="p">]:</span>
+</span><span id="BaseAlgorithm.get_train_set-70"><a href="#BaseAlgorithm.get_train_set-70"><span class="linenos">70</span></a>        <span class="sd">&quot;&quot;&quot;Get the train set that the algorithm was trained on.</span>
+</span><span id="BaseAlgorithm.get_train_set-71"><a href="#BaseAlgorithm.get_train_set-71"><span class="linenos">71</span></a>
+</span><span id="BaseAlgorithm.get_train_set-72"><a href="#BaseAlgorithm.get_train_set-72"><span class="linenos">72</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseAlgorithm.get_train_set-73"><a href="#BaseAlgorithm.get_train_set-73"><span class="linenos">73</span></a><span class="sd">            the train set matrix or None if the algorithm is not trained yet.</span>
+</span><span id="BaseAlgorithm.get_train_set-74"><a href="#BaseAlgorithm.get_train_set-74"><span class="linenos">74</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseAlgorithm.get_train_set-75"><a href="#BaseAlgorithm.get_train_set-75"><span class="linenos">75</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Get the (unique) items the algorithm was trained on.</p>
+            <div class="docstring"><p>Get the train set that the algorithm was trained on.</p>
 
 <p>Returns:
-    a list of unique item IDs or None if the algorithm is not trained yet.</p>
-</div>
-
-
-                            </div>
-                            <div id="BaseAlgorithm.get_users" class="classattr">
-                                        <input id="BaseAlgorithm.get_users-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">get_users</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>:</span></span>
-
-                <label class="view-source-button" for="BaseAlgorithm.get_users-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#BaseAlgorithm.get_users"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAlgorithm.get_users-80"><a href="#BaseAlgorithm.get_users-80"><span class="linenos">80</span></a>    <span class="k">def</span> <span class="nf">get_users</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
-</span><span id="BaseAlgorithm.get_users-81"><a href="#BaseAlgorithm.get_users-81"><span class="linenos">81</span></a>        <span class="sd">&quot;&quot;&quot;Get the (unique) users the algorithm was trained on.</span>
-</span><span id="BaseAlgorithm.get_users-82"><a href="#BaseAlgorithm.get_users-82"><span class="linenos">82</span></a>
-</span><span id="BaseAlgorithm.get_users-83"><a href="#BaseAlgorithm.get_users-83"><span class="linenos">83</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseAlgorithm.get_users-84"><a href="#BaseAlgorithm.get_users-84"><span class="linenos">84</span></a><span class="sd">            a list of unique user IDs or None if the algorithm is not trained yet.</span>
-</span><span id="BaseAlgorithm.get_users-85"><a href="#BaseAlgorithm.get_users-85"><span class="linenos">85</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseAlgorithm.get_users-86"><a href="#BaseAlgorithm.get_users-86"><span class="linenos">86</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">users</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Get the (unique) users the algorithm was trained on.</p>
-
-<p>Returns:
-    a list of unique user IDs or None if the algorithm is not trained yet.</p>
+    the train set matrix or None if the algorithm is not trained yet.</p>
 </div>
 
 
@@ -504,30 +461,39 @@ train</p>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">train</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">train_set</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+        <span class="name">train</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">train_set</span><span class="p">:</span> <span class="n">src</span><span class="o">.</span><span class="n">fairreckitlib</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">algorithms</span><span class="o">.</span><span class="n">matrix</span><span class="o">.</span><span class="n">Matrix</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
                 <label class="view-source-button" for="BaseAlgorithm.train-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#BaseAlgorithm.train"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAlgorithm.train-88"><a href="#BaseAlgorithm.train-88"><span class="linenos">88</span></a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_set</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="BaseAlgorithm.train-89"><a href="#BaseAlgorithm.train-89"><span class="linenos">89</span></a>        <span class="sd">&quot;&quot;&quot;Train the algorithm on the specified train set.</span>
-</span><span id="BaseAlgorithm.train-90"><a href="#BaseAlgorithm.train-90"><span class="linenos">90</span></a>
-</span><span id="BaseAlgorithm.train-91"><a href="#BaseAlgorithm.train-91"><span class="linenos">91</span></a><span class="sd">        Args:</span>
-</span><span id="BaseAlgorithm.train-92"><a href="#BaseAlgorithm.train-92"><span class="linenos">92</span></a><span class="sd">            train_set: with at least three columns: &#39;user&#39;, &#39;item&#39;, &#39;rating&#39;.</span>
-</span><span id="BaseAlgorithm.train-93"><a href="#BaseAlgorithm.train-93"><span class="linenos">93</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseAlgorithm.train-94"><a href="#BaseAlgorithm.train-94"><span class="linenos">94</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span> <span class="o">=</span> <span class="n">train_set</span>
-</span><span id="BaseAlgorithm.train-95"><a href="#BaseAlgorithm.train-95"><span class="linenos">95</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">users</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-</span><span id="BaseAlgorithm.train-96"><a href="#BaseAlgorithm.train-96"><span class="linenos">96</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="n">train_set</span><span class="p">[</span><span class="s1">&#39;item&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
-</span><span id="BaseAlgorithm.train-97"><a href="#BaseAlgorithm.train-97"><span class="linenos">97</span></a>
-</span><span id="BaseAlgorithm.train-98"><a href="#BaseAlgorithm.train-98"><span class="linenos">98</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">on_train</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAlgorithm.train-77"><a href="#BaseAlgorithm.train-77"><span class="linenos">77</span></a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_set</span><span class="p">:</span> <span class="n">Matrix</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseAlgorithm.train-78"><a href="#BaseAlgorithm.train-78"><span class="linenos">78</span></a>        <span class="sd">&quot;&quot;&quot;Train the algorithm on the specified train set.</span>
+</span><span id="BaseAlgorithm.train-79"><a href="#BaseAlgorithm.train-79"><span class="linenos">79</span></a>
+</span><span id="BaseAlgorithm.train-80"><a href="#BaseAlgorithm.train-80"><span class="linenos">80</span></a><span class="sd">        Args:</span>
+</span><span id="BaseAlgorithm.train-81"><a href="#BaseAlgorithm.train-81"><span class="linenos">81</span></a><span class="sd">            train_set: the matrix train set.</span>
+</span><span id="BaseAlgorithm.train-82"><a href="#BaseAlgorithm.train-82"><span class="linenos">82</span></a>
+</span><span id="BaseAlgorithm.train-83"><a href="#BaseAlgorithm.train-83"><span class="linenos">83</span></a><span class="sd">        Raises:</span>
+</span><span id="BaseAlgorithm.train-84"><a href="#BaseAlgorithm.train-84"><span class="linenos">84</span></a><span class="sd">            ArithmeticError: possibly raised by an algorithm on training.</span>
+</span><span id="BaseAlgorithm.train-85"><a href="#BaseAlgorithm.train-85"><span class="linenos">85</span></a><span class="sd">            MemoryError: possibly raised by an algorithm on training.</span>
+</span><span id="BaseAlgorithm.train-86"><a href="#BaseAlgorithm.train-86"><span class="linenos">86</span></a><span class="sd">            RuntimeError: possibly raised by an algorithm on training.</span>
+</span><span id="BaseAlgorithm.train-87"><a href="#BaseAlgorithm.train-87"><span class="linenos">87</span></a><span class="sd">            TypeError: when the specified train set does not have the correct matrix format.</span>
+</span><span id="BaseAlgorithm.train-88"><a href="#BaseAlgorithm.train-88"><span class="linenos">88</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseAlgorithm.train-89"><a href="#BaseAlgorithm.train-89"><span class="linenos">89</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">train_set</span> <span class="o">=</span> <span class="n">train_set</span>
+</span><span id="BaseAlgorithm.train-90"><a href="#BaseAlgorithm.train-90"><span class="linenos">90</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">on_train</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_set</span><span class="o">.</span><span class="n">get_matrix</span><span class="p">())</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>Train the algorithm on the specified train set.</p>
 
 <p>Args:
-    train_set: with at least three columns: 'user', 'item', 'rating'.</p>
+    train_set: the matrix train set.</p>
+
+<p>Raises:
+    ArithmeticError: possibly raised by an algorithm on training.
+    MemoryError: possibly raised by an algorithm on training.
+    RuntimeError: possibly raised by an algorithm on training.
+    TypeError: when the specified train set does not have the correct matrix format.</p>
 </div>
 
 
@@ -538,27 +504,35 @@ train</p>
                     <div class="decorator">@abstractmethod</div>
 
         <span class="def">def</span>
-        <span class="name">on_train</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+        <span class="name">on_train</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">train_set</span><span class="p">:</span> <span class="n">Any</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
                 <label class="view-source-button" for="BaseAlgorithm.on_train-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#BaseAlgorithm.on_train"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAlgorithm.on_train-100"><a href="#BaseAlgorithm.on_train-100"><span class="linenos">100</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseAlgorithm.on_train-101"><a href="#BaseAlgorithm.on_train-101"><span class="linenos">101</span></a>    <span class="k">def</span> <span class="nf">on_train</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="BaseAlgorithm.on_train-102"><a href="#BaseAlgorithm.on_train-102"><span class="linenos">102</span></a>        <span class="sd">&quot;&quot;&quot;Train the algorithm on the train set.</span>
-</span><span id="BaseAlgorithm.on_train-103"><a href="#BaseAlgorithm.on_train-103"><span class="linenos">103</span></a>
-</span><span id="BaseAlgorithm.on_train-104"><a href="#BaseAlgorithm.on_train-104"><span class="linenos">104</span></a><span class="sd">        Derived classes should implement the training logic</span>
-</span><span id="BaseAlgorithm.on_train-105"><a href="#BaseAlgorithm.on_train-105"><span class="linenos">105</span></a><span class="sd">        of the algorithm.</span>
-</span><span id="BaseAlgorithm.on_train-106"><a href="#BaseAlgorithm.on_train-106"><span class="linenos">106</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseAlgorithm.on_train-107"><a href="#BaseAlgorithm.on_train-107"><span class="linenos">107</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseAlgorithm.on_train-92"><a href="#BaseAlgorithm.on_train-92"><span class="linenos"> 92</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseAlgorithm.on_train-93"><a href="#BaseAlgorithm.on_train-93"><span class="linenos"> 93</span></a>    <span class="k">def</span> <span class="nf">on_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_set</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseAlgorithm.on_train-94"><a href="#BaseAlgorithm.on_train-94"><span class="linenos"> 94</span></a>        <span class="sd">&quot;&quot;&quot;Train the algorithm on the train set.</span>
+</span><span id="BaseAlgorithm.on_train-95"><a href="#BaseAlgorithm.on_train-95"><span class="linenos"> 95</span></a>
+</span><span id="BaseAlgorithm.on_train-96"><a href="#BaseAlgorithm.on_train-96"><span class="linenos"> 96</span></a><span class="sd">        Derived classes should implement the training logic</span>
+</span><span id="BaseAlgorithm.on_train-97"><a href="#BaseAlgorithm.on_train-97"><span class="linenos"> 97</span></a><span class="sd">        of the algorithm. The train set can be anything depending</span>
+</span><span id="BaseAlgorithm.on_train-98"><a href="#BaseAlgorithm.on_train-98"><span class="linenos"> 98</span></a><span class="sd">        on the matrix that is used.</span>
+</span><span id="BaseAlgorithm.on_train-99"><a href="#BaseAlgorithm.on_train-99"><span class="linenos"> 99</span></a>
+</span><span id="BaseAlgorithm.on_train-100"><a href="#BaseAlgorithm.on_train-100"><span class="linenos">100</span></a><span class="sd">        Args:</span>
+</span><span id="BaseAlgorithm.on_train-101"><a href="#BaseAlgorithm.on_train-101"><span class="linenos">101</span></a><span class="sd">            train_set: the set to train the algorithm with.</span>
+</span><span id="BaseAlgorithm.on_train-102"><a href="#BaseAlgorithm.on_train-102"><span class="linenos">102</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseAlgorithm.on_train-103"><a href="#BaseAlgorithm.on_train-103"><span class="linenos">103</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>Train the algorithm on the train set.</p>
 
 <p>Derived classes should implement the training logic
-of the algorithm.</p>
+of the algorithm. The train set can be anything depending
+on the matrix that is used.</p>
+
+<p>Args:
+    train_set: the set to train the algorithm with.</p>
 </div>
 
 

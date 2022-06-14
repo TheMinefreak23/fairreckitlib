@@ -102,20 +102,22 @@ Utrecht University within the Software Project course.
 </span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">            _: the dataset associated with the matrix factory.</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>
 </span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        <span class="c1"># add kl converter</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>        <span class="n">matrix_factory</span><span class="o">.</span><span class="n">add_obj</span><span class="p">(</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>            <span class="n">CONVERTER_KL</span><span class="p">,</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>            <span class="n">create_kl_converter</span><span class="p">,</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>            <span class="n">create_kl_converter_params</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>        <span class="p">)</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>        <span class="c1"># add range converter</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>        <span class="n">matrix_factory</span><span class="o">.</span><span class="n">add_obj</span><span class="p">(</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>            <span class="n">CONVERTER_RANGE</span><span class="p">,</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>            <span class="n">create_range_converter</span><span class="p">,</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>            <span class="n">create_range_converter_params</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>        <span class="p">)</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>
-</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>    <span class="k">return</span> <span class="n">create_data_modifier_factory</span><span class="p">(</span><span class="n">data_registry</span><span class="p">,</span> <span class="n">KEY_RATING_CONVERTER</span><span class="p">,</span> <span class="n">on_add_entries</span><span class="p">)</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>        <span class="k">if</span> <span class="s1">&#39;artist&#39;</span> <span class="ow">in</span> <span class="n">matrix_factory</span><span class="o">.</span><span class="n">get_name</span><span class="p">():</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>            <span class="c1"># add kl converter</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>            <span class="n">matrix_factory</span><span class="o">.</span><span class="n">add_obj</span><span class="p">(</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>                <span class="n">CONVERTER_KL</span><span class="p">,</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>                <span class="n">create_kl_converter</span><span class="p">,</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>                <span class="n">create_kl_converter_params</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>            <span class="p">)</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="c1"># add range converter</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>        <span class="n">matrix_factory</span><span class="o">.</span><span class="n">add_obj</span><span class="p">(</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a>            <span class="n">CONVERTER_RANGE</span><span class="p">,</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a>            <span class="n">create_range_converter</span><span class="p">,</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>            <span class="n">create_range_converter_params</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a>        <span class="p">)</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a>    <span class="k">return</span> <span class="n">create_data_modifier_factory</span><span class="p">(</span><span class="n">data_registry</span><span class="p">,</span> <span class="n">KEY_RATING_CONVERTER</span><span class="p">,</span> <span class="n">on_add_entries</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -149,20 +151,22 @@ Utrecht University within the Software Project course.
 </span><span id="create_rating_converter_factory-36"><a href="#create_rating_converter_factory-36"><span class="linenos">36</span></a><span class="sd">            _: the dataset associated with the matrix factory.</span>
 </span><span id="create_rating_converter_factory-37"><a href="#create_rating_converter_factory-37"><span class="linenos">37</span></a>
 </span><span id="create_rating_converter_factory-38"><a href="#create_rating_converter_factory-38"><span class="linenos">38</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="create_rating_converter_factory-39"><a href="#create_rating_converter_factory-39"><span class="linenos">39</span></a>        <span class="c1"># add kl converter</span>
-</span><span id="create_rating_converter_factory-40"><a href="#create_rating_converter_factory-40"><span class="linenos">40</span></a>        <span class="n">matrix_factory</span><span class="o">.</span><span class="n">add_obj</span><span class="p">(</span>
-</span><span id="create_rating_converter_factory-41"><a href="#create_rating_converter_factory-41"><span class="linenos">41</span></a>            <span class="n">CONVERTER_KL</span><span class="p">,</span>
-</span><span id="create_rating_converter_factory-42"><a href="#create_rating_converter_factory-42"><span class="linenos">42</span></a>            <span class="n">create_kl_converter</span><span class="p">,</span>
-</span><span id="create_rating_converter_factory-43"><a href="#create_rating_converter_factory-43"><span class="linenos">43</span></a>            <span class="n">create_kl_converter_params</span>
-</span><span id="create_rating_converter_factory-44"><a href="#create_rating_converter_factory-44"><span class="linenos">44</span></a>        <span class="p">)</span>
-</span><span id="create_rating_converter_factory-45"><a href="#create_rating_converter_factory-45"><span class="linenos">45</span></a>        <span class="c1"># add range converter</span>
-</span><span id="create_rating_converter_factory-46"><a href="#create_rating_converter_factory-46"><span class="linenos">46</span></a>        <span class="n">matrix_factory</span><span class="o">.</span><span class="n">add_obj</span><span class="p">(</span>
-</span><span id="create_rating_converter_factory-47"><a href="#create_rating_converter_factory-47"><span class="linenos">47</span></a>            <span class="n">CONVERTER_RANGE</span><span class="p">,</span>
-</span><span id="create_rating_converter_factory-48"><a href="#create_rating_converter_factory-48"><span class="linenos">48</span></a>            <span class="n">create_range_converter</span><span class="p">,</span>
-</span><span id="create_rating_converter_factory-49"><a href="#create_rating_converter_factory-49"><span class="linenos">49</span></a>            <span class="n">create_range_converter_params</span>
-</span><span id="create_rating_converter_factory-50"><a href="#create_rating_converter_factory-50"><span class="linenos">50</span></a>        <span class="p">)</span>
-</span><span id="create_rating_converter_factory-51"><a href="#create_rating_converter_factory-51"><span class="linenos">51</span></a>
-</span><span id="create_rating_converter_factory-52"><a href="#create_rating_converter_factory-52"><span class="linenos">52</span></a>    <span class="k">return</span> <span class="n">create_data_modifier_factory</span><span class="p">(</span><span class="n">data_registry</span><span class="p">,</span> <span class="n">KEY_RATING_CONVERTER</span><span class="p">,</span> <span class="n">on_add_entries</span><span class="p">)</span>
+</span><span id="create_rating_converter_factory-39"><a href="#create_rating_converter_factory-39"><span class="linenos">39</span></a>        <span class="k">if</span> <span class="s1">&#39;artist&#39;</span> <span class="ow">in</span> <span class="n">matrix_factory</span><span class="o">.</span><span class="n">get_name</span><span class="p">():</span>
+</span><span id="create_rating_converter_factory-40"><a href="#create_rating_converter_factory-40"><span class="linenos">40</span></a>            <span class="c1"># add kl converter</span>
+</span><span id="create_rating_converter_factory-41"><a href="#create_rating_converter_factory-41"><span class="linenos">41</span></a>            <span class="n">matrix_factory</span><span class="o">.</span><span class="n">add_obj</span><span class="p">(</span>
+</span><span id="create_rating_converter_factory-42"><a href="#create_rating_converter_factory-42"><span class="linenos">42</span></a>                <span class="n">CONVERTER_KL</span><span class="p">,</span>
+</span><span id="create_rating_converter_factory-43"><a href="#create_rating_converter_factory-43"><span class="linenos">43</span></a>                <span class="n">create_kl_converter</span><span class="p">,</span>
+</span><span id="create_rating_converter_factory-44"><a href="#create_rating_converter_factory-44"><span class="linenos">44</span></a>                <span class="n">create_kl_converter_params</span>
+</span><span id="create_rating_converter_factory-45"><a href="#create_rating_converter_factory-45"><span class="linenos">45</span></a>            <span class="p">)</span>
+</span><span id="create_rating_converter_factory-46"><a href="#create_rating_converter_factory-46"><span class="linenos">46</span></a>
+</span><span id="create_rating_converter_factory-47"><a href="#create_rating_converter_factory-47"><span class="linenos">47</span></a>        <span class="c1"># add range converter</span>
+</span><span id="create_rating_converter_factory-48"><a href="#create_rating_converter_factory-48"><span class="linenos">48</span></a>        <span class="n">matrix_factory</span><span class="o">.</span><span class="n">add_obj</span><span class="p">(</span>
+</span><span id="create_rating_converter_factory-49"><a href="#create_rating_converter_factory-49"><span class="linenos">49</span></a>            <span class="n">CONVERTER_RANGE</span><span class="p">,</span>
+</span><span id="create_rating_converter_factory-50"><a href="#create_rating_converter_factory-50"><span class="linenos">50</span></a>            <span class="n">create_range_converter</span><span class="p">,</span>
+</span><span id="create_rating_converter_factory-51"><a href="#create_rating_converter_factory-51"><span class="linenos">51</span></a>            <span class="n">create_range_converter_params</span>
+</span><span id="create_rating_converter_factory-52"><a href="#create_rating_converter_factory-52"><span class="linenos">52</span></a>        <span class="p">)</span>
+</span><span id="create_rating_converter_factory-53"><a href="#create_rating_converter_factory-53"><span class="linenos">53</span></a>
+</span><span id="create_rating_converter_factory-54"><a href="#create_rating_converter_factory-54"><span class="linenos">54</span></a>    <span class="k">return</span> <span class="n">create_data_modifier_factory</span><span class="p">(</span><span class="n">data_registry</span><span class="p">,</span> <span class="n">KEY_RATING_CONVERTER</span><span class="p">,</span> <span class="n">on_add_entries</span><span class="p">)</span>
 </span></pre></div>
 
 

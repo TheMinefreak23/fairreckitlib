@@ -170,61 +170,66 @@ Utrecht University within the Software Project course.
 </span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">        Args:</span>
 </span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">            eval_sets: the sets to use for computing the performance of the metric.</span>
 </span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">        Returns:</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">            the evaluated performance.</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_evaluate</span><span class="p">(</span><span class="n">eval_sets</span><span class="p">)</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">        Raises:</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">            ArithmeticError: possibly raised by a metric on evaluation.</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">            MemoryError: possibly raised by a metric on evaluation.</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="sd">            RuntimeError: possibly raised by a metric on evaluation.</span>
 </span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the metric.</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">        Returns:</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">            the metric name.</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">        Returns:</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">            the evaluated performance.</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_evaluate</span><span class="p">(</span><span class="n">eval_sets</span><span class="p">)</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the metric.</span>
 </span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the metric.</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">        Returns:</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">            the metric parameters.</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="sd">        Returns:</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">            the metric name.</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the metric.</span>
 </span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="k">class</span> <span class="nc">ColumnMetric</span><span class="p">(</span><span class="n">BaseMetric</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>    <span class="sd">&quot;&quot;&quot;Metric that uses two columns to produce the performance evaluation.</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">    The intended use of this class is to provide a base implementation for</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">    computing the evaluation using two pandas Series columns. The actual data</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">    that is provided in these columns can be anything depending on the derived class.</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">        Returns:</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">            the metric parameters.</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="k">class</span> <span class="nc">ColumnMetric</span><span class="p">(</span><span class="n">BaseMetric</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>    <span class="sd">&quot;&quot;&quot;Metric that uses two columns to produce the performance evaluation.</span>
 </span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>            <span class="bp">self</span><span class="p">,</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>            <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>            <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>            <span class="n">eval_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>            <span class="o">*</span><span class="p">,</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>            <span class="n">requires_test_set</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>            <span class="n">requires_train_set</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>        <span class="sd">&quot;&quot;&quot;Construct the column metric.</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">        Args:</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">            name: the name of the metric.</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">            params: the parameters of the metric.</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">            eval_func: the evaluation function that uses two columns to compute the evaluation.</span>
-</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">            requires_test_set: whether the metric requires the test set for evaluation.</span>
-</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">            requires_train_set: whether the metric requires the train set for evaluation.</span>
-</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>        <span class="n">BaseMetric</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>            <span class="bp">self</span><span class="p">,</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>            <span class="n">name</span><span class="p">,</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>            <span class="n">params</span><span class="p">,</span>
-</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>            <span class="n">requires_test_set</span><span class="o">=</span><span class="n">requires_test_set</span><span class="p">,</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>            <span class="n">requires_train_set</span><span class="o">=</span><span class="n">requires_train_set</span>
-</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>        <span class="p">)</span>
-</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">eval_func</span> <span class="o">=</span> <span class="n">eval_func</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">    The intended use of this class is to provide a base implementation for</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">    computing the evaluation using two pandas Series columns. The actual data</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">    that is provided in these columns can be anything depending on the derived class.</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a>            <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a>            <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>            <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a>            <span class="n">eval_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>            <span class="o">*</span><span class="p">,</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a>            <span class="n">requires_test_set</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a>            <span class="n">requires_train_set</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a>        <span class="sd">&quot;&quot;&quot;Construct the column metric.</span>
+</span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a>
+</span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a><span class="sd">        Args:</span>
+</span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">            name: the name of the metric.</span>
+</span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="sd">            params: the parameters of the metric.</span>
+</span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a><span class="sd">            eval_func: the evaluation function that uses two columns to compute the evaluation.</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">            requires_test_set: whether the metric requires the test set for evaluation.</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="sd">            requires_train_set: whether the metric requires the train set for evaluation.</span>
+</span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>        <span class="n">BaseMetric</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+</span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>            <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>            <span class="n">name</span><span class="p">,</span>
+</span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>            <span class="n">params</span><span class="p">,</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a>            <span class="n">requires_test_set</span><span class="o">=</span><span class="n">requires_test_set</span><span class="p">,</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>            <span class="n">requires_train_set</span><span class="o">=</span><span class="n">requires_train_set</span>
+</span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>        <span class="p">)</span>
+</span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">eval_func</span> <span class="o">=</span> <span class="n">eval_func</span>
 </span></pre></div>
 
 
@@ -240,83 +245,88 @@ Utrecht University within the Software Project course.
 
     </div>
     <a class="headerlink" href="#BaseMetric"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseMetric-22"><a href="#BaseMetric-22"><span class="linenos">22</span></a><span class="k">class</span> <span class="nc">BaseMetric</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
-</span><span id="BaseMetric-23"><a href="#BaseMetric-23"><span class="linenos">23</span></a>    <span class="sd">&quot;&quot;&quot;Base class for FairRecKit metrics.</span>
-</span><span id="BaseMetric-24"><a href="#BaseMetric-24"><span class="linenos">24</span></a>
-</span><span id="BaseMetric-25"><a href="#BaseMetric-25"><span class="linenos">25</span></a><span class="sd">    A metric is used for evaluating the performance of recommender system experiments.</span>
-</span><span id="BaseMetric-26"><a href="#BaseMetric-26"><span class="linenos">26</span></a><span class="sd">    Derived metrics are expected to implement the abstract interface.</span>
-</span><span id="BaseMetric-27"><a href="#BaseMetric-27"><span class="linenos">27</span></a>
-</span><span id="BaseMetric-28"><a href="#BaseMetric-28"><span class="linenos">28</span></a><span class="sd">    Abstract methods:</span>
-</span><span id="BaseMetric-29"><a href="#BaseMetric-29"><span class="linenos">29</span></a>
-</span><span id="BaseMetric-30"><a href="#BaseMetric-30"><span class="linenos">30</span></a><span class="sd">    on_evaluate</span>
-</span><span id="BaseMetric-31"><a href="#BaseMetric-31"><span class="linenos">31</span></a>
-</span><span id="BaseMetric-32"><a href="#BaseMetric-32"><span class="linenos">32</span></a><span class="sd">    Public methods:</span>
-</span><span id="BaseMetric-33"><a href="#BaseMetric-33"><span class="linenos">33</span></a>
-</span><span id="BaseMetric-34"><a href="#BaseMetric-34"><span class="linenos">34</span></a><span class="sd">    evaluate</span>
-</span><span id="BaseMetric-35"><a href="#BaseMetric-35"><span class="linenos">35</span></a><span class="sd">    get_name</span>
-</span><span id="BaseMetric-36"><a href="#BaseMetric-36"><span class="linenos">36</span></a><span class="sd">    get_params</span>
-</span><span id="BaseMetric-37"><a href="#BaseMetric-37"><span class="linenos">37</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="BaseMetric-38"><a href="#BaseMetric-38"><span class="linenos">38</span></a>
-</span><span id="BaseMetric-39"><a href="#BaseMetric-39"><span class="linenos">39</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-</span><span id="BaseMetric-40"><a href="#BaseMetric-40"><span class="linenos">40</span></a>            <span class="bp">self</span><span class="p">,</span>
-</span><span id="BaseMetric-41"><a href="#BaseMetric-41"><span class="linenos">41</span></a>            <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="BaseMetric-42"><a href="#BaseMetric-42"><span class="linenos">42</span></a>            <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
-</span><span id="BaseMetric-43"><a href="#BaseMetric-43"><span class="linenos">43</span></a>            <span class="o">*</span><span class="p">,</span>
-</span><span id="BaseMetric-44"><a href="#BaseMetric-44"><span class="linenos">44</span></a>            <span class="n">requires_test_set</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="BaseMetric-45"><a href="#BaseMetric-45"><span class="linenos">45</span></a>            <span class="n">requires_train_set</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-</span><span id="BaseMetric-46"><a href="#BaseMetric-46"><span class="linenos">46</span></a>        <span class="sd">&quot;&quot;&quot;Construct the metric.</span>
-</span><span id="BaseMetric-47"><a href="#BaseMetric-47"><span class="linenos">47</span></a>
-</span><span id="BaseMetric-48"><a href="#BaseMetric-48"><span class="linenos">48</span></a><span class="sd">        Args:</span>
-</span><span id="BaseMetric-49"><a href="#BaseMetric-49"><span class="linenos">49</span></a><span class="sd">            name: the name of the metric.</span>
-</span><span id="BaseMetric-50"><a href="#BaseMetric-50"><span class="linenos">50</span></a><span class="sd">            params: the parameters of the metric.</span>
-</span><span id="BaseMetric-51"><a href="#BaseMetric-51"><span class="linenos">51</span></a><span class="sd">            requires_test_set: whether the metric requires the test set for evaluation.</span>
-</span><span id="BaseMetric-52"><a href="#BaseMetric-52"><span class="linenos">52</span></a><span class="sd">            requires_train_set: whether the metric requires the train set for evaluation.</span>
-</span><span id="BaseMetric-53"><a href="#BaseMetric-53"><span class="linenos">53</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseMetric-54"><a href="#BaseMetric-54"><span class="linenos">54</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span> <span class="o">=</span> <span class="n">name</span>
-</span><span id="BaseMetric-55"><a href="#BaseMetric-55"><span class="linenos">55</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
-</span><span id="BaseMetric-56"><a href="#BaseMetric-56"><span class="linenos">56</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">requires_test_set</span> <span class="o">=</span> <span class="n">requires_test_set</span>
-</span><span id="BaseMetric-57"><a href="#BaseMetric-57"><span class="linenos">57</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">requires_train_set</span> <span class="o">=</span> <span class="n">requires_train_set</span>
-</span><span id="BaseMetric-58"><a href="#BaseMetric-58"><span class="linenos">58</span></a>
-</span><span id="BaseMetric-59"><a href="#BaseMetric-59"><span class="linenos">59</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseMetric-60"><a href="#BaseMetric-60"><span class="linenos">60</span></a>    <span class="k">def</span> <span class="nf">on_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eval_sets</span><span class="p">:</span> <span class="n">EvaluationSets</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="BaseMetric-61"><a href="#BaseMetric-61"><span class="linenos">61</span></a>        <span class="sd">&quot;&quot;&quot;Evaluate the sets for the performance of the metric.</span>
-</span><span id="BaseMetric-62"><a href="#BaseMetric-62"><span class="linenos">62</span></a>
-</span><span id="BaseMetric-63"><a href="#BaseMetric-63"><span class="linenos">63</span></a><span class="sd">        Derived classes should implement the evaluation logic of the metric.</span>
-</span><span id="BaseMetric-64"><a href="#BaseMetric-64"><span class="linenos">64</span></a>
-</span><span id="BaseMetric-65"><a href="#BaseMetric-65"><span class="linenos">65</span></a><span class="sd">        Args:</span>
-</span><span id="BaseMetric-66"><a href="#BaseMetric-66"><span class="linenos">66</span></a><span class="sd">            eval_sets: the sets to use for computing the performance of the metric.</span>
-</span><span id="BaseMetric-67"><a href="#BaseMetric-67"><span class="linenos">67</span></a>
-</span><span id="BaseMetric-68"><a href="#BaseMetric-68"><span class="linenos">68</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseMetric-69"><a href="#BaseMetric-69"><span class="linenos">69</span></a><span class="sd">            the evaluated performance.</span>
-</span><span id="BaseMetric-70"><a href="#BaseMetric-70"><span class="linenos">70</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseMetric-71"><a href="#BaseMetric-71"><span class="linenos">71</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-</span><span id="BaseMetric-72"><a href="#BaseMetric-72"><span class="linenos">72</span></a>
-</span><span id="BaseMetric-73"><a href="#BaseMetric-73"><span class="linenos">73</span></a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eval_sets</span><span class="p">:</span> <span class="n">EvaluationSets</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="BaseMetric-74"><a href="#BaseMetric-74"><span class="linenos">74</span></a>        <span class="sd">&quot;&quot;&quot;Evaluate the sets for the performance of the metric.</span>
-</span><span id="BaseMetric-75"><a href="#BaseMetric-75"><span class="linenos">75</span></a>
-</span><span id="BaseMetric-76"><a href="#BaseMetric-76"><span class="linenos">76</span></a><span class="sd">        Args:</span>
-</span><span id="BaseMetric-77"><a href="#BaseMetric-77"><span class="linenos">77</span></a><span class="sd">            eval_sets: the sets to use for computing the performance of the metric.</span>
-</span><span id="BaseMetric-78"><a href="#BaseMetric-78"><span class="linenos">78</span></a>
-</span><span id="BaseMetric-79"><a href="#BaseMetric-79"><span class="linenos">79</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseMetric-80"><a href="#BaseMetric-80"><span class="linenos">80</span></a><span class="sd">            the evaluated performance.</span>
-</span><span id="BaseMetric-81"><a href="#BaseMetric-81"><span class="linenos">81</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseMetric-82"><a href="#BaseMetric-82"><span class="linenos">82</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_evaluate</span><span class="p">(</span><span class="n">eval_sets</span><span class="p">)</span>
-</span><span id="BaseMetric-83"><a href="#BaseMetric-83"><span class="linenos">83</span></a>
-</span><span id="BaseMetric-84"><a href="#BaseMetric-84"><span class="linenos">84</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BaseMetric-85"><a href="#BaseMetric-85"><span class="linenos">85</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the metric.</span>
-</span><span id="BaseMetric-86"><a href="#BaseMetric-86"><span class="linenos">86</span></a>
-</span><span id="BaseMetric-87"><a href="#BaseMetric-87"><span class="linenos">87</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseMetric-88"><a href="#BaseMetric-88"><span class="linenos">88</span></a><span class="sd">            the metric name.</span>
-</span><span id="BaseMetric-89"><a href="#BaseMetric-89"><span class="linenos">89</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseMetric-90"><a href="#BaseMetric-90"><span class="linenos">90</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span>
-</span><span id="BaseMetric-91"><a href="#BaseMetric-91"><span class="linenos">91</span></a>
-</span><span id="BaseMetric-92"><a href="#BaseMetric-92"><span class="linenos">92</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span id="BaseMetric-93"><a href="#BaseMetric-93"><span class="linenos">93</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the metric.</span>
-</span><span id="BaseMetric-94"><a href="#BaseMetric-94"><span class="linenos">94</span></a>
-</span><span id="BaseMetric-95"><a href="#BaseMetric-95"><span class="linenos">95</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseMetric-96"><a href="#BaseMetric-96"><span class="linenos">96</span></a><span class="sd">            the metric parameters.</span>
-</span><span id="BaseMetric-97"><a href="#BaseMetric-97"><span class="linenos">97</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseMetric-98"><a href="#BaseMetric-98"><span class="linenos">98</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseMetric-22"><a href="#BaseMetric-22"><span class="linenos"> 22</span></a><span class="k">class</span> <span class="nc">BaseMetric</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+</span><span id="BaseMetric-23"><a href="#BaseMetric-23"><span class="linenos"> 23</span></a>    <span class="sd">&quot;&quot;&quot;Base class for FairRecKit metrics.</span>
+</span><span id="BaseMetric-24"><a href="#BaseMetric-24"><span class="linenos"> 24</span></a>
+</span><span id="BaseMetric-25"><a href="#BaseMetric-25"><span class="linenos"> 25</span></a><span class="sd">    A metric is used for evaluating the performance of recommender system experiments.</span>
+</span><span id="BaseMetric-26"><a href="#BaseMetric-26"><span class="linenos"> 26</span></a><span class="sd">    Derived metrics are expected to implement the abstract interface.</span>
+</span><span id="BaseMetric-27"><a href="#BaseMetric-27"><span class="linenos"> 27</span></a>
+</span><span id="BaseMetric-28"><a href="#BaseMetric-28"><span class="linenos"> 28</span></a><span class="sd">    Abstract methods:</span>
+</span><span id="BaseMetric-29"><a href="#BaseMetric-29"><span class="linenos"> 29</span></a>
+</span><span id="BaseMetric-30"><a href="#BaseMetric-30"><span class="linenos"> 30</span></a><span class="sd">    on_evaluate</span>
+</span><span id="BaseMetric-31"><a href="#BaseMetric-31"><span class="linenos"> 31</span></a>
+</span><span id="BaseMetric-32"><a href="#BaseMetric-32"><span class="linenos"> 32</span></a><span class="sd">    Public methods:</span>
+</span><span id="BaseMetric-33"><a href="#BaseMetric-33"><span class="linenos"> 33</span></a>
+</span><span id="BaseMetric-34"><a href="#BaseMetric-34"><span class="linenos"> 34</span></a><span class="sd">    evaluate</span>
+</span><span id="BaseMetric-35"><a href="#BaseMetric-35"><span class="linenos"> 35</span></a><span class="sd">    get_name</span>
+</span><span id="BaseMetric-36"><a href="#BaseMetric-36"><span class="linenos"> 36</span></a><span class="sd">    get_params</span>
+</span><span id="BaseMetric-37"><a href="#BaseMetric-37"><span class="linenos"> 37</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="BaseMetric-38"><a href="#BaseMetric-38"><span class="linenos"> 38</span></a>
+</span><span id="BaseMetric-39"><a href="#BaseMetric-39"><span class="linenos"> 39</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="BaseMetric-40"><a href="#BaseMetric-40"><span class="linenos"> 40</span></a>            <span class="bp">self</span><span class="p">,</span>
+</span><span id="BaseMetric-41"><a href="#BaseMetric-41"><span class="linenos"> 41</span></a>            <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="BaseMetric-42"><a href="#BaseMetric-42"><span class="linenos"> 42</span></a>            <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+</span><span id="BaseMetric-43"><a href="#BaseMetric-43"><span class="linenos"> 43</span></a>            <span class="o">*</span><span class="p">,</span>
+</span><span id="BaseMetric-44"><a href="#BaseMetric-44"><span class="linenos"> 44</span></a>            <span class="n">requires_test_set</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="BaseMetric-45"><a href="#BaseMetric-45"><span class="linenos"> 45</span></a>            <span class="n">requires_train_set</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</span><span id="BaseMetric-46"><a href="#BaseMetric-46"><span class="linenos"> 46</span></a>        <span class="sd">&quot;&quot;&quot;Construct the metric.</span>
+</span><span id="BaseMetric-47"><a href="#BaseMetric-47"><span class="linenos"> 47</span></a>
+</span><span id="BaseMetric-48"><a href="#BaseMetric-48"><span class="linenos"> 48</span></a><span class="sd">        Args:</span>
+</span><span id="BaseMetric-49"><a href="#BaseMetric-49"><span class="linenos"> 49</span></a><span class="sd">            name: the name of the metric.</span>
+</span><span id="BaseMetric-50"><a href="#BaseMetric-50"><span class="linenos"> 50</span></a><span class="sd">            params: the parameters of the metric.</span>
+</span><span id="BaseMetric-51"><a href="#BaseMetric-51"><span class="linenos"> 51</span></a><span class="sd">            requires_test_set: whether the metric requires the test set for evaluation.</span>
+</span><span id="BaseMetric-52"><a href="#BaseMetric-52"><span class="linenos"> 52</span></a><span class="sd">            requires_train_set: whether the metric requires the train set for evaluation.</span>
+</span><span id="BaseMetric-53"><a href="#BaseMetric-53"><span class="linenos"> 53</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseMetric-54"><a href="#BaseMetric-54"><span class="linenos"> 54</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span> <span class="o">=</span> <span class="n">name</span>
+</span><span id="BaseMetric-55"><a href="#BaseMetric-55"><span class="linenos"> 55</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+</span><span id="BaseMetric-56"><a href="#BaseMetric-56"><span class="linenos"> 56</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">requires_test_set</span> <span class="o">=</span> <span class="n">requires_test_set</span>
+</span><span id="BaseMetric-57"><a href="#BaseMetric-57"><span class="linenos"> 57</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">requires_train_set</span> <span class="o">=</span> <span class="n">requires_train_set</span>
+</span><span id="BaseMetric-58"><a href="#BaseMetric-58"><span class="linenos"> 58</span></a>
+</span><span id="BaseMetric-59"><a href="#BaseMetric-59"><span class="linenos"> 59</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseMetric-60"><a href="#BaseMetric-60"><span class="linenos"> 60</span></a>    <span class="k">def</span> <span class="nf">on_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eval_sets</span><span class="p">:</span> <span class="n">EvaluationSets</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="BaseMetric-61"><a href="#BaseMetric-61"><span class="linenos"> 61</span></a>        <span class="sd">&quot;&quot;&quot;Evaluate the sets for the performance of the metric.</span>
+</span><span id="BaseMetric-62"><a href="#BaseMetric-62"><span class="linenos"> 62</span></a>
+</span><span id="BaseMetric-63"><a href="#BaseMetric-63"><span class="linenos"> 63</span></a><span class="sd">        Derived classes should implement the evaluation logic of the metric.</span>
+</span><span id="BaseMetric-64"><a href="#BaseMetric-64"><span class="linenos"> 64</span></a>
+</span><span id="BaseMetric-65"><a href="#BaseMetric-65"><span class="linenos"> 65</span></a><span class="sd">        Args:</span>
+</span><span id="BaseMetric-66"><a href="#BaseMetric-66"><span class="linenos"> 66</span></a><span class="sd">            eval_sets: the sets to use for computing the performance of the metric.</span>
+</span><span id="BaseMetric-67"><a href="#BaseMetric-67"><span class="linenos"> 67</span></a>
+</span><span id="BaseMetric-68"><a href="#BaseMetric-68"><span class="linenos"> 68</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseMetric-69"><a href="#BaseMetric-69"><span class="linenos"> 69</span></a><span class="sd">            the evaluated performance.</span>
+</span><span id="BaseMetric-70"><a href="#BaseMetric-70"><span class="linenos"> 70</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseMetric-71"><a href="#BaseMetric-71"><span class="linenos"> 71</span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</span><span id="BaseMetric-72"><a href="#BaseMetric-72"><span class="linenos"> 72</span></a>
+</span><span id="BaseMetric-73"><a href="#BaseMetric-73"><span class="linenos"> 73</span></a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eval_sets</span><span class="p">:</span> <span class="n">EvaluationSets</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="BaseMetric-74"><a href="#BaseMetric-74"><span class="linenos"> 74</span></a>        <span class="sd">&quot;&quot;&quot;Evaluate the sets for the performance of the metric.</span>
+</span><span id="BaseMetric-75"><a href="#BaseMetric-75"><span class="linenos"> 75</span></a>
+</span><span id="BaseMetric-76"><a href="#BaseMetric-76"><span class="linenos"> 76</span></a><span class="sd">        Args:</span>
+</span><span id="BaseMetric-77"><a href="#BaseMetric-77"><span class="linenos"> 77</span></a><span class="sd">            eval_sets: the sets to use for computing the performance of the metric.</span>
+</span><span id="BaseMetric-78"><a href="#BaseMetric-78"><span class="linenos"> 78</span></a>
+</span><span id="BaseMetric-79"><a href="#BaseMetric-79"><span class="linenos"> 79</span></a><span class="sd">        Raises:</span>
+</span><span id="BaseMetric-80"><a href="#BaseMetric-80"><span class="linenos"> 80</span></a><span class="sd">            ArithmeticError: possibly raised by a metric on evaluation.</span>
+</span><span id="BaseMetric-81"><a href="#BaseMetric-81"><span class="linenos"> 81</span></a><span class="sd">            MemoryError: possibly raised by a metric on evaluation.</span>
+</span><span id="BaseMetric-82"><a href="#BaseMetric-82"><span class="linenos"> 82</span></a><span class="sd">            RuntimeError: possibly raised by a metric on evaluation.</span>
+</span><span id="BaseMetric-83"><a href="#BaseMetric-83"><span class="linenos"> 83</span></a>
+</span><span id="BaseMetric-84"><a href="#BaseMetric-84"><span class="linenos"> 84</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseMetric-85"><a href="#BaseMetric-85"><span class="linenos"> 85</span></a><span class="sd">            the evaluated performance.</span>
+</span><span id="BaseMetric-86"><a href="#BaseMetric-86"><span class="linenos"> 86</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseMetric-87"><a href="#BaseMetric-87"><span class="linenos"> 87</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_evaluate</span><span class="p">(</span><span class="n">eval_sets</span><span class="p">)</span>
+</span><span id="BaseMetric-88"><a href="#BaseMetric-88"><span class="linenos"> 88</span></a>
+</span><span id="BaseMetric-89"><a href="#BaseMetric-89"><span class="linenos"> 89</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="BaseMetric-90"><a href="#BaseMetric-90"><span class="linenos"> 90</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the metric.</span>
+</span><span id="BaseMetric-91"><a href="#BaseMetric-91"><span class="linenos"> 91</span></a>
+</span><span id="BaseMetric-92"><a href="#BaseMetric-92"><span class="linenos"> 92</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseMetric-93"><a href="#BaseMetric-93"><span class="linenos"> 93</span></a><span class="sd">            the metric name.</span>
+</span><span id="BaseMetric-94"><a href="#BaseMetric-94"><span class="linenos"> 94</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseMetric-95"><a href="#BaseMetric-95"><span class="linenos"> 95</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span>
+</span><span id="BaseMetric-96"><a href="#BaseMetric-96"><span class="linenos"> 96</span></a>
+</span><span id="BaseMetric-97"><a href="#BaseMetric-97"><span class="linenos"> 97</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="BaseMetric-98"><a href="#BaseMetric-98"><span class="linenos"> 98</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the metric.</span>
+</span><span id="BaseMetric-99"><a href="#BaseMetric-99"><span class="linenos"> 99</span></a>
+</span><span id="BaseMetric-100"><a href="#BaseMetric-100"><span class="linenos">100</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseMetric-101"><a href="#BaseMetric-101"><span class="linenos">101</span></a><span class="sd">            the metric parameters.</span>
+</span><span id="BaseMetric-102"><a href="#BaseMetric-102"><span class="linenos">102</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseMetric-103"><a href="#BaseMetric-103"><span class="linenos">103</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -438,10 +448,15 @@ get_params</p>
 </span><span id="BaseMetric.evaluate-76"><a href="#BaseMetric.evaluate-76"><span class="linenos">76</span></a><span class="sd">        Args:</span>
 </span><span id="BaseMetric.evaluate-77"><a href="#BaseMetric.evaluate-77"><span class="linenos">77</span></a><span class="sd">            eval_sets: the sets to use for computing the performance of the metric.</span>
 </span><span id="BaseMetric.evaluate-78"><a href="#BaseMetric.evaluate-78"><span class="linenos">78</span></a>
-</span><span id="BaseMetric.evaluate-79"><a href="#BaseMetric.evaluate-79"><span class="linenos">79</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseMetric.evaluate-80"><a href="#BaseMetric.evaluate-80"><span class="linenos">80</span></a><span class="sd">            the evaluated performance.</span>
-</span><span id="BaseMetric.evaluate-81"><a href="#BaseMetric.evaluate-81"><span class="linenos">81</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseMetric.evaluate-82"><a href="#BaseMetric.evaluate-82"><span class="linenos">82</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_evaluate</span><span class="p">(</span><span class="n">eval_sets</span><span class="p">)</span>
+</span><span id="BaseMetric.evaluate-79"><a href="#BaseMetric.evaluate-79"><span class="linenos">79</span></a><span class="sd">        Raises:</span>
+</span><span id="BaseMetric.evaluate-80"><a href="#BaseMetric.evaluate-80"><span class="linenos">80</span></a><span class="sd">            ArithmeticError: possibly raised by a metric on evaluation.</span>
+</span><span id="BaseMetric.evaluate-81"><a href="#BaseMetric.evaluate-81"><span class="linenos">81</span></a><span class="sd">            MemoryError: possibly raised by a metric on evaluation.</span>
+</span><span id="BaseMetric.evaluate-82"><a href="#BaseMetric.evaluate-82"><span class="linenos">82</span></a><span class="sd">            RuntimeError: possibly raised by a metric on evaluation.</span>
+</span><span id="BaseMetric.evaluate-83"><a href="#BaseMetric.evaluate-83"><span class="linenos">83</span></a>
+</span><span id="BaseMetric.evaluate-84"><a href="#BaseMetric.evaluate-84"><span class="linenos">84</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseMetric.evaluate-85"><a href="#BaseMetric.evaluate-85"><span class="linenos">85</span></a><span class="sd">            the evaluated performance.</span>
+</span><span id="BaseMetric.evaluate-86"><a href="#BaseMetric.evaluate-86"><span class="linenos">86</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseMetric.evaluate-87"><a href="#BaseMetric.evaluate-87"><span class="linenos">87</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_evaluate</span><span class="p">(</span><span class="n">eval_sets</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -449,6 +464,11 @@ get_params</p>
 
 <p>Args:
     eval_sets: the sets to use for computing the performance of the metric.</p>
+
+<p>Raises:
+    ArithmeticError: possibly raised by a metric on evaluation.
+    MemoryError: possibly raised by a metric on evaluation.
+    RuntimeError: possibly raised by a metric on evaluation.</p>
 
 <p>Returns:
     the evaluated performance.</p>
@@ -467,13 +487,13 @@ get_params</p>
 
     </div>
     <a class="headerlink" href="#BaseMetric.get_name"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseMetric.get_name-84"><a href="#BaseMetric.get_name-84"><span class="linenos">84</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="BaseMetric.get_name-85"><a href="#BaseMetric.get_name-85"><span class="linenos">85</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the metric.</span>
-</span><span id="BaseMetric.get_name-86"><a href="#BaseMetric.get_name-86"><span class="linenos">86</span></a>
-</span><span id="BaseMetric.get_name-87"><a href="#BaseMetric.get_name-87"><span class="linenos">87</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseMetric.get_name-88"><a href="#BaseMetric.get_name-88"><span class="linenos">88</span></a><span class="sd">            the metric name.</span>
-</span><span id="BaseMetric.get_name-89"><a href="#BaseMetric.get_name-89"><span class="linenos">89</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseMetric.get_name-90"><a href="#BaseMetric.get_name-90"><span class="linenos">90</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseMetric.get_name-89"><a href="#BaseMetric.get_name-89"><span class="linenos">89</span></a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="BaseMetric.get_name-90"><a href="#BaseMetric.get_name-90"><span class="linenos">90</span></a>        <span class="sd">&quot;&quot;&quot;Get the name of the metric.</span>
+</span><span id="BaseMetric.get_name-91"><a href="#BaseMetric.get_name-91"><span class="linenos">91</span></a>
+</span><span id="BaseMetric.get_name-92"><a href="#BaseMetric.get_name-92"><span class="linenos">92</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseMetric.get_name-93"><a href="#BaseMetric.get_name-93"><span class="linenos">93</span></a><span class="sd">            the metric name.</span>
+</span><span id="BaseMetric.get_name-94"><a href="#BaseMetric.get_name-94"><span class="linenos">94</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseMetric.get_name-95"><a href="#BaseMetric.get_name-95"><span class="linenos">95</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span>
 </span></pre></div>
 
 
@@ -496,13 +516,13 @@ get_params</p>
 
     </div>
     <a class="headerlink" href="#BaseMetric.get_params"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseMetric.get_params-92"><a href="#BaseMetric.get_params-92"><span class="linenos">92</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-</span><span id="BaseMetric.get_params-93"><a href="#BaseMetric.get_params-93"><span class="linenos">93</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the metric.</span>
-</span><span id="BaseMetric.get_params-94"><a href="#BaseMetric.get_params-94"><span class="linenos">94</span></a>
-</span><span id="BaseMetric.get_params-95"><a href="#BaseMetric.get_params-95"><span class="linenos">95</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseMetric.get_params-96"><a href="#BaseMetric.get_params-96"><span class="linenos">96</span></a><span class="sd">            the metric parameters.</span>
-</span><span id="BaseMetric.get_params-97"><a href="#BaseMetric.get_params-97"><span class="linenos">97</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseMetric.get_params-98"><a href="#BaseMetric.get_params-98"><span class="linenos">98</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseMetric.get_params-97"><a href="#BaseMetric.get_params-97"><span class="linenos"> 97</span></a>    <span class="k">def</span> <span class="nf">get_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+</span><span id="BaseMetric.get_params-98"><a href="#BaseMetric.get_params-98"><span class="linenos"> 98</span></a>        <span class="sd">&quot;&quot;&quot;Get the parameters of the metric.</span>
+</span><span id="BaseMetric.get_params-99"><a href="#BaseMetric.get_params-99"><span class="linenos"> 99</span></a>
+</span><span id="BaseMetric.get_params-100"><a href="#BaseMetric.get_params-100"><span class="linenos">100</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseMetric.get_params-101"><a href="#BaseMetric.get_params-101"><span class="linenos">101</span></a><span class="sd">            the metric parameters.</span>
+</span><span id="BaseMetric.get_params-102"><a href="#BaseMetric.get_params-102"><span class="linenos">102</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseMetric.get_params-103"><a href="#BaseMetric.get_params-103"><span class="linenos">103</span></a>        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -526,39 +546,39 @@ get_params</p>
 
     </div>
     <a class="headerlink" href="#ColumnMetric"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ColumnMetric-101"><a href="#ColumnMetric-101"><span class="linenos">101</span></a><span class="k">class</span> <span class="nc">ColumnMetric</span><span class="p">(</span><span class="n">BaseMetric</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
-</span><span id="ColumnMetric-102"><a href="#ColumnMetric-102"><span class="linenos">102</span></a>    <span class="sd">&quot;&quot;&quot;Metric that uses two columns to produce the performance evaluation.</span>
-</span><span id="ColumnMetric-103"><a href="#ColumnMetric-103"><span class="linenos">103</span></a>
-</span><span id="ColumnMetric-104"><a href="#ColumnMetric-104"><span class="linenos">104</span></a><span class="sd">    The intended use of this class is to provide a base implementation for</span>
-</span><span id="ColumnMetric-105"><a href="#ColumnMetric-105"><span class="linenos">105</span></a><span class="sd">    computing the evaluation using two pandas Series columns. The actual data</span>
-</span><span id="ColumnMetric-106"><a href="#ColumnMetric-106"><span class="linenos">106</span></a><span class="sd">    that is provided in these columns can be anything depending on the derived class.</span>
-</span><span id="ColumnMetric-107"><a href="#ColumnMetric-107"><span class="linenos">107</span></a><span class="sd">    &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ColumnMetric-106"><a href="#ColumnMetric-106"><span class="linenos">106</span></a><span class="k">class</span> <span class="nc">ColumnMetric</span><span class="p">(</span><span class="n">BaseMetric</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
+</span><span id="ColumnMetric-107"><a href="#ColumnMetric-107"><span class="linenos">107</span></a>    <span class="sd">&quot;&quot;&quot;Metric that uses two columns to produce the performance evaluation.</span>
 </span><span id="ColumnMetric-108"><a href="#ColumnMetric-108"><span class="linenos">108</span></a>
-</span><span id="ColumnMetric-109"><a href="#ColumnMetric-109"><span class="linenos">109</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-</span><span id="ColumnMetric-110"><a href="#ColumnMetric-110"><span class="linenos">110</span></a>            <span class="bp">self</span><span class="p">,</span>
-</span><span id="ColumnMetric-111"><a href="#ColumnMetric-111"><span class="linenos">111</span></a>            <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="ColumnMetric-112"><a href="#ColumnMetric-112"><span class="linenos">112</span></a>            <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
-</span><span id="ColumnMetric-113"><a href="#ColumnMetric-113"><span class="linenos">113</span></a>            <span class="n">eval_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span>
-</span><span id="ColumnMetric-114"><a href="#ColumnMetric-114"><span class="linenos">114</span></a>            <span class="o">*</span><span class="p">,</span>
-</span><span id="ColumnMetric-115"><a href="#ColumnMetric-115"><span class="linenos">115</span></a>            <span class="n">requires_test_set</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="ColumnMetric-116"><a href="#ColumnMetric-116"><span class="linenos">116</span></a>            <span class="n">requires_train_set</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-</span><span id="ColumnMetric-117"><a href="#ColumnMetric-117"><span class="linenos">117</span></a>        <span class="sd">&quot;&quot;&quot;Construct the column metric.</span>
-</span><span id="ColumnMetric-118"><a href="#ColumnMetric-118"><span class="linenos">118</span></a>
-</span><span id="ColumnMetric-119"><a href="#ColumnMetric-119"><span class="linenos">119</span></a><span class="sd">        Args:</span>
-</span><span id="ColumnMetric-120"><a href="#ColumnMetric-120"><span class="linenos">120</span></a><span class="sd">            name: the name of the metric.</span>
-</span><span id="ColumnMetric-121"><a href="#ColumnMetric-121"><span class="linenos">121</span></a><span class="sd">            params: the parameters of the metric.</span>
-</span><span id="ColumnMetric-122"><a href="#ColumnMetric-122"><span class="linenos">122</span></a><span class="sd">            eval_func: the evaluation function that uses two columns to compute the evaluation.</span>
-</span><span id="ColumnMetric-123"><a href="#ColumnMetric-123"><span class="linenos">123</span></a><span class="sd">            requires_test_set: whether the metric requires the test set for evaluation.</span>
-</span><span id="ColumnMetric-124"><a href="#ColumnMetric-124"><span class="linenos">124</span></a><span class="sd">            requires_train_set: whether the metric requires the train set for evaluation.</span>
-</span><span id="ColumnMetric-125"><a href="#ColumnMetric-125"><span class="linenos">125</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ColumnMetric-126"><a href="#ColumnMetric-126"><span class="linenos">126</span></a>        <span class="n">BaseMetric</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-</span><span id="ColumnMetric-127"><a href="#ColumnMetric-127"><span class="linenos">127</span></a>            <span class="bp">self</span><span class="p">,</span>
-</span><span id="ColumnMetric-128"><a href="#ColumnMetric-128"><span class="linenos">128</span></a>            <span class="n">name</span><span class="p">,</span>
-</span><span id="ColumnMetric-129"><a href="#ColumnMetric-129"><span class="linenos">129</span></a>            <span class="n">params</span><span class="p">,</span>
-</span><span id="ColumnMetric-130"><a href="#ColumnMetric-130"><span class="linenos">130</span></a>            <span class="n">requires_test_set</span><span class="o">=</span><span class="n">requires_test_set</span><span class="p">,</span>
-</span><span id="ColumnMetric-131"><a href="#ColumnMetric-131"><span class="linenos">131</span></a>            <span class="n">requires_train_set</span><span class="o">=</span><span class="n">requires_train_set</span>
-</span><span id="ColumnMetric-132"><a href="#ColumnMetric-132"><span class="linenos">132</span></a>        <span class="p">)</span>
-</span><span id="ColumnMetric-133"><a href="#ColumnMetric-133"><span class="linenos">133</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">eval_func</span> <span class="o">=</span> <span class="n">eval_func</span>
+</span><span id="ColumnMetric-109"><a href="#ColumnMetric-109"><span class="linenos">109</span></a><span class="sd">    The intended use of this class is to provide a base implementation for</span>
+</span><span id="ColumnMetric-110"><a href="#ColumnMetric-110"><span class="linenos">110</span></a><span class="sd">    computing the evaluation using two pandas Series columns. The actual data</span>
+</span><span id="ColumnMetric-111"><a href="#ColumnMetric-111"><span class="linenos">111</span></a><span class="sd">    that is provided in these columns can be anything depending on the derived class.</span>
+</span><span id="ColumnMetric-112"><a href="#ColumnMetric-112"><span class="linenos">112</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="ColumnMetric-113"><a href="#ColumnMetric-113"><span class="linenos">113</span></a>
+</span><span id="ColumnMetric-114"><a href="#ColumnMetric-114"><span class="linenos">114</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="ColumnMetric-115"><a href="#ColumnMetric-115"><span class="linenos">115</span></a>            <span class="bp">self</span><span class="p">,</span>
+</span><span id="ColumnMetric-116"><a href="#ColumnMetric-116"><span class="linenos">116</span></a>            <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="ColumnMetric-117"><a href="#ColumnMetric-117"><span class="linenos">117</span></a>            <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+</span><span id="ColumnMetric-118"><a href="#ColumnMetric-118"><span class="linenos">118</span></a>            <span class="n">eval_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span>
+</span><span id="ColumnMetric-119"><a href="#ColumnMetric-119"><span class="linenos">119</span></a>            <span class="o">*</span><span class="p">,</span>
+</span><span id="ColumnMetric-120"><a href="#ColumnMetric-120"><span class="linenos">120</span></a>            <span class="n">requires_test_set</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="ColumnMetric-121"><a href="#ColumnMetric-121"><span class="linenos">121</span></a>            <span class="n">requires_train_set</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+</span><span id="ColumnMetric-122"><a href="#ColumnMetric-122"><span class="linenos">122</span></a>        <span class="sd">&quot;&quot;&quot;Construct the column metric.</span>
+</span><span id="ColumnMetric-123"><a href="#ColumnMetric-123"><span class="linenos">123</span></a>
+</span><span id="ColumnMetric-124"><a href="#ColumnMetric-124"><span class="linenos">124</span></a><span class="sd">        Args:</span>
+</span><span id="ColumnMetric-125"><a href="#ColumnMetric-125"><span class="linenos">125</span></a><span class="sd">            name: the name of the metric.</span>
+</span><span id="ColumnMetric-126"><a href="#ColumnMetric-126"><span class="linenos">126</span></a><span class="sd">            params: the parameters of the metric.</span>
+</span><span id="ColumnMetric-127"><a href="#ColumnMetric-127"><span class="linenos">127</span></a><span class="sd">            eval_func: the evaluation function that uses two columns to compute the evaluation.</span>
+</span><span id="ColumnMetric-128"><a href="#ColumnMetric-128"><span class="linenos">128</span></a><span class="sd">            requires_test_set: whether the metric requires the test set for evaluation.</span>
+</span><span id="ColumnMetric-129"><a href="#ColumnMetric-129"><span class="linenos">129</span></a><span class="sd">            requires_train_set: whether the metric requires the train set for evaluation.</span>
+</span><span id="ColumnMetric-130"><a href="#ColumnMetric-130"><span class="linenos">130</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ColumnMetric-131"><a href="#ColumnMetric-131"><span class="linenos">131</span></a>        <span class="n">BaseMetric</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+</span><span id="ColumnMetric-132"><a href="#ColumnMetric-132"><span class="linenos">132</span></a>            <span class="bp">self</span><span class="p">,</span>
+</span><span id="ColumnMetric-133"><a href="#ColumnMetric-133"><span class="linenos">133</span></a>            <span class="n">name</span><span class="p">,</span>
+</span><span id="ColumnMetric-134"><a href="#ColumnMetric-134"><span class="linenos">134</span></a>            <span class="n">params</span><span class="p">,</span>
+</span><span id="ColumnMetric-135"><a href="#ColumnMetric-135"><span class="linenos">135</span></a>            <span class="n">requires_test_set</span><span class="o">=</span><span class="n">requires_test_set</span><span class="p">,</span>
+</span><span id="ColumnMetric-136"><a href="#ColumnMetric-136"><span class="linenos">136</span></a>            <span class="n">requires_train_set</span><span class="o">=</span><span class="n">requires_train_set</span>
+</span><span id="ColumnMetric-137"><a href="#ColumnMetric-137"><span class="linenos">137</span></a>        <span class="p">)</span>
+</span><span id="ColumnMetric-138"><a href="#ColumnMetric-138"><span class="linenos">138</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">eval_func</span> <span class="o">=</span> <span class="n">eval_func</span>
 </span></pre></div>
 
 
@@ -580,31 +600,31 @@ that is provided in these columns can be anything depending on the derived class
 
     </div>
     <a class="headerlink" href="#ColumnMetric.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="ColumnMetric.__init__-109"><a href="#ColumnMetric.__init__-109"><span class="linenos">109</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-</span><span id="ColumnMetric.__init__-110"><a href="#ColumnMetric.__init__-110"><span class="linenos">110</span></a>            <span class="bp">self</span><span class="p">,</span>
-</span><span id="ColumnMetric.__init__-111"><a href="#ColumnMetric.__init__-111"><span class="linenos">111</span></a>            <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="ColumnMetric.__init__-112"><a href="#ColumnMetric.__init__-112"><span class="linenos">112</span></a>            <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
-</span><span id="ColumnMetric.__init__-113"><a href="#ColumnMetric.__init__-113"><span class="linenos">113</span></a>            <span class="n">eval_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span>
-</span><span id="ColumnMetric.__init__-114"><a href="#ColumnMetric.__init__-114"><span class="linenos">114</span></a>            <span class="o">*</span><span class="p">,</span>
-</span><span id="ColumnMetric.__init__-115"><a href="#ColumnMetric.__init__-115"><span class="linenos">115</span></a>            <span class="n">requires_test_set</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-</span><span id="ColumnMetric.__init__-116"><a href="#ColumnMetric.__init__-116"><span class="linenos">116</span></a>            <span class="n">requires_train_set</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-</span><span id="ColumnMetric.__init__-117"><a href="#ColumnMetric.__init__-117"><span class="linenos">117</span></a>        <span class="sd">&quot;&quot;&quot;Construct the column metric.</span>
-</span><span id="ColumnMetric.__init__-118"><a href="#ColumnMetric.__init__-118"><span class="linenos">118</span></a>
-</span><span id="ColumnMetric.__init__-119"><a href="#ColumnMetric.__init__-119"><span class="linenos">119</span></a><span class="sd">        Args:</span>
-</span><span id="ColumnMetric.__init__-120"><a href="#ColumnMetric.__init__-120"><span class="linenos">120</span></a><span class="sd">            name: the name of the metric.</span>
-</span><span id="ColumnMetric.__init__-121"><a href="#ColumnMetric.__init__-121"><span class="linenos">121</span></a><span class="sd">            params: the parameters of the metric.</span>
-</span><span id="ColumnMetric.__init__-122"><a href="#ColumnMetric.__init__-122"><span class="linenos">122</span></a><span class="sd">            eval_func: the evaluation function that uses two columns to compute the evaluation.</span>
-</span><span id="ColumnMetric.__init__-123"><a href="#ColumnMetric.__init__-123"><span class="linenos">123</span></a><span class="sd">            requires_test_set: whether the metric requires the test set for evaluation.</span>
-</span><span id="ColumnMetric.__init__-124"><a href="#ColumnMetric.__init__-124"><span class="linenos">124</span></a><span class="sd">            requires_train_set: whether the metric requires the train set for evaluation.</span>
-</span><span id="ColumnMetric.__init__-125"><a href="#ColumnMetric.__init__-125"><span class="linenos">125</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="ColumnMetric.__init__-126"><a href="#ColumnMetric.__init__-126"><span class="linenos">126</span></a>        <span class="n">BaseMetric</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-</span><span id="ColumnMetric.__init__-127"><a href="#ColumnMetric.__init__-127"><span class="linenos">127</span></a>            <span class="bp">self</span><span class="p">,</span>
-</span><span id="ColumnMetric.__init__-128"><a href="#ColumnMetric.__init__-128"><span class="linenos">128</span></a>            <span class="n">name</span><span class="p">,</span>
-</span><span id="ColumnMetric.__init__-129"><a href="#ColumnMetric.__init__-129"><span class="linenos">129</span></a>            <span class="n">params</span><span class="p">,</span>
-</span><span id="ColumnMetric.__init__-130"><a href="#ColumnMetric.__init__-130"><span class="linenos">130</span></a>            <span class="n">requires_test_set</span><span class="o">=</span><span class="n">requires_test_set</span><span class="p">,</span>
-</span><span id="ColumnMetric.__init__-131"><a href="#ColumnMetric.__init__-131"><span class="linenos">131</span></a>            <span class="n">requires_train_set</span><span class="o">=</span><span class="n">requires_train_set</span>
-</span><span id="ColumnMetric.__init__-132"><a href="#ColumnMetric.__init__-132"><span class="linenos">132</span></a>        <span class="p">)</span>
-</span><span id="ColumnMetric.__init__-133"><a href="#ColumnMetric.__init__-133"><span class="linenos">133</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">eval_func</span> <span class="o">=</span> <span class="n">eval_func</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="ColumnMetric.__init__-114"><a href="#ColumnMetric.__init__-114"><span class="linenos">114</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+</span><span id="ColumnMetric.__init__-115"><a href="#ColumnMetric.__init__-115"><span class="linenos">115</span></a>            <span class="bp">self</span><span class="p">,</span>
+</span><span id="ColumnMetric.__init__-116"><a href="#ColumnMetric.__init__-116"><span class="linenos">116</span></a>            <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+</span><span id="ColumnMetric.__init__-117"><a href="#ColumnMetric.__init__-117"><span class="linenos">117</span></a>            <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+</span><span id="ColumnMetric.__init__-118"><a href="#ColumnMetric.__init__-118"><span class="linenos">118</span></a>            <span class="n">eval_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span>
+</span><span id="ColumnMetric.__init__-119"><a href="#ColumnMetric.__init__-119"><span class="linenos">119</span></a>            <span class="o">*</span><span class="p">,</span>
+</span><span id="ColumnMetric.__init__-120"><a href="#ColumnMetric.__init__-120"><span class="linenos">120</span></a>            <span class="n">requires_test_set</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="ColumnMetric.__init__-121"><a href="#ColumnMetric.__init__-121"><span class="linenos">121</span></a>            <span class="n">requires_train_set</span><span class="p">:</span> <span class="nb">bool</span><span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+</span><span id="ColumnMetric.__init__-122"><a href="#ColumnMetric.__init__-122"><span class="linenos">122</span></a>        <span class="sd">&quot;&quot;&quot;Construct the column metric.</span>
+</span><span id="ColumnMetric.__init__-123"><a href="#ColumnMetric.__init__-123"><span class="linenos">123</span></a>
+</span><span id="ColumnMetric.__init__-124"><a href="#ColumnMetric.__init__-124"><span class="linenos">124</span></a><span class="sd">        Args:</span>
+</span><span id="ColumnMetric.__init__-125"><a href="#ColumnMetric.__init__-125"><span class="linenos">125</span></a><span class="sd">            name: the name of the metric.</span>
+</span><span id="ColumnMetric.__init__-126"><a href="#ColumnMetric.__init__-126"><span class="linenos">126</span></a><span class="sd">            params: the parameters of the metric.</span>
+</span><span id="ColumnMetric.__init__-127"><a href="#ColumnMetric.__init__-127"><span class="linenos">127</span></a><span class="sd">            eval_func: the evaluation function that uses two columns to compute the evaluation.</span>
+</span><span id="ColumnMetric.__init__-128"><a href="#ColumnMetric.__init__-128"><span class="linenos">128</span></a><span class="sd">            requires_test_set: whether the metric requires the test set for evaluation.</span>
+</span><span id="ColumnMetric.__init__-129"><a href="#ColumnMetric.__init__-129"><span class="linenos">129</span></a><span class="sd">            requires_train_set: whether the metric requires the train set for evaluation.</span>
+</span><span id="ColumnMetric.__init__-130"><a href="#ColumnMetric.__init__-130"><span class="linenos">130</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="ColumnMetric.__init__-131"><a href="#ColumnMetric.__init__-131"><span class="linenos">131</span></a>        <span class="n">BaseMetric</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+</span><span id="ColumnMetric.__init__-132"><a href="#ColumnMetric.__init__-132"><span class="linenos">132</span></a>            <span class="bp">self</span><span class="p">,</span>
+</span><span id="ColumnMetric.__init__-133"><a href="#ColumnMetric.__init__-133"><span class="linenos">133</span></a>            <span class="n">name</span><span class="p">,</span>
+</span><span id="ColumnMetric.__init__-134"><a href="#ColumnMetric.__init__-134"><span class="linenos">134</span></a>            <span class="n">params</span><span class="p">,</span>
+</span><span id="ColumnMetric.__init__-135"><a href="#ColumnMetric.__init__-135"><span class="linenos">135</span></a>            <span class="n">requires_test_set</span><span class="o">=</span><span class="n">requires_test_set</span><span class="p">,</span>
+</span><span id="ColumnMetric.__init__-136"><a href="#ColumnMetric.__init__-136"><span class="linenos">136</span></a>            <span class="n">requires_train_set</span><span class="o">=</span><span class="n">requires_train_set</span>
+</span><span id="ColumnMetric.__init__-137"><a href="#ColumnMetric.__init__-137"><span class="linenos">137</span></a>        <span class="p">)</span>
+</span><span id="ColumnMetric.__init__-138"><a href="#ColumnMetric.__init__-138"><span class="linenos">138</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">eval_func</span> <span class="o">=</span> <span class="n">eval_func</span>
 </span></pre></div>
 
 

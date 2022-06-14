@@ -150,151 +150,176 @@ Utrecht University within the Software Project course.
 </span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>        <span class="n">Predictor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;num_threads&#39;</span><span class="p">])</span>
 </span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">algo</span> <span class="o">=</span> <span class="n">algo</span>
 </span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="k">def</span> <span class="nf">on_train</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>        <span class="sd">&quot;&quot;&quot;Fit the lenskit algorithm on the train set.&quot;&quot;&quot;</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_set</span><span class="p">)</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>    <span class="k">def</span> <span class="nf">on_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>        <span class="sd">&quot;&quot;&quot;Compute a prediction for the specified user and item.</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="sd">        Lenskit predictors allow for predicting multiple items at the same time.</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">        To conform with the interface only one item needs to be predicted and all</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">        the extra data that it generates needs to be excluded.</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">        Args:</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">            user: the user ID.</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">            item: the item ID.</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="sd">        Returns:</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">            the predicted rating.</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>        <span class="n">prediction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">predict_for_user</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>        <span class="k">return</span> <span class="n">prediction</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>    <span class="k">def</span> <span class="nf">on_predict_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_item_pairs</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>        <span class="sd">&quot;&quot;&quot;Compute the predictions for each of the specified user and item pairs.</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">        Lenskit predictors have a batch implementation available that allows for</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">        predicting ratings using multiple &#39;jobs&#39;.</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">        Args:</span>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">            user_item_pairs: with at least two columns: &#39;user&#39;, &#39;item&#39;.</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>    <span class="k">def</span> <span class="nf">on_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_set</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>        <span class="sd">&quot;&quot;&quot;Fit the lenskit algorithm on the train set.</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="sd">        The predictor should be trained with a dataframe matrix.</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="sd">        Args:</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a><span class="sd">            train_set: the set to train the predictor with.</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">        Raises:</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">            ArithmeticError: possibly raised by an algorithm on training.</span>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a><span class="sd">            MemoryError: possibly raised by an algorithm on training.</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">            RuntimeError: possibly raised by an algorithm on training.</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">            TypeError: when the train set is not a pandas dataframe.</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">train_set</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Expected predictor to be trained with a dataframe matrix&#39;</span><span class="p">)</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_set</span><span class="p">)</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>    <span class="k">def</span> <span class="nf">on_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>        <span class="sd">&quot;&quot;&quot;Compute a prediction for the specified user and item.</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">        Lenskit predictors allow for predicting multiple items at the same time.</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">        To conform with the interface only one item needs to be predicted and all</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">        the extra data that it generates needs to be excluded.</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">        Args:</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">            user: the user ID.</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">            item: the item ID.</span>
 </span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">        Returns:</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">            dataFrame with the columns: &#39;user&#39;, &#39;item&#39;, &#39;prediction&#39;.</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>        <span class="n">n_jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>        <span class="n">predictions</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="p">,</span> <span class="n">user_item_pairs</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>        <span class="k">return</span> <span class="n">predictions</span><span class="p">[[</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;prediction&#39;</span><span class="p">]]</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="k">def</span> <span class="nf">create_biased_mf</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>    <span class="sd">&quot;&quot;&quot;Create the BiasedMF predictor.</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">        Raises:</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">            ArithmeticError: possibly raised by a predictor on testing.</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">            MemoryError: possibly raised by a predictor on testing.</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">            RuntimeError: when the predictor is not trained yet.</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a><span class="sd">        Returns:</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">            the predicted rating.</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>        <span class="n">prediction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">predict_for_user</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>        <span class="k">return</span> <span class="n">prediction</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
 </span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">    Args:</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="sd">        name: the name of the algorithm.</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="sd">        params: containing the following name-value pairs:</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="sd">            features(int): the number of features to train.</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">            iterations(int): the number of iterations to train.</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">            user_reg(float): the regularization factor for users.</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">            item_reg(float): the regularization factor for items.</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">            damping(float): damping factor for the underlying bias.</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">            method(str): the solver to use (&#39;cd&#39; or &#39;lu&#39;).</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">            random_seed(int): the random seed or None for the current time as seed.</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">    Keyword Args:</span>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>    <span class="k">def</span> <span class="nf">on_predict_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_item_pairs</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>        <span class="sd">&quot;&quot;&quot;Compute the predictions for each of the specified user and item pairs.</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="sd">        Lenskit predictors have a batch implementation available that allows for</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="sd">        predicting ratings using multiple &#39;jobs&#39;.</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">        Args:</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">            user_item_pairs: with at least two columns: &#39;user&#39;, &#39;item&#39;.</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">        Raises:</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">            ArithmeticError: possibly raised by a predictor on testing.</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">            MemoryError: possibly raised by a predictor on testing.</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">            RuntimeError: when the predictor is not trained yet.</span>
 </span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">    Returns:</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">        the LensKitPredictor wrapper of BiasedMF.</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_biased_mf</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">        Returns:</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">            dataFrame with the columns: &#39;user&#39;, &#39;item&#39;, &#39;prediction&#39;.</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>        <span class="n">n_jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>        <span class="n">predictions</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="p">,</span> <span class="n">user_item_pairs</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>        <span class="k">return</span> <span class="n">predictions</span><span class="p">[[</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;prediction&#39;</span><span class="p">]]</span>
 </span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="k">def</span> <span class="nf">create_implicit_mf</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>    <span class="sd">&quot;&quot;&quot;Create the ImplicitMF predictor.</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">    Args:</span>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">        name: the name of the algorithm.</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">        params: containing the following name-value pairs:</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">            features(int): the number of features to train.</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">            iterations(int): the number of iterations to train.</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">            reg(float): the regularization factor.</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">            weight(flot): the scaling weight for positive samples.</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">            use_ratings(bool): whether to use the rating column or treat</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">                every rated user-item pair as having a rating of 1.</span>
-</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">            method(str): the training method (&#39;cg&#39; or &#39;lu&#39;).</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="k">def</span> <span class="nf">create_biased_mf</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>    <span class="sd">&quot;&quot;&quot;Create the BiasedMF predictor.</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">    Args:</span>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">        name: the name of the algorithm.</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">        params: containing the following name-value pairs:</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">            features(int): the number of features to train.</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">            iterations(int): the number of iterations to train.</span>
+</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">            user_reg(float): the regularization factor for users.</span>
+</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">            item_reg(float): the regularization factor for items.</span>
+</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">            damping(float): damping factor for the underlying bias.</span>
+</span><span id="L-121"><a href="#L-121"><span class="linenos">121</span></a><span class="sd">            method(str): the solver to use (&#39;cd&#39; or &#39;lu&#39;).</span>
 </span><span id="L-122"><a href="#L-122"><span class="linenos">122</span></a><span class="sd">            random_seed(int): the random seed or None for the current time as seed.</span>
 </span><span id="L-123"><a href="#L-123"><span class="linenos">123</span></a>
 </span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a><span class="sd">    Keyword Args:</span>
 </span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
 </span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>
 </span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a><span class="sd">    Returns:</span>
-</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="sd">        the LensKitPredictor wrapper of ImplicitMF.</span>
+</span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a><span class="sd">        the LensKitPredictor wrapper of BiasedMF.</span>
 </span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_implicit_mf</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_biased_mf</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 </span><span id="L-131"><a href="#L-131"><span class="linenos">131</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span><span id="L-132"><a href="#L-132"><span class="linenos">132</span></a>
 </span><span id="L-133"><a href="#L-133"><span class="linenos">133</span></a>
-</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="k">def</span> <span class="nf">create_item_item</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
-</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>    <span class="sd">&quot;&quot;&quot;Create the ItemItem predictor.</span>
+</span><span id="L-134"><a href="#L-134"><span class="linenos">134</span></a><span class="k">def</span> <span class="nf">create_implicit_mf</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
+</span><span id="L-135"><a href="#L-135"><span class="linenos">135</span></a>    <span class="sd">&quot;&quot;&quot;Create the ImplicitMF predictor.</span>
 </span><span id="L-136"><a href="#L-136"><span class="linenos">136</span></a>
 </span><span id="L-137"><a href="#L-137"><span class="linenos">137</span></a><span class="sd">    Args:</span>
 </span><span id="L-138"><a href="#L-138"><span class="linenos">138</span></a><span class="sd">        name: the name of the algorithm.</span>
 </span><span id="L-139"><a href="#L-139"><span class="linenos">139</span></a><span class="sd">        params: containing the following name-value pairs:</span>
-</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="sd">            max_neighbors(int): the maximum number of neighbors for scoring each item.</span>
-</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="sd">            min_neighbors(int): the minimum number of neighbors for scoring each item.</span>
-</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a><span class="sd">            min_similarity(float): minimum similarity threshold for considering a neighbor.</span>
-</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a><span class="sd">            feedback(str): control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
-</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a>
-</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a><span class="sd">    Keyword Args:</span>
-</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
-</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a>
-</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a><span class="sd">    Returns:</span>
-</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="sd">        the LensKitPredictor wrapper of ItemItem.</span>
-</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_item_item</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a>
-</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a>
-</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a><span class="k">def</span> <span class="nf">create_pop_score</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
-</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="sd">&quot;&quot;&quot;Create the PopScore predictor.</span>
+</span><span id="L-140"><a href="#L-140"><span class="linenos">140</span></a><span class="sd">            features(int): the number of features to train.</span>
+</span><span id="L-141"><a href="#L-141"><span class="linenos">141</span></a><span class="sd">            iterations(int): the number of iterations to train.</span>
+</span><span id="L-142"><a href="#L-142"><span class="linenos">142</span></a><span class="sd">            reg(float): the regularization factor.</span>
+</span><span id="L-143"><a href="#L-143"><span class="linenos">143</span></a><span class="sd">            weight(flot): the scaling weight for positive samples.</span>
+</span><span id="L-144"><a href="#L-144"><span class="linenos">144</span></a><span class="sd">            use_ratings(bool): whether to use the rating column or treat</span>
+</span><span id="L-145"><a href="#L-145"><span class="linenos">145</span></a><span class="sd">                every rated user-item pair as having a rating of 1.</span>
+</span><span id="L-146"><a href="#L-146"><span class="linenos">146</span></a><span class="sd">            method(str): the training method (&#39;cg&#39; or &#39;lu&#39;).</span>
+</span><span id="L-147"><a href="#L-147"><span class="linenos">147</span></a><span class="sd">            random_seed(int): the random seed or None for the current time as seed.</span>
+</span><span id="L-148"><a href="#L-148"><span class="linenos">148</span></a>
+</span><span id="L-149"><a href="#L-149"><span class="linenos">149</span></a><span class="sd">    Keyword Args:</span>
+</span><span id="L-150"><a href="#L-150"><span class="linenos">150</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
+</span><span id="L-151"><a href="#L-151"><span class="linenos">151</span></a>
+</span><span id="L-152"><a href="#L-152"><span class="linenos">152</span></a><span class="sd">    Returns:</span>
+</span><span id="L-153"><a href="#L-153"><span class="linenos">153</span></a><span class="sd">        the LensKitPredictor wrapper of ImplicitMF.</span>
+</span><span id="L-154"><a href="#L-154"><span class="linenos">154</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-155"><a href="#L-155"><span class="linenos">155</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_implicit_mf</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span id="L-156"><a href="#L-156"><span class="linenos">156</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span><span id="L-157"><a href="#L-157"><span class="linenos">157</span></a>
-</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a><span class="sd">    Args:</span>
-</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="sd">        name: the name of the algorithm.</span>
-</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a><span class="sd">        params: containing the following name-value pairs:</span>
-</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a><span class="sd">            score_method(str): for computing popularity scores (&#39;quantile&#39;, &#39;rank&#39; or &#39;count&#39;).</span>
-</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a>
-</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="sd">    Keyword Args:</span>
-</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
-</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="sd">    Returns:</span>
-</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">        the LensKitPredictor wrapper of PopScore.</span>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_pop_score</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a>
+</span><span id="L-158"><a href="#L-158"><span class="linenos">158</span></a>
+</span><span id="L-159"><a href="#L-159"><span class="linenos">159</span></a><span class="k">def</span> <span class="nf">create_item_item</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
+</span><span id="L-160"><a href="#L-160"><span class="linenos">160</span></a>    <span class="sd">&quot;&quot;&quot;Create the ItemItem predictor.</span>
+</span><span id="L-161"><a href="#L-161"><span class="linenos">161</span></a>
+</span><span id="L-162"><a href="#L-162"><span class="linenos">162</span></a><span class="sd">    Args:</span>
+</span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a><span class="sd">        name: the name of the algorithm.</span>
+</span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a><span class="sd">        params: containing the following name-value pairs:</span>
+</span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a><span class="sd">            max_neighbors(int): the maximum number of neighbors for scoring each item.</span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="sd">            min_neighbors(int): the minimum number of neighbors for scoring each item.</span>
+</span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">            min_similarity(float): minimum similarity threshold for considering a neighbor.</span>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a><span class="sd">            feedback(str): control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a><span class="sd">    Keyword Args:</span>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
 </span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>
-</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="k">def</span> <span class="nf">create_user_user</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
-</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a>    <span class="sd">&quot;&quot;&quot;Create the UserUser predictor.</span>
-</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="sd">    Args:</span>
-</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="sd">        name: the name of the algorithm.</span>
-</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a><span class="sd">        params: containing the following name-value pairs:</span>
-</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a><span class="sd">            max_neighbors(int): the maximum number of neighbors for scoring each item.</span>
-</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a><span class="sd">            min_neighbors(int): the minimum number of neighbors for scoring each item.</span>
-</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a><span class="sd">            min_similarity(float): minimum similarity threshold for considering a neighbor.</span>
-</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a><span class="sd">            feedback(str): control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
-</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>
-</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a><span class="sd">    Keyword Args:</span>
-</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
-</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a>
-</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a><span class="sd">    Returns:</span>
-</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a><span class="sd">        the LensKitPredictor wrapper of UserUser.</span>
-</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_user_user</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="sd">    Returns:</span>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="sd">        the LensKitPredictor wrapper of ItemItem.</span>
+</span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_item_item</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>
+</span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>
+</span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a><span class="k">def</span> <span class="nf">create_pop_score</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
+</span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>    <span class="sd">&quot;&quot;&quot;Create the PopScore predictor.</span>
+</span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>
+</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a><span class="sd">    Args:</span>
+</span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a><span class="sd">        name: the name of the algorithm.</span>
+</span><span id="L-185"><a href="#L-185"><span class="linenos">185</span></a><span class="sd">        params: containing the following name-value pairs:</span>
+</span><span id="L-186"><a href="#L-186"><span class="linenos">186</span></a><span class="sd">            score_method(str): for computing popularity scores (&#39;quantile&#39;, &#39;rank&#39; or &#39;count&#39;).</span>
+</span><span id="L-187"><a href="#L-187"><span class="linenos">187</span></a>
+</span><span id="L-188"><a href="#L-188"><span class="linenos">188</span></a><span class="sd">    Keyword Args:</span>
+</span><span id="L-189"><a href="#L-189"><span class="linenos">189</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
+</span><span id="L-190"><a href="#L-190"><span class="linenos">190</span></a>
+</span><span id="L-191"><a href="#L-191"><span class="linenos">191</span></a><span class="sd">    Returns:</span>
+</span><span id="L-192"><a href="#L-192"><span class="linenos">192</span></a><span class="sd">        the LensKitPredictor wrapper of PopScore.</span>
+</span><span id="L-193"><a href="#L-193"><span class="linenos">193</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-194"><a href="#L-194"><span class="linenos">194</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_pop_score</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span id="L-195"><a href="#L-195"><span class="linenos">195</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</span><span id="L-196"><a href="#L-196"><span class="linenos">196</span></a>
+</span><span id="L-197"><a href="#L-197"><span class="linenos">197</span></a>
+</span><span id="L-198"><a href="#L-198"><span class="linenos">198</span></a><span class="k">def</span> <span class="nf">create_user_user</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
+</span><span id="L-199"><a href="#L-199"><span class="linenos">199</span></a>    <span class="sd">&quot;&quot;&quot;Create the UserUser predictor.</span>
+</span><span id="L-200"><a href="#L-200"><span class="linenos">200</span></a>
+</span><span id="L-201"><a href="#L-201"><span class="linenos">201</span></a><span class="sd">    Args:</span>
+</span><span id="L-202"><a href="#L-202"><span class="linenos">202</span></a><span class="sd">        name: the name of the algorithm.</span>
+</span><span id="L-203"><a href="#L-203"><span class="linenos">203</span></a><span class="sd">        params: containing the following name-value pairs:</span>
+</span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a><span class="sd">            max_neighbors(int): the maximum number of neighbors for scoring each item.</span>
+</span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a><span class="sd">            min_neighbors(int): the minimum number of neighbors for scoring each item.</span>
+</span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a><span class="sd">            min_similarity(float): minimum similarity threshold for considering a neighbor.</span>
+</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a><span class="sd">            feedback(str): control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
+</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a>
+</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a><span class="sd">    Keyword Args:</span>
+</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
+</span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a>
+</span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a><span class="sd">    Returns:</span>
+</span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a><span class="sd">        the LensKitPredictor wrapper of UserUser.</span>
+</span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_user_user</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -310,59 +335,84 @@ Utrecht University within the Software Project course.
 
     </div>
     <a class="headerlink" href="#LensKitPredictor"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="LensKitPredictor-31"><a href="#LensKitPredictor-31"><span class="linenos">31</span></a><span class="k">class</span> <span class="nc">LensKitPredictor</span><span class="p">(</span><span class="n">Predictor</span><span class="p">):</span>
-</span><span id="LensKitPredictor-32"><a href="#LensKitPredictor-32"><span class="linenos">32</span></a>    <span class="sd">&quot;&quot;&quot;Predictor implementation for the LensKit framework.&quot;&quot;&quot;</span>
-</span><span id="LensKitPredictor-33"><a href="#LensKitPredictor-33"><span class="linenos">33</span></a>
-</span><span id="LensKitPredictor-34"><a href="#LensKitPredictor-34"><span class="linenos">34</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">:</span> <span class="n">lenskit</span><span class="o">.</span><span class="n">Predictor</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-</span><span id="LensKitPredictor-35"><a href="#LensKitPredictor-35"><span class="linenos">35</span></a>        <span class="sd">&quot;&quot;&quot;Construct the lenskit predictor.</span>
-</span><span id="LensKitPredictor-36"><a href="#LensKitPredictor-36"><span class="linenos">36</span></a>
-</span><span id="LensKitPredictor-37"><a href="#LensKitPredictor-37"><span class="linenos">37</span></a><span class="sd">        Args:</span>
-</span><span id="LensKitPredictor-38"><a href="#LensKitPredictor-38"><span class="linenos">38</span></a><span class="sd">            algo: the lenskit prediction algorithm.</span>
-</span><span id="LensKitPredictor-39"><a href="#LensKitPredictor-39"><span class="linenos">39</span></a><span class="sd">            name: the name of the predictor.</span>
-</span><span id="LensKitPredictor-40"><a href="#LensKitPredictor-40"><span class="linenos">40</span></a><span class="sd">            params: the parameters of the predictor.</span>
-</span><span id="LensKitPredictor-41"><a href="#LensKitPredictor-41"><span class="linenos">41</span></a>
-</span><span id="LensKitPredictor-42"><a href="#LensKitPredictor-42"><span class="linenos">42</span></a><span class="sd">        Keyword Args:</span>
-</span><span id="LensKitPredictor-43"><a href="#LensKitPredictor-43"><span class="linenos">43</span></a><span class="sd">            num_threads(int): the max number of threads the predictor can use.</span>
-</span><span id="LensKitPredictor-44"><a href="#LensKitPredictor-44"><span class="linenos">44</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="LensKitPredictor-45"><a href="#LensKitPredictor-45"><span class="linenos">45</span></a>        <span class="n">Predictor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;num_threads&#39;</span><span class="p">])</span>
-</span><span id="LensKitPredictor-46"><a href="#LensKitPredictor-46"><span class="linenos">46</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">algo</span> <span class="o">=</span> <span class="n">algo</span>
-</span><span id="LensKitPredictor-47"><a href="#LensKitPredictor-47"><span class="linenos">47</span></a>
-</span><span id="LensKitPredictor-48"><a href="#LensKitPredictor-48"><span class="linenos">48</span></a>    <span class="k">def</span> <span class="nf">on_train</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="LensKitPredictor-49"><a href="#LensKitPredictor-49"><span class="linenos">49</span></a>        <span class="sd">&quot;&quot;&quot;Fit the lenskit algorithm on the train set.&quot;&quot;&quot;</span>
-</span><span id="LensKitPredictor-50"><a href="#LensKitPredictor-50"><span class="linenos">50</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_set</span><span class="p">)</span>
-</span><span id="LensKitPredictor-51"><a href="#LensKitPredictor-51"><span class="linenos">51</span></a>
-</span><span id="LensKitPredictor-52"><a href="#LensKitPredictor-52"><span class="linenos">52</span></a>    <span class="k">def</span> <span class="nf">on_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="LensKitPredictor-53"><a href="#LensKitPredictor-53"><span class="linenos">53</span></a>        <span class="sd">&quot;&quot;&quot;Compute a prediction for the specified user and item.</span>
-</span><span id="LensKitPredictor-54"><a href="#LensKitPredictor-54"><span class="linenos">54</span></a>
-</span><span id="LensKitPredictor-55"><a href="#LensKitPredictor-55"><span class="linenos">55</span></a><span class="sd">        Lenskit predictors allow for predicting multiple items at the same time.</span>
-</span><span id="LensKitPredictor-56"><a href="#LensKitPredictor-56"><span class="linenos">56</span></a><span class="sd">        To conform with the interface only one item needs to be predicted and all</span>
-</span><span id="LensKitPredictor-57"><a href="#LensKitPredictor-57"><span class="linenos">57</span></a><span class="sd">        the extra data that it generates needs to be excluded.</span>
-</span><span id="LensKitPredictor-58"><a href="#LensKitPredictor-58"><span class="linenos">58</span></a>
-</span><span id="LensKitPredictor-59"><a href="#LensKitPredictor-59"><span class="linenos">59</span></a><span class="sd">        Args:</span>
-</span><span id="LensKitPredictor-60"><a href="#LensKitPredictor-60"><span class="linenos">60</span></a><span class="sd">            user: the user ID.</span>
-</span><span id="LensKitPredictor-61"><a href="#LensKitPredictor-61"><span class="linenos">61</span></a><span class="sd">            item: the item ID.</span>
-</span><span id="LensKitPredictor-62"><a href="#LensKitPredictor-62"><span class="linenos">62</span></a>
-</span><span id="LensKitPredictor-63"><a href="#LensKitPredictor-63"><span class="linenos">63</span></a><span class="sd">        Returns:</span>
-</span><span id="LensKitPredictor-64"><a href="#LensKitPredictor-64"><span class="linenos">64</span></a><span class="sd">            the predicted rating.</span>
-</span><span id="LensKitPredictor-65"><a href="#LensKitPredictor-65"><span class="linenos">65</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="LensKitPredictor-66"><a href="#LensKitPredictor-66"><span class="linenos">66</span></a>        <span class="n">prediction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">predict_for_user</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
-</span><span id="LensKitPredictor-67"><a href="#LensKitPredictor-67"><span class="linenos">67</span></a>        <span class="k">return</span> <span class="n">prediction</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
-</span><span id="LensKitPredictor-68"><a href="#LensKitPredictor-68"><span class="linenos">68</span></a>
-</span><span id="LensKitPredictor-69"><a href="#LensKitPredictor-69"><span class="linenos">69</span></a>    <span class="k">def</span> <span class="nf">on_predict_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_item_pairs</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="LensKitPredictor-70"><a href="#LensKitPredictor-70"><span class="linenos">70</span></a>        <span class="sd">&quot;&quot;&quot;Compute the predictions for each of the specified user and item pairs.</span>
-</span><span id="LensKitPredictor-71"><a href="#LensKitPredictor-71"><span class="linenos">71</span></a>
-</span><span id="LensKitPredictor-72"><a href="#LensKitPredictor-72"><span class="linenos">72</span></a><span class="sd">        Lenskit predictors have a batch implementation available that allows for</span>
-</span><span id="LensKitPredictor-73"><a href="#LensKitPredictor-73"><span class="linenos">73</span></a><span class="sd">        predicting ratings using multiple &#39;jobs&#39;.</span>
-</span><span id="LensKitPredictor-74"><a href="#LensKitPredictor-74"><span class="linenos">74</span></a>
-</span><span id="LensKitPredictor-75"><a href="#LensKitPredictor-75"><span class="linenos">75</span></a><span class="sd">        Args:</span>
-</span><span id="LensKitPredictor-76"><a href="#LensKitPredictor-76"><span class="linenos">76</span></a><span class="sd">            user_item_pairs: with at least two columns: &#39;user&#39;, &#39;item&#39;.</span>
-</span><span id="LensKitPredictor-77"><a href="#LensKitPredictor-77"><span class="linenos">77</span></a>
-</span><span id="LensKitPredictor-78"><a href="#LensKitPredictor-78"><span class="linenos">78</span></a><span class="sd">        Returns:</span>
-</span><span id="LensKitPredictor-79"><a href="#LensKitPredictor-79"><span class="linenos">79</span></a><span class="sd">            dataFrame with the columns: &#39;user&#39;, &#39;item&#39;, &#39;prediction&#39;.</span>
-</span><span id="LensKitPredictor-80"><a href="#LensKitPredictor-80"><span class="linenos">80</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="LensKitPredictor-81"><a href="#LensKitPredictor-81"><span class="linenos">81</span></a>        <span class="n">n_jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
-</span><span id="LensKitPredictor-82"><a href="#LensKitPredictor-82"><span class="linenos">82</span></a>        <span class="n">predictions</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="p">,</span> <span class="n">user_item_pairs</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)</span>
-</span><span id="LensKitPredictor-83"><a href="#LensKitPredictor-83"><span class="linenos">83</span></a>        <span class="k">return</span> <span class="n">predictions</span><span class="p">[[</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;prediction&#39;</span><span class="p">]]</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LensKitPredictor-31"><a href="#LensKitPredictor-31"><span class="linenos"> 31</span></a><span class="k">class</span> <span class="nc">LensKitPredictor</span><span class="p">(</span><span class="n">Predictor</span><span class="p">):</span>
+</span><span id="LensKitPredictor-32"><a href="#LensKitPredictor-32"><span class="linenos"> 32</span></a>    <span class="sd">&quot;&quot;&quot;Predictor implementation for the LensKit framework.&quot;&quot;&quot;</span>
+</span><span id="LensKitPredictor-33"><a href="#LensKitPredictor-33"><span class="linenos"> 33</span></a>
+</span><span id="LensKitPredictor-34"><a href="#LensKitPredictor-34"><span class="linenos"> 34</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">:</span> <span class="n">lenskit</span><span class="o">.</span><span class="n">Predictor</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="LensKitPredictor-35"><a href="#LensKitPredictor-35"><span class="linenos"> 35</span></a>        <span class="sd">&quot;&quot;&quot;Construct the lenskit predictor.</span>
+</span><span id="LensKitPredictor-36"><a href="#LensKitPredictor-36"><span class="linenos"> 36</span></a>
+</span><span id="LensKitPredictor-37"><a href="#LensKitPredictor-37"><span class="linenos"> 37</span></a><span class="sd">        Args:</span>
+</span><span id="LensKitPredictor-38"><a href="#LensKitPredictor-38"><span class="linenos"> 38</span></a><span class="sd">            algo: the lenskit prediction algorithm.</span>
+</span><span id="LensKitPredictor-39"><a href="#LensKitPredictor-39"><span class="linenos"> 39</span></a><span class="sd">            name: the name of the predictor.</span>
+</span><span id="LensKitPredictor-40"><a href="#LensKitPredictor-40"><span class="linenos"> 40</span></a><span class="sd">            params: the parameters of the predictor.</span>
+</span><span id="LensKitPredictor-41"><a href="#LensKitPredictor-41"><span class="linenos"> 41</span></a>
+</span><span id="LensKitPredictor-42"><a href="#LensKitPredictor-42"><span class="linenos"> 42</span></a><span class="sd">        Keyword Args:</span>
+</span><span id="LensKitPredictor-43"><a href="#LensKitPredictor-43"><span class="linenos"> 43</span></a><span class="sd">            num_threads(int): the max number of threads the predictor can use.</span>
+</span><span id="LensKitPredictor-44"><a href="#LensKitPredictor-44"><span class="linenos"> 44</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="LensKitPredictor-45"><a href="#LensKitPredictor-45"><span class="linenos"> 45</span></a>        <span class="n">Predictor</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;num_threads&#39;</span><span class="p">])</span>
+</span><span id="LensKitPredictor-46"><a href="#LensKitPredictor-46"><span class="linenos"> 46</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">algo</span> <span class="o">=</span> <span class="n">algo</span>
+</span><span id="LensKitPredictor-47"><a href="#LensKitPredictor-47"><span class="linenos"> 47</span></a>
+</span><span id="LensKitPredictor-48"><a href="#LensKitPredictor-48"><span class="linenos"> 48</span></a>    <span class="k">def</span> <span class="nf">on_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_set</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="LensKitPredictor-49"><a href="#LensKitPredictor-49"><span class="linenos"> 49</span></a>        <span class="sd">&quot;&quot;&quot;Fit the lenskit algorithm on the train set.</span>
+</span><span id="LensKitPredictor-50"><a href="#LensKitPredictor-50"><span class="linenos"> 50</span></a>
+</span><span id="LensKitPredictor-51"><a href="#LensKitPredictor-51"><span class="linenos"> 51</span></a><span class="sd">        The predictor should be trained with a dataframe matrix.</span>
+</span><span id="LensKitPredictor-52"><a href="#LensKitPredictor-52"><span class="linenos"> 52</span></a>
+</span><span id="LensKitPredictor-53"><a href="#LensKitPredictor-53"><span class="linenos"> 53</span></a><span class="sd">        Args:</span>
+</span><span id="LensKitPredictor-54"><a href="#LensKitPredictor-54"><span class="linenos"> 54</span></a><span class="sd">            train_set: the set to train the predictor with.</span>
+</span><span id="LensKitPredictor-55"><a href="#LensKitPredictor-55"><span class="linenos"> 55</span></a>
+</span><span id="LensKitPredictor-56"><a href="#LensKitPredictor-56"><span class="linenos"> 56</span></a><span class="sd">        Raises:</span>
+</span><span id="LensKitPredictor-57"><a href="#LensKitPredictor-57"><span class="linenos"> 57</span></a><span class="sd">            ArithmeticError: possibly raised by an algorithm on training.</span>
+</span><span id="LensKitPredictor-58"><a href="#LensKitPredictor-58"><span class="linenos"> 58</span></a><span class="sd">            MemoryError: possibly raised by an algorithm on training.</span>
+</span><span id="LensKitPredictor-59"><a href="#LensKitPredictor-59"><span class="linenos"> 59</span></a><span class="sd">            RuntimeError: possibly raised by an algorithm on training.</span>
+</span><span id="LensKitPredictor-60"><a href="#LensKitPredictor-60"><span class="linenos"> 60</span></a><span class="sd">            TypeError: when the train set is not a pandas dataframe.</span>
+</span><span id="LensKitPredictor-61"><a href="#LensKitPredictor-61"><span class="linenos"> 61</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="LensKitPredictor-62"><a href="#LensKitPredictor-62"><span class="linenos"> 62</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">train_set</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+</span><span id="LensKitPredictor-63"><a href="#LensKitPredictor-63"><span class="linenos"> 63</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Expected predictor to be trained with a dataframe matrix&#39;</span><span class="p">)</span>
+</span><span id="LensKitPredictor-64"><a href="#LensKitPredictor-64"><span class="linenos"> 64</span></a>
+</span><span id="LensKitPredictor-65"><a href="#LensKitPredictor-65"><span class="linenos"> 65</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_set</span><span class="p">)</span>
+</span><span id="LensKitPredictor-66"><a href="#LensKitPredictor-66"><span class="linenos"> 66</span></a>
+</span><span id="LensKitPredictor-67"><a href="#LensKitPredictor-67"><span class="linenos"> 67</span></a>    <span class="k">def</span> <span class="nf">on_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="LensKitPredictor-68"><a href="#LensKitPredictor-68"><span class="linenos"> 68</span></a>        <span class="sd">&quot;&quot;&quot;Compute a prediction for the specified user and item.</span>
+</span><span id="LensKitPredictor-69"><a href="#LensKitPredictor-69"><span class="linenos"> 69</span></a>
+</span><span id="LensKitPredictor-70"><a href="#LensKitPredictor-70"><span class="linenos"> 70</span></a><span class="sd">        Lenskit predictors allow for predicting multiple items at the same time.</span>
+</span><span id="LensKitPredictor-71"><a href="#LensKitPredictor-71"><span class="linenos"> 71</span></a><span class="sd">        To conform with the interface only one item needs to be predicted and all</span>
+</span><span id="LensKitPredictor-72"><a href="#LensKitPredictor-72"><span class="linenos"> 72</span></a><span class="sd">        the extra data that it generates needs to be excluded.</span>
+</span><span id="LensKitPredictor-73"><a href="#LensKitPredictor-73"><span class="linenos"> 73</span></a>
+</span><span id="LensKitPredictor-74"><a href="#LensKitPredictor-74"><span class="linenos"> 74</span></a><span class="sd">        Args:</span>
+</span><span id="LensKitPredictor-75"><a href="#LensKitPredictor-75"><span class="linenos"> 75</span></a><span class="sd">            user: the user ID.</span>
+</span><span id="LensKitPredictor-76"><a href="#LensKitPredictor-76"><span class="linenos"> 76</span></a><span class="sd">            item: the item ID.</span>
+</span><span id="LensKitPredictor-77"><a href="#LensKitPredictor-77"><span class="linenos"> 77</span></a>
+</span><span id="LensKitPredictor-78"><a href="#LensKitPredictor-78"><span class="linenos"> 78</span></a><span class="sd">        Raises:</span>
+</span><span id="LensKitPredictor-79"><a href="#LensKitPredictor-79"><span class="linenos"> 79</span></a><span class="sd">            ArithmeticError: possibly raised by a predictor on testing.</span>
+</span><span id="LensKitPredictor-80"><a href="#LensKitPredictor-80"><span class="linenos"> 80</span></a><span class="sd">            MemoryError: possibly raised by a predictor on testing.</span>
+</span><span id="LensKitPredictor-81"><a href="#LensKitPredictor-81"><span class="linenos"> 81</span></a><span class="sd">            RuntimeError: when the predictor is not trained yet.</span>
+</span><span id="LensKitPredictor-82"><a href="#LensKitPredictor-82"><span class="linenos"> 82</span></a>
+</span><span id="LensKitPredictor-83"><a href="#LensKitPredictor-83"><span class="linenos"> 83</span></a><span class="sd">        Returns:</span>
+</span><span id="LensKitPredictor-84"><a href="#LensKitPredictor-84"><span class="linenos"> 84</span></a><span class="sd">            the predicted rating.</span>
+</span><span id="LensKitPredictor-85"><a href="#LensKitPredictor-85"><span class="linenos"> 85</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="LensKitPredictor-86"><a href="#LensKitPredictor-86"><span class="linenos"> 86</span></a>        <span class="n">prediction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">predict_for_user</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+</span><span id="LensKitPredictor-87"><a href="#LensKitPredictor-87"><span class="linenos"> 87</span></a>        <span class="k">return</span> <span class="n">prediction</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+</span><span id="LensKitPredictor-88"><a href="#LensKitPredictor-88"><span class="linenos"> 88</span></a>
+</span><span id="LensKitPredictor-89"><a href="#LensKitPredictor-89"><span class="linenos"> 89</span></a>    <span class="k">def</span> <span class="nf">on_predict_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_item_pairs</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="LensKitPredictor-90"><a href="#LensKitPredictor-90"><span class="linenos"> 90</span></a>        <span class="sd">&quot;&quot;&quot;Compute the predictions for each of the specified user and item pairs.</span>
+</span><span id="LensKitPredictor-91"><a href="#LensKitPredictor-91"><span class="linenos"> 91</span></a>
+</span><span id="LensKitPredictor-92"><a href="#LensKitPredictor-92"><span class="linenos"> 92</span></a><span class="sd">        Lenskit predictors have a batch implementation available that allows for</span>
+</span><span id="LensKitPredictor-93"><a href="#LensKitPredictor-93"><span class="linenos"> 93</span></a><span class="sd">        predicting ratings using multiple &#39;jobs&#39;.</span>
+</span><span id="LensKitPredictor-94"><a href="#LensKitPredictor-94"><span class="linenos"> 94</span></a>
+</span><span id="LensKitPredictor-95"><a href="#LensKitPredictor-95"><span class="linenos"> 95</span></a><span class="sd">        Args:</span>
+</span><span id="LensKitPredictor-96"><a href="#LensKitPredictor-96"><span class="linenos"> 96</span></a><span class="sd">            user_item_pairs: with at least two columns: &#39;user&#39;, &#39;item&#39;.</span>
+</span><span id="LensKitPredictor-97"><a href="#LensKitPredictor-97"><span class="linenos"> 97</span></a>
+</span><span id="LensKitPredictor-98"><a href="#LensKitPredictor-98"><span class="linenos"> 98</span></a><span class="sd">        Raises:</span>
+</span><span id="LensKitPredictor-99"><a href="#LensKitPredictor-99"><span class="linenos"> 99</span></a><span class="sd">            ArithmeticError: possibly raised by a predictor on testing.</span>
+</span><span id="LensKitPredictor-100"><a href="#LensKitPredictor-100"><span class="linenos">100</span></a><span class="sd">            MemoryError: possibly raised by a predictor on testing.</span>
+</span><span id="LensKitPredictor-101"><a href="#LensKitPredictor-101"><span class="linenos">101</span></a><span class="sd">            RuntimeError: when the predictor is not trained yet.</span>
+</span><span id="LensKitPredictor-102"><a href="#LensKitPredictor-102"><span class="linenos">102</span></a>
+</span><span id="LensKitPredictor-103"><a href="#LensKitPredictor-103"><span class="linenos">103</span></a><span class="sd">        Returns:</span>
+</span><span id="LensKitPredictor-104"><a href="#LensKitPredictor-104"><span class="linenos">104</span></a><span class="sd">            dataFrame with the columns: &#39;user&#39;, &#39;item&#39;, &#39;prediction&#39;.</span>
+</span><span id="LensKitPredictor-105"><a href="#LensKitPredictor-105"><span class="linenos">105</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="LensKitPredictor-106"><a href="#LensKitPredictor-106"><span class="linenos">106</span></a>        <span class="n">n_jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+</span><span id="LensKitPredictor-107"><a href="#LensKitPredictor-107"><span class="linenos">107</span></a>        <span class="n">predictions</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="p">,</span> <span class="n">user_item_pairs</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)</span>
+</span><span id="LensKitPredictor-108"><a href="#LensKitPredictor-108"><span class="linenos">108</span></a>        <span class="k">return</span> <span class="n">predictions</span><span class="p">[[</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;prediction&#39;</span><span class="p">]]</span>
 </span></pre></div>
 
 
@@ -414,19 +464,45 @@ Utrecht University within the Software Project course.
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">on_train</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+        <span class="name">on_train</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">train_set</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
                 <label class="view-source-button" for="LensKitPredictor.on_train-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#LensKitPredictor.on_train"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="LensKitPredictor.on_train-48"><a href="#LensKitPredictor.on_train-48"><span class="linenos">48</span></a>    <span class="k">def</span> <span class="nf">on_train</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="LensKitPredictor.on_train-49"><a href="#LensKitPredictor.on_train-49"><span class="linenos">49</span></a>        <span class="sd">&quot;&quot;&quot;Fit the lenskit algorithm on the train set.&quot;&quot;&quot;</span>
-</span><span id="LensKitPredictor.on_train-50"><a href="#LensKitPredictor.on_train-50"><span class="linenos">50</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_set</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LensKitPredictor.on_train-48"><a href="#LensKitPredictor.on_train-48"><span class="linenos">48</span></a>    <span class="k">def</span> <span class="nf">on_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_set</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="LensKitPredictor.on_train-49"><a href="#LensKitPredictor.on_train-49"><span class="linenos">49</span></a>        <span class="sd">&quot;&quot;&quot;Fit the lenskit algorithm on the train set.</span>
+</span><span id="LensKitPredictor.on_train-50"><a href="#LensKitPredictor.on_train-50"><span class="linenos">50</span></a>
+</span><span id="LensKitPredictor.on_train-51"><a href="#LensKitPredictor.on_train-51"><span class="linenos">51</span></a><span class="sd">        The predictor should be trained with a dataframe matrix.</span>
+</span><span id="LensKitPredictor.on_train-52"><a href="#LensKitPredictor.on_train-52"><span class="linenos">52</span></a>
+</span><span id="LensKitPredictor.on_train-53"><a href="#LensKitPredictor.on_train-53"><span class="linenos">53</span></a><span class="sd">        Args:</span>
+</span><span id="LensKitPredictor.on_train-54"><a href="#LensKitPredictor.on_train-54"><span class="linenos">54</span></a><span class="sd">            train_set: the set to train the predictor with.</span>
+</span><span id="LensKitPredictor.on_train-55"><a href="#LensKitPredictor.on_train-55"><span class="linenos">55</span></a>
+</span><span id="LensKitPredictor.on_train-56"><a href="#LensKitPredictor.on_train-56"><span class="linenos">56</span></a><span class="sd">        Raises:</span>
+</span><span id="LensKitPredictor.on_train-57"><a href="#LensKitPredictor.on_train-57"><span class="linenos">57</span></a><span class="sd">            ArithmeticError: possibly raised by an algorithm on training.</span>
+</span><span id="LensKitPredictor.on_train-58"><a href="#LensKitPredictor.on_train-58"><span class="linenos">58</span></a><span class="sd">            MemoryError: possibly raised by an algorithm on training.</span>
+</span><span id="LensKitPredictor.on_train-59"><a href="#LensKitPredictor.on_train-59"><span class="linenos">59</span></a><span class="sd">            RuntimeError: possibly raised by an algorithm on training.</span>
+</span><span id="LensKitPredictor.on_train-60"><a href="#LensKitPredictor.on_train-60"><span class="linenos">60</span></a><span class="sd">            TypeError: when the train set is not a pandas dataframe.</span>
+</span><span id="LensKitPredictor.on_train-61"><a href="#LensKitPredictor.on_train-61"><span class="linenos">61</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="LensKitPredictor.on_train-62"><a href="#LensKitPredictor.on_train-62"><span class="linenos">62</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">train_set</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+</span><span id="LensKitPredictor.on_train-63"><a href="#LensKitPredictor.on_train-63"><span class="linenos">63</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Expected predictor to be trained with a dataframe matrix&#39;</span><span class="p">)</span>
+</span><span id="LensKitPredictor.on_train-64"><a href="#LensKitPredictor.on_train-64"><span class="linenos">64</span></a>
+</span><span id="LensKitPredictor.on_train-65"><a href="#LensKitPredictor.on_train-65"><span class="linenos">65</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_set</span><span class="p">)</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>Fit the lenskit algorithm on the train set.</p>
+
+<p>The predictor should be trained with a dataframe matrix.</p>
+
+<p>Args:
+    train_set: the set to train the predictor with.</p>
+
+<p>Raises:
+    ArithmeticError: possibly raised by an algorithm on training.
+    MemoryError: possibly raised by an algorithm on training.
+    RuntimeError: possibly raised by an algorithm on training.
+    TypeError: when the train set is not a pandas dataframe.</p>
 </div>
 
 
@@ -442,22 +518,27 @@ Utrecht University within the Software Project course.
 
     </div>
     <a class="headerlink" href="#LensKitPredictor.on_predict"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="LensKitPredictor.on_predict-52"><a href="#LensKitPredictor.on_predict-52"><span class="linenos">52</span></a>    <span class="k">def</span> <span class="nf">on_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="LensKitPredictor.on_predict-53"><a href="#LensKitPredictor.on_predict-53"><span class="linenos">53</span></a>        <span class="sd">&quot;&quot;&quot;Compute a prediction for the specified user and item.</span>
-</span><span id="LensKitPredictor.on_predict-54"><a href="#LensKitPredictor.on_predict-54"><span class="linenos">54</span></a>
-</span><span id="LensKitPredictor.on_predict-55"><a href="#LensKitPredictor.on_predict-55"><span class="linenos">55</span></a><span class="sd">        Lenskit predictors allow for predicting multiple items at the same time.</span>
-</span><span id="LensKitPredictor.on_predict-56"><a href="#LensKitPredictor.on_predict-56"><span class="linenos">56</span></a><span class="sd">        To conform with the interface only one item needs to be predicted and all</span>
-</span><span id="LensKitPredictor.on_predict-57"><a href="#LensKitPredictor.on_predict-57"><span class="linenos">57</span></a><span class="sd">        the extra data that it generates needs to be excluded.</span>
-</span><span id="LensKitPredictor.on_predict-58"><a href="#LensKitPredictor.on_predict-58"><span class="linenos">58</span></a>
-</span><span id="LensKitPredictor.on_predict-59"><a href="#LensKitPredictor.on_predict-59"><span class="linenos">59</span></a><span class="sd">        Args:</span>
-</span><span id="LensKitPredictor.on_predict-60"><a href="#LensKitPredictor.on_predict-60"><span class="linenos">60</span></a><span class="sd">            user: the user ID.</span>
-</span><span id="LensKitPredictor.on_predict-61"><a href="#LensKitPredictor.on_predict-61"><span class="linenos">61</span></a><span class="sd">            item: the item ID.</span>
-</span><span id="LensKitPredictor.on_predict-62"><a href="#LensKitPredictor.on_predict-62"><span class="linenos">62</span></a>
-</span><span id="LensKitPredictor.on_predict-63"><a href="#LensKitPredictor.on_predict-63"><span class="linenos">63</span></a><span class="sd">        Returns:</span>
-</span><span id="LensKitPredictor.on_predict-64"><a href="#LensKitPredictor.on_predict-64"><span class="linenos">64</span></a><span class="sd">            the predicted rating.</span>
-</span><span id="LensKitPredictor.on_predict-65"><a href="#LensKitPredictor.on_predict-65"><span class="linenos">65</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="LensKitPredictor.on_predict-66"><a href="#LensKitPredictor.on_predict-66"><span class="linenos">66</span></a>        <span class="n">prediction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">predict_for_user</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
-</span><span id="LensKitPredictor.on_predict-67"><a href="#LensKitPredictor.on_predict-67"><span class="linenos">67</span></a>        <span class="k">return</span> <span class="n">prediction</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LensKitPredictor.on_predict-67"><a href="#LensKitPredictor.on_predict-67"><span class="linenos">67</span></a>    <span class="k">def</span> <span class="nf">on_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="LensKitPredictor.on_predict-68"><a href="#LensKitPredictor.on_predict-68"><span class="linenos">68</span></a>        <span class="sd">&quot;&quot;&quot;Compute a prediction for the specified user and item.</span>
+</span><span id="LensKitPredictor.on_predict-69"><a href="#LensKitPredictor.on_predict-69"><span class="linenos">69</span></a>
+</span><span id="LensKitPredictor.on_predict-70"><a href="#LensKitPredictor.on_predict-70"><span class="linenos">70</span></a><span class="sd">        Lenskit predictors allow for predicting multiple items at the same time.</span>
+</span><span id="LensKitPredictor.on_predict-71"><a href="#LensKitPredictor.on_predict-71"><span class="linenos">71</span></a><span class="sd">        To conform with the interface only one item needs to be predicted and all</span>
+</span><span id="LensKitPredictor.on_predict-72"><a href="#LensKitPredictor.on_predict-72"><span class="linenos">72</span></a><span class="sd">        the extra data that it generates needs to be excluded.</span>
+</span><span id="LensKitPredictor.on_predict-73"><a href="#LensKitPredictor.on_predict-73"><span class="linenos">73</span></a>
+</span><span id="LensKitPredictor.on_predict-74"><a href="#LensKitPredictor.on_predict-74"><span class="linenos">74</span></a><span class="sd">        Args:</span>
+</span><span id="LensKitPredictor.on_predict-75"><a href="#LensKitPredictor.on_predict-75"><span class="linenos">75</span></a><span class="sd">            user: the user ID.</span>
+</span><span id="LensKitPredictor.on_predict-76"><a href="#LensKitPredictor.on_predict-76"><span class="linenos">76</span></a><span class="sd">            item: the item ID.</span>
+</span><span id="LensKitPredictor.on_predict-77"><a href="#LensKitPredictor.on_predict-77"><span class="linenos">77</span></a>
+</span><span id="LensKitPredictor.on_predict-78"><a href="#LensKitPredictor.on_predict-78"><span class="linenos">78</span></a><span class="sd">        Raises:</span>
+</span><span id="LensKitPredictor.on_predict-79"><a href="#LensKitPredictor.on_predict-79"><span class="linenos">79</span></a><span class="sd">            ArithmeticError: possibly raised by a predictor on testing.</span>
+</span><span id="LensKitPredictor.on_predict-80"><a href="#LensKitPredictor.on_predict-80"><span class="linenos">80</span></a><span class="sd">            MemoryError: possibly raised by a predictor on testing.</span>
+</span><span id="LensKitPredictor.on_predict-81"><a href="#LensKitPredictor.on_predict-81"><span class="linenos">81</span></a><span class="sd">            RuntimeError: when the predictor is not trained yet.</span>
+</span><span id="LensKitPredictor.on_predict-82"><a href="#LensKitPredictor.on_predict-82"><span class="linenos">82</span></a>
+</span><span id="LensKitPredictor.on_predict-83"><a href="#LensKitPredictor.on_predict-83"><span class="linenos">83</span></a><span class="sd">        Returns:</span>
+</span><span id="LensKitPredictor.on_predict-84"><a href="#LensKitPredictor.on_predict-84"><span class="linenos">84</span></a><span class="sd">            the predicted rating.</span>
+</span><span id="LensKitPredictor.on_predict-85"><a href="#LensKitPredictor.on_predict-85"><span class="linenos">85</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="LensKitPredictor.on_predict-86"><a href="#LensKitPredictor.on_predict-86"><span class="linenos">86</span></a>        <span class="n">prediction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="o">.</span><span class="n">predict_for_user</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="p">[</span><span class="n">item</span><span class="p">])</span>
+</span><span id="LensKitPredictor.on_predict-87"><a href="#LensKitPredictor.on_predict-87"><span class="linenos">87</span></a>        <span class="k">return</span> <span class="n">prediction</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
 </span></pre></div>
 
 
@@ -470,6 +551,11 @@ the extra data that it generates needs to be excluded.</p>
 <p>Args:
     user: the user ID.
     item: the item ID.</p>
+
+<p>Raises:
+    ArithmeticError: possibly raised by a predictor on testing.
+    MemoryError: possibly raised by a predictor on testing.
+    RuntimeError: when the predictor is not trained yet.</p>
 
 <p>Returns:
     the predicted rating.</p>
@@ -488,21 +574,26 @@ the extra data that it generates needs to be excluded.</p>
 
     </div>
     <a class="headerlink" href="#LensKitPredictor.on_predict_batch"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="LensKitPredictor.on_predict_batch-69"><a href="#LensKitPredictor.on_predict_batch-69"><span class="linenos">69</span></a>    <span class="k">def</span> <span class="nf">on_predict_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_item_pairs</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-</span><span id="LensKitPredictor.on_predict_batch-70"><a href="#LensKitPredictor.on_predict_batch-70"><span class="linenos">70</span></a>        <span class="sd">&quot;&quot;&quot;Compute the predictions for each of the specified user and item pairs.</span>
-</span><span id="LensKitPredictor.on_predict_batch-71"><a href="#LensKitPredictor.on_predict_batch-71"><span class="linenos">71</span></a>
-</span><span id="LensKitPredictor.on_predict_batch-72"><a href="#LensKitPredictor.on_predict_batch-72"><span class="linenos">72</span></a><span class="sd">        Lenskit predictors have a batch implementation available that allows for</span>
-</span><span id="LensKitPredictor.on_predict_batch-73"><a href="#LensKitPredictor.on_predict_batch-73"><span class="linenos">73</span></a><span class="sd">        predicting ratings using multiple &#39;jobs&#39;.</span>
-</span><span id="LensKitPredictor.on_predict_batch-74"><a href="#LensKitPredictor.on_predict_batch-74"><span class="linenos">74</span></a>
-</span><span id="LensKitPredictor.on_predict_batch-75"><a href="#LensKitPredictor.on_predict_batch-75"><span class="linenos">75</span></a><span class="sd">        Args:</span>
-</span><span id="LensKitPredictor.on_predict_batch-76"><a href="#LensKitPredictor.on_predict_batch-76"><span class="linenos">76</span></a><span class="sd">            user_item_pairs: with at least two columns: &#39;user&#39;, &#39;item&#39;.</span>
-</span><span id="LensKitPredictor.on_predict_batch-77"><a href="#LensKitPredictor.on_predict_batch-77"><span class="linenos">77</span></a>
-</span><span id="LensKitPredictor.on_predict_batch-78"><a href="#LensKitPredictor.on_predict_batch-78"><span class="linenos">78</span></a><span class="sd">        Returns:</span>
-</span><span id="LensKitPredictor.on_predict_batch-79"><a href="#LensKitPredictor.on_predict_batch-79"><span class="linenos">79</span></a><span class="sd">            dataFrame with the columns: &#39;user&#39;, &#39;item&#39;, &#39;prediction&#39;.</span>
-</span><span id="LensKitPredictor.on_predict_batch-80"><a href="#LensKitPredictor.on_predict_batch-80"><span class="linenos">80</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="LensKitPredictor.on_predict_batch-81"><a href="#LensKitPredictor.on_predict_batch-81"><span class="linenos">81</span></a>        <span class="n">n_jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
-</span><span id="LensKitPredictor.on_predict_batch-82"><a href="#LensKitPredictor.on_predict_batch-82"><span class="linenos">82</span></a>        <span class="n">predictions</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="p">,</span> <span class="n">user_item_pairs</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)</span>
-</span><span id="LensKitPredictor.on_predict_batch-83"><a href="#LensKitPredictor.on_predict_batch-83"><span class="linenos">83</span></a>        <span class="k">return</span> <span class="n">predictions</span><span class="p">[[</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;prediction&#39;</span><span class="p">]]</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="LensKitPredictor.on_predict_batch-89"><a href="#LensKitPredictor.on_predict_batch-89"><span class="linenos"> 89</span></a>    <span class="k">def</span> <span class="nf">on_predict_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_item_pairs</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="LensKitPredictor.on_predict_batch-90"><a href="#LensKitPredictor.on_predict_batch-90"><span class="linenos"> 90</span></a>        <span class="sd">&quot;&quot;&quot;Compute the predictions for each of the specified user and item pairs.</span>
+</span><span id="LensKitPredictor.on_predict_batch-91"><a href="#LensKitPredictor.on_predict_batch-91"><span class="linenos"> 91</span></a>
+</span><span id="LensKitPredictor.on_predict_batch-92"><a href="#LensKitPredictor.on_predict_batch-92"><span class="linenos"> 92</span></a><span class="sd">        Lenskit predictors have a batch implementation available that allows for</span>
+</span><span id="LensKitPredictor.on_predict_batch-93"><a href="#LensKitPredictor.on_predict_batch-93"><span class="linenos"> 93</span></a><span class="sd">        predicting ratings using multiple &#39;jobs&#39;.</span>
+</span><span id="LensKitPredictor.on_predict_batch-94"><a href="#LensKitPredictor.on_predict_batch-94"><span class="linenos"> 94</span></a>
+</span><span id="LensKitPredictor.on_predict_batch-95"><a href="#LensKitPredictor.on_predict_batch-95"><span class="linenos"> 95</span></a><span class="sd">        Args:</span>
+</span><span id="LensKitPredictor.on_predict_batch-96"><a href="#LensKitPredictor.on_predict_batch-96"><span class="linenos"> 96</span></a><span class="sd">            user_item_pairs: with at least two columns: &#39;user&#39;, &#39;item&#39;.</span>
+</span><span id="LensKitPredictor.on_predict_batch-97"><a href="#LensKitPredictor.on_predict_batch-97"><span class="linenos"> 97</span></a>
+</span><span id="LensKitPredictor.on_predict_batch-98"><a href="#LensKitPredictor.on_predict_batch-98"><span class="linenos"> 98</span></a><span class="sd">        Raises:</span>
+</span><span id="LensKitPredictor.on_predict_batch-99"><a href="#LensKitPredictor.on_predict_batch-99"><span class="linenos"> 99</span></a><span class="sd">            ArithmeticError: possibly raised by a predictor on testing.</span>
+</span><span id="LensKitPredictor.on_predict_batch-100"><a href="#LensKitPredictor.on_predict_batch-100"><span class="linenos">100</span></a><span class="sd">            MemoryError: possibly raised by a predictor on testing.</span>
+</span><span id="LensKitPredictor.on_predict_batch-101"><a href="#LensKitPredictor.on_predict_batch-101"><span class="linenos">101</span></a><span class="sd">            RuntimeError: when the predictor is not trained yet.</span>
+</span><span id="LensKitPredictor.on_predict_batch-102"><a href="#LensKitPredictor.on_predict_batch-102"><span class="linenos">102</span></a>
+</span><span id="LensKitPredictor.on_predict_batch-103"><a href="#LensKitPredictor.on_predict_batch-103"><span class="linenos">103</span></a><span class="sd">        Returns:</span>
+</span><span id="LensKitPredictor.on_predict_batch-104"><a href="#LensKitPredictor.on_predict_batch-104"><span class="linenos">104</span></a><span class="sd">            dataFrame with the columns: &#39;user&#39;, &#39;item&#39;, &#39;prediction&#39;.</span>
+</span><span id="LensKitPredictor.on_predict_batch-105"><a href="#LensKitPredictor.on_predict_batch-105"><span class="linenos">105</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="LensKitPredictor.on_predict_batch-106"><a href="#LensKitPredictor.on_predict_batch-106"><span class="linenos">106</span></a>        <span class="n">n_jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_threads</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
+</span><span id="LensKitPredictor.on_predict_batch-107"><a href="#LensKitPredictor.on_predict_batch-107"><span class="linenos">107</span></a>        <span class="n">predictions</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">algo</span><span class="p">,</span> <span class="n">user_item_pairs</span><span class="p">,</span> <span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs</span><span class="p">)</span>
+</span><span id="LensKitPredictor.on_predict_batch-108"><a href="#LensKitPredictor.on_predict_batch-108"><span class="linenos">108</span></a>        <span class="k">return</span> <span class="n">predictions</span><span class="p">[[</span><span class="s1">&#39;user&#39;</span><span class="p">,</span> <span class="s1">&#39;item&#39;</span><span class="p">,</span> <span class="s1">&#39;prediction&#39;</span><span class="p">]]</span>
 </span></pre></div>
 
 
@@ -513,6 +604,11 @@ predicting ratings using multiple 'jobs'.</p>
 
 <p>Args:
     user_item_pairs: with at least two columns: 'user', 'item'.</p>
+
+<p>Raises:
+    ArithmeticError: possibly raised by a predictor on testing.
+    MemoryError: possibly raised by a predictor on testing.
+    RuntimeError: when the predictor is not trained yet.</p>
 
 <p>Returns:
     dataFrame with the columns: 'user', 'item', 'prediction'.</p>
@@ -535,8 +631,7 @@ predicting ratings using multiple 'jobs'.</p>
 
             </div>
             <div><dt><a href="../base_algorithm.html#BaseAlgorithm">src.fairreckitlib.model.algorithms.base_algorithm.BaseAlgorithm</a></dt>
-                                <dd id="LensKitPredictor.get_items" class="function"><a href="../base_algorithm.html#BaseAlgorithm.get_items">get_items</a></dd>
-                <dd id="LensKitPredictor.get_users" class="function"><a href="../base_algorithm.html#BaseAlgorithm.get_users">get_users</a></dd>
+                                <dd id="LensKitPredictor.get_train_set" class="function"><a href="../base_algorithm.html#BaseAlgorithm.get_train_set">get_train_set</a></dd>
                 <dd id="LensKitPredictor.train" class="function"><a href="../base_algorithm.html#BaseAlgorithm.train">train</a></dd>
 
             </div>
@@ -554,28 +649,28 @@ predicting ratings using multiple 'jobs'.</p>
 
     </div>
     <a class="headerlink" href="#create_biased_mf"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="create_biased_mf-86"><a href="#create_biased_mf-86"><span class="linenos"> 86</span></a><span class="k">def</span> <span class="nf">create_biased_mf</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
-</span><span id="create_biased_mf-87"><a href="#create_biased_mf-87"><span class="linenos"> 87</span></a>    <span class="sd">&quot;&quot;&quot;Create the BiasedMF predictor.</span>
-</span><span id="create_biased_mf-88"><a href="#create_biased_mf-88"><span class="linenos"> 88</span></a>
-</span><span id="create_biased_mf-89"><a href="#create_biased_mf-89"><span class="linenos"> 89</span></a><span class="sd">    Args:</span>
-</span><span id="create_biased_mf-90"><a href="#create_biased_mf-90"><span class="linenos"> 90</span></a><span class="sd">        name: the name of the algorithm.</span>
-</span><span id="create_biased_mf-91"><a href="#create_biased_mf-91"><span class="linenos"> 91</span></a><span class="sd">        params: containing the following name-value pairs:</span>
-</span><span id="create_biased_mf-92"><a href="#create_biased_mf-92"><span class="linenos"> 92</span></a><span class="sd">            features(int): the number of features to train.</span>
-</span><span id="create_biased_mf-93"><a href="#create_biased_mf-93"><span class="linenos"> 93</span></a><span class="sd">            iterations(int): the number of iterations to train.</span>
-</span><span id="create_biased_mf-94"><a href="#create_biased_mf-94"><span class="linenos"> 94</span></a><span class="sd">            user_reg(float): the regularization factor for users.</span>
-</span><span id="create_biased_mf-95"><a href="#create_biased_mf-95"><span class="linenos"> 95</span></a><span class="sd">            item_reg(float): the regularization factor for items.</span>
-</span><span id="create_biased_mf-96"><a href="#create_biased_mf-96"><span class="linenos"> 96</span></a><span class="sd">            damping(float): damping factor for the underlying bias.</span>
-</span><span id="create_biased_mf-97"><a href="#create_biased_mf-97"><span class="linenos"> 97</span></a><span class="sd">            method(str): the solver to use (&#39;cd&#39; or &#39;lu&#39;).</span>
-</span><span id="create_biased_mf-98"><a href="#create_biased_mf-98"><span class="linenos"> 98</span></a><span class="sd">            random_seed(int): the random seed or None for the current time as seed.</span>
-</span><span id="create_biased_mf-99"><a href="#create_biased_mf-99"><span class="linenos"> 99</span></a>
-</span><span id="create_biased_mf-100"><a href="#create_biased_mf-100"><span class="linenos">100</span></a><span class="sd">    Keyword Args:</span>
-</span><span id="create_biased_mf-101"><a href="#create_biased_mf-101"><span class="linenos">101</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
-</span><span id="create_biased_mf-102"><a href="#create_biased_mf-102"><span class="linenos">102</span></a>
-</span><span id="create_biased_mf-103"><a href="#create_biased_mf-103"><span class="linenos">103</span></a><span class="sd">    Returns:</span>
-</span><span id="create_biased_mf-104"><a href="#create_biased_mf-104"><span class="linenos">104</span></a><span class="sd">        the LensKitPredictor wrapper of BiasedMF.</span>
-</span><span id="create_biased_mf-105"><a href="#create_biased_mf-105"><span class="linenos">105</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="create_biased_mf-106"><a href="#create_biased_mf-106"><span class="linenos">106</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_biased_mf</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-</span><span id="create_biased_mf-107"><a href="#create_biased_mf-107"><span class="linenos">107</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="create_biased_mf-111"><a href="#create_biased_mf-111"><span class="linenos">111</span></a><span class="k">def</span> <span class="nf">create_biased_mf</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
+</span><span id="create_biased_mf-112"><a href="#create_biased_mf-112"><span class="linenos">112</span></a>    <span class="sd">&quot;&quot;&quot;Create the BiasedMF predictor.</span>
+</span><span id="create_biased_mf-113"><a href="#create_biased_mf-113"><span class="linenos">113</span></a>
+</span><span id="create_biased_mf-114"><a href="#create_biased_mf-114"><span class="linenos">114</span></a><span class="sd">    Args:</span>
+</span><span id="create_biased_mf-115"><a href="#create_biased_mf-115"><span class="linenos">115</span></a><span class="sd">        name: the name of the algorithm.</span>
+</span><span id="create_biased_mf-116"><a href="#create_biased_mf-116"><span class="linenos">116</span></a><span class="sd">        params: containing the following name-value pairs:</span>
+</span><span id="create_biased_mf-117"><a href="#create_biased_mf-117"><span class="linenos">117</span></a><span class="sd">            features(int): the number of features to train.</span>
+</span><span id="create_biased_mf-118"><a href="#create_biased_mf-118"><span class="linenos">118</span></a><span class="sd">            iterations(int): the number of iterations to train.</span>
+</span><span id="create_biased_mf-119"><a href="#create_biased_mf-119"><span class="linenos">119</span></a><span class="sd">            user_reg(float): the regularization factor for users.</span>
+</span><span id="create_biased_mf-120"><a href="#create_biased_mf-120"><span class="linenos">120</span></a><span class="sd">            item_reg(float): the regularization factor for items.</span>
+</span><span id="create_biased_mf-121"><a href="#create_biased_mf-121"><span class="linenos">121</span></a><span class="sd">            damping(float): damping factor for the underlying bias.</span>
+</span><span id="create_biased_mf-122"><a href="#create_biased_mf-122"><span class="linenos">122</span></a><span class="sd">            method(str): the solver to use (&#39;cd&#39; or &#39;lu&#39;).</span>
+</span><span id="create_biased_mf-123"><a href="#create_biased_mf-123"><span class="linenos">123</span></a><span class="sd">            random_seed(int): the random seed or None for the current time as seed.</span>
+</span><span id="create_biased_mf-124"><a href="#create_biased_mf-124"><span class="linenos">124</span></a>
+</span><span id="create_biased_mf-125"><a href="#create_biased_mf-125"><span class="linenos">125</span></a><span class="sd">    Keyword Args:</span>
+</span><span id="create_biased_mf-126"><a href="#create_biased_mf-126"><span class="linenos">126</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
+</span><span id="create_biased_mf-127"><a href="#create_biased_mf-127"><span class="linenos">127</span></a>
+</span><span id="create_biased_mf-128"><a href="#create_biased_mf-128"><span class="linenos">128</span></a><span class="sd">    Returns:</span>
+</span><span id="create_biased_mf-129"><a href="#create_biased_mf-129"><span class="linenos">129</span></a><span class="sd">        the LensKitPredictor wrapper of BiasedMF.</span>
+</span><span id="create_biased_mf-130"><a href="#create_biased_mf-130"><span class="linenos">130</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="create_biased_mf-131"><a href="#create_biased_mf-131"><span class="linenos">131</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_biased_mf</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span id="create_biased_mf-132"><a href="#create_biased_mf-132"><span class="linenos">132</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -612,29 +707,29 @@ predicting ratings using multiple 'jobs'.</p>
 
     </div>
     <a class="headerlink" href="#create_implicit_mf"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="create_implicit_mf-110"><a href="#create_implicit_mf-110"><span class="linenos">110</span></a><span class="k">def</span> <span class="nf">create_implicit_mf</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
-</span><span id="create_implicit_mf-111"><a href="#create_implicit_mf-111"><span class="linenos">111</span></a>    <span class="sd">&quot;&quot;&quot;Create the ImplicitMF predictor.</span>
-</span><span id="create_implicit_mf-112"><a href="#create_implicit_mf-112"><span class="linenos">112</span></a>
-</span><span id="create_implicit_mf-113"><a href="#create_implicit_mf-113"><span class="linenos">113</span></a><span class="sd">    Args:</span>
-</span><span id="create_implicit_mf-114"><a href="#create_implicit_mf-114"><span class="linenos">114</span></a><span class="sd">        name: the name of the algorithm.</span>
-</span><span id="create_implicit_mf-115"><a href="#create_implicit_mf-115"><span class="linenos">115</span></a><span class="sd">        params: containing the following name-value pairs:</span>
-</span><span id="create_implicit_mf-116"><a href="#create_implicit_mf-116"><span class="linenos">116</span></a><span class="sd">            features(int): the number of features to train.</span>
-</span><span id="create_implicit_mf-117"><a href="#create_implicit_mf-117"><span class="linenos">117</span></a><span class="sd">            iterations(int): the number of iterations to train.</span>
-</span><span id="create_implicit_mf-118"><a href="#create_implicit_mf-118"><span class="linenos">118</span></a><span class="sd">            reg(float): the regularization factor.</span>
-</span><span id="create_implicit_mf-119"><a href="#create_implicit_mf-119"><span class="linenos">119</span></a><span class="sd">            weight(flot): the scaling weight for positive samples.</span>
-</span><span id="create_implicit_mf-120"><a href="#create_implicit_mf-120"><span class="linenos">120</span></a><span class="sd">            use_ratings(bool): whether to use the rating column or treat</span>
-</span><span id="create_implicit_mf-121"><a href="#create_implicit_mf-121"><span class="linenos">121</span></a><span class="sd">                every rated user-item pair as having a rating of 1.</span>
-</span><span id="create_implicit_mf-122"><a href="#create_implicit_mf-122"><span class="linenos">122</span></a><span class="sd">            method(str): the training method (&#39;cg&#39; or &#39;lu&#39;).</span>
-</span><span id="create_implicit_mf-123"><a href="#create_implicit_mf-123"><span class="linenos">123</span></a><span class="sd">            random_seed(int): the random seed or None for the current time as seed.</span>
-</span><span id="create_implicit_mf-124"><a href="#create_implicit_mf-124"><span class="linenos">124</span></a>
-</span><span id="create_implicit_mf-125"><a href="#create_implicit_mf-125"><span class="linenos">125</span></a><span class="sd">    Keyword Args:</span>
-</span><span id="create_implicit_mf-126"><a href="#create_implicit_mf-126"><span class="linenos">126</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
-</span><span id="create_implicit_mf-127"><a href="#create_implicit_mf-127"><span class="linenos">127</span></a>
-</span><span id="create_implicit_mf-128"><a href="#create_implicit_mf-128"><span class="linenos">128</span></a><span class="sd">    Returns:</span>
-</span><span id="create_implicit_mf-129"><a href="#create_implicit_mf-129"><span class="linenos">129</span></a><span class="sd">        the LensKitPredictor wrapper of ImplicitMF.</span>
-</span><span id="create_implicit_mf-130"><a href="#create_implicit_mf-130"><span class="linenos">130</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="create_implicit_mf-131"><a href="#create_implicit_mf-131"><span class="linenos">131</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_implicit_mf</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-</span><span id="create_implicit_mf-132"><a href="#create_implicit_mf-132"><span class="linenos">132</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="create_implicit_mf-135"><a href="#create_implicit_mf-135"><span class="linenos">135</span></a><span class="k">def</span> <span class="nf">create_implicit_mf</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
+</span><span id="create_implicit_mf-136"><a href="#create_implicit_mf-136"><span class="linenos">136</span></a>    <span class="sd">&quot;&quot;&quot;Create the ImplicitMF predictor.</span>
+</span><span id="create_implicit_mf-137"><a href="#create_implicit_mf-137"><span class="linenos">137</span></a>
+</span><span id="create_implicit_mf-138"><a href="#create_implicit_mf-138"><span class="linenos">138</span></a><span class="sd">    Args:</span>
+</span><span id="create_implicit_mf-139"><a href="#create_implicit_mf-139"><span class="linenos">139</span></a><span class="sd">        name: the name of the algorithm.</span>
+</span><span id="create_implicit_mf-140"><a href="#create_implicit_mf-140"><span class="linenos">140</span></a><span class="sd">        params: containing the following name-value pairs:</span>
+</span><span id="create_implicit_mf-141"><a href="#create_implicit_mf-141"><span class="linenos">141</span></a><span class="sd">            features(int): the number of features to train.</span>
+</span><span id="create_implicit_mf-142"><a href="#create_implicit_mf-142"><span class="linenos">142</span></a><span class="sd">            iterations(int): the number of iterations to train.</span>
+</span><span id="create_implicit_mf-143"><a href="#create_implicit_mf-143"><span class="linenos">143</span></a><span class="sd">            reg(float): the regularization factor.</span>
+</span><span id="create_implicit_mf-144"><a href="#create_implicit_mf-144"><span class="linenos">144</span></a><span class="sd">            weight(flot): the scaling weight for positive samples.</span>
+</span><span id="create_implicit_mf-145"><a href="#create_implicit_mf-145"><span class="linenos">145</span></a><span class="sd">            use_ratings(bool): whether to use the rating column or treat</span>
+</span><span id="create_implicit_mf-146"><a href="#create_implicit_mf-146"><span class="linenos">146</span></a><span class="sd">                every rated user-item pair as having a rating of 1.</span>
+</span><span id="create_implicit_mf-147"><a href="#create_implicit_mf-147"><span class="linenos">147</span></a><span class="sd">            method(str): the training method (&#39;cg&#39; or &#39;lu&#39;).</span>
+</span><span id="create_implicit_mf-148"><a href="#create_implicit_mf-148"><span class="linenos">148</span></a><span class="sd">            random_seed(int): the random seed or None for the current time as seed.</span>
+</span><span id="create_implicit_mf-149"><a href="#create_implicit_mf-149"><span class="linenos">149</span></a>
+</span><span id="create_implicit_mf-150"><a href="#create_implicit_mf-150"><span class="linenos">150</span></a><span class="sd">    Keyword Args:</span>
+</span><span id="create_implicit_mf-151"><a href="#create_implicit_mf-151"><span class="linenos">151</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
+</span><span id="create_implicit_mf-152"><a href="#create_implicit_mf-152"><span class="linenos">152</span></a>
+</span><span id="create_implicit_mf-153"><a href="#create_implicit_mf-153"><span class="linenos">153</span></a><span class="sd">    Returns:</span>
+</span><span id="create_implicit_mf-154"><a href="#create_implicit_mf-154"><span class="linenos">154</span></a><span class="sd">        the LensKitPredictor wrapper of ImplicitMF.</span>
+</span><span id="create_implicit_mf-155"><a href="#create_implicit_mf-155"><span class="linenos">155</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="create_implicit_mf-156"><a href="#create_implicit_mf-156"><span class="linenos">156</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_implicit_mf</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span id="create_implicit_mf-157"><a href="#create_implicit_mf-157"><span class="linenos">157</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -672,25 +767,25 @@ predicting ratings using multiple 'jobs'.</p>
 
     </div>
     <a class="headerlink" href="#create_item_item"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="create_item_item-135"><a href="#create_item_item-135"><span class="linenos">135</span></a><span class="k">def</span> <span class="nf">create_item_item</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
-</span><span id="create_item_item-136"><a href="#create_item_item-136"><span class="linenos">136</span></a>    <span class="sd">&quot;&quot;&quot;Create the ItemItem predictor.</span>
-</span><span id="create_item_item-137"><a href="#create_item_item-137"><span class="linenos">137</span></a>
-</span><span id="create_item_item-138"><a href="#create_item_item-138"><span class="linenos">138</span></a><span class="sd">    Args:</span>
-</span><span id="create_item_item-139"><a href="#create_item_item-139"><span class="linenos">139</span></a><span class="sd">        name: the name of the algorithm.</span>
-</span><span id="create_item_item-140"><a href="#create_item_item-140"><span class="linenos">140</span></a><span class="sd">        params: containing the following name-value pairs:</span>
-</span><span id="create_item_item-141"><a href="#create_item_item-141"><span class="linenos">141</span></a><span class="sd">            max_neighbors(int): the maximum number of neighbors for scoring each item.</span>
-</span><span id="create_item_item-142"><a href="#create_item_item-142"><span class="linenos">142</span></a><span class="sd">            min_neighbors(int): the minimum number of neighbors for scoring each item.</span>
-</span><span id="create_item_item-143"><a href="#create_item_item-143"><span class="linenos">143</span></a><span class="sd">            min_similarity(float): minimum similarity threshold for considering a neighbor.</span>
-</span><span id="create_item_item-144"><a href="#create_item_item-144"><span class="linenos">144</span></a><span class="sd">            feedback(str): control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
-</span><span id="create_item_item-145"><a href="#create_item_item-145"><span class="linenos">145</span></a>
-</span><span id="create_item_item-146"><a href="#create_item_item-146"><span class="linenos">146</span></a><span class="sd">    Keyword Args:</span>
-</span><span id="create_item_item-147"><a href="#create_item_item-147"><span class="linenos">147</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
-</span><span id="create_item_item-148"><a href="#create_item_item-148"><span class="linenos">148</span></a>
-</span><span id="create_item_item-149"><a href="#create_item_item-149"><span class="linenos">149</span></a><span class="sd">    Returns:</span>
-</span><span id="create_item_item-150"><a href="#create_item_item-150"><span class="linenos">150</span></a><span class="sd">        the LensKitPredictor wrapper of ItemItem.</span>
-</span><span id="create_item_item-151"><a href="#create_item_item-151"><span class="linenos">151</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="create_item_item-152"><a href="#create_item_item-152"><span class="linenos">152</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_item_item</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-</span><span id="create_item_item-153"><a href="#create_item_item-153"><span class="linenos">153</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="create_item_item-160"><a href="#create_item_item-160"><span class="linenos">160</span></a><span class="k">def</span> <span class="nf">create_item_item</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
+</span><span id="create_item_item-161"><a href="#create_item_item-161"><span class="linenos">161</span></a>    <span class="sd">&quot;&quot;&quot;Create the ItemItem predictor.</span>
+</span><span id="create_item_item-162"><a href="#create_item_item-162"><span class="linenos">162</span></a>
+</span><span id="create_item_item-163"><a href="#create_item_item-163"><span class="linenos">163</span></a><span class="sd">    Args:</span>
+</span><span id="create_item_item-164"><a href="#create_item_item-164"><span class="linenos">164</span></a><span class="sd">        name: the name of the algorithm.</span>
+</span><span id="create_item_item-165"><a href="#create_item_item-165"><span class="linenos">165</span></a><span class="sd">        params: containing the following name-value pairs:</span>
+</span><span id="create_item_item-166"><a href="#create_item_item-166"><span class="linenos">166</span></a><span class="sd">            max_neighbors(int): the maximum number of neighbors for scoring each item.</span>
+</span><span id="create_item_item-167"><a href="#create_item_item-167"><span class="linenos">167</span></a><span class="sd">            min_neighbors(int): the minimum number of neighbors for scoring each item.</span>
+</span><span id="create_item_item-168"><a href="#create_item_item-168"><span class="linenos">168</span></a><span class="sd">            min_similarity(float): minimum similarity threshold for considering a neighbor.</span>
+</span><span id="create_item_item-169"><a href="#create_item_item-169"><span class="linenos">169</span></a><span class="sd">            feedback(str): control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
+</span><span id="create_item_item-170"><a href="#create_item_item-170"><span class="linenos">170</span></a>
+</span><span id="create_item_item-171"><a href="#create_item_item-171"><span class="linenos">171</span></a><span class="sd">    Keyword Args:</span>
+</span><span id="create_item_item-172"><a href="#create_item_item-172"><span class="linenos">172</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
+</span><span id="create_item_item-173"><a href="#create_item_item-173"><span class="linenos">173</span></a>
+</span><span id="create_item_item-174"><a href="#create_item_item-174"><span class="linenos">174</span></a><span class="sd">    Returns:</span>
+</span><span id="create_item_item-175"><a href="#create_item_item-175"><span class="linenos">175</span></a><span class="sd">        the LensKitPredictor wrapper of ItemItem.</span>
+</span><span id="create_item_item-176"><a href="#create_item_item-176"><span class="linenos">176</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="create_item_item-177"><a href="#create_item_item-177"><span class="linenos">177</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_item_item</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span id="create_item_item-178"><a href="#create_item_item-178"><span class="linenos">178</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -724,22 +819,22 @@ predicting ratings using multiple 'jobs'.</p>
 
     </div>
     <a class="headerlink" href="#create_pop_score"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="create_pop_score-156"><a href="#create_pop_score-156"><span class="linenos">156</span></a><span class="k">def</span> <span class="nf">create_pop_score</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
-</span><span id="create_pop_score-157"><a href="#create_pop_score-157"><span class="linenos">157</span></a>    <span class="sd">&quot;&quot;&quot;Create the PopScore predictor.</span>
-</span><span id="create_pop_score-158"><a href="#create_pop_score-158"><span class="linenos">158</span></a>
-</span><span id="create_pop_score-159"><a href="#create_pop_score-159"><span class="linenos">159</span></a><span class="sd">    Args:</span>
-</span><span id="create_pop_score-160"><a href="#create_pop_score-160"><span class="linenos">160</span></a><span class="sd">        name: the name of the algorithm.</span>
-</span><span id="create_pop_score-161"><a href="#create_pop_score-161"><span class="linenos">161</span></a><span class="sd">        params: containing the following name-value pairs:</span>
-</span><span id="create_pop_score-162"><a href="#create_pop_score-162"><span class="linenos">162</span></a><span class="sd">            score_method(str): for computing popularity scores (&#39;quantile&#39;, &#39;rank&#39; or &#39;count&#39;).</span>
-</span><span id="create_pop_score-163"><a href="#create_pop_score-163"><span class="linenos">163</span></a>
-</span><span id="create_pop_score-164"><a href="#create_pop_score-164"><span class="linenos">164</span></a><span class="sd">    Keyword Args:</span>
-</span><span id="create_pop_score-165"><a href="#create_pop_score-165"><span class="linenos">165</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
-</span><span id="create_pop_score-166"><a href="#create_pop_score-166"><span class="linenos">166</span></a>
-</span><span id="create_pop_score-167"><a href="#create_pop_score-167"><span class="linenos">167</span></a><span class="sd">    Returns:</span>
-</span><span id="create_pop_score-168"><a href="#create_pop_score-168"><span class="linenos">168</span></a><span class="sd">        the LensKitPredictor wrapper of PopScore.</span>
-</span><span id="create_pop_score-169"><a href="#create_pop_score-169"><span class="linenos">169</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="create_pop_score-170"><a href="#create_pop_score-170"><span class="linenos">170</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_pop_score</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-</span><span id="create_pop_score-171"><a href="#create_pop_score-171"><span class="linenos">171</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="create_pop_score-181"><a href="#create_pop_score-181"><span class="linenos">181</span></a><span class="k">def</span> <span class="nf">create_pop_score</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
+</span><span id="create_pop_score-182"><a href="#create_pop_score-182"><span class="linenos">182</span></a>    <span class="sd">&quot;&quot;&quot;Create the PopScore predictor.</span>
+</span><span id="create_pop_score-183"><a href="#create_pop_score-183"><span class="linenos">183</span></a>
+</span><span id="create_pop_score-184"><a href="#create_pop_score-184"><span class="linenos">184</span></a><span class="sd">    Args:</span>
+</span><span id="create_pop_score-185"><a href="#create_pop_score-185"><span class="linenos">185</span></a><span class="sd">        name: the name of the algorithm.</span>
+</span><span id="create_pop_score-186"><a href="#create_pop_score-186"><span class="linenos">186</span></a><span class="sd">        params: containing the following name-value pairs:</span>
+</span><span id="create_pop_score-187"><a href="#create_pop_score-187"><span class="linenos">187</span></a><span class="sd">            score_method(str): for computing popularity scores (&#39;quantile&#39;, &#39;rank&#39; or &#39;count&#39;).</span>
+</span><span id="create_pop_score-188"><a href="#create_pop_score-188"><span class="linenos">188</span></a>
+</span><span id="create_pop_score-189"><a href="#create_pop_score-189"><span class="linenos">189</span></a><span class="sd">    Keyword Args:</span>
+</span><span id="create_pop_score-190"><a href="#create_pop_score-190"><span class="linenos">190</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
+</span><span id="create_pop_score-191"><a href="#create_pop_score-191"><span class="linenos">191</span></a>
+</span><span id="create_pop_score-192"><a href="#create_pop_score-192"><span class="linenos">192</span></a><span class="sd">    Returns:</span>
+</span><span id="create_pop_score-193"><a href="#create_pop_score-193"><span class="linenos">193</span></a><span class="sd">        the LensKitPredictor wrapper of PopScore.</span>
+</span><span id="create_pop_score-194"><a href="#create_pop_score-194"><span class="linenos">194</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="create_pop_score-195"><a href="#create_pop_score-195"><span class="linenos">195</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_pop_score</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span id="create_pop_score-196"><a href="#create_pop_score-196"><span class="linenos">196</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -770,25 +865,25 @@ predicting ratings using multiple 'jobs'.</p>
 
     </div>
     <a class="headerlink" href="#create_user_user"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="create_user_user-174"><a href="#create_user_user-174"><span class="linenos">174</span></a><span class="k">def</span> <span class="nf">create_user_user</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
-</span><span id="create_user_user-175"><a href="#create_user_user-175"><span class="linenos">175</span></a>    <span class="sd">&quot;&quot;&quot;Create the UserUser predictor.</span>
-</span><span id="create_user_user-176"><a href="#create_user_user-176"><span class="linenos">176</span></a>
-</span><span id="create_user_user-177"><a href="#create_user_user-177"><span class="linenos">177</span></a><span class="sd">    Args:</span>
-</span><span id="create_user_user-178"><a href="#create_user_user-178"><span class="linenos">178</span></a><span class="sd">        name: the name of the algorithm.</span>
-</span><span id="create_user_user-179"><a href="#create_user_user-179"><span class="linenos">179</span></a><span class="sd">        params: containing the following name-value pairs:</span>
-</span><span id="create_user_user-180"><a href="#create_user_user-180"><span class="linenos">180</span></a><span class="sd">            max_neighbors(int): the maximum number of neighbors for scoring each item.</span>
-</span><span id="create_user_user-181"><a href="#create_user_user-181"><span class="linenos">181</span></a><span class="sd">            min_neighbors(int): the minimum number of neighbors for scoring each item.</span>
-</span><span id="create_user_user-182"><a href="#create_user_user-182"><span class="linenos">182</span></a><span class="sd">            min_similarity(float): minimum similarity threshold for considering a neighbor.</span>
-</span><span id="create_user_user-183"><a href="#create_user_user-183"><span class="linenos">183</span></a><span class="sd">            feedback(str): control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
-</span><span id="create_user_user-184"><a href="#create_user_user-184"><span class="linenos">184</span></a>
-</span><span id="create_user_user-185"><a href="#create_user_user-185"><span class="linenos">185</span></a><span class="sd">    Keyword Args:</span>
-</span><span id="create_user_user-186"><a href="#create_user_user-186"><span class="linenos">186</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
-</span><span id="create_user_user-187"><a href="#create_user_user-187"><span class="linenos">187</span></a>
-</span><span id="create_user_user-188"><a href="#create_user_user-188"><span class="linenos">188</span></a><span class="sd">    Returns:</span>
-</span><span id="create_user_user-189"><a href="#create_user_user-189"><span class="linenos">189</span></a><span class="sd">        the LensKitPredictor wrapper of UserUser.</span>
-</span><span id="create_user_user-190"><a href="#create_user_user-190"><span class="linenos">190</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="create_user_user-191"><a href="#create_user_user-191"><span class="linenos">191</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_user_user</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-</span><span id="create_user_user-192"><a href="#create_user_user-192"><span class="linenos">192</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="create_user_user-199"><a href="#create_user_user-199"><span class="linenos">199</span></a><span class="k">def</span> <span class="nf">create_user_user</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LensKitPredictor</span><span class="p">:</span>
+</span><span id="create_user_user-200"><a href="#create_user_user-200"><span class="linenos">200</span></a>    <span class="sd">&quot;&quot;&quot;Create the UserUser predictor.</span>
+</span><span id="create_user_user-201"><a href="#create_user_user-201"><span class="linenos">201</span></a>
+</span><span id="create_user_user-202"><a href="#create_user_user-202"><span class="linenos">202</span></a><span class="sd">    Args:</span>
+</span><span id="create_user_user-203"><a href="#create_user_user-203"><span class="linenos">203</span></a><span class="sd">        name: the name of the algorithm.</span>
+</span><span id="create_user_user-204"><a href="#create_user_user-204"><span class="linenos">204</span></a><span class="sd">        params: containing the following name-value pairs:</span>
+</span><span id="create_user_user-205"><a href="#create_user_user-205"><span class="linenos">205</span></a><span class="sd">            max_neighbors(int): the maximum number of neighbors for scoring each item.</span>
+</span><span id="create_user_user-206"><a href="#create_user_user-206"><span class="linenos">206</span></a><span class="sd">            min_neighbors(int): the minimum number of neighbors for scoring each item.</span>
+</span><span id="create_user_user-207"><a href="#create_user_user-207"><span class="linenos">207</span></a><span class="sd">            min_similarity(float): minimum similarity threshold for considering a neighbor.</span>
+</span><span id="create_user_user-208"><a href="#create_user_user-208"><span class="linenos">208</span></a><span class="sd">            feedback(str): control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
+</span><span id="create_user_user-209"><a href="#create_user_user-209"><span class="linenos">209</span></a>
+</span><span id="create_user_user-210"><a href="#create_user_user-210"><span class="linenos">210</span></a><span class="sd">    Keyword Args:</span>
+</span><span id="create_user_user-211"><a href="#create_user_user-211"><span class="linenos">211</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
+</span><span id="create_user_user-212"><a href="#create_user_user-212"><span class="linenos">212</span></a>
+</span><span id="create_user_user-213"><a href="#create_user_user-213"><span class="linenos">213</span></a><span class="sd">    Returns:</span>
+</span><span id="create_user_user-214"><a href="#create_user_user-214"><span class="linenos">214</span></a><span class="sd">        the LensKitPredictor wrapper of UserUser.</span>
+</span><span id="create_user_user-215"><a href="#create_user_user-215"><span class="linenos">215</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="create_user_user-216"><a href="#create_user_user-216"><span class="linenos">216</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_user_user</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span id="create_user_user-217"><a href="#create_user_user-217"><span class="linenos">217</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span></pre></div>
 
 
