@@ -211,9 +211,9 @@ class ExperimentPipeline:
             'name': result['dataset'] + ' - ' + result['model'],
             'dataset': result['dataset'],
             'recommender_system': result['model'],
-            'evaluation_path': result['dir'] + '\\evaluations.json',
-            'ratings_path': result['dir'] + '\\ratings.tsv',
-            'ratings_settings_path': result['dir'] + '\\settings.json'
+            'evaluation_path': os.path.join(result['dir'], 'evaluations.json'),
+            'ratings_path': os.path.join(result['dir'], 'ratings.tsv'),
+            'ratings_settings_path': os.path.join(result['dir'], 'settings.json')
         }, results)
 
         create_json(
