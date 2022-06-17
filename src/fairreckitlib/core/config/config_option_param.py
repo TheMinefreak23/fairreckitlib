@@ -22,7 +22,7 @@ from .config_base_param import ConfigOptionParam
 class ConfigMultiOptionParam(ConfigOptionParam):
     """Config Multi Option Parameter.
 
-    The default_value and all the options are expected to be strings.
+    The default_value and all the options are expected to be strings or None.
     The default_value list is expected to have at least one entry.
     The default_value list is expected to be present in the list of available options.
     """
@@ -66,9 +66,10 @@ class ConfigMultiOptionParam(ConfigOptionParam):
 
         # split options into correct/incorrect/duplicate lists
         incorrect, correct, duplicates = [], [], []
+        valid_types = (self.value_type, type(None)) if None in self.options else self.value_type
         for val in value:
             # check val is correct
-            if isinstance(val, self.value_type) and val in self.options:
+            if isinstance(val, valid_types) and val in self.options:
                 # check val is duplicate
                 (duplicates if val in correct else correct).append(val)
             # check val is incorrect
