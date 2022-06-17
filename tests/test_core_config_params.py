@@ -71,8 +71,8 @@ def test_config_multi_option_param() -> None:
         assert ret_value == param.default_value, 'Expected ret_value to be default when incorrect.'
         print('ConfigMultiOptionParam invalid:', msg)
 
-    valid = ['a', 'b']
-    invalid = [None, True, False, 1, 1.0]
+    valid = ['a', 'b', None]
+    invalid = [True, False, 1, 1.0]
     multi_option = ConfigMultiOptionParam(
         'multi_option_param',
         valid,
