@@ -32,15 +32,15 @@ class EvaluationPipelineConfig:
     output_dir: the directory to store the output.
     data_transition: data input.
     data_filter_factory: the factory with available filters for all dataset-matrix pairs.
-    metric_category_factory: the factory with available metric category factories.
-    evaluation: list of metric configurations to compute.
+    eval_type_factory: the factory with available metric category factories.
+    metric_config_list: list of metric configurations to compute.
     """
 
     model_dirs: List[str]
     data_transition: DataTransition
     data_filter_factory: GroupFactory
-    metric_category_factory: GroupFactory
-    evaluation: List[MetricConfig]
+    eval_type_factory: GroupFactory
+    metric_config_list: List[MetricConfig]
 
 
 def run_evaluation_pipelines(
@@ -60,12 +60,12 @@ def run_evaluation_pipelines(
     eval_pipeline = EvaluationPipeline(
         data_transition.dataset,
         pipeline_config.data_filter_factory,
-        pipeline_config.metric_category_factory,
+        pipeline_config.eval_type_factory,
         event_dispatcher
     )
 
     # remove any metrics that have a subgroup that is not related to the data transition
-    metric_config_list = [metric for metric in pipeline_config.evaluation
+    metric_config_list = [metric for metric in pipeline_config.metric_config_list
                           if metric.subgroup is None or \
                           metric.subgroup.dataset == data_transition.dataset.get_name() and \
                           metric.subgroup.matrix == data_transition.matrix_name]
@@ -78,9 +78,9 @@ def run_evaluation_pipelines(
             eval_pipeline.run(
                 output_path,
                 EvaluationSetPaths(
+                    rating_set_path,
                     data_transition.train_set_path,
-                    data_transition.test_set_path,
-                    rating_set_path
+                    data_transition.test_set_path
                 ),
                 metric_config_list,
                 is_running

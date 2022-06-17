@@ -238,6 +238,9 @@ def test_run_model_pipelines(
                 if 'score' in rating_set:
                     assert len(test_set['user'].unique()) * DEFAULT_TOP_K == len(rating_set), \
                         'expected item recommendations for every user in the test set'
+                elif 'prediction' in rating_set:
+                    assert len(test_set) == len(rating_set), \
+                        'expected user-item prediction for every pair in the test set'
 
 
 def assert_model_run_error(

@@ -12,6 +12,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from ...core.core_constants import DEFAULT_TOP_K
 from ...core.config.config_factories import Factory, create_factory_from_list
 from ...core.config.config_parameters import ConfigParameters
 from .lenskit import lenskit_accuracy_metric, lenskit_rating_metric
@@ -26,7 +27,7 @@ def create_metric_params_k() -> ConfigParameters:
         the configuration parameters of the metric.
     """
     params = ConfigParameters()
-    params.add_number(KEY_METRIC_PARAM_K, int, None, (1, None))
+    params.add_number(KEY_METRIC_PARAM_K, int, DEFAULT_TOP_K, (1, DEFAULT_TOP_K))
     return params
 
 

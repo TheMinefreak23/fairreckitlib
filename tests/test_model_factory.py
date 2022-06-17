@@ -12,6 +12,7 @@ Utrecht University within the Software Project course.
 from src.fairreckitlib.core.config.config_factories import Factory, GroupFactory
 from src.fairreckitlib.core.core_constants import \
     KEY_RATED_ITEMS_FILTER, TYPE_PREDICTION, TYPE_RECOMMENDATION
+from src.fairreckitlib.data.set.dataset_config import DATASET_RATINGS_EXPLICIT
 from src.fairreckitlib.model.algorithms.base_algorithm import BaseAlgorithm
 from src.fairreckitlib.model.algorithms.base_predictor import BasePredictor
 from src.fairreckitlib.model.algorithms.base_recommender import BaseRecommender
@@ -30,7 +31,8 @@ def test_model_factory() -> None:
         model_type_factory = model_factory.get_factory(model_type)
         assert isinstance(model_type_factory, GroupFactory), 'expected API group factory.'
 
-        algo_kwargs = {'num_threads': 1}
+        # lenskit KNN algorithms need a rating_type
+        algo_kwargs = {'num_threads': 1, 'rating_type': DATASET_RATINGS_EXPLICIT}
         if model_type ==TYPE_RECOMMENDATION:
             algo_kwargs[KEY_RATED_ITEMS_FILTER] = True
 

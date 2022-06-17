@@ -288,6 +288,7 @@ class ModelPipeline(CorePipeline, metaclass=ABCMeta):
         ))
 
         # attempt to create model
+        kwargs['rating_type'] = self.data_transition.get_rating_type()
         model = self.algo_factory.create(
             model_name,
             model_params,

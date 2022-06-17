@@ -21,6 +21,8 @@ Modules:
     test_data_subset_config: tests the formatting/parsing of the data subset configuration.
     test_evaluation_config: test the formatting/parsing of the eval config of the experiment.
     test_evaluation_factory: test the evaluation (type/category) factories.
+    test_evaluation_metrics: test the interface of metrics.
+    test_evaluation_pipeline: test the evaluation pipeline functionality.
     text_experiment-config: test the formatting/parsing of the experiment configurations.
     test_model_algorithm_matrices: test the interface of the algorithm matrices.
     test_model_algorithms: test the interface of predictors/recommenders.
