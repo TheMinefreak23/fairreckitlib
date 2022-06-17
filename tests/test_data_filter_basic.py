@@ -53,8 +53,8 @@ class TestFilterAge:
 class TestFilterGender:
     """Create a filter object and a dummy data frame to test gender filter."""
 
-    df_source = DataFrame({"id": [1, 2, 3, 4, 5, 6],
-        "user_gender": ['f', 'm', 'f', 'm', ' ', None]})
+    df_source = DataFrame({"id": [1, 2, 3, 4, 5, 6, 7],
+        "user_gender": ['f', 'm', 'f', 'm', ' ', None, None]})
     filter_obj = CategoricalFilter('', {}, **filter_kwargs)
     df_empty = filter_obj.__empty_df__(df_source)
 
@@ -87,12 +87,18 @@ class TestFilterGender:
         df_result = self.filter_obj.filter(df_given, 'gender', ['m'])
         assert_frame_equal(df_result, self.filter_obj.__empty_df__(df_given))
 
+    def test_run_with_none(self):
+        """Test run with given parameters."""
+        df_result = self.filter_obj.filter(self.df_source, 'user_gender', [None])
+        df_expected = DataFrame({"id": [6, 7], "user_gender": [None, None]})
+        assert_frame_equal(df_result, df_expected)
+
 
 class TestFilterCountry:
     """Create a filter object and a dummy data frame to test country filter."""
 
-    df_source = DataFrame({"id": [1, 2, 3, 4, 5, 6],
-                           "country": ['Iran', ' ', 'Netherlands', 'Russia', 'Sweden', None]})
+    df_source = DataFrame({"id": [1, 2, 3, 4, 5, 6, 7],
+                           "country": ['Iran', ' ', 'Netherlands', 'Russia', 'Sweden', None, None]})
     filter_obj = CategoricalFilter('', {}, **filter_kwargs)
     empty_df = filter_obj.__empty_df__(df_source)
 
@@ -138,13 +144,19 @@ class TestFilterCountry:
         df_given = DataFrame({"id": [1, 2, 3, 4, 5], "play_count": [24, 0, -1, 45, 102]})
         df_result = self.filter_obj.filter(df_given, 'country', ['Sweden'])
         assert_frame_equal(df_result, self.filter_obj.__empty_df__(df_given))
+    
+    def test_run_with_none(self):
+        """Test run with given parameters."""
+        df_result = self.filter_obj.filter(self.df_source, 'country', [None])
+        df_expected = DataFrame({"id": [6, 7], "country": [None, None]})
+        assert_frame_equal(df_result, df_expected)
 
 
 class TestFilterCount:
     """Create a filter object and a dummy data frame to test count filter."""
 
-    df_source = DataFrame({"id":[1, 2, 3, 4, 5, 6, 7],
-                           "country": ["NL", "NL", "NL", "BE", "NL", "BE", "FR"]})
+    df_source = DataFrame({"id":[1, 2, 3, 4, 5, 6, 7, 8, 9],
+                           "country": ["NL", "NL", "NL", "BE", "NL", "BE", "FR", None, None]})
     filter_obj = CountFilter('', {}, **filter_kwargs)
     df_empty = filter_obj.__empty_df__(df_source)
 
@@ -156,15 +168,14 @@ class TestFilterCount:
     def test_run_with_param(self):
         """Test run with existent column."""
         df_result = self.filter_obj.filter(self.df_source, "country", 2)
-        df_expected = DataFrame({"id":[1, 2, 3, 4, 5, 6],
-                                 "country": ["NL", "NL", "NL", "BE", "NL", "BE"]})
+        df_expected = DataFrame({"id":[1, 2, 3, 4, 5, 6, 8, 9],
+                                 "country": ["NL", "NL", "NL", "BE", "NL", "BE", None, None]})
         assert_frame_equal(df_result, df_expected)
 
     def test_run_with_low_threshold(self):
         """Test run with threshold < 1."""
         df_result = self.filter_obj.filter(self.df_source, "country", -5)
         assert_frame_equal(df_result, self.df_source)
-
 
     def test_run_with_high_threshold(self):
         """Test run with infinite threshold."""
