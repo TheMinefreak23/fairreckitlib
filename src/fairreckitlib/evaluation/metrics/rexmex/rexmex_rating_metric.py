@@ -35,9 +35,9 @@ class RexmexRatingMetric(ColumnMetric):
         Returns:
             the evaluated performance.
         """
-        eval_sets.ratings.drop('rating', inplace=True, axis=1)
-        score_column = 'score' if 'score' in eval_sets.ratings else 'prediction'
-        scores = pd.merge(eval_sets.test, eval_sets.ratings, how='left', on=['user', 'item'])
+        rexmex_ratings = eval_sets.ratings.drop('rating', axis=1)
+        score_column = 'score' if 'score' in rexmex_ratings else 'prediction'
+        scores = pd.merge(eval_sets.test, rexmex_ratings, how='left', on=['user', 'item'])
         scores.dropna(subset=[score_column], axis=0, inplace=True)
         return self.eval_func(scores['rating'], scores[score_column])
 

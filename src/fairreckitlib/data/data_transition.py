@@ -13,7 +13,9 @@ from typing import Tuple
 
 from dataclasses import dataclass
 
+from .ratings.convert_constants import RATING_TYPE_THRESHOLD
 from .set.dataset import Dataset
+from .set.dataset_config import DATASET_RATINGS_EXPLICIT, DATASET_RATINGS_IMPLICIT
 
 
 @dataclass
@@ -34,3 +36,12 @@ class DataTransition:
     train_set_path: str
     test_set_path: str
     rating_scale: Tuple[float, float]
+
+    def get_rating_type(self) -> str:
+        """Get the rating type of the data transition.
+
+        Returns:
+            the rating type (either 'explicit' or 'implicit').
+        """
+        return DATASET_RATINGS_IMPLICIT \
+            if self.rating_scale[1] > RATING_TYPE_THRESHOLD else DATASET_RATINGS_EXPLICIT

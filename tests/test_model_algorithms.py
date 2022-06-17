@@ -1,9 +1,9 @@
-"""This module tests the algorithm interface of predictors/recommenders and the model factory.
+"""This module tests the algorithm interface of predictors/recommenders.
 
 Classes:
 
-    DummyPredictor: dummy predictor to test not implemented and construction errors.
-    DummyRecommender: dummy recommender to test not implemented and construction errors.
+    DummyPredictor: dummy predictor implementation to test various errors.
+    DummyRecommender: dummy recommender implementation to test various errors.
 
 Functions:
 
@@ -39,6 +39,7 @@ import pytest
 
 from src.fairreckitlib.core.core_constants import KEY_RATED_ITEMS_FILTER
 from src.fairreckitlib.core.core_constants import TYPE_PREDICTION, TYPE_RECOMMENDATION
+from src.fairreckitlib.data.set.dataset_config import DATASET_RATINGS_EXPLICIT
 from src.fairreckitlib.model.algorithms.base_algorithm import BaseAlgorithm
 from src.fairreckitlib.model.algorithms.base_predictor import BasePredictor, Predictor
 from src.fairreckitlib.model.algorithms.base_recommender import BaseRecommender, Recommender
@@ -58,7 +59,8 @@ top_k = [1, 5, 10]
 
 algo_kwargs = {
     KEY_RATED_ITEMS_FILTER: True, # recommenders only
-    'num_threads': NUM_THREADS
+    'num_threads': NUM_THREADS,
+    'rating_type': DATASET_RATINGS_EXPLICIT # used by lenskit KNN algorithms
 }
 
 
@@ -255,7 +257,8 @@ def assert_predictor_edge_cases(predictor: BasePredictor) -> None:
         # test (batching) min and max user edge cases
         pairs = pd.DataFrame({'user': [min_user - 1, max_user + 1], 'item': [item, item]})
         pairs = predictor.predict_batch(pairs)
-        assert len(pairs) == 0, 'expected an empty prediction dataframe.'
+        assert pairs['prediction'].isna().all(), \
+            'expected prediction frame with NaN values for unknown users'
 
     # test item edge cases for all users
     for user in predictor.get_train_set().get_users():
@@ -270,7 +273,8 @@ def assert_predictor_edge_cases(predictor: BasePredictor) -> None:
         # test (batching) min and max item edge cases
         pairs = pd.DataFrame({'user': [user, user], 'item': [min_item - 1, max_item + 1]})
         pairs = predictor.predict_batch(pairs)
-        assert len(pairs) == 0, 'expected an empty prediction dataframe.'
+        assert pairs['prediction'].isna().all(), \
+            'expected prediction frame with NaN values for unknown items'
 
 
 def assert_predictor_singular_user(predictor: BasePredictor) -> None:

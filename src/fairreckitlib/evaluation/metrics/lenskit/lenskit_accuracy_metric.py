@@ -58,9 +58,9 @@ class LensKitAccuracyMetric(BaseMetric):
             the evaluated performance.
         """
         # Drop the rating column as it is not needed and will be used by lenskit internally
-        eval_sets.ratings.drop('rating', inplace=True, axis=1)
+        lenskit_ratings = eval_sets.ratings.drop('rating', axis=1)
         # Lenskit needs this column
-        eval_sets.ratings['Algorithm'] = 'APPROACHNAME'
+        lenskit_ratings['Algorithm'] = 'APPROACHNAME'
 
         analysis = topn.RecListAnalysis()
         k = self.params.get(KEY_METRIC_PARAM_K)
@@ -69,8 +69,8 @@ class LensKitAccuracyMetric(BaseMetric):
         else:
             analysis.add_metric(self.eval_func)
 
-        results = analysis.compute(eval_sets.ratings, eval_sets.test)
-        return results.groupby('Algorithm')[self.group].mean()[0]
+        results = analysis.compute(lenskit_ratings, eval_sets.test)
+        return float(results.groupby('Algorithm')[self.group].mean()[0])
 
 
 def create_ndcg(name: str, params: Dict[str, Any], **_) -> LensKitAccuracyMetric:
