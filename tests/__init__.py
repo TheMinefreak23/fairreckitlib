@@ -28,7 +28,8 @@ Modules:
     test_evaluation_factory: test the evaluation (type/category) factories.
     test_evaluation_metrics: test the interface of metrics.
     test_evaluation_pipeline: test the evaluation pipeline functionality.
-    text_experiment-config: test the formatting/parsing of the experiment configurations.
+    test_experiment_config: test the formatting/parsing of the experiment configurations.
+    test_experiment_pipeline: test the experiment pipeline functionality.
     test_model_algorithm_matrices: test the interface of the algorithm matrices.
     test_model_algorithms: test the interface of predictors/recommenders.
     test_model_config: test the formatting/parsing of the model config of the experiment.

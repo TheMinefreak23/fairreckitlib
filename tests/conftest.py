@@ -10,7 +10,9 @@ Fixtures:
     fixture_io_tmp_dir: create and delete temporary directory for other unit tests.
     fixture_io_event_dispatcher: event dispatcher that prints IO events.
     fixture_parse_event_dispatcher: event dispatcher that prints parse events.
+    fixture_data_event_dispatcher: event dispatcher that prints data/IO events.
     fixture_eval_event_dispatcher: event dispatcher that prints evaluation/IO events.
+    fixture_experiment_event_dispatcher: event dispatcher that prints experiment/IO events.
     fixture_model_event_dispatcher: event dispatcher that prints model/IO events.
 
 Functions:
@@ -39,6 +41,8 @@ from src.fairreckitlib.data.pipeline.data_event import \
 from src.fairreckitlib.data.set.dataset_registry import DataRegistry
 from src.fairreckitlib.evaluation.pipeline.evaluation_event import \
     get_eval_events, get_eval_event_print_switch
+from src.fairreckitlib.experiment.experiment_event import \
+    get_experiment_events, get_experiment_print_switch
 from src.fairreckitlib.model.pipeline.model_event import \
     get_model_events, get_model_event_print_switch
 
@@ -114,6 +118,22 @@ def fixture_eval_event_dispatcher() -> EventDispatcher:
 
     for event_id in events:
         event_dispatcher.add_listener(event_id, None, (print_eval_pipeline_event, None))
+
+    return event_dispatcher
+
+
+@pytest.fixture(scope='function', name='experiment_event_dispatcher')
+def fixture_experiment_event_dispatcher() -> EventDispatcher:
+    """Fix experiment event dispatcher creation for other test functions."""
+    def print_experiment_pipeline_event(_, event_args: EventArgs, **kwargs) -> None:
+        """Print the experiment event using print switches."""
+        print_switch = get_experiment_print_switch(kwargs.get('elapsed_time'))
+        print_switch[event_args.event_id](event_args)
+
+    event_dispatcher = EventDispatcher()
+
+    for event_id in get_experiment_events():
+        event_dispatcher.add_listener(event_id, None, (print_experiment_pipeline_event, None))
 
     return event_dispatcher
 
