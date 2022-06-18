@@ -34,6 +34,8 @@ from src.fairreckitlib.core.io.io_create import create_dir
 from src.fairreckitlib.core.io.io_delete import delete_dir
 from src.fairreckitlib.core.io.event_io import get_io_events, get_io_event_print_switch
 from src.fairreckitlib.core.parsing.parse_event import ON_PARSE, print_parse_event
+from src.fairreckitlib.data.pipeline.data_event import \
+    get_data_events, get_data_event_print_switch
 from src.fairreckitlib.data.set.dataset_registry import DataRegistry
 from src.fairreckitlib.evaluation.pipeline.evaluation_event import \
     get_eval_events, get_eval_event_print_switch
@@ -78,11 +80,30 @@ def fixture_parse_event_dispatcher() -> EventDispatcher:
     return event_dispatcher
 
 
+@pytest.fixture(scope='function', name='data_event_dispatcher')
+def fixture_data_event_dispatcher() -> EventDispatcher:
+    """Fix data event dispatcher creation for other test functions."""
+    def print_data_pipeline_event(_, event_args: EventArgs, **kwargs) -> None:
+        """Print the data event using print switches."""
+        print_switch = get_data_event_print_switch(kwargs.get('elapsed_time'))
+        print_switch.update(get_error_event_print_switch())
+        print_switch.update(get_io_event_print_switch())
+        print_switch[event_args.event_id](event_args)
+
+    events = get_error_events() + get_io_events() + get_data_events()
+    event_dispatcher = EventDispatcher()
+
+    for event_id in events:
+        event_dispatcher.add_listener(event_id, None, (print_data_pipeline_event, None))
+
+    return event_dispatcher
+
+
 @pytest.fixture(scope='function', name='eval_event_dispatcher')
 def fixture_eval_event_dispatcher() -> EventDispatcher:
     """Fix evaluation event dispatcher creation for other test functions."""
     def print_eval_pipeline_event(_, event_args: EventArgs, **kwargs) -> None:
-        """Print the model event using print switches."""
+        """Print the eval event using print switches."""
         print_switch = get_eval_event_print_switch(kwargs.get('elapsed_time'))
         print_switch.update(get_error_event_print_switch())
         print_switch.update(get_io_event_print_switch())
