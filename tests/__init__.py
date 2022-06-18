@@ -16,9 +16,14 @@ Modules:
     test_data_converting: test the dataframe rating conversion functionality.
     test_data_converting_config: test the formatting/parsing of the dataset converting config.
     test_data_factory: test the data (modifier) factories.
+    test_data_filter_basic: test the dataframe filter functionality for the basic filters.
+    test_data_filter_samples: test the basic filters with dataset samples.
+    test_data_pipeline: test the data pipeline functionality.
+    test_data_registry: test the data registry.
     test_data_splitting: test the dataframe splitting functionality.
     test_data_splitting_config: test the formatting/parsing of the dataset splitting config.
-    test_data_subset_config: tests the formatting/parsing of the data subset configuration.
+    test_data_subset_config: test the formatting/parsing of the data subset configuration.
+    test_dataset: test the dataset wrapper functionality of the dataset configuration.
     test_evaluation_config: test the formatting/parsing of the eval config of the experiment.
     test_evaluation_factory: test the evaluation (type/category) factories.
     test_evaluation_metrics: test the interface of metrics.

@@ -26,7 +26,7 @@ from .dataset_processor_lfm import DatasetProcessorLFM
 ALL_MUSIC_GENRES = [
     'rnb', 'rap', 'electronic', 'rock', 'new age', 'classical', 'reggae', 'blues', 'country',
     'world', 'folk', 'easy listening', 'jazz', 'vocal', 'children\'s', 'punk', 'alternative',
-    'spoken_word', 'pop', 'heavy metal'
+    'spoken word', 'pop', 'heavy metal'
 ]
 
 
