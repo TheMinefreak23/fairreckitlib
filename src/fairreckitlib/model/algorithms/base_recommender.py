@@ -160,8 +160,8 @@ class BaseRecommender(BaseAlgorithm, metaclass=ABCMeta):
             item_scores['rank'] = np.arange(1, 1 + num_items)
             item_scores['user'] = np.full(num_items, user)
 
-            result = result.append(
-                item_scores[['rank', 'user', 'item', 'score']],
+            result = pd.concat(
+                [result, item_scores[['rank', 'user', 'item', 'score']]],
                 ignore_index=True
             )
 
