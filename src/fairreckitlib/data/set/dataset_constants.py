@@ -19,6 +19,7 @@ TABLE_NUM_RECORDS = 'num_records'
 TABLE_SEP = 'sep'
 
 DATASET_CONFIG_FILE = TABLE_FILE_PREFIX + 'dataset_config.yml'
+DATASET_SPLIT_DELIMITER = '_'
 
 KEY_MATRIX = 'matrix'
 KEY_IDX_ITEM = 'idx_item'

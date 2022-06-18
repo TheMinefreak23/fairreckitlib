@@ -87,11 +87,15 @@ class DataPipeline(CorePipeline):
 
         Raises:
             FileNotFoundError: when the dataset matrix file does not exist.
+            IOError: when the specified output directory does not exist.
             RuntimeError: when any data modifiers are not found in their respective factories.
 
         Returns:
             the data transition output of the pipeline.
         """
+        if not os.path.isdir(output_dir):
+            raise IOError('Unknown data output directory')
+
         self.event_dispatcher.dispatch(DatasetEventArgs(
             ON_BEGIN_DATA_PIPELINE,
             dataset.get_name()
@@ -128,6 +132,9 @@ class DataPipeline(CorePipeline):
         # step 6
         train_set_path, test_set_path = self.save_sets(data_dir, train_set, test_set)
 
+        # update data matrix counter
+        self.split_datasets[data_config.get_data_matrix_name()] += 1
+
         end = time.time()
 
         self.event_dispatcher.dispatch(DatasetEventArgs(
@@ -156,12 +163,11 @@ class DataPipeline(CorePipeline):
         Returns:
             the path of the directory where the output data can be stored.
         """
-        dataset_matrix_name = data_config.dataset + '_' + data_config.matrix
+        dataset_matrix_name = data_config.get_data_matrix_name()
         if not self.split_datasets.get(dataset_matrix_name):
             self.split_datasets[dataset_matrix_name] = 0
 
         index = self.split_datasets[dataset_matrix_name]
-        self.split_datasets[dataset_matrix_name] += 1
 
         data_dir = os.path.join(output_dir, dataset_matrix_name + '_' + str(index))
         return create_dir(data_dir, self.event_dispatcher)

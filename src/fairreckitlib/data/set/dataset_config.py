@@ -111,6 +111,9 @@ class DatasetTableConfig(YmlConfig):
     in which they are specified. These are followed by the columns of relevant data and any foreign
     keys should be in order as the last column(s). However, it is also allowed that the foreign
     keys describe the primary key, but individually rather than the combination of.
+    Moreover, both the values of the primary key and columns are expected to be splittable into two
+    based on the DATASET_SPLIT_DELIMITER. The left split is the prefix (in case of duplicate names
+    across tables) and the right split is the name of the key/column (e.g. user_id and item_id).
 
     primary_key: list of column names that form the primary key of the table.
     foreign_keys: (optional) list of column names that are foreign keys in other tables.

@@ -119,7 +119,7 @@ tables:
     - noPC_children's
     - noPC_punk
     - noPC_alternative
-    - noPC_spoken_word
+    - noPC_spoken word
     - noPC_pop
     - noPC_heavy metal
     file:
@@ -147,7 +147,7 @@ tables:
     - weightedPC_children's
     - weightedPC_punk
     - weightedPC_alternative
-    - weightedPC_spoken_word
+    - weightedPC_spoken word
     - weightedPC_pop
     - weightedPC_heavy metal
     file:
