@@ -8,7 +8,7 @@ matrices:
     idx_user:
       file: user-artist-count_user_indices.hdf5
       key: user_id
-      num_records: 100
+      num_records: 50
     matrix:
       columns:
       - matrix_count
@@ -18,7 +18,7 @@ matrices:
       foreign_keys:
       - user_id
       - artist_id
-      num_records: 485
+      num_records: 339
       primary_key:
       - user_id
       - artist_id
@@ -47,6 +47,6 @@ tables:
     file:
       compression: bz2
       name: LFM-360K_user.tsv.bz2
-    num_records: 100
+    num_records: 50
     primary_key:
     - user_id

@@ -8,7 +8,7 @@ matrices:
     idx_user:
       file: user-artist-count_user_indices.hdf5
       key: user_id
-      num_records: 100
+      num_records: 50
     matrix:
       columns:
       - matrix_count
@@ -18,11 +18,11 @@ matrices:
       foreign_keys:
       - user_id
       - artist_id
-      num_records: 4966
+      num_records: 2439
       primary_key:
       - user_id
       - artist_id
-    rating_max: 3347.0
+    rating_max: 3139.0
     rating_min: 1.0
     rating_type: implicit
 tables:
@@ -47,7 +47,7 @@ tables:
     file:
       compression: bz2
       name: LFM-1B_user.tsv.bz2
-    num_records: 100
+    num_records: 50
     primary_key:
     - user_id
   user additional:
@@ -97,7 +97,7 @@ tables:
     file:
       compression: bz2
       name: LFM-1B_user additional.tsv.bz2
-    num_records: 100
+    num_records: 50
     primary_key:
     - user_id
   user allmusic noPC:
@@ -125,7 +125,7 @@ tables:
     file:
       compression: bz2
       name: LFM-1B_user allmusic noPC.tsv.bz2
-    num_records: 100
+    num_records: 50
     primary_key:
     - user_id
   user allmusic weightedPC:
@@ -153,6 +153,6 @@ tables:
     file:
       compression: bz2
       name: LFM-1B_user allmusic weightedPC.tsv.bz2
-    num_records: 100
+    num_records: 50
     primary_key:
     - user_id

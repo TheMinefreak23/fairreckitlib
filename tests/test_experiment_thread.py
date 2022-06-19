@@ -4,6 +4,7 @@ Functions:
 
     test_experiment_thread_failures: test the experiment thread to run into failures.
     test_experiment_thread_success: test the experiment thread to run successfully.
+    assert_experiment_thread_success: event callback to assert the thread ended successfully.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
@@ -18,7 +19,8 @@ import pytest
 from src.fairreckitlib.core.core_constants import VALID_TYPES
 from src.fairreckitlib.core.threading.thread_processor import ThreadProcessor
 from src.fairreckitlib.data.set.dataset_registry import DataRegistry
-from src.fairreckitlib.experiment.experiment_event import ON_END_EXPERIMENT_THREAD
+from src.fairreckitlib.experiment.experiment_event import \
+    ON_END_EXPERIMENT_THREAD, ExperimentThreadEventArgs
 from src.fairreckitlib.experiment.experiment_factory import create_experiment_factory
 from src.fairreckitlib.experiment.experiment_run import ExperimentPipelineConfig
 from src.fairreckitlib.experiment.experiment_thread import ThreadExperiment
@@ -32,10 +34,10 @@ def test_experiment_thread_failures(
         data_registry: DataRegistry,
         io_tmp_dir: str) -> None:
     """Test the experiment thread to run into failures."""
-    def assert_no_success(_, __, **kwargs) -> None:
+    def assert_no_success(_, event_args: ExperimentThreadEventArgs, **kwargs) -> None:
         """Assert the experiment (result) to have failed."""
-        assert not kwargs['success'], \
-            'expected experiment to fail'
+        assert not kwargs['success'], 'expected experiment to fail'
+        print(event_args.experiment_name, 'has failed')
 
     experiment_factory = create_experiment_factory(data_registry)
 
@@ -85,11 +87,6 @@ def test_experiment_thread_success(
         data_registry: DataRegistry,
         io_tmp_dir: str) -> None:
     """Test the experiment thread to run successfully."""
-    def assert_success(_, __, **kwargs) -> None:
-        """Assert the experiment (result) to have succeeded."""
-        assert kwargs['success'], \
-            'expected experiment to succeed'
-
     experiment_factory = create_experiment_factory(data_registry)
 
     pipeline_config = ExperimentPipelineConfig(
@@ -110,7 +107,7 @@ def test_experiment_thread_success(
 
     experiment_thread = ThreadExperiment(
         'experiment',
-        {ON_END_EXPERIMENT_THREAD: assert_success},
+        {ON_END_EXPERIMENT_THREAD: assert_experiment_thread_success},
         True,
         **{'pipeline_config': pipeline_config}
     )
@@ -119,3 +116,9 @@ def test_experiment_thread_success(
     thread_processor.start(experiment_thread)
     while thread_processor.get_num_active() > 0:
         time.sleep(1)
+
+
+def assert_experiment_thread_success(_, event_args: ExperimentThreadEventArgs, **kwargs) -> None:
+    """Assert the experiment (result) to have succeeded."""
+    assert kwargs['success'], 'expected experiment to succeed'
+    print(event_args.experiment_name, 'finished successfully')
