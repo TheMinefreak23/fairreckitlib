@@ -4,7 +4,7 @@ matrices:
     idx_item:
       file: user-artist-count_item_indices.hdf5
       key: artist_id
-      num_records: 1000
+      num_records: 200
     idx_user:
       file: user-artist-count_user_indices.hdf5
       key: user_id
@@ -18,11 +18,11 @@ matrices:
       foreign_keys:
       - user_id
       - artist_id
-      num_records: 15067
+      num_records: 4966
       primary_key:
       - user_id
       - artist_id
-    rating_max: 5579.0
+    rating_max: 3347.0
     rating_min: 1.0
     rating_type: implicit
 tables:
@@ -34,7 +34,7 @@ tables:
     file:
       compression: bz2
       name: LFM-1B_artist.tsv.bz2
-    num_records: 1000
+    num_records: 200
     primary_key:
     - artist_id
   user:

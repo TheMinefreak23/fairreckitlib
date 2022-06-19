@@ -4,6 +4,7 @@ Functions:
 
     test_run_experiment_pipelines_errors: test experiment pipeline (run) errors.
     test_run_experiment_pipelines: test the experiment pipeline (run) integration.
+    test_resolve_experiment_start_run: test resolving the experiment result's start run.
     create_experiment_config: create experiment type configuration.
 
 This program has been developed by students from the bachelor Computer Science at
@@ -20,6 +21,7 @@ from src.fairreckitlib.core.config.config_factories import GroupFactory
 from src.fairreckitlib.core.core_constants import DEFAULT_TOP_K, DEFAULT_RATED_ITEMS_FILTER, \
     VALID_TYPES, TYPE_PREDICTION, TYPE_RECOMMENDATION
 from src.fairreckitlib.core.events.event_dispatcher import EventDispatcher
+from src.fairreckitlib.core.io.io_create import create_dir, create_json
 from src.fairreckitlib.core.io.io_utility import load_json
 from src.fairreckitlib.data.set.dataset_registry import DataRegistry
 from src.fairreckitlib.evaluation.evaluation_factory import KEY_EVALUATION
@@ -28,7 +30,7 @@ from src.fairreckitlib.experiment.experiment_config import \
 from src.fairreckitlib.experiment.experiment_factory import create_experiment_factory
 from src.fairreckitlib.experiment.experiment_pipeline import ExperimentPipeline
 from src.fairreckitlib.experiment.experiment_run import \
-    ExperimentPipelineConfig, run_experiment_pipelines
+    ExperimentPipelineConfig, run_experiment_pipelines, resolve_experiment_start_run
 from src.fairreckitlib.model.model_factory import KEY_MODELS
 from .conftest import is_always_running
 from .test_data_pipeline import create_data_matrix_config_list
@@ -147,6 +149,32 @@ def test_run_experiment_pipelines(
     overview_json = load_json(overview_json_path)
     assert len(overview_json['overview']) == overview_total, \
         'expected all data-model pairs to be present in the overview result'
+
+
+def test_resolve_experiment_start_run(io_tmp_dir, io_event_dispatcher: EventDispatcher) -> None:
+    """Test resolving the experiment start run in (result) directory."""
+    # test failure for unknown result directory
+    pytest.raises(IOError, resolve_experiment_start_run, os.path.join(io_tmp_dir, 'unknown'))
+
+    assert resolve_experiment_start_run(io_tmp_dir) == 0, \
+        'expected start run to be 0 for no present run directories'
+
+    create_json(os.path.join(io_tmp_dir, 'overview.json'), {}, io_event_dispatcher)
+    assert resolve_experiment_start_run(io_tmp_dir) == 0, \
+        'expected start run to be 0 when skipping existing files'
+
+    create_dir(os.path.join(io_tmp_dir, 'unknown'), io_event_dispatcher)
+    assert resolve_experiment_start_run(io_tmp_dir) == 0, \
+        'expected start run to be 0 when skipping unknown run directories'
+
+    create_dir(os.path.join(io_tmp_dir, 'run_a'), io_event_dispatcher)
+    assert resolve_experiment_start_run(io_tmp_dir) == 0, \
+        'expected start run to be 0 when the run directory does not have a number'
+
+    for i in range(5):
+        create_dir(os.path.join(io_tmp_dir, 'run_' + str(i)), io_event_dispatcher)
+        assert resolve_experiment_start_run(io_tmp_dir) == i + 1, \
+            'expected start run to be resolved'
 
 
 def create_experiment_config(
