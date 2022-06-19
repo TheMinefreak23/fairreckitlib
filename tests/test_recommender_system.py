@@ -221,10 +221,14 @@ def test_recommender_system_abort_experiment(
     print('\nRecommender system aborting', experiment_type, 'experiment tests\n')
     recommender_system = RecommenderSystem(DATASET_DIR, io_tmp_dir)
 
-    experiment_config, _ = create_experiment_config_coverage(
+    experiment_config = create_experiment_config_duplicates(
         experiment_type,
         recommender_system.data_registry,
-        recommender_system.experiment_factory
+        recommender_system.experiment_factory,
+        # high number of duplicates to simulate a long experiment with samples
+        num_data_duplicates=5,
+        num_model_duplicates=10,
+        num_metric_duplicates=20
     )
 
     def assert_is_experiment_aborted(_, event_args: ExperimentThreadEventArgs, **__) -> None:

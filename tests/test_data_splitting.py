@@ -52,7 +52,7 @@ split_kwargs = {KEY_SPLIT_TEST_RATIO: DEFAULT_SPLIT_TEST_RATIO}
 
 # the list of test ratios to test splitting with
 # should be a 0.0 < float < 1.0
-ratios = [MIN_TEST_RATIO, 0.2, 0.5, 0.8, MAX_TEST_RATIO]
+ratios = [MIN_TEST_RATIO, DEFAULT_SPLIT_TEST_RATIO, 1.0 - DEFAULT_SPLIT_TEST_RATIO, MAX_TEST_RATIO]
 
 
 class DummySplitter(DataSplitter):
