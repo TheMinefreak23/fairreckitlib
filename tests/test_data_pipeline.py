@@ -247,7 +247,7 @@ def test_run_data_pipelines(
         io_tmp_dir,
         data_registry,
         create_data_factory(data_registry),
-        create_data_matrix_config_list(data_registry)
+        create_data_matrix_config_list(data_registry, 1)
     )
 
     data_transitions = run_data_pipelines(
@@ -270,23 +270,25 @@ def test_run_data_pipelines(
             'expected saved test set in data transition output directory'
 
 
-def create_data_matrix_config_list(datasets_registry: DataRegistry) -> List[DataMatrixConfig]:
+def create_data_matrix_config_list(
+        datasets_registry: DataRegistry, num_duplicates: int) -> List[DataMatrixConfig]:
     """Create data matrix configuration list for each available dataset matrix."""
     config_list = []
 
-    for dataset_name in datasets_registry.get_available_sets():
-        if not 'Sample' in dataset_name:
-            continue
+    for _ in range(num_duplicates):
+        for dataset_name in datasets_registry.get_available_sets():
+            if not 'Sample' in dataset_name:
+                continue
 
-        dataset = datasets_registry.get_set(dataset_name)
+            dataset = datasets_registry.get_set(dataset_name)
 
-        for matrix_name in dataset.get_available_matrices():
-            config_list.append(DataMatrixConfig(
-                dataset.get_name(),
-                matrix_name,
-                [],
-                ConvertConfig(CONVERTER_RANGE, {'upper_bound': RATING_TYPE_THRESHOLD}),
-                create_default_split_config()
-            ))
+            for matrix_name in dataset.get_available_matrices():
+                config_list.append(DataMatrixConfig(
+                    dataset.get_name(),
+                    matrix_name,
+                    [],
+                    ConvertConfig(CONVERTER_RANGE, {'upper_bound': RATING_TYPE_THRESHOLD}),
+                    create_default_split_config()
+                ))
 
     return config_list

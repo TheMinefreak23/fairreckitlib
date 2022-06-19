@@ -46,9 +46,9 @@ from src.fairreckitlib.model.algorithms.base_recommender import BaseRecommender,
 from src.fairreckitlib.model.algorithms.lenskit import lenskit_algorithms
 from src.fairreckitlib.model.algorithms.surprise import surprise_algorithms
 from src.fairreckitlib.model.model_factory import create_model_factory
+from .conftest import NUM_THREADS
 from .test_model_algorithm_matrices import DummyMatrix, create_algo_matrix
 
-NUM_THREADS = 1
 PREDICTION_FRAME_HEADERS = ['user', 'item', 'prediction']
 REC_FRAME_HEADER_SINGLE = ['item', 'score']
 REC_FRAME_HEADER_BATCH = ['rank', 'user'] + REC_FRAME_HEADER_SINGLE

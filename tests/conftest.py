@@ -4,6 +4,7 @@ Constants:
 
     DATASET_DIR: the directory to where the dataset samples are stored.
     TMP_DIR: the temporary directory that is used in the io_tmp_dir fixture.
+    NUM_THREADS: the (maximum) number of threads used in the pipeline tests.
 
 Fixtures:
 
@@ -48,6 +49,8 @@ from src.fairreckitlib.model.pipeline.model_event import \
 
 DATASET_DIR = os.path.join('tests', 'datasets')
 TMP_DIR = os.path.join('tests', 'tmp')
+
+NUM_THREADS = 1
 
 
 @pytest.fixture(scope='package', name='data_registry')
