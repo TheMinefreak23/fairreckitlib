@@ -168,6 +168,9 @@ def test_recommender_system_validate_experiment(
         num_metric_duplicates=1
     )
 
+    # test failure when the previously computed experiment does not exist
+    pytest.raises(IOError, recommender_system.validate_experiment, experiment_config.name, 1)
+
     yml_path = os.path.join(io_tmp_dir, experiment_config.name + '_config')
     create_yml(yml_path + '.yml', experiment_config.to_yml_format(), io_event_dispatcher)
     # run through yml covers integration as well
@@ -182,7 +185,7 @@ def test_recommender_system_validate_experiment(
         'expected the experiment computation to have started'
 
     # test failure to validate experiment that is currently being computed
-    pytest.raises(IOError, recommender_system.validate_experiment, experiment_config.name, 1)
+    pytest.raises(KeyError, recommender_system.validate_experiment, experiment_config.name, 1)
 
     # wait for the experiments to finish
     while recommender_system.thread_processor.get_num_active() > 0:
@@ -281,6 +284,9 @@ def test_recommender_system_availability(
 
     for available_name, func_available in available_funcs:
         availability = func_available()
+        # integration check to verify everything is still available
+        assert len(availability) > 0, 'expected availability'
+
         # assert availability with JSON (which implies compatibility with YML as well)
         json_path = os.path.join(io_tmp_dir, 'available_' + available_name + '.json')
         create_json(json_path, availability, io_event_dispatcher)
