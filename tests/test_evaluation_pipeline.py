@@ -186,7 +186,7 @@ def test_run_evaluation_pipelines(
 
             model_dirs.append(model_dir)
 
-        metric_config_list = create_metric_config_list(eval_type_factory)
+        metric_config_list = create_metric_config_list(eval_type_factory, 1)
 
         pipeline_config = EvaluationPipelineConfig(
             model_dirs,
@@ -217,18 +217,20 @@ def test_run_evaluation_pipelines(
             delete_file(eval_json_path, eval_event_dispatcher)
 
 
-def create_metric_config_list(eval_type_factory: GroupFactory) -> List[MetricConfig]:
+def create_metric_config_list(
+        eval_type_factory: GroupFactory, num_duplicates: int) -> List[MetricConfig]:
     """Create a metric configuration for all available metrics in the factory."""
     metric_config_list = []
-    for metric_category_name in eval_type_factory.get_available_names():
-        metric_category_factory = eval_type_factory.get_factory(metric_category_name)
+    for _ in range(num_duplicates):
+        for metric_category_name in eval_type_factory.get_available_names():
+            metric_category_factory = eval_type_factory.get_factory(metric_category_name)
 
-        for metric_name in metric_category_factory.get_available_names():
-            metric_config_list.append(MetricConfig(
-                metric_name,
-                metric_category_factory.create_params(metric_name).get_defaults(),
-                None
-            ))
+            for metric_name in metric_category_factory.get_available_names():
+                metric_config_list.append(MetricConfig(
+                    metric_name,
+                    metric_category_factory.create_params(metric_name).get_defaults(),
+                    None
+                ))
 
     return metric_config_list
 

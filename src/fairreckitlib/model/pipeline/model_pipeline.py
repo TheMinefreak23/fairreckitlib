@@ -4,10 +4,6 @@ Classes:
 
     ModelPipeline: class that batches multiple model computations for a specific API.
 
-Functions:
-
-    write_computed_ratings: append computed ratings to a result file.
-
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
@@ -315,7 +311,7 @@ class ModelPipeline(CorePipeline, metaclass=ABCMeta):
         Returns:
             the path of the directory where the model's computed ratings can be stored.
         """
-        if self.tested_models.get(model_name, True):
+        if self.tested_models.get(model_name) is None:
             # initialize model name counter
             self.tested_models[model_name] = 0
 
