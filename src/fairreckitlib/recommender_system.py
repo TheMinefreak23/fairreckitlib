@@ -11,6 +11,7 @@ Utrecht University within the Software Project course.
 
 import errno
 import os
+import time
 from typing import Any, Dict, Callable, List, Union
 
 from .core.threading.thread_processor import ThreadProcessor
@@ -157,6 +158,9 @@ class RecommenderSystem:
                 num_threads
             )
         ))
+
+        # delay so the experiment can start up
+        time.sleep(0.1)
 
         return True
 
