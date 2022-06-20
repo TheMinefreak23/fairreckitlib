@@ -24,6 +24,7 @@ Modules:
     test_data_splitting_config: test the formatting/parsing of the dataset splitting config.
     test_data_subset_config: test the formatting/parsing of the data subset configuration.
     test_dataset: test the dataset wrapper functionality of the dataset configuration.
+    test_dataset_config: test the formatting/parsing of a dataset configuration.
     test_evaluation_config: test the formatting/parsing of the eval config of the experiment.
     test_evaluation_factory: test the evaluation (type/category) factories.
     test_evaluation_metrics: test the interface of metrics.

@@ -27,6 +27,7 @@ Utrecht University within the Software Project course.
 
 import os
 
+import numpy as np
 import pytest
 
 from src.fairreckitlib.core.events.event_args import EventArgs
@@ -46,6 +47,9 @@ from src.fairreckitlib.experiment.experiment_event import \
     get_experiment_events, get_experiment_print_switch
 from src.fairreckitlib.model.pipeline.model_event import \
     get_model_events, get_model_event_print_switch
+
+if np.__config__.get_info('openblas_info') and os.environ.get('OPENBLAS_NUM_THREADS') != '1':
+    os.environ['OPENBLAS_NUM_THREADS'] = '1'
 
 DATASET_DIR = os.path.join('tests', 'datasets')
 TMP_DIR = os.path.join('tests', 'tmp')
