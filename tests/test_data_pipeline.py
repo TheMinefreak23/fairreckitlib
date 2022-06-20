@@ -57,7 +57,7 @@ def test_data_pipeline_io_errors(
         io_tmp_dir,
         'dataset',
         matrix_name,
-        DatasetFileConfig('unknown.tsv', FileOptionsConfig(None, None, None, False, False))
+        DatasetFileConfig('unknown.tsv', FileOptionsConfig(None, None, None, False))
     )
 
     # test load from dataset failure
@@ -214,7 +214,7 @@ def test_run_data_pipelines_failures(
         io_tmp_dir,
         dataset_name,
         matrix_name,
-        DatasetFileConfig('unknown.tsv',FileOptionsConfig(None, None, None, False, False))
+        DatasetFileConfig('unknown.tsv',FileOptionsConfig(None, None, None, False))
     )
     # add dummy dataset to the data registry temporarily
     data_registry.registry[dataset_name] = dataset

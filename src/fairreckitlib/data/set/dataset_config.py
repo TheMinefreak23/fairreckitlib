@@ -36,7 +36,7 @@ from .dataset_constants import KEY_MATRIX, KEY_IDX_ITEM, KEY_IDX_USER
 from .dataset_constants import KEY_DATASET, KEY_EVENTS, KEY_MATRICES, KEY_TABLES
 from .dataset_constants import TABLE_KEY, TABLE_PRIMARY_KEY, TABLE_FOREIGN_KEYS, TABLE_COLUMNS
 from .dataset_constants import TABLE_FILE, TABLE_COMPRESSION, TABLE_ENCODING
-from .dataset_constants import TABLE_HEADER, TABLE_INDEXED, TABLE_NUM_RECORDS, TABLE_SEP
+from .dataset_constants import TABLE_HEADER, TABLE_NUM_RECORDS, TABLE_SEP
 
 DATASET_RATINGS_EXPLICIT = 'explicit'
 DATASET_RATINGS_IMPLICIT = 'implicit'
@@ -50,14 +50,12 @@ class FileOptionsConfig(YmlConfig):
     compression: the (optional) compression of the file.
     encoding: the encoding of the file or None for 'utf-8'.
     header: is there a header on the first line of the file.
-    indexed: are the row indices the table's primary key.
     """
 
     sep: Optional[str]
     compression: Optional[str]
     encoding: Optional[str]
     header: bool
-    indexed: bool
 
     def to_yml_format(self):
         """Format file settings configuration to a yml compatible dictionary.
@@ -69,8 +67,6 @@ class FileOptionsConfig(YmlConfig):
 
         if self.header:
             yml_format[TABLE_HEADER] = self.header
-        if self.indexed:
-            yml_format[TABLE_INDEXED] = self.indexed
         if self.sep is not None:
             yml_format[TABLE_SEP] = self.sep
         if self.compression is not None:
@@ -147,9 +143,7 @@ class DatasetTableConfig(YmlConfig):
         Returns:
             the resulting table (iterator).
         """
-        names = self.columns
-        if not self.file.options.indexed:
-            names = self.primary_key + names
+        names = self.primary_key + self.columns
         if self.foreign_keys is not None:
             names += [key for key in self.foreign_keys if key not in self.primary_key]
 
@@ -419,7 +413,6 @@ def create_dataset_table_config(
         encoding: str=None,
         foreign_keys: List[str]=None,
         header: bool=False,
-        indexed: bool=False,
         num_records: int=0,
         sep: str=None) -> DatasetTableConfig:
     """Create a dataset table configuration.
@@ -432,7 +425,6 @@ def create_dataset_table_config(
         encoding: the encoding for reading/writing the table contents or None for 'utf-8'.
         foreign_keys: (optional) list of column names that are foreign keys in other tables.
         header: whether the table file contains a header on the first line.
-        indexed: are the row indices the table's primary key.
         num_records: the number of records in the table.
         sep: the delimiter that is used in the table or None for a tab separator.
 
@@ -450,8 +442,7 @@ def create_dataset_table_config(
                 sep,
                 compression,
                 encoding,
-                header,
-                indexed
+                header
             )
         )
     )

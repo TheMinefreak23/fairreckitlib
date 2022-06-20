@@ -1,0 +1,1000 @@
+1	A Matter of Time	3
+2	Hangar 18	1
+3	Up the Downstair	4
+4	Mr. Carter (Featuring Jay-Z)	2
+5	Mixtaped	5
+6	Sounds that I Hear	6
+7	Light Fuse And Get Away	7
+8	Tornado Of Souls	1
+9	Varyags of Miklagaard	8
+10	The Pursuit Of Vikings	8
+11	Drzwi 01	9
+12	Live for the Kill	8
+13	Cry of the Black Birds	8
+14	That Was Then	10
+15	Holyground	11
+16	Metalingus	12
+17	Ready To Go (feat. Lil Wayne)	13
+18	(bluecoda)	5
+19	Fire It Up!	13
+20	Destroy The Orcs	14
+21	Paliwoda	15
+22	Pancerz	15
+23	Popołudnia bezkarnie cytrynowe	9
+24	Jump They Say	16
+25	Psy, krowy i kapusta	15
+26	Buraki	15
+27	Monopol	15
+28	Najważniejsze	17
+29	koza	15
+30	Rakieta	15
+31	Klocki	15
+32	Bagno	15
+33	Baba i dziad	15
+34	Baleron w kartoflach pod keczupem	15
+35	Dobranocka	15
+36	The Damage Done	12
+37	Sacrificed Sons	7
+38	The World Is Yours (B-Side)	18
+39	Slip To The Void	12
+40	ZamkniÄ™te gĹ‚Ăłwki	15
+41	Wampirzyca	15
+42	Chmurki	15
+43	Margaryna	15
+44	The Jean Genie	16
+45	Czołg	15
+46	Mordy	15
+47	Reality Dream III	19
+48	Zupa kalafiorowa	15
+49	Klaun	15
+50	Once	20
+51	Buda Dla Azora	15
+52	Nie   Więcej	17
+53	Sick and Tired	21
+54	Klepsydra	22
+55	Haydamaka (Bonus Track)	23
+56	Visionism	23
+57	Under the Mask	23
+58	Steiner	23
+59	The Ministry	23
+60	Alive	23
+61	Złoty	22
+62	Follow the Spirit	23
+63	Open Insurrection	24
+64	The End of the Beginning	25
+65	Ordery Chwały	26
+66	Realize	23
+67	Timeless	23
+68	Freedom	23
+69	Frozenthal	23
+70	Closer	23
+71	Your Eyes Girl	27
+72	Brand New Start	12
+73	The Depth of Self-Delusion	19
+74	Fall to Pieces	28
+75	Living in the Cage	23
+76	Venture	23
+77	Intro	23
+78	Caje Sukarije	23
+79	Pistol Grip Pump	29
+80	Grace for Drowning	30
+81	I Drive the Hearse	4
+82	Circle of Manias	4
+83	The Seance	4
+84	Little Wing_Third Stone from the Sun (live) [1984]	31
+85	Empty Arms [1984]	31
+86	Crystalised	32
+87	Octane Twisted	4
+88	Couldn't Stand The Weather	31
+89	Scuttle Buttin' [1984]	31
+90	Degree Zero of Liberty	4
+91	Time Flies	4
+92	Silent Wars	33
+93	The Yellow Windows of the Evening Train	4
+94	Havenless	34
+95	Your Unpleasant Family	4
+96	The Incident	4
+97	In the Name of Blood	35
+98	Drawing the Line	4
+99	Kneel and Disconnect	4
+100	The Sentinel (Judas Priest cover)	36
+101	Mr. Crowley	37
+102	Great Expectations	4
+103	Warcurse	38
+104	The Blind House	4
+105	Violent Revolution	38
+106	Twoja generacja	39
+107	Pijawki	15
+108	Occam’s Razor	4
+109	Where We Would Be	4
+110	Fallout	12
+111	Sunrise In Aries	25
+112	Jagoda	15
+113	Motyl	15
+114	Time	40
+115	The Sky Moves Sideways	4
+116	Magpies on Fire	27
+117	Darkness and Frost	40
+118	Land of Snow and Sorrow	40
+119	Sons of Winter and Stars	40
+120	Summer Moved On	11
+121	When Time Fades Away	40
+122	Rivers	41
+123	You're the Biggest Thing Since Powdered Milk	42
+124	Sentimental	4
+125	Silent Scream	43
+126	How It Ends	27
+127	Blind	44
+128	South Of Heaven	43
+129	Like Dust I Have Cleared From My Eye	30
+130	Angel of Death	43
+131	Naïve	45
+132	Violet Hill	46
+133	Jihad	43
+134	Ambulance Chasing	4
+135	Sunrise	47
+136	Turn Around	48
+137	Concealing Fate Part Six - Origin	47
+138	Artificial Smile	19
+139	Concealing Fate Part Five - Epiphany	47
+140	Boundless Ignorance	41
+141	Concealing Fate Part Four - Perfection	47
+142	Love Ain't Here Anymore (U.S. Version)	49
+143	Concealing Fate Part Three - The Impossible	47
+144	Offworld	50
+145	Concealing Fate Part Two - Deception	47
+146	Concealing Fate Part One - Acceptance	47
+147	Go to Hell	20
+148	4  Pory	17
+149	This Guy's In Love With You (B-Side)	18
+150	Everything To Nothing	51
+151	Let's Dance	16
+152	[sic!]	17
+153	Pea   Sorela	17
+154	Some Pain Will Last	38
+155	When Everything Dies/Halo Of Flies	25
+156	Slave machinery	38
+157	Reconquering The Throne	38
+158	Woda leży pod powierzchnią	9
+159	Dissolving With the Night	20
+160	People of the Lie	38
+161	Not Beautiful Anymore	4
+162	Z   Rejestru   Strasznych   Snów	17
+163	Hordes Of Chaos	38
+164	Electric Eye	52
+165	100 tysięcy jednakowych miast	9
+166	Returning Jesus	5
+167	The Hellion	52
+168	What You Are Listening To	4
+169	May I?	53
+170	Learning to Fly	54
+171	Postcard	30
+172	No Part of Me	30
+173	Fade to Black	55
+174	From Out of Nowhere	18
+175	Insurgentes (Mexico)	30
+176	Leper Messiah	55
+177	Gravity of Love	48
+178	Disposable Heroes	55
+179	Heaven Taste (edit)	5
+180	Hanalei	27
+181	Revolution Is My Name	56
+182	My Songs Know What You Did in the Dark (Light Em Up)	57
+183	Keep Talking	54
+184	Eleven	4
+185	Lover	12
+186	Wanderings	58
+187	Never Divide	24
+188	Silent Night, Bodom Night	59
+189	Romans   Petitem	17
+190	Street Fighting Man	29
+191	Evidence	18
+192	Hellraiser	37
+193	Believer	37
+194	La mala educacion	9
+195	Cat Scratch Fever	56
+196	Hyperactive	19
+197	Cover Version III	30
+198	Good Day To Die	60
+199	Out on a Limb	58
+200	Volte-face	19
+201	Abracadabra	22
+202	Willie the Pimp	62
+203	Tylko	63
+204	MMG Untouchable	61
+205	Prelud deszczowy	17
+206	Willie the Wimp (live) [1987]	31
+207	Let Me Love You Baby (live) [1990]	31
+208	Wall of Denial	31
+209	Nie ma Joozka	9
+210	Drive Home	30
+211	Mesmer I	4
+212	Delightful Suicide	4
+213	Goin' Down (live) [& Jeff Beck; 1989]	31
+214	Child in Time	64
+215	Empty Arms	31
+216	Scuttle Buttin'	31
+217	A Deafening Distance	25
+218	In My Place	46
+219	Adrenaline	65
+220	Na pół	9
+221	Walker	5
+222	Hotel California	66
+223	Get Off, Get Out	67
+224	All Sweet Things	5
+225	DOLLY	17
+226	Nemesis Voices	68
+227	Hunting Song	69
+228	Kick Out the Jams	29
+229	Rege	70
+230	Famine	71
+231	Adrenaline (zaycev.net)	65
+232	Armistice	24
+233	Glasgow Kiss	72
+234	Satch Boogie	73
+235	Dancing With the Moonlit Knight	74
+236	(Oh) Pretty Woman	75
+237	Weakness	71
+238	Siren	4
+239	Intruder	75
+240	Peace Is Broken	12
+241	Cathedral	75
+242	Maggie's Farm	29
+243	House Of Pain	75
+244	Words Darker Than Their Wings	12
+245	A Thousand Petals	76
+246	Girl Gone Bad	75
+247	Show Me A Sign	12
+248	I'll Wait	75
+249	Hot For Teacher	75
+250	Drop Dead Legs	75
+251	I Know It Hurts	12
+252	Wonderful Life	12
+253	Make It Right	12
+254	Still Remains	12
+255	Top Jimmy	75
+256	Panama	75
+257	1984	75
+258	Mary Had a Little Lamb (Live)	31
+259	All Hope Is Gone	12
+260	Boilermaker [1985]	31
+261	Ghost Of Days Gone By	12
+262	These Blues Is Killing Me [with A.C. Reed; 1984]	31
+263	Isolation	12
+264	Texas Flood	77
+265	The Sound of Muzak	4
+266	01 - The House Is Rockin'	31
+267	Chelsea Cap	5
+268	River	78
+269	Travis Walk	31
+270	Gas Panic	79
+271	Battery	55
+272	Comfortably Numb	54
+273	Mobile	28
+274	A Great Day for Freedom	54
+275	Cinder Tin	80
+276	Bring the Boys Back Home	54
+277	Vera	54
+278	Nobody Home	54
+279	Is There Anybody Out There?	54
+280	The Time Beneath the Sky: Credo I	81
+281	W   Imieniu   Dam	17
+282	No Romance (Who's Next)	83
+283	Hey You	54
+284	Behind Closed Eyes	82
+285	Goodbye Cruel World	54
+286	Iron Man	85
+287	Master of Puppets	55
+288	Mandatory Suicide	43
+289	Tick Tick Boom	86
+290	The Look	84
+291	Bark at the Moon	37
+292	Made of Tears	73
+293	Wait for Sleep	7
+294	Unbroken Shiver	87
+295	The West Coast	88
+296	Sectarian	30
+297	Vodka	69
+298	Holy Diver	89
+299	Akasha	90
+300	Slow Ride	91
+301	Don't Talk to Strangers	92
+302	Godsmack	93
+303	Push	92
+304	.3	4
+305	Radioactive Toy	4
+306	Master Of The Moon	92
+307	Feel Like Falling	19
+308	Mr. Scary	94
+309	Buying New Soul	4
+310	Kill Your Heroes	95
+311	Thunderhorse	96
+312	Antares	50
+313	Starstruck	97
+314	Run With the Wolf	97
+315	Dancing river bar	50
+316	Mesmerized	50
+317	A Postcard From Offworld	50
+318	Chandelier	50
+319	Land	50
+320	Tarot Woman	97
+321	Hiperprzestrzen	50
+322	Can't Play Dead (zaycev.net)	98
+323	Money Maker	99
+324	Ritchie Blackmore's Rainbow	97
+325	Mama, I'm Coming Home	37
+326	Yesterday	100
+327	Diggin’ Me Down	37
+328	Gwiazdozbiory	9
+329	In Love Dying	27
+330	My Jekyll Doesn't Hide	37
+331	Eclipse	54
+332	Brain Damage	54
+333	Białe krowy	9
+334	Waiting Phase One	4
+335	Any Colour You Like	54
+336	In My Eyes	29
+337	Us and Them	54
+338	Your Life	41
+339	Money	54
+340	Zodiac	25
+341	The Great Gig in the Sky	54
+342	Time	54
+343	On the Run	54
+344	Breathe	54
+345	Speak to Me	54
+346	Blackbird	12
+347	DNA	20
+348	Piano Lessons	4
+349	A Light In The Black	97
+350	The Fletcher Memorial Home	54
+351	Track One	30
+352	Stargazer	97
+353	Do You Close Your Eyes	97
+354	Hybrid Times	19
+355	Гинеколог	101
+356	Na Luzie	63
+357	Ścieżka Audio 03	4
+358	Wish You Were Here	54
+359	This Is Life	102
+360	Zaprzepaszczone siły wielkiej armii świętych znaków	9
+361	Scary Monsters (& Super Creeps)	16
+362	Blackest Eyes	4
+363	Deadwing	4
+364	Mędzy Piekłem A Niebem	22
+365	Bordeaux	22
+366	Half-Light	4
+367	Pozwól mi	26
+368	Rainbow in the Dark	92
+369	Harmony Korine	30
+370	The City in a Hundred Ways	5
+371	How I Wanna Be	6
+372	Over The Treetops	11
+373	We Rock	92
+374	Miracle	44
+375	Dream On	103
+376	The Man Who Sold the World	16
+377	Intermediate Jesus	4
+378	City Zen	41
+379	Dance With the Shadow	19
+380	We Got Used To Us	19
+381	Jupiter	20
+382	Mistreated	97
+383	Kill the King	97
+384	Kto   Tam?   Kto   Jest   W   Środku?	17
+385	Gates of Babylon	97
+386	Boję   Się  O   Nas	17
+387	Little James	79
+388	Niech Tańczą Aniołowie	26
+389	01. daje wam ogien	26
+390	Drzewa	26
+391	Salvaging	30
+392	Act of Desperation	104
+393	Enter the Maze	104
+394	Amaranthine	104
+395	Unholy Confessions	105
+396	Prince Igor	107
+397	Cyan	22
+398	King of the Kill	106
+399	On the Plane	20
+400	Loss	25
+401	If	41
+402	Housekeeping	5
+403	Tidal	108
+404	Party All The Time (Japanese Bonus Track)	59
+405	Silent Scream	59
+406	Hate Crew Deathroll	59
+407	Lil' Bloodred Ridin' Hood	59
+408	You're Better Off Dead	59
+409	Triple Corpse Hammerblow	59
+410	Walk	3
+411	Alaska	109
+412	Trains	4
+413	Silence	102
+414	Angels Don't Kill	59
+415	Bodom Beach Terror	59
+416	Politik	46
+417	Chokehold (Cocked 'n' Loaded)	59
+418	Roszpunka	22
+419	Sixpounder	59
+420	Sound and Vision	16
+421	Needled 24/7	59
+422	Die Motherfucker Die	110
+423	Empress	111
+424	From the Ashes	111
+425	Things I Want	112
+426	Bad Blood	113
+427	Heroes	16
+428	Love Of Your Life	27
+429	Glass House	20
+430	An Empty Box	4
+431	Stars Die	4
+432	Skumfuk	114
+433	Never Neverland	106
+434	Stonewall	106
+435	Sixes and Sevens	106
+436	Road to Ruin	106
+437	Tales From Under the Tree	102
+438	The Fun Palace	106
+439	Phantasmagoria	106
+440	Yellow	46
+441	Los cebula i krokodyle łzy	9
+442	Opium	109
+443	End of the World	20
+444	We Never Change	46
+445	Tribute	115
+446	Never Enough	7
+447	No Reason to Live, No Reason to Die	4
+448	Third Eye Surfer	4
+449	Only Child	30
+450	The Road	115
+451	Shine on You Crazy Diamond (Part I)	54
+452	Spiderman	115
+453	My Biznitch is the Shiznit	115
+454	Karate Schnitzel	115
+455	Bike	54
+456	Miłość! Uwaga! Ratunku! Pomocy!	17
+457	Nóż	63
+458	Always Never	4
+459	Blackfield	20
+460	Fala	22
+461	These Walls	7
+462	Lee	115
+463	Friendship	115
+464	Double Team	115
+465	School of Rock	116
+466	I'm the Only Gay Eskimo	115
+467	Mine	102
+468	Needles in My Brain	102
+469	Xennomorph	50
+470	Normal	4
+471	Rock Your Socks	115
+472	One Note Song	115
+473	Marijuanaville	117
+474	Dio	115
+475	Kickapoo	115
+476	Beelzeboss (The Final Showdown)	115
+477	09 Unit 09 Day 2 MODEL DIALOGUE 2	118
+478	Velvet	119
+479	Kissed by the Devil	20
+480	Another Brick in the Wall (Part 3)	54
+481	The Last Few Bricks	54
+482	Young Lust	54
+483	The Only Fool Is Me	20
+484	Firefly	20
+485	What Shall We Do Now	54
+486	War Pigs	85
+487	TV Crimes	85
+488	Lonely Is the Word	85
+489	Sense of Insanity	20
+490	X-Ray	20
+491	Springtime	20
+492	Voodoo	85
+493	Blinded in Chains	105
+494	Burn It Down	105
+495	Beast and the Harlot	105
+496	Pills	20
+497	After the Rain	20
+498	Faking	20
+499	Lost Souls	20
+500	Bad Blood (zaycev.net)	113
+501	White Lie	120
+502	Starrider	120
+503	Circle Line	121
+504	My Happy Ending	28
+505	Juke Box Hero	120
+506	I Want to Know What Love Is	120
+507	Kuźnia	119
+508	Talisman	90
+509	Hallogallo	4
+510	Lateral Noise	25
+511	Dyskoteki	9
+512	Byłabym	17
+513	Hot Blooded	120
+514	Double Vision	120
+515	Yes!	46
+516	Cold as Ice	120
+517	Incommunicado	122
+518	Surrogate People	123
+519	Wojtek	63
+520	Landscare	4
+521	Trujące rośliny	9
+522	Everything	67
+523	Driven To Destruction	19
+524	Deprived (Irretrievably Lost Imagination)	19
+525	Escalator Shrine	19
+526	Celebrity Touch	19
+527	Times Like These	3
+528	Take It Easy	66
+529	Borrowed Time	124
+530	Helpless	124
+531	Bible Black	85
+532	New Generation Slave	19
+533	Left Out	19
+534	Die Young	85
+535	Heaven and Hell	85
+536	Children of the Sea	85
+537	Egoist Hedonist	19
+538	The Pin Drop	30
+539	Tumor	102
+540	Fear of a Blank Planet	4
+541	The down on the chandelier	50
+542	Epic	18
+543	Neon Knights	85
+544	Plague Of Objects	125
+545	The Seventh Cavalry	125
+546	The Illuminaught	125
+547	Taka Dupa	126
+548	Waiting	4
+549	In Formaldehyde	4
+550	R'n'R	18
+551	Here	4
+552	Harmony Korine (David A. Sitek	30
+553	The Spectator	125
+554	Heirs to Thievery	125
+555	The Carrion Call	125
+556	Fed To The Wolves	125
+557	This Long Silence	4
+558	Beautiful Songs You Should Know	5
+559	Man's World	127
+560	Signify	4
+561	Cry Wolf	11
+562	Porcelain	108
+563	Summer	20
+564	Push The Limits	48
+565	Embracing Extinction	125
+566	Sadistic Magician	128
+567	Schism	129
+568	Rising Force	130
+569	Drown With Me	4
+570	10538 Overture	131
+571	All the Blue Changes	5
+572	Speed Of Light	6
+573	Safe Like You	6
+574	Magic And Mayhem(Instr.)	130
+575	Life On Mars?	16
+576	Arriving Somewhere but Not Here	4
+577	Cierń	63
+578	Sound Of Muzak	4
+579	Fury	130
+580	Seven Nation Army	132
+581	Bullet in the Head	29
+582	Technical Difficulties	133
+583	I Like the Way	134
+584	Turnaround	135
+585	Minor Earth Major Sky	11
+586	Na pogrzeb króla	136
+587	Telephone (feat. Beyoncé)	137
+588	Swampwar	138
+589	Bitter Metallic Side	138
+590	Rust Never Sleeps	138
+591	Remenissions	105
+592	Beatiful	139
+593	God Save the Queen	140
+594	Can't Stop	27
+595	Serendipity	104
+596	Director's Cut	104
+597	Call Out My Name	104
+598	It's All About Me (Rain)	104
+599	Forever and a Day	141
+600	Chat, chat	22
+601	Tired Of Being Sorry	142
+602	Come Back	3
+603	My Transition	104
+604	Automatic	104
+605	Best of You	3
+606	1.000.000 Lightyears	104
+607	Hunger	104
+608	Leave Everything Behind	104
+609	Universal Love	143
+610	Touching The Golden Cloud	143
+611	S.W.I.S. Song	143
+612	Message From Atlantis	143
+613	Prana	90
+614	Oxygen	20
+615	Pain	20
+616	Lullaby	20
+617	Scars	20
+618	Zostań Ze Mną	144
+619	Przepraszam za miłość	144
+620	Cisza W Jej Domu	22
+621	Burning My Soul	7
+622	Wiara nadzieja milosc	26
+623	Minor Thing	27
+624	Is...Not	4
+625	Czerwone wino	22
+626	Midnight Flyer	66
+627	Bodyrock	145
+628	If	27
+629	(The Symphony of) Blasé	146
+630	Destroying Angel	147
+631	These Days	3
+632	Monarchy of Roses	27
+633	11 Someday	20
+634	Keyboard Solo	7
+635	Behind the Eyelids	19
+636	Adubi	63
+637	Boum-Boum (Enigma Radio Edit)	48
+638	Crazy Little Thing Called Love	140
+639	Euphoria!	143
+640	Vodoo People (Prodigy cover)	143
+641	Magic Box	143
+642	Journey Through the Hidden Gardens, Part One	143
+643	Energy Of Consciousness	143
+644	Cosmic Mother	143
+645	AUM	143
+646	A Rush of Blood to the Head	46
+647	solą w oku	63
+648	The Summers Of Our Youth	11
+649	Morphing Thru Time	48
+650	Under Pressure	140
+651	I'm Down	148
+652	Rape Me	135
+653	The Road (zaycev.net)	44
+654	What It Takes	148
+655	Świadkowie schyłku czasu królestwa wiecznych chłopców	9
+656	Dancing With Endless Love	143
+657	Lucifer's Dance	143
+658	Shortcut	143
+659	Open Arms	149
+660	Mother, Father	149
+661	Dead Or Alive	149
+662	Sleep of No Dreaming	4
+663	Lay It Down	149
+664	There in the Silence	150
+665	Paintbox	151
+666	Tomorrow	28
+667	I Saved The World Today	152
+668	Ming's Theme (In The Court Of Ming The Merciless)	140
+669	A Kind of Magic	140
+670	Coming Down	102
+671	Mayday	90
+672	Angelene	17
+673	Light Of Your Smile (Deep Version)	48
+674	The Small Print	153
+675	Lovers in Japan (acoustic)	46
+676	No Time Inside	102
+677	The Unwinding Cable Car	146
+678	Fragile Dreams	67
+679	The Rumor	150
+680	Man in the Mirror	150
+681	The Price You Pay	150
+682	Hall Of The Mountain King	150
+683	Not What You See (New Acoustic Version 2009)	150
+684	Morphine Child	150
+685	Coś	22
+686	Wake Of Magellan	150
+687	The Hourglass	150
+688	Anymore	150
+689	Farther Than The Sun	12
+690	Cry A River	12
+691	Waters Rising	12
+692	Calm The Fire	12
+693	The Uninvited	12
+694	Bleed It Dry	12
+695	Addicted To Pain	12
+696	I Am	150
+697	One Child	150
+698	Chance	150
+699	Handful Of Rain	150
+700	Burden	71
+701	Cry Of Achilles	12
+702	My Wife, My Bitch, My Girl	154
+703	Ghost of Perdition	71
+704	Sever	4
+705	Half Light	4
+706	Cheating the Polygraph	4
+707	The Baying of the Hounds	71
+708	Cemetery Gates	56
+709	Dark Matter	4
+710	I Want to Break Free	140
+711	Fucking Hostile	56
+712	Eskimo	27
+713	A Natural Disaster	67
+714	Close Your Eyes	155
+715	Domination	56
+716	I'll Cast a Shadow	56
+717	It Makes Them Disappear	56
+718	Uplift	56
+719	Death Rattle	56
+720	You've Go To Belong To It	56
+721	Yesterday Don't Mean Shit	56
+722	Goddamn Electric	56
+723	Message in Blood	56
+724	Kick Out the Jams	156
+725	Out Of Myself	19
+726	Still They Ride	149
+727	Keep On Runnin'	149
+728	Who's Crying Now	149
+729	Stone in Love	149
+730	Don't Stop Believin'	149
+731	Happiness	44
+732	Empty	67
+733	Moralne Salto	136
+734	Karą   Będzie   Lęk	17
+735	Alright Alright	157
+736	Fight	158
+737	Blood On Your Hands	33
+738	Whores, Vodka and Lasers	159
+739	Devil Walks	159
+740	137	88
+741	Heroes	79
+742	Figo-Fago	161
+743	Return to Innocence	48
+744	Stay Visible	162
+745	Conceiving You	19
+746	Kibel Ii	26
+747	140	63
+748	Evelyn	44
+749	Spadam	9
+750	W moim kraju	22
+751	The Curse of Castle Dragon	160
+752	Devotion	44
+753	Blood, Tears & Gold	44
+754	Better Than Love	44
+755	The Water	44
+756	Mother Nature	44
+757	Affair	44
+758	Bridge Burning	3
+759	Sweet Child o' Mine	163
+760	Welcome to the Jungle	163
+761	08 - Illusions	164
+762	07 - Full Of Pride	164
+763	04 - Faded Memories	164
+764	06 - Main	164
+765	03 - Towards The Light	164
+766	05 - The Helpless	164
+767	02 - Matter Of Time	164
+768	01 - Signal	164
+769	Wonderful Life	44
+770	Fever Dreams	92
+771	Jak o kamień deszcz	22
+772	Soulfinger	165
+773	Demon a Go-go	165
+774	Caught in the Middle	92
+775	Stund Up And Shout	92
+776	Finnish Medley	166
+777	Into Hiding	166
+778	White Storm	166
+779	Kalevala Melody	166
+780	Warrior's Quest	166
+781	Unspoken	44
+782	Twisted	92
+783	Dragonheads	166
+784	Ogród Półcieni	22
+785	Ate	22
+786	Zmierzch Bogów	22
+787	Lai Lai Hei	166
+788	Czas komety	22
+789	Nero	22
+790	Sunday	44
+791	Stay	44
+792	Silver Lining	44
+793	Illuminated	44
+794	Into Battle	166
+795	Iron	166
+796	Earth Song	22
+797	Smutek Spełnionej Baśni	22
+798	California	22
+799	Tale of Revenge	166
+800	Sword Chant	166
+801	Guardians of Fate	166
+802	Token of Time	166
+803	I Won't See You Tonight (Part	105
+804	Goblin's Dance [bonus track]	166
+805	12 Dni	22
+806	Grzech	22
+807	Jak łzy w deszczu	22
+808	Battle Song	166
+809	Kolana i już	22
+810	Spokój	22
+811	Nocarz	22
+812	Taniec na linie	22
+813	Minor Earth, Major Sky	22
+814	Eternal Wait	166
+815	Treacherous Gods	166
+816	Windrider	166
+817	Abandoned	166
+818	Little Dreamer [väinämöinen part ii]	166
+819	Old Man [väinämöinen]	166
+820	Hero in a Dream	166
+821	Intro	166
+822	Bad Horsie	167
+823	Bludfuk	165
+824	The Velvet Fire	165
+825	I Magnify	165
+826	The Rapture	165
+827	Exithouse	165
+828	Black Wolfgang	22
+829	To muzyka	22
+830	Phantom	22
+831	Na krawędzi	22
+832	Jeszcze Jeden Dzień	22
+833	Czasu coraz mniej	22
+834	The Sadistic Motives Behind Be	168
+835	Maddening Disdain	168
+836	Trapped in a Corner	169
+837	Tie My Hands (featuring Robin Thicke)	2
+838	LA DA DE	170
+839	A New Dawn	171
+840	Biosphere	171
+841	Cisza w moim domu	22
+842	In The Name Of God	7
+843	The Sound of Eight Hooves	8
+844	Prediction of Warfare	8
+845	Forsaken	7
+846	My Avenger	35
+847	Come as You Are	135
+848	Engel	172
+849	Breaking	146
+850	Doin Me	173
+851	Premonition Of Pain	14
+852	This Godless Endeavor	174
+853	A Future Uncertain	174
+854	The Psalm of Lydia	174
+855	Sell My Heart For Stones	174
+856	The Holocaust of Thought	174
+857	Message to Harry Manback II	129
+858	Dark Angel	175
+859	Dreaming Light	67
+860	The Rover - Achilles Last Stand - The Song Remains The Same	7
+861	Storm Corrosion	176
+862	Your World	88
+863	To France	177
+864	Medicated Nation	174
+865	Requiem (PL)	178
+866	Catch Me If You Can	179
+867	Otherside	27
+868	Nienawiść	82
+869	Silent Warrior	48
+870	Blood Of The Rose	180
+871	Love Song	146
+872	Tire Me	29
+873	Exogenesis: Symphony, Pt. 2: Cross-pollination	153
+874	Sentient 6	174
+875	Bittersweet Feast	174
+876	My Acid Words	174
+877	Tinto Brass	4
+878	Final Product	174
+879	Born	174
+880	And All Things Will End	105
+881	Clairvoyant Disease	105
+882	Radiant Eclipse	105
+883	Second Heartbeat	105
+884	Prodigal	4
+885	Champagne Supernova	79
+886	Wonderwall	79
+887	Danny Says	3
+888	Exhausted	3
+889	Cold Day in the Sun	3
+890	Tired Of You	3
+891	Eternal Rest	105
+892	Desecrate Through Reverance	105
+893	Waking the Fallen	105
+894	Chapter Four	105
+895	Y'all Don't Really Know (zaycev.net)	181
+896	Wind Up	3
+897	Next Year	3
+898	On The Mend	3
+899	Erase/Replace	3
+900	Born on the Bayou	3
+901	Another Round	3
+902	Still	3
+903	The Last Song	3
+904	Do What U Like	49
+905	Ziemia obiecana	22
+906	No Brakes	141
+907	Dust In The Wind	182
+908	Pasażer	9
+909	When the Water Breaks	183
+910	Terminal Illusions	184
+911	So Long	155
+912	Death Of The Cocaine Dancer	82
+913	Get the Lead Out	148
+914	Carry Us All	79
+915	Summer '68	54
+916	Sleepless	67
+917	Chyba	17
+918	All Around the World (reprise)	79
+919	Jupiter Island	4
+920	Stone Cold Bush (feat. D.H. Peligro)	27
+921	Sex on Fire	185
+922	Rise	56
+923	Incantations Of The Apprentice	186
+924	Russian Roulette	187
+925	Friend	187
+926	Lock 'n' Load	187
+927	Real Motherfucker (Feat. Boyz N Da Hood)	170
+928	Pathogen	187
+929	Wicked	186
+930	Masquerade '98	186
+931	Villain	188
+932	Bitch Came Back	188
+933	Invisible Man	188
+934	Bad Girlfriend	188
+935	Inferno	186
+936	Roundabout	160
+937	AWAY	189
+938	Ties That Bind	12
+939	Life Must Go On	12
+940	Coeur D’Alene	12
+941	Breathe Again	12
+942	Crystal Ball	190
+943	Cover Version IV	30
+944	The Pretender	3
+945	One Day Remains	12
+946	Coming Home	12
+947	Rise Today	12
+948	Before Tomorrow Comes	12
+949	Buried Alive	12
+950	Open Your Eyes	12
+951	Lyrical Miracle	191
+952	Come To Life	12
+953	Polska	192
+954	Alter Mann	172
+955	Out In L.A. (Demo Version)	27
+956	Black Sunrise	38
+957	Wooden Pints	69
+958	Go Let It Out	79
+959	Shakermaker	79
+960	Critical Mass	148
+961	Stop Swimming	4
+962	The Ytse Jam	7
+963	The Expanding Universe	193
+964	Runaway	122
+965	World Is Round (Part 2)	102
+966	White Room	194
+967	Sole Survivor	194
+968	Glass To The Arson	146
+969	Another One Bites the Dust	140
+970	Pocket Sun	195
+971	Tier	172
+972	Us	19
+973	Kidz	49
+974	We Will Rock You	140
+975	Disappear	196
+976	Never Win (Benny Benassi Remix)	197
+977	Stronger Than All	198
+978	Battery	166
+979	Laid to Rest	51
+980	War In Me	199
+981	Hell	3
+982	Trzymajac sie za rece	39
+983	Halo	36
+984	Black President	200
+985	The Dagger	202
+986	The Phantom Opera Ghost	203
+987	Young'N'Drunk	158
+988	Piece For Hammered Dulcimer And Mellotron Choir	201
+989	Love of My Life	140
+990	Nutshell	93
+991	Flood	129
+992	Body Bags	205
+993	Illusion	206
+994	Like A Bitch	158
+995	Loaded Weapon	158
+996	To Be	204
+997	Too Far Away	158
+998	Jumping Queeny Flash	158
+999	Breaking The Wall	158
+1000	Black'n'Roll	158
