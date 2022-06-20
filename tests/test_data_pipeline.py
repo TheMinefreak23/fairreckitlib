@@ -277,9 +277,6 @@ def create_data_matrix_config_list(
 
     for _ in range(num_duplicates):
         for dataset_name in datasets_registry.get_available_sets():
-            if not 'Sample' in dataset_name:
-                continue
-
             dataset = datasets_registry.get_set(dataset_name)
 
             for matrix_name in dataset.get_available_matrices():
