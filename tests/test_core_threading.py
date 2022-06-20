@@ -55,7 +55,7 @@ class DummyThread(ThreadBase):
     def on_terminate(self) -> None:
         """Terminate the dummy thread."""
         self.terminated = True
-        print(self.get_name() + ' terminated')
+        #print(self.get_name() + ' terminated')
         ThreadBase.on_terminate(self)
 
 
