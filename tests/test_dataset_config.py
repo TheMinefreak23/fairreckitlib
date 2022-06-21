@@ -42,7 +42,7 @@ from src.fairreckitlib.data.set.dataset_constants import \
     KEY_DATASET, KEY_EVENTS, KEY_MATRICES, KEY_TABLES, \
     KEY_MATRIX, KEY_IDX_ITEM, KEY_IDX_USER, KEY_RATING_MIN, KEY_RATING_MAX, KEY_RATING_TYPE, \
     TABLE_KEY, TABLE_PRIMARY_KEY, TABLE_FOREIGN_KEYS, TABLE_COLUMNS, TABLE_FILE, \
-    TABLE_COMPRESSION, TABLE_ENCODING, TABLE_HEADER, TABLE_INDEXED, TABLE_NUM_RECORDS, TABLE_SEP
+    TABLE_COMPRESSION, TABLE_ENCODING, TABLE_HEADER, TABLE_NUM_RECORDS, TABLE_SEP
 
 STRING_LIST = ['a', 'b', 'c', 'd', 'e']
 
@@ -303,11 +303,6 @@ def test_parse_file_options_config_minimal() -> None:
             assert not bool(parser.parse_file_options_config(file_options_config)), \
                 'did not expect parsing to succeed for an incorrect header value'
 
-            # test indexed option failure
-            file_options_config[TABLE_INDEXED] = invalid
-            assert not bool(parser.parse_file_options_config(file_options_config)), \
-                'did not expect parsing to succeed for an incorrect indexed value'
-
     # test success for an empty configuration
     file_options_config = {}
     parsed_options_config = parser.parse_file_options_config(file_options_config)
@@ -362,16 +357,6 @@ def test_parse_file_options_config_valid() -> None:
     assert file_options_config == parsed_options_config.to_yml_format(), \
             'expected formatting FileOptionsConfig to be the same as the original configuration'
 
-    # test success for valid indexed option
-    file_options_config = {TABLE_INDEXED: True}
-    parsed_options_config = parser.parse_file_options_config(file_options_config)
-    assert isinstance(parsed_options_config, FileOptionsConfig), \
-        'expected FileOptionsConfig to be parsed for a configuration with a valid indexed option'
-    assert parsed_options_config.indexed, \
-        'expected parsed indexed option to be the same as the input'
-    assert file_options_config == parsed_options_config.to_yml_format(), \
-            'expected formatting FileOptionsConfig to be the same as the original configuration'
-
 
 def test_parse_dataset_file_config(io_tmp_dir: str) -> None:
     """Test parsing dataset file configuration from a dictionary."""
@@ -385,10 +370,9 @@ def test_parse_dataset_file_config(io_tmp_dir: str) -> None:
     pd.DataFrame().to_csv(os.path.join(io_tmp_dir, file_name))
 
     # test failure for when the file options are not correct
-    for bool_key in [TABLE_HEADER, TABLE_INDEXED]:
-        assert not bool(parser.parse_dataset_file_config(
-            io_tmp_dir, {KEY_NAME: file_name, bool_key: ''})), \
-            'did not expect parsing to succeed for an incorrect file options configuration'
+    assert not bool(parser.parse_dataset_file_config(
+        io_tmp_dir, {KEY_NAME: file_name, TABLE_HEADER: ''})), \
+        'did not expect parsing to succeed for an incorrect file options configuration'
 
     # test success
     file_config = {KEY_NAME: file_name}

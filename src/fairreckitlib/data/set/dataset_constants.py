@@ -14,7 +14,6 @@ TABLE_COLUMNS = 'columns'
 TABLE_COMPRESSION = 'compression'
 TABLE_ENCODING = 'encoding'
 TABLE_HEADER = 'header'
-TABLE_INDEXED = 'indexed'
 TABLE_NUM_RECORDS = 'num_records'
 TABLE_SEP = 'sep'
 

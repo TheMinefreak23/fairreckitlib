@@ -199,9 +199,6 @@ def test_run_model_pipelines(
 
     # test model pipeline for several dataset-matrix pairs and API models
     for dataset_name in data_registry.get_available_sets():
-        if not 'Sample' in dataset_name:
-            continue
-
         for matrix_name in data_registry.get_set(dataset_name).get_available_matrices():
             output_dir = os.path.join(io_tmp_dir, dataset_name + '_' + matrix_name)
             create_dir(output_dir, model_event_dispatcher)

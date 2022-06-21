@@ -33,7 +33,7 @@ from .dataset_constants import KEY_MATRIX, KEY_IDX_ITEM, KEY_IDX_USER
 from .dataset_constants import KEY_RATING_MIN, KEY_RATING_MAX, KEY_RATING_TYPE
 from .dataset_constants import TABLE_KEY, TABLE_PRIMARY_KEY, TABLE_FOREIGN_KEYS, TABLE_COLUMNS
 from .dataset_constants import TABLE_FILE, TABLE_COMPRESSION, TABLE_ENCODING
-from .dataset_constants import TABLE_HEADER, TABLE_INDEXED, TABLE_NUM_RECORDS, TABLE_SEP
+from .dataset_constants import TABLE_HEADER, TABLE_NUM_RECORDS, TABLE_SEP
 from .dataset_config import DatasetIndexConfig, DatasetMatrixConfig, RatingMatrixConfig
 from .dataset_config import DatasetConfig, DatasetFileConfig, DatasetTableConfig, FileOptionsConfig
 from .dataset_config import DATASET_RATINGS_EXPLICIT, DATASET_RATINGS_IMPLICIT
@@ -276,21 +276,11 @@ class DatasetConfigParser:
         if not success:
             return None
 
-        # attempt to parse the optional indexed boolean
-        success, file_indexed = parse_optional_bool(
-            file_config,
-            TABLE_INDEXED,
-            self.event_dispatcher
-        )
-        if not success:
-            return None
-
         return FileOptionsConfig(
             file_sep,
             file_compression,
             file_encoding,
-            file_header,
-            file_indexed
+            file_header
         )
 
     def parse_dataset_file_config(

@@ -120,8 +120,8 @@ class DatasetProcessorLFM(DatasetProcessorBase, metaclass=ABCMeta):
             matrix_it = matrix_table_config.read_table(self.dataset_dir, chunk_size=50000000)
             # process matrix in chunks
             for _, matrix in enumerate(matrix_it):
-                unique_users = pd.Series(unique_users).append(matrix[user_id]).unique()
-                unique_items = pd.Series(unique_items).append(matrix[item_id]).unique()
+                unique_users = pd.Series(unique_users, dtype='int').append(matrix[user_id]).unique()
+                unique_items = pd.Series(unique_items, dtype='int').append(matrix[item_id]).unique()
                 matrix_table_config.num_records += len(matrix)
                 rating_min = min(rating_min, matrix[count_column].min())
                 rating_max = max(rating_max, matrix[count_column].max())
@@ -131,8 +131,8 @@ class DatasetProcessorLFM(DatasetProcessorBase, metaclass=ABCMeta):
         return DatasetMatrixConfig(
             matrix_table_config,
             RatingMatrixConfig(
-                rating_min,
-                rating_max,
+                float(rating_min),
+                float(rating_max),
                 DATASET_RATINGS_IMPLICIT
             ),
             DatasetIndexConfig(

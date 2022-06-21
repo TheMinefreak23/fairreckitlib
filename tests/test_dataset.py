@@ -19,6 +19,7 @@ Functions:
     test_dataset_read_table: test reading the available tables of a dataset.
     test_dataset_resolve_ids: test the index resolving functionality of a dataset.
     test_add_dataset_columns: test adding columns to a dataframe related to a dataset.
+    test_dataset_processors: test the integration of the dataset processors.
     assert_data_table_loading: assert table loading according to a table configuration.
     assert_data_table_and_columns: assert table (type), number of rows and requested columns.
 
@@ -35,10 +36,14 @@ import pytest
 import numpy as np
 import pandas as pd
 
+from src.fairreckitlib.core.events.event_dispatcher import EventDispatcher
+from src.fairreckitlib.core.io.io_delete import delete_file
 from src.fairreckitlib.data.set.dataset import Dataset, add_dataset_columns
 from src.fairreckitlib.data.set.dataset_config import \
     DatasetConfig, DatasetMatrixConfig, DatasetTableConfig, DatasetFileConfig
-from src.fairreckitlib.data.set.dataset_constants import KEY_MATRIX, DATASET_SPLIT_DELIMITER
+from src.fairreckitlib.data.set.dataset_config_parser import DatasetConfigParser
+from src.fairreckitlib.data.set.dataset_constants import \
+    KEY_MATRIX, DATASET_SPLIT_DELIMITER, DATASET_CONFIG_FILE, TABLE_FILE_PREFIX
 from src.fairreckitlib.data.set.dataset_registry import DataRegistry
 
 
@@ -376,6 +381,8 @@ def test_add_dataset_columns(data_registry: DataRegistry) -> None:
 
                 # test success for adding all columns of this table
                 formatted_matrix = add_dataset_columns(dataset, matrix_name, matrix, table_columns)
+                assert len(matrix) == len(formatted_matrix), \
+                    'did not expect new rows to be generated when formatting columns'
                 assert num_matrix_columns + len(table_columns) == len(formatted_matrix.columns), \
                     'expected all columns to be formatted to the matrix'
                 for column in table_columns:
@@ -388,6 +395,8 @@ def test_add_dataset_columns(data_registry: DataRegistry) -> None:
                     num_matrix_columns = len(matrix.columns)
 
                     formatted_matrix = add_dataset_columns(dataset, matrix_name, matrix, [column])
+                    assert len(matrix) == len(formatted_matrix), \
+                        'did not expect new rows to be generated when formatting columns'
                     assert num_matrix_columns + 1 == len(formatted_matrix.columns), \
                         'expected column to be formatted to the matrix'
                     assert column in formatted_matrix.columns, \
@@ -398,11 +407,55 @@ def test_add_dataset_columns(data_registry: DataRegistry) -> None:
                 num_matrix_columns = len(matrix.columns)
 
                 formatted_matrix = add_dataset_columns(dataset, matrix_name, matrix, all_columns)
+                assert len(matrix) == len(formatted_matrix), \
+                    'did not expect new rows to be generated when formatting columns'
                 assert num_matrix_columns + len(all_columns) == len(formatted_matrix.columns), \
                     'expected all columns to be formatted to the matrix'
                 for column in all_columns:
                     assert column in formatted_matrix, \
                         'expected column to be preset in the formatted matrix'
+
+
+def test_dataset_processors(io_event_dispatcher: EventDispatcher) -> None:
+    """Test the integration of the dataset processors."""
+    unprocessed_sets_dir = os.path.join('tests', 'unprocessed_sets')
+    data_registry = DataRegistry(unprocessed_sets_dir)
+
+    for dataset_name in data_registry.get_available_sets():
+        dataset = data_registry.get_set(dataset_name)
+        parser = DatasetConfigParser(True)
+        dataset_config = parser.parse_dataset_config_from_yml(
+            dataset.data_dir, DATASET_CONFIG_FILE, [])
+
+        assert dataset_config == dataset.config, \
+            'expected configuration to be the same after parsing'
+
+    # do the same checks as the sample registry but with the processed sample registry instead
+    test_dataset_available_columns(data_registry)
+    test_dataset_available_event_tables(data_registry)
+    test_dataset_available_matrices(data_registry)
+    test_dataset_available_tables(data_registry)
+    test_dataset_get_matrices_info(data_registry)
+    test_dataset_get_matrix_config(data_registry)
+    test_dataset_get_matrix_file_path(data_registry)
+    test_dataset_get_table_config(data_registry)
+    test_dataset_get_table_info(data_registry)
+    test_dataset_load_matrix(data_registry)
+    test_dataset_load_indices(data_registry)
+    test_dataset_read_matrix(data_registry)
+    test_dataset_read_table(data_registry)
+    test_dataset_resolve_ids(data_registry)
+    test_add_dataset_columns(data_registry)
+
+    # clean up generated processing artifacts
+    for dataset_dir in os.listdir(unprocessed_sets_dir):
+        dataset_dir = os.path.join(unprocessed_sets_dir, dataset_dir)
+        if not os.path.isdir(dataset_dir):
+            continue
+
+        for dataset_file in os.listdir(dataset_dir):
+            if dataset_file.startswith(TABLE_FILE_PREFIX):
+                delete_file(os.path.join(dataset_dir, dataset_file), io_event_dispatcher)
 
 
 def assert_data_table_loading(
