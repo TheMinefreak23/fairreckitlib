@@ -9,13 +9,14 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from ..core.factories import GroupFactory
+from ..core.config.config_factories import GroupFactory
 from ..data.data_factory import create_data_factory
+from ..data.set.dataset_registry import DataRegistry
 from ..evaluation.evaluation_factory import create_evaluation_factory
 from ..model.model_factory import create_model_factory
 
 
-def create_experiment_factory() -> GroupFactory:
+def create_experiment_factory(data_registry: DataRegistry) -> GroupFactory:
     """Create a group factory with all three pipeline factories.
 
     Consists of three factories:
@@ -27,7 +28,7 @@ def create_experiment_factory() -> GroupFactory:
         the group factory containing the pipeline factories.
     """
     experiment_factory = GroupFactory('experiment')
-    experiment_factory.add_factory(create_data_factory())
+    experiment_factory.add_factory(create_data_factory(data_registry))
     experiment_factory.add_factory(create_model_factory())
     experiment_factory.add_factory(create_evaluation_factory())
     return experiment_factory

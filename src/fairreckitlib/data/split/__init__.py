@@ -7,6 +7,7 @@ Modules:
     split_config: splitter configuration class.
     split_config_parsing: parse splitter configuration.
     split_constants: constants to be used in other modules.
+    split_event: event args and a print function for a splitting event.
     split_factory: create splitter factory with available data splitters.
     temporal_splitter: class for splitting on time.
 

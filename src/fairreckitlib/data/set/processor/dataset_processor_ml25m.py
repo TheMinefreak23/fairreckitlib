@@ -50,6 +50,14 @@ class DatasetProcessorML25M(DatasetProcessorML):
             sep=','
         )
 
+    def get_event_configs(self) -> List[Tuple[str, Callable[[], Optional[DatasetTableConfig]]]]:
+        """Get event table configuration processors.
+
+        Returns:
+            a list containing the tag event table processor.
+        """
+        return [('tag', self.process_tag_table)]
+
     def get_table_configs(self) -> List[Tuple[str, Callable[[], Optional[DatasetTableConfig]]]]:
         """Get table configuration processors.
 
@@ -59,8 +67,7 @@ class DatasetProcessorML25M(DatasetProcessorML):
         return [
             ('genome score', self.process_genome_score_table),
             ('genome tag', self.process_genome_tag_table),
-            ('movie', self.process_movie_table),
-            ('tag', self.process_tag_table)
+            ('movie', self.process_movie_table)
         ]
 
     def process_genome_score_table(self) -> Optional[DatasetTableConfig]:
@@ -72,7 +79,7 @@ class DatasetProcessorML25M(DatasetProcessorML):
         genome_score_table_config = create_dataset_table_config(
             'genome-scores.csv',
             ['movie_id', 'tag_id'],
-            ['relevance'],
+            ['movie-tag_relevance'],
             foreign_keys=['movie_id', 'tag_id'],
             header=True,
             sep=','
@@ -150,9 +157,9 @@ class DatasetProcessorML25M(DatasetProcessorML):
 
             # update movie table configuration
             movie_table_config.file.name = TABLE_FILE_PREFIX + self.dataset_name + '_movies.tsv.bz2'
-            movie_table_config.file.sep = None
-            movie_table_config.file.compression = 'bz2'
-            movie_table_config.file.header = False
+            movie_table_config.file.options.sep = None
+            movie_table_config.file.options.compression = 'bz2'
+            movie_table_config.file.options.header = False
             movie_table_config.columns += link_table_config.columns
 
             # store the extended movie table
@@ -161,7 +168,7 @@ class DatasetProcessorML25M(DatasetProcessorML):
         return movie_table_config
 
     def process_tag_table(self) -> Optional[DatasetTableConfig]:
-        """Process the tag table.
+        """Process the tag (event) table.
 
         Returns:
             the tag table configuration or None on failure.

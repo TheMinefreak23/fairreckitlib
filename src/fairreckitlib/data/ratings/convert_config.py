@@ -11,9 +11,13 @@ Utrecht University within the Software Project course.
 
 from dataclasses import dataclass
 
-from ...core.config_object import ObjectConfig
+from ...core.config.config_object import ObjectConfig
 
 
 @dataclass
 class ConvertConfig(ObjectConfig):
-    """Dataset rating conversion Configuration."""
+    """Dataset rating conversion Configuration.
+
+    name: the name of the rating converter.
+    params: the parameters of the rating converter.
+    """

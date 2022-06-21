@@ -17,11 +17,11 @@ class RecommendationPipelineElliot(RecommendationPipeline):
             is_running: Callable[[], bool],
             **kwargs) -> str:
         ...
-        save_yml(yml_path, data)
+        create_yml(yml_path, data, self.event_dispatcher)
 
         run_experiment(yml_path)
 
-        self.clear_temp_dir(temp_dir)
+        delete_dir(temp_dir, self.event_dispatcher)
         ...
     ...
 
@@ -36,11 +36,9 @@ from typing import Callable
 import numpy as np
 import pandas as pd
 
-from ...core.config_constants import MODEL_RATINGS_FILE
-from ...core.event_dispatcher import EventDispatcher
-from ...core.event_io import ON_MAKE_DIR, ON_REMOVE_DIR, ON_RENAME_FILE, ON_REMOVE_FILE
-from ...core.factories import Factory
-from ...data.utility import save_yml
+from ...core.core_constants import MODEL_RATINGS_FILE
+from ...core.io.io_create import create_dir, create_yml
+from ...core.io.io_delete import delete_dir, delete_file
 from ..algorithms.elliot.elliot_recommender import ElliotRecommender
 from .recommendation_pipeline import RecommendationPipeline
 
@@ -48,35 +46,12 @@ from .recommendation_pipeline import RecommendationPipeline
 class RecommendationPipelineElliot(RecommendationPipeline):
     """Recommendation Pipeline implementation for the Elliot framework."""
 
-    def __init__(self, factory: Factory, event_dispatcher: EventDispatcher):
-        """Construct the elliot recommendation pipeline.
-
-        Args:
-            factory: factory of available elliot recommenders.
-            event_dispatcher: used to dispatch model/IO events when running the pipeline.
-        """
-        RecommendationPipeline.__init__(self, factory, event_dispatcher)
-        self.train_set_path = None
-        self.test_set_path = None
-
-    def load_train_and_test_set(self, train_set_path: str, test_set_path: str) -> None:
-        """Load the train and test set that all models can use.
-
-        The loading is done by the Elliot framework, delay until after it is done.
-
-        Args:
-            train_set_path: path to where the train set is stored.
-            test_set_path: path to where the test set is stored.
-        """
-        self.train_set_path = train_set_path
-        self.test_set_path = test_set_path
-
     def train_and_test_model(
             self,
             model: ElliotRecommender,
             model_dir: str,
             is_running: Callable[[], bool],
-            **kwargs) -> str:
+            **kwargs) -> None:
         """Train and test the specified model.
 
         Convert the model configuration into a yml file that is accepted by the framework.
@@ -92,15 +67,17 @@ class RecommendationPipelineElliot(RecommendationPipeline):
         Keyword Args:
             num_items(int): the number of item recommendations to produce.
 
-        Returns:
-            the path to the file where the model's computed ratings are stored.
+        Raises:
+            ArithmeticError: possibly raised by a model on training or testing.
+            MemoryError: possibly raised by a model on training or testing.
+            RuntimeError: possibly raised by a model on training or testing.
         """
         params = model.get_params()
         params['meta'] = {'verbose': False, 'save_recs': True, 'save_weights': False}
 
         top_k = kwargs['num_items']
 
-        temp_dir = self.create_temp_dir(model_dir)
+        temp_dir = create_dir(os.path.join(model_dir, 'temp'), self.event_dispatcher)
         yml_path = os.path.join(temp_dir, 'config.yml')
 
         data = {
@@ -124,71 +101,16 @@ class RecommendationPipelineElliot(RecommendationPipeline):
             }
         }
 
-        save_yml(yml_path, data)
+        create_yml(yml_path, data, self.event_dispatcher)
 
         # run_experiment(yml_path)
 
-        self.clear_temp_dir(temp_dir)
+        delete_dir(temp_dir, self.event_dispatcher)
         if params.get('epochs'):
             # remove everything so that only the final epochs file remains
             self.clear_unused_epochs(params['epochs'], model_dir)
 
-        result_file_path = self.reconstruct_rank_column(model_dir, top_k)
-        if not is_running():
-            return result_file_path
-
-        # load the train and test set now the elliot framework is done
-        RecommendationPipeline.load_train_and_test_set(
-            self,
-            self.train_set_path,
-            self.test_set_path
-        )
-
-        return result_file_path
-
-
-    def create_temp_dir(self, model_dir: str) -> str:
-        """Create a temp directory to store unnecessary artifacts.
-
-        Args:
-            model_dir: the directory where the computed ratings can be stored.
-
-        Returns:
-            the path to the temp directory that was created.
-        """
-        temp_dir = os.path.join(model_dir, 'temp')
-        if not os.path.isdir(temp_dir):
-            os.mkdir(temp_dir)
-            self.event_dispatcher.dispatch(
-                ON_MAKE_DIR,
-                dir=temp_dir
-            )
-
-        return temp_dir
-
-    def clear_temp_dir(self, temp_dir: str) -> None:
-        """Clear and remove the temp directory.
-
-        Args:
-            temp_dir: the path to the temp directory.
-        """
-        for file in os.listdir(temp_dir):
-            file_name = os.fsdecode(file)
-            file_path = os.path.join(temp_dir, file_name)
-            if os.path.isdir(file_path):
-                os.rmdir(file_path)
-                self.event_dispatcher.dispatch(
-                    ON_REMOVE_DIR,
-                    dir=temp_dir
-                )
-            else:
-                os.remove(file_path)
-                self.event_dispatcher.dispatch(
-                    ON_REMOVE_FILE,
-                    file=file_path
-                )
-
-        os.rmdir(temp_dir)
+        self.reconstruct_rank_column(model_dir, top_k)
 
     def clear_unused_epochs(self, num_epochs: int, model_dir: str) -> None:
         """Clear unused epochs from the model output directory.
@@ -210,21 +132,14 @@ class RecommendationPipelineElliot(RecommendationPipeline):
             file_path = os.path.join(model_dir, file_name)
 
             if used_epoch not in file_name:
-                os.remove(file_path)
-                self.event_dispatcher.dispatch(
-                    ON_REMOVE_FILE,
-                    file=file_path
-                )
+                delete_file(file_path, self.event_dispatcher)
 
-    def reconstruct_rank_column(self, model_dir: str, top_k: int) -> str:
+    def reconstruct_rank_column(self, model_dir: str, top_k: int) -> None:
         """Reconstruct the rank column in the result file that the framework generated.
 
         Args:
             model_dir: the directory where the computed ratings are stored.
             top_k: the topK that was used to compute the ratings.
-
-        Returns:
-            the path to the computed ratings file.
         """
         result_file_path = self.rename_result(model_dir)
         result = pd.read_csv(
@@ -252,9 +167,8 @@ class RecommendationPipelineElliot(RecommendationPipeline):
             index=False
         )
 
-        return result_file_path
-
-    def rename_result(self, model_dir: str) -> str:
+    @staticmethod
+    def rename_result(model_dir: str) -> str:
         """Rename the computed ratings file to be consistent with other pipelines.
 
         Args:
@@ -273,10 +187,5 @@ class RecommendationPipelineElliot(RecommendationPipeline):
             dst_path = os.path.join(model_dir, MODEL_RATINGS_FILE)
 
             os.rename(src_path, dst_path)
-            self.event_dispatcher.dispatch(
-                ON_RENAME_FILE,
-                src_file=src_path,
-                dst_file=dst_path
-            )
 
             return dst_path

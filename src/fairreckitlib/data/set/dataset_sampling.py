@@ -17,11 +17,11 @@ from typing import Dict, List, Optional, Tuple
 
 import pandas as pd
 
-from ..utility import save_yml
+from ...core.io.io_utility import save_yml
 from .dataset import Dataset
 from .dataset_constants import DATASET_CONFIG_FILE
-from .dataset_config import DatasetConfig, DatasetMatrixConfig, DatasetIndexConfig
-from .dataset_config import DatasetTableConfig, create_dataset_table_config
+from .dataset_config import DatasetMatrixConfig, DatasetIndexConfig, RatingMatrixConfig
+from .dataset_config import DatasetConfig, DatasetTableConfig, create_dataset_table_config
 
 
 def create_dataset_sample(
@@ -82,7 +82,12 @@ def create_dataset_sample(
     sample_tables = create_dataset_table_samples(sample_dir, dataset, key_id_map)
 
     # create and save dataset configuration
-    sample_dataset_config = DatasetConfig(dataset.get_name(), {}, sample_matrices, sample_tables)
+    sample_dataset_config = DatasetConfig(
+        dataset.get_name() + '-Sample',
+        {},
+        sample_matrices,
+        sample_tables
+    )
     save_yml(os.path.join(sample_dir, DATASET_CONFIG_FILE), sample_dataset_config.to_yml_format())
 
     return Dataset(sample_dir, sample_dataset_config)
@@ -129,7 +134,7 @@ def create_dataset_table_samples(
                 table_config.primary_key,
                 table_config.columns,
                 compression='bz2',
-                encoding=table_config.file.encoding,
+                encoding=table_config.file.options.encoding,
                 foreign_keys=table_config.foreign_keys,
                 num_records=len(table)
             )
@@ -190,7 +195,7 @@ def create_matrix_sample_config(
         matrix_config.table.primary_key,
         matrix_config.table.columns,
         compression='bz2',
-        encoding=matrix_config.table.file.encoding,
+        encoding=matrix_config.table.file.options.encoding,
         foreign_keys=matrix_config.table.foreign_keys,
         num_records=len(sample)
     )
@@ -198,9 +203,11 @@ def create_matrix_sample_config(
 
     return DatasetMatrixConfig(
         sample_table_config,
-        sample[matrix_config.table.columns[0]].min(),
-        sample[matrix_config.table.columns[0]].max(),
-        matrix_config.rating_type,
+        RatingMatrixConfig(
+            float(sample[matrix_config.table.columns[0]].min()),
+            float(sample[matrix_config.table.columns[0]].max()),
+            matrix_config.ratings.rating_type
+        ),
         user_index_config,
         item_index_config
     )

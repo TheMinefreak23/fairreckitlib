@@ -14,28 +14,14 @@ Utrecht University within the Software Project course.
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict, List
 
-from ...core.config_object import ObjectConfig, format_yml_config_list
-
-KEY_MODELS = 'models'
+from ...core.config.config_object import ObjectConfig
 
 
 @dataclass
 class ModelConfig(ObjectConfig):
-    """Model Configuration."""
+    """Model Configuration.
 
-
-def api_models_to_yml_format(
-        api_models: Dict[str, List[ModelConfig]]) -> Dict[str, List[Dict[str, Any]]]:
-    """Format API models configuration list to a yml compatible dictionary.
-
-    Returns:
-        a dictionary containing the lists of model configurations.
+    name: the name of the model.
+    params: the parameters of the model.
     """
-    yml_format = {}
-
-    for api_name, models in api_models.items():
-        yml_format[api_name] = format_yml_config_list(models)
-
-    return yml_format

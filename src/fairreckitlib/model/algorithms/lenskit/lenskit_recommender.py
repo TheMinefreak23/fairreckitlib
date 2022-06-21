@@ -53,9 +53,24 @@ class LensKitRecommender(Recommender):
                              kwargs['num_threads'], kwargs['rated_items_filter'])
         self.algo = algo
 
-    def on_train(self) -> None:
-        """Fit the lenskit algorithm on the train set."""
-        self.algo.fit(self.train_set)
+    def on_train(self, train_set: pd.DataFrame) -> None:
+        """Fit the lenskit algorithm on the train set.
+
+        The recommender should be trained with a dataframe matrix.
+
+        Args:
+            train_set: the set to train the recommender with.
+
+        Raises:
+            ArithmeticError: possibly raised by an algorithm on training.
+            MemoryError: possibly raised by an algorithm on training.
+            RuntimeError: possibly raised by an algorithm on training.
+            TypeError: when the train set is not a pandas dataframe.
+        """
+        if not isinstance(train_set, pd.DataFrame):
+            raise TypeError('Expected recommender to be trained with a dataframe matrix')
+
+        self.algo.fit(train_set)
 
     def on_recommend(self, user: int, num_items: int) -> pd.DataFrame:
         """Compute item recommendations for the specified user.
@@ -66,6 +81,11 @@ class LensKitRecommender(Recommender):
         Args:
             user: the user ID to compute recommendations for.
             num_items: the number of item recommendations to produce.
+
+        Raises:
+            ArithmeticError: possibly raised by a recommender on testing.
+            MemoryError: possibly raised by a recommender on testing.
+            RuntimeError: when the recommender is not trained yet.
 
         Returns:
             dataframe with the columns: 'item' and 'score'.
@@ -86,6 +106,11 @@ class LensKitRecommender(Recommender):
         Args:
             users: the user ID's to compute recommendations for.
             num_items: the number of item recommendations to produce.
+
+        Raises:
+            ArithmeticError: possibly raised by a recommender on testing.
+            MemoryError: possibly raised by a recommender on testing.
+            RuntimeError: when the recommender is not trained yet.
 
         Returns:
             dataframe with the columns: 'rank', 'user', 'item', 'score'.
@@ -183,18 +208,18 @@ def create_item_item(name: str, params: Dict[str, Any], **kwargs) -> LensKitReco
             max_neighbors(int): the maximum number of neighbors for scoring each item.
             min_neighbors(int): the minimum number of neighbors for scoring each item.
             min_similarity(float): minimum similarity threshold for considering a neighbor.
-            feedback(str): control how feedback should be interpreted ('explicit' or 'implicit').
 
     Keyword Args:
         num_threads(int): the max number of threads the algorithm can use.
         rated_items_filter(bool): whether to filter already rated items when
             producing item recommendations.
+        rating_type(str): the rating type on how feedback should be interpreted.
 
     Returns:
         the LensKitRecommender wrapper of ItemItem.
     """
     algo = TopN(
-        lenskit_algorithms.create_item_item(params),
+        lenskit_algorithms.create_item_item(params, kwargs['rating_type']),
         create_candidate_selector(kwargs['rated_items_filter'])
     )
 
@@ -258,18 +283,18 @@ def create_user_user(name: str, params: Dict[str, Any], **kwargs) -> LensKitReco
             max_neighbors(int): the maximum number of neighbors for scoring each item.
             min_neighbors(int): the minimum number of neighbors for scoring each item.
             min_similarity(float): minimum similarity threshold for considering a neighbor.
-            feedback(str): control how feedback should be interpreted ('explicit' or 'implicit').
 
     Keyword Args:
         num_threads(int): the max number of threads the algorithm can use.
         rated_items_filter(bool): whether to filter already rated items when
             producing item recommendations.
+        rating_type(str): the rating type on how feedback should be interpreted.
 
     Returns:
         the LensKitRecommender wrapper of UserUser.
     """
     algo = TopN(
-        lenskit_algorithms.create_user_user(params),
+        lenskit_algorithms.create_user_user(params, kwargs['rating_type']),
         create_candidate_selector(kwargs['rated_items_filter'])
     )
 

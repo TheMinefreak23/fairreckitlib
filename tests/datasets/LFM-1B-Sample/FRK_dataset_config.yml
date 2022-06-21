@@ -1,14 +1,14 @@
-dataset: LFM-1B
+dataset: LFM-1B-Sample
 matrices:
   user-artist-count:
     idx_item:
       file: user-artist-count_item_indices.hdf5
       key: artist_id
-      num_records: 10000
+      num_records: 200
     idx_user:
       file: user-artist-count_user_indices.hdf5
       key: user_id
-      num_records: 1000
+      num_records: 50
     matrix:
       columns:
       - matrix_count
@@ -18,11 +18,11 @@ matrices:
       foreign_keys:
       - user_id
       - artist_id
-      num_records: 525134
+      num_records: 2439
       primary_key:
       - user_id
       - artist_id
-    rating_max: 90301.0
+    rating_max: 3139.0
     rating_min: 1.0
     rating_type: implicit
 tables:
@@ -34,7 +34,7 @@ tables:
     file:
       compression: bz2
       name: LFM-1B_artist.tsv.bz2
-    num_records: 10000
+    num_records: 200
     primary_key:
     - artist_id
   user:
@@ -47,7 +47,7 @@ tables:
     file:
       compression: bz2
       name: LFM-1B_user.tsv.bz2
-    num_records: 1000
+    num_records: 50
     primary_key:
     - user_id
   user additional:
@@ -97,7 +97,7 @@ tables:
     file:
       compression: bz2
       name: LFM-1B_user additional.tsv.bz2
-    num_records: 1000
+    num_records: 50
     primary_key:
     - user_id
   user allmusic noPC:
@@ -119,13 +119,13 @@ tables:
     - noPC_children's
     - noPC_punk
     - noPC_alternative
-    - noPC_spoken_word
+    - noPC_spoken word
     - noPC_pop
     - noPC_heavy metal
     file:
       compression: bz2
       name: LFM-1B_user allmusic noPC.tsv.bz2
-    num_records: 1000
+    num_records: 50
     primary_key:
     - user_id
   user allmusic weightedPC:
@@ -147,12 +147,12 @@ tables:
     - weightedPC_children's
     - weightedPC_punk
     - weightedPC_alternative
-    - weightedPC_spoken_word
+    - weightedPC_spoken word
     - weightedPC_pop
     - weightedPC_heavy metal
     file:
       compression: bz2
       name: LFM-1B_user allmusic weightedPC.tsv.bz2
-    num_records: 1000
+    num_records: 50
     primary_key:
     - user_id

@@ -9,33 +9,38 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from abc import ABCMeta
 import os
 import time
-from typing import Any, Callable, List, Optional, Tuple
+from typing import Callable, Optional, Tuple
 
 import pandas as pd
 
-from ...core.event_dispatcher import EventDispatcher
-from ...core.event_error import ON_FAILURE_ERROR
-from ...core.event_io import ON_MAKE_DIR
-from ...core.factories import GroupFactory
+from ...core.config.config_factories import GroupFactory
+from ...core.events.event_dispatcher import EventDispatcher
+from ...core.events.event_error import ON_FAILURE_ERROR, ErrorEventArgs
+from ...core.io.io_create import create_dir
+from ...core.pipeline.core_pipeline import CorePipeline
 from ..data_transition import DataTransition
+from ..filter.filter_config import DataSubsetConfig
+from ..filter.filter_event import FilterDataframeEventArgs
+from ..ratings.convert_config import ConvertConfig
+from ..ratings.convert_event import ConvertRatingsEventArgs
+from ..ratings.rating_converter_factory import KEY_RATING_CONVERTER
 from ..set.dataset import Dataset
+# from ..filter.filter_constants import KEY_DATA_FILTERS, deduce_filter_type
 from ..split.split_config import SplitConfig
 from ..split.split_constants import KEY_SPLITTING, KEY_SPLIT_TEST_RATIO
-from ..ratings.convert_config import ConvertConfig
-from ..ratings.rating_converter_factory import KEY_RATING_CONVERTER
+from ..split.split_event import SplitDataframeEventArgs
 from .data_config import DataMatrixConfig
-from .data_event import ON_BEGIN_DATA_PIPELINE, ON_END_DATA_PIPELINE
-from .data_event import ON_BEGIN_LOAD_DATASET, ON_END_LOAD_DATASET
+from .data_event import ON_BEGIN_DATA_PIPELINE, ON_END_DATA_PIPELINE, DatasetEventArgs
+from .data_event import ON_BEGIN_LOAD_DATASET, ON_END_LOAD_DATASET, DatasetMatrixEventArgs
 from .data_event import ON_BEGIN_FILTER_DATASET, ON_END_FILTER_DATASET
-from .data_event import ON_BEGIN_MODIFY_DATASET, ON_END_MODIFY_DATASET
+from .data_event import ON_BEGIN_CONVERT_RATINGS, ON_END_CONVERT_RATINGS
 from .data_event import ON_BEGIN_SPLIT_DATASET, ON_END_SPLIT_DATASET
-from .data_event import ON_BEGIN_SAVE_SETS, ON_END_SAVE_SETS
+from .data_event import ON_BEGIN_SAVE_SETS, ON_END_SAVE_SETS, SaveSetsEventArgs
 
 
-class DataPipeline(metaclass=ABCMeta):
+class DataPipeline(CorePipeline):
     """Data Pipeline to prepare a dataset for a transition to the ModelPipeline(s).
 
     The pipeline is intended to be reused multiple times depending on the specified
@@ -62,9 +67,9 @@ class DataPipeline(metaclass=ABCMeta):
             data_factory: the factory with available data modifier factories.
             event_dispatcher: used to dispatch data/IO events when running the pipeline.
         """
+        CorePipeline.__init__(self, event_dispatcher)
         self.split_datasets = {}
         self.data_factory = data_factory
-        self.event_dispatcher = event_dispatcher
 
     def run(self,
             output_dir: str,
@@ -73,24 +78,28 @@ class DataPipeline(metaclass=ABCMeta):
             is_running: Callable[[], bool]) -> Optional[DataTransition]:
         """Run the entire data pipeline from beginning to end.
 
-        Two errors can be raised during execution of the pipeline:
-        FileNotFoundError is raised if the dataset matrix file does not exist.
-        RuntimeError is raised if any data modifiers are not found in their respective factories.
-
         Args:
             output_dir: the path of the directory to store the output.
             dataset: the dataset to run the pipeline on.
-            data_config: the dataset configuration.
+            data_config: the dataset matrix configurations.
             is_running: function that returns whether the pipeline
                 is still running. Stops early when False is returned.
+
+        Raises:
+            FileNotFoundError: when the dataset matrix file does not exist.
+            IOError: when the specified output directory does not exist.
+            RuntimeError: when any data modifiers are not found in their respective factories.
 
         Returns:
             the data transition output of the pipeline.
         """
-        self.event_dispatcher.dispatch(
+        if not os.path.isdir(output_dir):
+            raise IOError('Unknown data output directory')
+
+        self.event_dispatcher.dispatch(DatasetEventArgs(
             ON_BEGIN_DATA_PIPELINE,
-            dataset=dataset
-        )
+            dataset.get_name()
+        ))
 
         start = time.time()
 
@@ -103,15 +112,15 @@ class DataPipeline(metaclass=ABCMeta):
             return None
 
         # step 3
-        dataframe = self.filter_rows(dataframe, data_config.prefilters)
+        dataframe = self.filter_rows(dataframe, data_config)
         if not is_running():
             return None
 
         # step 4
-        dataframe, rating_type = self.convert_ratings(dataset,
-                                                      data_config.matrix,
-                                                      dataframe,
-                                                      data_config.converter)
+        dataframe = self.convert_ratings(dataset,
+                                         data_config.matrix,
+                                         dataframe,
+                                         data_config.converter)
         if not is_running():
             return None
 
@@ -123,21 +132,23 @@ class DataPipeline(metaclass=ABCMeta):
         # step 6
         train_set_path, test_set_path = self.save_sets(data_dir, train_set, test_set)
 
+        # update data matrix counter
+        self.split_datasets[data_config.get_data_matrix_name()] += 1
+
         end = time.time()
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(DatasetEventArgs(
             ON_END_DATA_PIPELINE,
-            dataset=dataset,
-            elapsed_time=end - start
-        )
+            dataset.get_name()
+        ), elapsed_time=end - start)
 
         data_output = DataTransition(
             dataset,
+            data_config.matrix,
             data_dir,
             train_set_path,
             test_set_path,
-            (dataframe['rating'].min(), dataframe['rating'].max()),
-            rating_type
+            (dataframe['rating'].min(), dataframe['rating'].max())
         )
 
         return data_output
@@ -152,94 +163,93 @@ class DataPipeline(metaclass=ABCMeta):
         Returns:
             the path of the directory where the output data can be stored.
         """
-        dataset_matrix_name = data_config.dataset + '_' + data_config.matrix
+        dataset_matrix_name = data_config.get_data_matrix_name()
         if not self.split_datasets.get(dataset_matrix_name):
             self.split_datasets[dataset_matrix_name] = 0
 
         index = self.split_datasets[dataset_matrix_name]
-        self.split_datasets[dataset_matrix_name] += 1
 
         data_dir = os.path.join(output_dir, dataset_matrix_name + '_' + str(index))
-        os.mkdir(data_dir)
-        self.event_dispatcher.dispatch(
-            ON_MAKE_DIR,
-            dir=data_dir
-        )
-
-        return data_dir
+        return create_dir(data_dir, self.event_dispatcher)
 
     def load_from_dataset(self, dataset: Dataset, matrix_name: str) -> pd.DataFrame:
         """Load in the desired dataset matrix into a dataframe.
 
-        It raises a FileNotFoundError when the dataset matrix file does not exist.
+        The loaded dataframe contains at least three columns 'user', 'item', 'rating'.
+        In addition, the 'timestamp' column can be present when available in the specified dataset.
 
         Args:
             dataset: the dataset to load a matrix dataframe from.
             matrix_name: the name of the matrix to load from the dataset.
 
+        Raises:
+            FileNotFoundError: when the dataset matrix file does not exist.
+
         Returns:
-            dataframe: belonging to the specified dataset. The
-                dataframe contains at least three columns 'user', 'item', 'rating'.
-                In addition, the 'timestamp' column can be present when
-                available in the specified dataset.
+            the dataframe belonging to the specified dataset.
         """
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(DatasetMatrixEventArgs(
             ON_BEGIN_LOAD_DATASET,
-            dataset=dataset,
-            matrix=matrix_name
-        )
+            dataset.get_name(),
+            matrix_name,
+            dataset.get_matrix_file_path(matrix_name)
+        ))
 
         start = time.time()
 
         try:
             dataframe = dataset.load_matrix(matrix_name)
         except FileNotFoundError as err:
-            self.event_dispatcher.dispatch(
+            self.event_dispatcher.dispatch(ErrorEventArgs(
                 ON_FAILURE_ERROR,
-                msg='Failure: to load dataset matrix ' + dataset.get_name() + '_' + matrix_name
-            )
+                'Failure: to load dataset matrix ' + dataset.get_name() + '_' + matrix_name
+            ))
             # raise again so the data run aborts
             raise err
 
         end = time.time()
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(DatasetMatrixEventArgs(
             ON_END_LOAD_DATASET,
-            dataset=dataset,
-            elapsed_time=end - start
-        )
+            dataset.get_name(),
+            matrix_name,
+            dataset.get_matrix_file_path(matrix_name)
+        ), elapsed_time=end - start)
 
         return dataframe
 
-    def filter_rows(self, dataframe: pd.DataFrame, prefilters: List[Any]) -> pd.DataFrame:
-        """Apply the specified filters to the dataframe.
+    def filter_rows(self,
+                    dataframe: pd.DataFrame,
+                    subset: DataSubsetConfig) -> pd.DataFrame:
+        """Apply the specified subset filters to the dataframe.
+
+        The subset is created by applying multiple filter passes to the dataframe individually.
+        These filter passes are then combined to form the resulting dataframe.
 
         Args:
-            dataframe: the dataset to filter with at least
-                two columns: 'user', 'item'.
-            prefilters: list of user/item filters to apply to the dataframe.
+            dataframe: the dataframe to filter with at least two columns: 'user', 'item'.
+            subset: the subset to create of to the dataframe.
 
         Returns:
-            the dataframe with the specified filters applied to it.
+            the dataframe with the specified subgroup filters applied to it.
         """
         # early exit, because no filtering is needed
-        if len(prefilters) == 0:
+        if len(subset.filter_passes) == 0:
             return dataframe
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(FilterDataframeEventArgs(
             ON_BEGIN_FILTER_DATASET,
-            prefilters=prefilters
-        )
+            subset
+        ))
 
         start = time.time()
         # TODO aggregated the set using the given filters
         end = time.time()
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(FilterDataframeEventArgs(
             ON_END_FILTER_DATASET,
-            prefilters=prefilters,
-            elapsed_time=end - start
-        )
+            subset
+        ), elapsed_time=end - start)
 
         return dataframe
 
@@ -247,10 +257,8 @@ class DataPipeline(metaclass=ABCMeta):
                         dataset: Dataset,
                         matrix_name: str,
                         dataframe: pd.DataFrame,
-                        convert_config: ConvertConfig) -> Tuple[pd.DataFrame, str]:
+                        convert_config: ConvertConfig) -> pd.DataFrame:
         """Convert the ratings in the dataframe with the specified rating modifier.
-
-        It raises a RuntimeError when the converter specified by the configuration is not available.
 
         Args:
             dataset: the dataset to load the matrix and rating_type from.
@@ -259,38 +267,45 @@ class DataPipeline(metaclass=ABCMeta):
                 At the least a 'rating' column is expected to be present.
             convert_config: the configuration of the converter to apply to the 'rating' column.
 
+        Raises:
+            RuntimeError: when the converter specified by the configuration is not available.
+
         Returns:
-            the converted dataframe and the type of rating, either 'explicit' or 'implicit'.
+            the converted dataframe or the input dataframe when no converter is specified.
         """
         if convert_config is None:
-            return dataframe, dataset.get_matrix_config(matrix_name).rating_type
+            return dataframe
 
-        self.event_dispatcher.dispatch(
-            ON_BEGIN_MODIFY_DATASET,
-            rating_converter=convert_config.name
-        )
+        self.event_dispatcher.dispatch(ConvertRatingsEventArgs(
+            ON_BEGIN_CONVERT_RATINGS,
+            convert_config
+        ))
 
         start = time.time()
-        convert_factory = self.data_factory.get_factory(KEY_RATING_CONVERTER)
-        converter = convert_factory.create(convert_config.name, convert_config.params)
+
+        converter_factory = self.data_factory.get_factory(KEY_RATING_CONVERTER)
+        dataset_converter_factory = converter_factory.get_factory(dataset.get_name())
+        matrix_converter_factory = dataset_converter_factory.get_factory(matrix_name)
+
+        converter = matrix_converter_factory.create(convert_config.name, convert_config.params)
         if converter is None:
-            self.event_dispatcher.dispatch(
+            self.event_dispatcher.dispatch(ErrorEventArgs(
                 ON_FAILURE_ERROR,
-                msg='Failure: to get converter from factory: ' + convert_config.name
-            )
+                'Failure: to get converter from factory: ' + convert_config.name
+            ))
             # raise error so the data run aborts
             raise RuntimeError()
 
-        dataframe, rating_type = converter.run(dataframe)
+        dataframe = converter.run(dataframe)
+
         end = time.time()
 
-        self.event_dispatcher.dispatch(
-            ON_END_MODIFY_DATASET,
-            rating_converter=convert_config.name,
-            elapsed_time=end - start
-        )
+        self.event_dispatcher.dispatch(ConvertRatingsEventArgs(
+            ON_END_CONVERT_RATINGS,
+            convert_config
+        ), elapsed_time=end - start)
 
-        return dataframe, rating_type
+        return dataframe
 
     def split(self,
               dataframe: pd.DataFrame,
@@ -298,45 +313,43 @@ class DataPipeline(metaclass=ABCMeta):
         """Split the dataframe into a train and test set.
 
         This will be split 80/20 (or a similar ratio), and be done either random, or timestamp-wise.
-        It raises a RuntimeError when the splitter specified by the configuration is not available.
+        The dataframe is expected to have at least three columns: 'user', 'item', 'rating'.
+        In addition, the 'timestamp' column is required for temporal splits.
 
         Args:
-            dataframe: the dataset to split with at least
-                three columns: 'user', 'item', 'rating'. In addition, the 'timestamp' column
-                is required for temporal splits.
+            dataframe: the dataframe to split into a train and test set.
             split_config: the dataset splitting configuration.
 
+        Raises:
+            RuntimeError: when the splitter specified by the configuration is not available.
+
         Returns:
-            train_set: the train set split of the specified dataframe.
-            test_set: the test set split of the specified dataframe.
+            the train and test set split of the specified dataframe.
         """
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(SplitDataframeEventArgs(
             ON_BEGIN_SPLIT_DATASET,
-            split_name=split_config.name,
-            test_ratio=split_config.test_ratio
-        )
+            split_config
+        ))
 
         start = time.time()
         split_kwargs = {KEY_SPLIT_TEST_RATIO: split_config.test_ratio}
         split_factory = self.data_factory.get_factory(KEY_SPLITTING)
         splitter = split_factory.create(split_config.name, split_config.params, **split_kwargs)
         if splitter is None:
-            self.event_dispatcher.dispatch(
+            self.event_dispatcher.dispatch(ErrorEventArgs(
                 ON_FAILURE_ERROR,
-                msg='Failure: to get splitter from factory: ' + split_config.name
-            )
+                'Failure: to get splitter from factory: ' + split_config.name
+            ))
             # raise error so the data run aborts
             raise RuntimeError()
 
         train_set, test_set = splitter.run(dataframe)
         end = time.time()
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(SplitDataframeEventArgs(
             ON_END_SPLIT_DATASET,
-            split_name=split_config.name,
-            test_ratio=split_config.test_ratio,
-            elapsed_time=end - start
-        )
+            split_config
+        ), elapsed_time=end - start)
 
         return train_set, test_set
 
@@ -348,10 +361,8 @@ class DataPipeline(metaclass=ABCMeta):
 
         Args:
             output_dir: the path of the directory to store both sets.
-            train_set: the train set to save with at least
-                three columns: 'user', 'item', 'rating'.
-            test_set: the test set to save with at least
-                three columns: 'user', 'item', 'rating'.
+            train_set: the train set to save with at least three columns: 'user', 'item', 'rating'.
+            test_set: the test set to save with at least three columns: 'user', 'item', 'rating'.
 
         Returns:
             the paths where the train and test set are stored.
@@ -364,22 +375,21 @@ class DataPipeline(metaclass=ABCMeta):
         train_set_path = os.path.join(output_dir, 'train_set.tsv')
         test_set_path = os.path.join(output_dir, 'test_set.tsv')
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(SaveSetsEventArgs(
             ON_BEGIN_SAVE_SETS,
-            train_set_path=train_set_path,
-            test_set_path=test_set_path
-        )
+            train_set_path,
+            test_set_path
+        ))
 
         start = time.time()
         train_set.to_csv(train_set_path, sep='\t', header=False, index=False)
         test_set.to_csv(test_set_path, sep='\t', header=False, index=False)
         end = time.time()
 
-        self.event_dispatcher.dispatch(
+        self.event_dispatcher.dispatch(SaveSetsEventArgs(
             ON_END_SAVE_SETS,
-            train_set_path=train_set_path,
-            test_set_path=test_set_path,
-            elapsed_time=end - start
-        )
+            train_set_path,
+            test_set_path
+        ), elapsed_time=end - start)
 
         return train_set_path, test_set_path

@@ -17,16 +17,16 @@ import numpy as np
 import pandas as pd
 from scipy import sparse
 
-from ...utility import convert_csr_to_coo, convert_coo_to_df
-from ..dataset_config import DatasetIndexConfig, DatasetMatrixConfig, DatasetTableConfig
-from ..dataset_config import DATASET_RATINGS_IMPLICIT, create_dataset_table_config
+from ..dataset_config import DATASET_RATINGS_IMPLICIT, RatingMatrixConfig
+from ..dataset_config import \
+    DatasetIndexConfig, DatasetMatrixConfig, DatasetTableConfig, create_dataset_table_config
 from ..dataset_constants import TABLE_FILE_PREFIX
 from .dataset_processor_lfm import DatasetProcessorLFM
 
 ALL_MUSIC_GENRES = [
     'rnb', 'rap', 'electronic', 'rock', 'new age', 'classical', 'reggae', 'blues', 'country',
     'world', 'folk', 'easy listening', 'jazz', 'vocal', 'children\'s', 'punk', 'alternative',
-    'spoken_word', 'pop', 'heavy metal'
+    'spoken word', 'pop', 'heavy metal'
 ]
 
 
@@ -214,7 +214,7 @@ class DatasetProcessorLFM1B(DatasetProcessorLFM):
                 artist_table_config.columns += ['artist_genres']
 
         artist_table_config.file.name = TABLE_FILE_PREFIX + self.dataset_name + '_artists.tsv.bz2'
-        artist_table_config.file.compression = 'bz2'
+        artist_table_config.file.options.compression = 'bz2'
         artist_table_config.num_records = len(artist_table)
 
         # store generated artist table
@@ -230,16 +230,29 @@ class DatasetProcessorLFM1B(DatasetProcessorLFM):
         """
         genres_allmusic_table_config = create_dataset_table_config(
             'genres_allmusic.txt',
-            ['allmusic_id'],
-            ['allmusic_genre'],
-            indexed=True
+            [], # row number is the primary key
+            ['allmusic_genre']
         )
         try:
-            num_records = len(genres_allmusic_table_config.read_table(self.dataset_dir))
-            genres_allmusic_table_config.num_records = num_records
-            return genres_allmusic_table_config
+            genres_allmusic_table = genres_allmusic_table_config.read_table(self.dataset_dir)
         except FileNotFoundError:
             return None
+
+        # reset index and rename to primary key
+        genres_allmusic_table.reset_index(inplace=True)
+        genres_allmusic_table.rename(columns={0: 'allmusic_id'}, inplace=True)
+
+        genres_allmusic_table_config.primary_key = ['allmusic_id']
+        genres_allmusic_table_config.file.name = \
+            TABLE_FILE_PREFIX + self.dataset_name + '_genres_allmusic.tsv.bz2'
+        genres_allmusic_table_config.file.options.compression = 'bz2'
+        genres_allmusic_table_config.num_records = len(genres_allmusic_table)
+
+        # store generated allmusic genre table
+        genres_allmusic_table_config.save_table(genres_allmusic_table, self.dataset_dir)
+
+        return genres_allmusic_table_config
+
 
     def process_track_table(self) -> Optional[DatasetTableConfig]:
         """Process the track table.
@@ -299,10 +312,11 @@ class DatasetProcessorLFM1B(DatasetProcessorLFM):
         artist_index_config.save_indices(self.dataset_dir, artist_list)
 
         # convert csr to dataframe
-        user_artist_matrix = convert_coo_to_df(
-            convert_csr_to_coo(csr_matrix),
-            'user_id', 'artist_id', 'matrix_count'
-        )
+        coo_matrix = pd.DataFrame.sparse.from_spmatrix(csr_matrix).sparse.to_coo()
+        user_artist_matrix = pd.DataFrame()
+        user_artist_matrix['user_id'] = coo_matrix.row
+        user_artist_matrix['artist_id'] = coo_matrix.col
+        user_artist_matrix['matrix_count'] = coo_matrix.data
 
         # create matrix table configuration
         user_artist_table_config = create_dataset_table_config(
@@ -319,9 +333,11 @@ class DatasetProcessorLFM1B(DatasetProcessorLFM):
 
         return DatasetMatrixConfig(
             user_artist_table_config,
-            user_artist_matrix['matrix_count'].min(),
-            user_artist_matrix['matrix_count'].max(),
-            DATASET_RATINGS_IMPLICIT,
+            RatingMatrixConfig(
+                user_artist_matrix['matrix_count'].min(),
+                user_artist_matrix['matrix_count'].max(),
+                DATASET_RATINGS_IMPLICIT
+            ),
             user_index_config,
             artist_index_config
         )

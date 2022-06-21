@@ -51,7 +51,7 @@ class ElliotRecommender(Recommender):
         if not self.rated_items_filter:
             raise RuntimeError('no rated items filter is not supported.')
 
-    def on_train(self) -> None:
+    def on_train(self, train_set: Any) -> None:
         """Train the elliot model not supported."""
         raise RuntimeError('training is done by running the framework')
 

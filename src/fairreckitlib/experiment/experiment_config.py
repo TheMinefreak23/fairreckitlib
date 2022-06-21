@@ -11,29 +11,38 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+from abc import ABCMeta, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
-from ..core.config_constants import KEY_NAME, KEY_TYPE
-from ..core.config_constants import KEY_TOP_K, KEY_RATED_ITEMS_FILTER
-from ..core.config_object import format_yml_config_list
+from ..core.config.config_yml import format_yml_config_dict_list, format_yml_config_list
+from ..core.core_constants import KEY_NAME, KEY_TYPE, KEY_TOP_K, KEY_RATED_ITEMS_FILTER, \
+    TYPE_PREDICTION, TYPE_RECOMMENDATION
 from ..data.data_factory import KEY_DATA
 from ..data.pipeline.data_config import DataMatrixConfig
 from ..evaluation.evaluation_factory import KEY_EVALUATION
 from ..evaluation.pipeline.evaluation_config import MetricConfig
 from ..model.model_factory import KEY_MODELS
-from ..model.pipeline.model_config import ModelConfig, api_models_to_yml_format
+from ..model.pipeline.model_config import ModelConfig
 
 
 @dataclass
-class ExperimentConfig:
+class ExperimentConfig(metaclass=ABCMeta):
     """Base Experiment Configuration."""
 
-    datasets: [DataMatrixConfig]
+    datasets: List[DataMatrixConfig]
     models: Dict[str, List[ModelConfig]]
-    evaluation: [MetricConfig]
+    evaluation: List[MetricConfig]
     name: str
-    type: str
+
+    @abstractmethod
+    def get_type(self) -> str:
+        """Get the type of the experiment configuration.
+
+        Returns:
+            the experiment type.
+        """
+        raise NotImplementedError()
 
     def to_yml_format(self) -> Dict[str, Any]:
         """Format experiment configuration to a yml compatible dictionary.
@@ -43,9 +52,9 @@ class ExperimentConfig:
         """
         yml_format = {
             KEY_NAME: self.name,
-            KEY_TYPE: self.type,
+            KEY_TYPE: self.get_type(),
             KEY_DATA: format_yml_config_list(self.datasets),
-            KEY_MODELS: api_models_to_yml_format(self.models)
+            KEY_MODELS: format_yml_config_dict_list(self.models)
         }
 
         # only include evaluation if it is present
@@ -59,6 +68,14 @@ class ExperimentConfig:
 class PredictorExperimentConfig(ExperimentConfig):
     """Prediction Experiment Configuration."""
 
+    def get_type(self) -> str:
+        """Get the predictor experiment type.
+
+        Returns:
+            TYPE_PREDICTION.
+        """
+        return TYPE_PREDICTION
+
 
 @dataclass
 class RecommenderExperimentConfig(ExperimentConfig):
@@ -66,6 +83,14 @@ class RecommenderExperimentConfig(ExperimentConfig):
 
     top_k: int
     rated_items_filter: bool
+
+    def get_type(self) -> str:
+        """Get the recommender experiment type.
+
+        Returns:
+            TYPE_RECOMMENDATION.
+        """
+        return TYPE_RECOMMENDATION
 
     def to_yml_format(self) -> Dict[str, Any]:
         """Format recommender experiment configuration to a yml compatible dictionary.

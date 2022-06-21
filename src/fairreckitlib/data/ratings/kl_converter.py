@@ -24,11 +24,11 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from typing import Any, Dict, Tuple
+from typing import Any, Dict
 
 import pandas as pd
 
-from ...core.params.config_parameters import ConfigParameters
+from ...core.config.config_parameters import ConfigParameters
 from .base_converter import RatingConverter
 
 
@@ -38,14 +38,14 @@ class KLConverter(RatingConverter):
     Applies the Kullback-Leibler formula to the rating column of the dataframe.
     """
 
-    def run(self, dataframe: pd.DataFrame) -> Tuple[pd.DataFrame, str]:
+    def run(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Apply the Kullback-Leibler formula to convert ratings.
 
         Args:
             dataframe: with 'user', 'item' and 'rating' columns.
 
         Returns:
-            the converted dataframe and the type of rating, either 'explicit' or 'implicit'.
+            the converted dataframe.
         """
         # TODO apply kullback-leibler formula on the rating column. Needs APC/ALC arg.
         # method = self.params['method']
@@ -57,11 +57,11 @@ class KLConverter(RatingConverter):
         #           KL(Q||P) = sum(A.C    * np.log(A.C    / A.C(u)))
         #   note that the above is a slightly abstract and incomplete notation,
         #   please consult the paper linked at the top.
-        # return (converted_dataframe, 'explicit')
-        raise NotImplementedError()
+        # return converted_dataframe
+        raise RuntimeError()
 
 
-def create_kl_converter(name: str, params: Dict[str, Any]) -> KLConverter:
+def create_kl_converter(name: str, params: Dict[str, Any], **_) -> KLConverter:
     """Create the KL Converter.
 
     Args:
@@ -75,7 +75,7 @@ def create_kl_converter(name: str, params: Dict[str, Any]) -> KLConverter:
     return KLConverter(name, params)
 
 
-def create_kl_converter_params() -> ConfigParameters:
+def create_kl_converter_params(**_) -> ConfigParameters:
     """Create the parameters of the kl converter.
 
     Returns:

@@ -16,16 +16,22 @@ Utrecht University within the Software Project course.
 from dataclasses import dataclass
 from typing import Callable, Dict, List
 
-from ...core.event_dispatcher import EventDispatcher
-from ...core.event_error import ON_FAILURE_ERROR
-from ...core.factories import GroupFactory
+from ...core.config.config_factories import GroupFactory
+from ...core.events.event_dispatcher import EventDispatcher
+from ...core.events.event_error import ON_FAILURE_ERROR, ErrorEventArgs
 from ...data.data_transition import DataTransition
 from .model_config import ModelConfig
 
 
 @dataclass
 class ModelPipelineConfig:
-    """ModelPipeline Configuration."""
+    """Model Pipeline Configuration.
+
+    output_dir: the directory to store the output.
+    data_transition: data input.
+    model_factory: the factory with available algorithm factories.
+    models: dictionary with api model configurations to compute.
+    """
 
     output_dir: str
     data_transition: DataTransition
@@ -61,17 +67,21 @@ def run_model_pipelines(
     for api_name, models in pipeline_config.models.items():
         api_factory = pipeline_config.model_factory.get_factory(api_name)
         if api_factory is None:
-            event_dispatcher.dispatch(
+            event_dispatcher.dispatch(ErrorEventArgs(
                 ON_FAILURE_ERROR,
-                msg='Failure: to get algorithm API factory: ' + api_name
-            )
+                'Failure: to get algorithm API factory: ' + api_name
+            ))
             continue
 
+        model_pipeline = api_factory.create_pipeline(
+            api_factory,
+            pipeline_config.data_transition,
+            event_dispatcher
+        )
+
         try:
-            model_pipeline = api_factory.create_pipeline(api_factory, event_dispatcher)
             dirs = model_pipeline.run(
                 pipeline_config.output_dir,
-                pipeline_config.data_transition,
                 models,
                 is_running,
                 **kwargs

@@ -54,15 +54,21 @@ class BasePredictor(BaseAlgorithm, metaclass=ABCMeta):
             user: the user ID.
             item: the item ID.
 
+        Raises:
+            ArithmeticError: possibly raised by a predictor on testing.
+            MemoryError: possibly raised by a predictor on testing.
+            RuntimeError: when the predictor is not trained yet.
+
         Returns:
             the predicted rating or NaN when impossible.
         """
-        if user not in self.users:
-            return math.nan
-        if item not in self.items:
-            return math.nan
+        if self.train_set is None:
+            raise RuntimeError('Predictor is not trained for predictions')
 
-        return self.on_predict(user, item)
+        if self.train_set.knows_user(user) and self.train_set.knows_item(item):
+            return self.on_predict(user, item)
+
+        return math.nan
 
     @abstractmethod
     def on_predict(self, user: int, item: int) -> float:
@@ -77,6 +83,11 @@ class BasePredictor(BaseAlgorithm, metaclass=ABCMeta):
             user: the user ID.
             item: the item ID.
 
+        Raises:
+            ArithmeticError: possibly raised by a predictor on testing.
+            MemoryError: possibly raised by a predictor on testing.
+            RuntimeError: when the predictor is not trained yet.
+
         Returns:
             the predicted rating or NaN when impossible.
         """
@@ -86,32 +97,48 @@ class BasePredictor(BaseAlgorithm, metaclass=ABCMeta):
         """Compute the predictions for each of the specified user and item pairs.
 
         All the users and items in the pairs that are not present in the train set that
-        the predictor was trained on are filtered before predictions are made.
+        the predictor was trained on are set to NaN after predictions are made.
 
         Args:
             user_item_pairs: with at least two columns: 'user' and 'item'.
 
+        Raises:
+            ArithmeticError: possibly raised by a predictor on testing.
+            MemoryError: possibly raised by a predictor on testing.
+            RuntimeError: when the predictor is not trained yet.
+
         Returns:
             a dataFrame with the columns: 'user', 'item', 'prediction'.
         """
-        user_item_pairs = user_item_pairs[['user', 'item']]
-        user_item_pairs = user_item_pairs[user_item_pairs['user'].isin(self.users)]
-        user_item_pairs = user_item_pairs[user_item_pairs['item'].isin(self.items)]
-        if len(user_item_pairs) == 0:
-            return user_item_pairs
+        if self.train_set is None:
+            raise RuntimeError('Predictor is not trained for predictions')
 
-        return self.on_predict_batch(user_item_pairs)
+        user_item_pairs = user_item_pairs[['user', 'item']]
+        user_item_pairs = self.on_predict_batch(user_item_pairs)
+
+        # resolve the rows that contain unknown users and/or items
+        unknown_user_item = ~self.train_set.knows_user_list(user_item_pairs['user']) | \
+                            ~self.train_set.knows_item_list(user_item_pairs['item'])
+
+        # replace unknown user or item predictions with NaN
+        # these predictions are already NaN in most cases except for a few (stochastic) predictors
+        user_item_pairs.loc[unknown_user_item, 'prediction'] = math.nan
+
+        return user_item_pairs
 
     def on_predict_batch(self, user_item_pairs: pd.DataFrame) -> pd.DataFrame:
         """Compute the predictions for each of the specified user and item pairs.
 
-        All the users and items in the pairs are assumed to be present in the train
-        set that the predictor was trained on.
         A standard batch implementation is provided, but derived classes are
         allowed to override batching with their own logic.
 
         Args:
             user_item_pairs: with two columns: 'user' and 'item'.
+
+        Raises:
+            ArithmeticError: possibly raised by a predictor on testing.
+            MemoryError: possibly raised by a predictor on testing.
+            RuntimeError: when the predictor is not trained yet.
 
         Returns:
             a dataFrame with the columns: 'user', 'item', 'prediction'.

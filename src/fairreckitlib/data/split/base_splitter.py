@@ -14,6 +14,7 @@ from typing import Any, Dict, Tuple
 import pandas as pd
 
 from ..data_modifier import DataModifier
+from .split_constants import MIN_TEST_RATIO, MAX_TEST_RATIO
 
 
 class DataSplitter(DataModifier):
@@ -33,9 +34,15 @@ class DataSplitter(DataModifier):
             name: the name of the splitter.
             params: a dictionary containing the parameters for the splitter.
             test_ratio: the fraction of users to use for testing.
+
+        Raises:
+            RuntimeError: when the test ratio is not within the accepted min and max range.
         """
         DataModifier.__init__(self, name, params)
         self.test_ratio = test_ratio
+
+        if self.test_ratio < MIN_TEST_RATIO or self.test_ratio > MAX_TEST_RATIO:
+            raise RuntimeError()
 
     def get_test_ratio(self) -> float:
         """Get the test ratio used by the splitter when run.

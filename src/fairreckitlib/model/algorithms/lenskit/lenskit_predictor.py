@@ -44,9 +44,24 @@ class LensKitPredictor(Predictor):
         Predictor.__init__(self, name, params, kwargs['num_threads'])
         self.algo = algo
 
-    def on_train(self) -> None:
-        """Fit the lenskit algorithm on the train set."""
-        self.algo.fit(self.train_set)
+    def on_train(self, train_set: pd.DataFrame) -> None:
+        """Fit the lenskit algorithm on the train set.
+
+        The predictor should be trained with a dataframe matrix.
+
+        Args:
+            train_set: the set to train the predictor with.
+
+        Raises:
+            ArithmeticError: possibly raised by an algorithm on training.
+            MemoryError: possibly raised by an algorithm on training.
+            RuntimeError: possibly raised by an algorithm on training.
+            TypeError: when the train set is not a pandas dataframe.
+        """
+        if not isinstance(train_set, pd.DataFrame):
+            raise TypeError('Expected predictor to be trained with a dataframe matrix')
+
+        self.algo.fit(train_set)
 
     def on_predict(self, user: int, item: int) -> float:
         """Compute a prediction for the specified user and item.
@@ -58,6 +73,11 @@ class LensKitPredictor(Predictor):
         Args:
             user: the user ID.
             item: the item ID.
+
+        Raises:
+            ArithmeticError: possibly raised by a predictor on testing.
+            MemoryError: possibly raised by a predictor on testing.
+            RuntimeError: when the predictor is not trained yet.
 
         Returns:
             the predicted rating.
@@ -73,6 +93,11 @@ class LensKitPredictor(Predictor):
 
         Args:
             user_item_pairs: with at least two columns: 'user', 'item'.
+
+        Raises:
+            ArithmeticError: possibly raised by a predictor on testing.
+            MemoryError: possibly raised by a predictor on testing.
+            RuntimeError: when the predictor is not trained yet.
 
         Returns:
             dataFrame with the columns: 'user', 'item', 'prediction'.
@@ -140,15 +165,15 @@ def create_item_item(name: str, params: Dict[str, Any], **kwargs) -> LensKitPred
             max_neighbors(int): the maximum number of neighbors for scoring each item.
             min_neighbors(int): the minimum number of neighbors for scoring each item.
             min_similarity(float): minimum similarity threshold for considering a neighbor.
-            feedback(str): control how feedback should be interpreted ('explicit' or 'implicit').
 
     Keyword Args:
         num_threads(int): the max number of threads the algorithm can use.
+        rating_type(str): the rating type on how feedback should be interpreted.
 
     Returns:
         the LensKitPredictor wrapper of ItemItem.
     """
-    algo = lenskit_algorithms.create_item_item(params)
+    algo = lenskit_algorithms.create_item_item(params, kwargs['rating_type'])
     return LensKitPredictor(algo, name, params, **kwargs)
 
 
@@ -179,13 +204,13 @@ def create_user_user(name: str, params: Dict[str, Any], **kwargs) -> LensKitPred
             max_neighbors(int): the maximum number of neighbors for scoring each item.
             min_neighbors(int): the minimum number of neighbors for scoring each item.
             min_similarity(float): minimum similarity threshold for considering a neighbor.
-            feedback(str): control how feedback should be interpreted ('explicit' or 'implicit').
 
     Keyword Args:
         num_threads(int): the max number of threads the algorithm can use.
+        rating_type(str): the rating type on how feedback should be interpreted.
 
     Returns:
         the LensKitPredictor wrapper of UserUser.
     """
-    algo = lenskit_algorithms.create_user_user(params)
+    algo = lenskit_algorithms.create_user_user(params, kwargs['rating_type'])
     return LensKitPredictor(algo, name, params, **kwargs)

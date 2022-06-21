@@ -18,18 +18,26 @@ from dataclasses import dataclass
 import os
 from typing import Callable, Union
 
-from ..core.event_dispatcher import EventDispatcher
-from ..core.event_io import ON_MAKE_DIR
-from ..core.factories import GroupFactory
+from ..core.config.config_factories import GroupFactory
+from ..core.events.event_dispatcher import EventDispatcher
+from ..core.io.io_create import create_dir, create_yml
 from ..data.set.dataset_registry import DataRegistry
-from ..data.utility import save_yml
 from .experiment_config import PredictorExperimentConfig, RecommenderExperimentConfig
 from .experiment_pipeline import ExperimentPipeline
 
 
 @dataclass
 class ExperimentPipelineConfig:
-    """ExperimentPipeline Configuration."""
+    """Experiment Pipeline Configuration.
+
+    output_dir: the directory to store the output.
+    data_registry: the registry with available datasets.
+    experiment_factory: the factory with data/model/evaluation pipeline factories.
+    experiment_config: the experiment configuration to compute.
+    start_run: the experiment run to start with.
+    num_runs: the number of runs of the experiment.
+    num_threads: the max number of threads the experiment can use.
+    """
 
     output_dir: str
     data_registry: DataRegistry
@@ -43,7 +51,7 @@ class ExperimentPipelineConfig:
 def run_experiment_pipelines(
         pipeline_config: ExperimentPipelineConfig,
         event_dispatcher: EventDispatcher,
-        is_running: Callable[[], bool]) -> None:
+        is_running: Callable[[], bool]) -> bool:
     """Run the experiment pipeline several runs according to the specified pipeline configuration.
 
     Args:
@@ -52,18 +60,19 @@ def run_experiment_pipelines(
         is_running: function that returns whether the pipelines
             are still running. Stops early when False is returned.
 
+    Returns:
+        whether running the experiment pipelines succeeded.
     """
-    # Create result output directory
     if not os.path.isdir(pipeline_config.output_dir):
-        os.mkdir(pipeline_config.output_dir)
-        event_dispatcher.dispatch(
-            ON_MAKE_DIR,
-            dir=pipeline_config.output_dir
-        )
+        # create result output directory
+        create_dir(pipeline_config.output_dir, event_dispatcher)
 
         # save the yml configuration file
-        experiment_yml = pipeline_config.experiment_config.to_yml_format()
-        save_yml(os.path.join(pipeline_config.output_dir, 'config.yml'), experiment_yml)
+        create_yml(
+            os.path.join(pipeline_config.output_dir, 'config.yml'),
+            pipeline_config.experiment_config.to_yml_format(),
+            event_dispatcher
+        )
 
     # prepare pipeline
     experiment_pipeline = ExperimentPipeline(
@@ -77,12 +86,17 @@ def run_experiment_pipelines(
 
     # run the pipeline
     for run in range(start_run, end_run):
-        experiment_pipeline.run(
-            os.path.join(pipeline_config.output_dir, 'run_' + str(run)),
-            pipeline_config.experiment_config,
-            pipeline_config.num_threads,
-            is_running
-        )
+        try:
+            experiment_pipeline.run(
+                os.path.join(pipeline_config.output_dir, 'run_' + str(run)),
+                pipeline_config.experiment_config,
+                pipeline_config.num_threads,
+                is_running
+            )
+        except RuntimeError:
+            return False
+
+    return True
 
 
 def resolve_experiment_start_run(result_dir: str) -> int:
@@ -91,21 +105,30 @@ def resolve_experiment_start_run(result_dir: str) -> int:
     Args:
         result_dir: path to the result directory to look into.
 
+    Raises:
+        IOError: when the specified result directory does not exist.
+
     Returns:
         the next run index for this result directory.
     """
-    start_run = 0
+    if not os.path.isdir(result_dir):
+        raise IOError('Unknown result directory')
 
-    for file in os.listdir(result_dir):
-        file_name = os.fsdecode(file)
-        run_dir = os.path.join(result_dir, file_name)
-        if not os.path.isdir(run_dir):
+    directories = []
+    for dir_name in os.listdir(result_dir):
+        if not os.path.isdir(os.path.join(result_dir, dir_name)):
             continue
 
-        run_split = file_name.split('_')
-        if len(run_split) != 2:
+        if not dir_name.startswith('run_'):
             continue
 
-        start_run = max(start_run, int(run_split[1]))
+        run_split = dir_name.split('_')
+        try:
+            directories.append(int(run_split[1]))
+        except ValueError:
+            continue
 
-    return start_run + 1
+    if len(directories) == 0:
+        return 0
+
+    return max(directories) + 1

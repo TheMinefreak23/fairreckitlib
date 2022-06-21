@@ -1,15 +1,40 @@
 data:
 - dataset: ML-100K
   matrix: user-movie-rating
+  subset:
+    - filter_pass:
+      - name: user_gender
+        params:
+          values: [Female]
+    - filter_pass:
+      - name: user_age
+    - filter_pass:
+      - name: user_gender
+        params:
+          values: [Male]
   rating_converter:
     name: range
   splitting:
     name: random
 evaluation:
 - name: NDCG@K
+  subgroup:
+    dataset: ML-100K
+    matrix: user-movie-rating
+    subset:
+      - filter_pass:
+        - name: user_age
+        - name: user_gender
 - name: P@K
 - name: R@K
+- name: HR@K
+- name: MAE
+- name: MAPE
 - name: MRR
+- name: MSE
+- name: RMSE
+- name: Item Coverage
+- name: User Coverage
 models:
   Implicit:
   - name: AlternatingLeastSquares

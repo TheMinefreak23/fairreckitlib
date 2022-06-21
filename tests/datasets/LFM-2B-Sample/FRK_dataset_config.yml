@@ -1,14 +1,14 @@
-dataset: LFM-2B
+dataset: LFM-2B-Sample
 matrices:
   user-artist-count:
     idx_item:
       file: user-artist-count_item_indices.hdf5
       key: artist_id
-      num_records: 10000
+      num_records: 200
     idx_user:
       file: user-artist-count_user_indices.hdf5
       key: user_id
-      num_records: 1000
+      num_records: 50
     matrix:
       columns:
       - matrix_count
@@ -18,22 +18,22 @@ matrices:
       foreign_keys:
       - user_id
       - artist_id
-      num_records: 21517
+      num_records: 356
       primary_key:
       - user_id
       - artist_id
-    rating_max: 4216
-    rating_min: 1
+    rating_max: 344.0
+    rating_min: 1.0
     rating_type: implicit
   user-track-count:
     idx_item:
       file: user-track-count_item_indices.hdf5
       key: track_id
-      num_records: 10000
+      num_records: 200
     idx_user:
       file: user-track-count_user_indices.hdf5
       key: user_id
-      num_records: 1000
+      num_records: 50
     matrix:
       columns:
       - matrix_count
@@ -43,12 +43,12 @@ matrices:
       foreign_keys:
       - user_id
       - track_id
-      num_records: 225210
+      num_records: 457
       primary_key:
       - user_id
       - track_id
-    rating_max: 1317
-    rating_min: 1
+    rating_max: 102.0
+    rating_min: 1.0
     rating_type: implicit
 tables:
   artist:
@@ -57,7 +57,7 @@ tables:
     file:
       compression: bz2
       name: LFM-2B_artist.tsv.bz2
-    num_records: 9984
+    num_records: 199
     primary_key:
     - artist_id
   spotify:
@@ -66,7 +66,7 @@ tables:
     file:
       compression: bz2
       name: LFM-2B_spotify.tsv.bz2
-    num_records: 7023
+    num_records: 164
     primary_key:
     - track_id
   track:
@@ -76,7 +76,7 @@ tables:
     file:
       compression: bz2
       name: LFM-2B_track.tsv.bz2
-    num_records: 10000
+    num_records: 200
     primary_key:
     - track_id
   user:
@@ -88,6 +88,6 @@ tables:
     file:
       compression: bz2
       name: LFM-2B_user.tsv.bz2
-    num_records: 1990
+    num_records: 100
     primary_key:
     - user_id

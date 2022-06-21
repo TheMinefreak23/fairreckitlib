@@ -1,21 +1,32 @@
-"""
+"""This module contains the metric configuration.
+
+Classes:
+
+    MetricConfig: metric configuration.
+
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
 from dataclasses import dataclass
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
-from ...core.config_object import ObjectConfig
-from ...data.filter.filter_constants import KEY_DATA_FILTERS
+from ...core.config.config_object import ObjectConfig
+from ...data.filter.filter_config import DataSubsetConfig
+from ..metrics.metric_constants import KEY_METRIC_SUBGROUP
 
 
 @dataclass
 class MetricConfig(ObjectConfig):
-    """Metric Configuration."""
+    """Metric Configuration.
 
-    prefilters: []
+    name: the name of the metric.
+    params: the parameters of the metric.
+    subgroup: the subgroup of the metric.
+    """
+
+    subgroup: Optional[DataSubsetConfig]
 
     def to_yml_format(self) -> Dict[str, Any]:
         """Format metric configuration to a yml compatible dictionary.
@@ -24,10 +35,8 @@ class MetricConfig(ObjectConfig):
             a dictionary containing the metric configuration.
         """
         yml_format = ObjectConfig.to_yml_format(self)
-
-        # only include prefilters if it has entries
-        if len(self.prefilters) > 0:
-            # TODO convert filters to yml format
-            yml_format[KEY_DATA_FILTERS] = self.prefilters
+        # only include subgroup if it is specified
+        if self.subgroup is not None:
+            yml_format[KEY_METRIC_SUBGROUP] = self.subgroup.to_yml_format()
 
         return yml_format

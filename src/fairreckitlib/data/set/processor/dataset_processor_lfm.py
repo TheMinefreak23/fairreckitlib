@@ -14,7 +14,7 @@ from typing import Callable, List, Optional, Tuple
 
 import pandas as pd
 
-from ..dataset_config import DATASET_RATINGS_IMPLICIT
+from ..dataset_config import DATASET_RATINGS_IMPLICIT, RatingMatrixConfig
 from ..dataset_config import DatasetIndexConfig, DatasetMatrixConfig, DatasetTableConfig
 from ..dataset_constants import TABLE_FILE_PREFIX
 from .dataset_processor_base import DatasetProcessorBase
@@ -120,8 +120,8 @@ class DatasetProcessorLFM(DatasetProcessorBase, metaclass=ABCMeta):
             matrix_it = matrix_table_config.read_table(self.dataset_dir, chunk_size=50000000)
             # process matrix in chunks
             for _, matrix in enumerate(matrix_it):
-                unique_users = pd.Series(unique_users).append(matrix[user_id]).unique()
-                unique_items = pd.Series(unique_items).append(matrix[item_id]).unique()
+                unique_users = pd.Series(unique_users, dtype='int').append(matrix[user_id]).unique()
+                unique_items = pd.Series(unique_items, dtype='int').append(matrix[item_id]).unique()
                 matrix_table_config.num_records += len(matrix)
                 rating_min = min(rating_min, matrix[count_column].min())
                 rating_max = max(rating_max, matrix[count_column].max())
@@ -130,9 +130,11 @@ class DatasetProcessorLFM(DatasetProcessorBase, metaclass=ABCMeta):
 
         return DatasetMatrixConfig(
             matrix_table_config,
-            rating_min,
-            rating_max,
-            DATASET_RATINGS_IMPLICIT,
+            RatingMatrixConfig(
+                float(rating_min),
+                float(rating_max),
+                DATASET_RATINGS_IMPLICIT
+            ),
             DatasetIndexConfig(
                 user_idx_file,
                 user_id,
@@ -175,9 +177,9 @@ class DatasetProcessorLFM(DatasetProcessorBase, metaclass=ABCMeta):
 
         # update table configuration
         user_table_config.file.name = TABLE_FILE_PREFIX + self.dataset_name + '_users.tsv.bz2'
-        user_table_config.file.compression = 'bz2'
-        user_table_config.file.header = False
-        user_table_config.file.sep = None
+        user_table_config.file.options.compression = 'bz2'
+        user_table_config.file.options.header = False
+        user_table_config.file.options.sep = None
 
         # store the resulting user table
         user_table_config.save_table(user_table, self.dataset_dir)

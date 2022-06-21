@@ -1,4 +1,4 @@
-"""This module contains all event ids and callback functions used in the data pipeline.
+"""This module contains all event ids, event args and a print switch for the data pipeline.
 
 Constants:
 
@@ -15,262 +15,147 @@ Constants:
     ON_END_SAVE_SETS: id of the event that is used when the train and test sets have been saved.
     ON_END_SPLIT_DATASET: id of the event that is used when a dataset has been split.
 
+Classes:
+
+    DatasetEventArgs: event args related to a dataset.
+    DatasetMatrixEventArgs: event args related to a dataset matrix.
+    SaveSetsEventArgs: event args related to saving a train and test set.
+
 Functions:
 
-    get_data_events: get data pipeline events.
-    on_begin_data_pipeline: call when the data pipeline starts.
-    on_begin_filter_dataset: call when dataset filtering starts.
-    on_begin_load_dataset: call when a dataset is being loaded.
-    on_begin_modify_dataset: call when dataset ratings are being modified.
-    on_begin_save_set: call when the train and test sets are being saved.
-    on_begin_split_dataset: call when a dataset is being split.
-    on_end_data_pipeline: call when the data pipeline ends.
-    on_end_filter_dataset: call when dataset filtering finishes.
-    on_end_load_dataset: call when a dataset has been loaded.
-    on_end_modify_dataset: call when dataset ratings have been modified.
-    on_end_save_set: call when the train and test sets have been saved.
-    on_end_split_dataset: call when a dataset has been split.
+    get_data_events: list of data pipeline event IDs.
+    get_data_event_print_switch: switch to print data pipeline event arguments by ID.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
-from typing import Any, Callable, List, Tuple
+from dataclasses import dataclass
+from typing import Callable, Dict, List
+
+from ...core.events.event_dispatcher import EventArgs
+from ...core.io.event_io import DataframeEventArgs, print_load_df_event_args
+from ..filter.filter_event import print_filter_event_args
+from ..ratings.convert_event import print_convert_event_args
+from ..split.split_event import print_split_event_args
 
 ON_BEGIN_DATA_PIPELINE = 'DataPipeline.on_begin'
 ON_BEGIN_FILTER_DATASET = 'DataPipeline.on_begin_filter_dataset'
 ON_BEGIN_LOAD_DATASET = 'DataPipeline.on_begin_load_dataset'
-ON_BEGIN_MODIFY_DATASET = 'DataPipeline.on_begin_modify_dataset'
+ON_BEGIN_CONVERT_RATINGS = 'DataPipeline.on_begin_convert_ratings'
 ON_BEGIN_SAVE_SETS = 'DataPipeline.on_begin_save_sets'
 ON_BEGIN_SPLIT_DATASET = 'DataPipeline.on_begin_split_dataset'
 ON_END_DATA_PIPELINE = 'DataPipeline.on_end'
 ON_END_FILTER_DATASET = 'DataPipeline.on_end_filter_dataset'
 ON_END_LOAD_DATASET = 'DataPipeline.on_end_load_dataset'
-ON_END_MODIFY_DATASET = 'DataPipeline.on_end_modify_dataset'
+ON_END_CONVERT_RATINGS = 'DataPipeline.on_end_convert_ratings'
 ON_END_SAVE_SETS = 'DataPipeline.on_end_save_sets'
 ON_END_SPLIT_DATASET = 'DataPipeline.on_end_split_dataset'
 
 
-def get_data_events() -> List[Tuple[str, Callable[[Any], None]]]:
-    """Get all data pipeline events.
+@dataclass
+class DatasetEventArgs(EventArgs):
+    """Dataset Event Arguments.
 
-    The callback functions are specified below and serve as a default
-    implementation for the RecommenderSystem class including the keyword arguments
-    that are passed down by the data pipeline.
+    event_id: the unique ID that classifies the dataset event.
+    dataset_name: the name of the dataset.
+    """
+
+    dataset_name: str
+
+
+@dataclass
+class DatasetMatrixEventArgs(DatasetEventArgs):
+    """Dataset Matrix Event Arguments.
+
+    event_id: the unique ID that classifies the dataset matrix event.
+    dataset_name: the name of the dataset.
+    matrix_name: the name of the dataset matrix.
+    matrix_file_path: the path to the file of the dataset matrix.
+    """
+
+    matrix_name: str
+    matrix_file_path: str
+
+
+@dataclass
+class SaveSetsEventArgs(EventArgs):
+    """Save Sets Event Arguments.
+
+    event_id: the unique ID that classifies the save sets event.
+    train_set_path: the path to the file of the train set.
+    test_set_path: the path to the file of the test set.
+    """
+
+    train_set_path: str
+    test_set_path: str
+
+
+def get_data_events() -> List[str]:
+    """Get a list of data pipeline event IDs.
 
     Returns:
-        a list of pairs in the format (event_id, func_on_event)
+        a list of unique data pipeline event IDs.
     """
     return [
-        (ON_BEGIN_DATA_PIPELINE, on_begin_data_pipeline),
-        (ON_BEGIN_FILTER_DATASET, on_begin_filter_dataset),
-        (ON_BEGIN_LOAD_DATASET, on_begin_load_dataset),
-        (ON_BEGIN_MODIFY_DATASET, on_begin_modify_dataset),
-        (ON_BEGIN_SAVE_SETS, on_begin_save_sets),
-        (ON_BEGIN_SPLIT_DATASET, on_begin_split_dataset),
-        (ON_END_DATA_PIPELINE, on_end_data_pipeline),
-        (ON_END_FILTER_DATASET, on_end_filter_dataset),
-        (ON_END_LOAD_DATASET, on_end_load_dataset),
-        (ON_END_MODIFY_DATASET, on_end_modify_dataset),
-        (ON_END_SAVE_SETS, on_end_save_sets),
-        (ON_END_SPLIT_DATASET, on_end_split_dataset)
+        # DatasetEventArgs
+        ON_BEGIN_DATA_PIPELINE,
+        ON_END_DATA_PIPELINE,
+        # FilterDatasetEventArgs
+        ON_END_FILTER_DATASET,
+        ON_BEGIN_FILTER_DATASET,
+        # DatasetMatrixEventArgs
+        ON_BEGIN_LOAD_DATASET,
+        ON_END_LOAD_DATASET,
+        # ConvertRatingsEventArgs
+        ON_BEGIN_CONVERT_RATINGS,
+        ON_END_CONVERT_RATINGS,
+        # SplitDataframeEventArgs
+        ON_BEGIN_SPLIT_DATASET,
+        ON_END_SPLIT_DATASET,
+        # SaveSetsEventArgs
+        ON_BEGIN_SAVE_SETS,
+        ON_END_SAVE_SETS,
     ]
 
 
-def on_begin_data_pipeline(event_listener: Any, **kwargs) -> None:
-    """Call back when the data pipeline starts.
+def get_data_event_print_switch(elapsed_time: float=None) -> Dict[str,Callable[[EventArgs], None]]:
+    """Get a switch that prints data pipeline event IDs.
 
-    Args:
-        event_listener: the listener that is registered
-            in the event dispatcher with this callback.
-
-    Keyword Args:
-        dataset(Dataset): the dataset that is being processed by the pipeline.
+    Returns:
+        the print data pipeline event switch.
     """
-    if event_listener.verbose:
-        print('\nStarting Data Pipeline:', kwargs['dataset'].get_name())
-
-
-def on_begin_filter_dataset(event_listener: Any, **kwargs) -> None:
-    """Call back when dataset filtering starts.
-
-    Args:
-        event_listener: the listener that is registered
-            in the event dispatcher with this callback.
-
-    Keyword Args:
-        prefilters(array like): list of filters that will be applied to the dataset.
-    """
-    if event_listener.verbose:
-        print('Filtering dataset using:', kwargs['prefilters'])
-
-
-def on_begin_load_dataset(event_listener: Any, **kwargs) -> None:
-    """Call back when dataset loading starts.
-
-    Args:
-        event_listener: the listener that is registered
-            in the event dispatcher with this callback.
-
-    Keyword Args:
-        dataset(Dataset): the dataset that is being loaded.
-    """
-    if event_listener.verbose:
-        print('Loading dataset from', kwargs['dataset'].get_matrix_file_path(kwargs['matrix']))
-
-
-def on_begin_modify_dataset(event_listener: Any, **kwargs) -> None:
-    """Call back when dataset rating conversion starts.
-
-    Args:
-        event_listener: the listener that is registered
-            in the event dispatcher with this callback.
-
-    Keyword Args:
-        rating_modifier(object): the rating modifier object that will be
-            applied to the dataset.
-    """
-    if event_listener.verbose:
-        print('Converting dataset ratings:', kwargs['rating_converter'])
-
-
-def on_begin_save_sets(event_listener: Any, **kwargs) -> None:
-    """Call back when train/test set saving starts.
-
-    Args:
-        event_listener: the listener that is registered
-            in the event dispatcher with this callback.
-
-    Keyword Args:
-        train_set_path(str): the path where the test set is saved to.
-        test_set_path(str): the path where the test set is saved to.
-    """
-    if event_listener.verbose:
-        print('Saving train set to', kwargs['train_set_path'])
-        print('Saving test set to', kwargs['test_set_path'])
-
-
-def on_begin_split_dataset(event_listener: Any, **kwargs) -> None:
-    """Call back when dataset splitting starts.
-
-    Args:
-        event_listener: the listener that is registered
-            in the event dispatcher with this callback.
-
-    Keyword Args:
-        split_name(str): the name of the split that is performed.
-        test_ratio(float): the ratio of the test set size relative
-            to the original dataset.
-    """
-    if event_listener.verbose:
-        test_perc = int(kwargs['test_ratio'] * 100.0)
-        print('Splitting dataset:', 100 - test_perc, '/', test_perc,
-              '=>', kwargs['split_name'])
-
-
-def on_end_data_pipeline(event_listener: Any, **kwargs) -> None:
-    """Call back when the data pipeline finishes.
-
-    Args:
-        event_listener: the listener that is registered
-            in the event dispatcher with this callback.
-
-    Keyword Args:
-        dataset(Dataset): the dataset that was processed by the pipeline.
-        elapsed_time(float): the time that has passed since the pipeline started,
-            expressed in seconds.
-    """
-    if event_listener.verbose:
-        elapsed_time = kwargs['elapsed_time']
-        print('Finished Data Pipeline:', kwargs['dataset'].get_name(),
-              f'in {elapsed_time:1.4f}s')
-
-
-def on_end_filter_dataset(event_listener: Any, **kwargs) -> None:
-    """Call back when dataset filtering finishes.
-
-    Args:
-        event_listener: the listener that is registered
-            in the event dispatcher with this callback.
-
-    Keyword Args:
-        prefilters(array like): list of filters that are applied to the dataset.
-        elapsed_time(float): the time that has passed since the filtering started,
-            expressed in seconds.
-    """
-    if event_listener.verbose:
-        elapsed_time = kwargs['elapsed_time']
-        print(f'Filtered dataset in {elapsed_time:1.4f}s')
-
-
-def on_end_load_dataset(event_listener: Any, **kwargs) -> None:
-    """Call back when dataset loading finishes.
-
-    Args:
-        event_listener: the listener that is registered
-            in the event dispatcher with this callback.
-
-    Keyword Args:
-        dataset(Dataset): the dataset that is loaded.
-        elapsed_time(float): the time that has passed since the loading started,
-            expressed in seconds.
-    """
-    if event_listener.verbose:
-        elapsed_time = kwargs['elapsed_time']
-        print(f'Loaded dataset in {elapsed_time:1.4f}s')
-
-
-def on_end_modify_dataset(event_listener: Any, **kwargs) -> None:
-    """Call back when dataset rating conversion finishes.
-
-    Args:
-        event_listener: the listener that is registered
-            in the event dispatcher with this callback.
-
-    Keyword Args:
-        rating_modifier(object): the rating modifier object that was
-            applied to the dataset.
-        elapsed_time(float): the time that has passed since the
-            modification started, expressed in seconds.
-    """
-    if event_listener.verbose:
-        elapsed_time = kwargs['elapsed_time']
-        print(f'Converted dataset ratings in {elapsed_time:1.4f}s')
-
-
-def on_end_save_sets(event_listener: Any, **kwargs) -> None:
-    """Call back when train/test set saving finishes.
-
-    Args:
-        event_listener: the listener that is registered
-            in the event dispatcher with this callback.
-
-    Keyword Args:
-        train_set_path(str): the path where the test set is saved.
-        test_set_path(str): the path where the test set is saved.
-        elapsed_time(float): the time that has passed since the
-            saving started, expressed in seconds.
-    """
-    if event_listener.verbose:
-        elapsed_time = kwargs['elapsed_time']
-        print(f'Saved train and test sets in {elapsed_time:1.4f}s')
-
-
-def on_end_split_dataset(event_listener: Any, **kwargs) -> None:
-    """Call back when dataset splitting finishes.
-
-    Args:
-        event_listener: the listener that is registered
-            in the event dispatcher with this callback.
-
-    Keyword Args:
-        split_name(str): the name of the split that was performed.
-        test_ratio(float): the ratio of the test set size relative
-            to the original dataset.
-        elapsed_time(float): the time that has passed since the
-            splitting started, expressed in seconds.
-    """
-    if event_listener.verbose:
-        elapsed_time = kwargs['elapsed_time']
-        print(f'Split dataset in {elapsed_time:1.4f}s')
+    return  {
+        ON_BEGIN_DATA_PIPELINE:
+            lambda args: print('\nStarting Data Pipeline:', args.dataset_name),
+        ON_BEGIN_CONVERT_RATINGS: print_convert_event_args,
+        ON_BEGIN_FILTER_DATASET: print_filter_event_args,
+        ON_BEGIN_LOAD_DATASET:
+            lambda args: print_load_df_event_args(DataframeEventArgs(
+                args.event_id,
+                args.matrix_file_path,
+                'dataset matrix'
+            )),
+        ON_BEGIN_SAVE_SETS:
+            lambda args: print('Saving train set to', args.train_set_path,
+                               '\nSaving test set to', args.test_set_path),
+        ON_BEGIN_SPLIT_DATASET: print_split_event_args,
+        ON_END_DATA_PIPELINE:
+            lambda args: print('Finished Data Pipeline:', args.dataset_name,
+                               f'in {elapsed_time:1.4f}s'),
+        ON_END_CONVERT_RATINGS:
+            lambda args: print_convert_event_args(args, elapsed_time),
+        ON_END_FILTER_DATASET:
+            lambda args: print_filter_event_args(args, elapsed_time),
+        ON_END_LOAD_DATASET:
+            lambda args: print_load_df_event_args(DataframeEventArgs(
+                args.event_id,
+                args.matrix_file_path,
+                'dataset matrix'
+            ), elapsed_time=elapsed_time),
+        ON_END_SAVE_SETS:
+            lambda args: print(f'Saved train and test sets in {elapsed_time:1.4f}s'),
+        ON_END_SPLIT_DATASET:
+            lambda args: print_split_event_args(args, elapsed_time)
+    }
