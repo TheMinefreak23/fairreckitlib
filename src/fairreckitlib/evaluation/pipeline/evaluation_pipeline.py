@@ -226,7 +226,7 @@ class EvaluationPipeline(CorePipeline):
             eval_sets,
             metric_config.subgroup
         )
-        print(eval_sets)
+
         evaluation = self.compute_metric_evaluation(
             metric,
             eval_sets,
@@ -313,6 +313,7 @@ class EvaluationPipeline(CorePipeline):
 
         start = time.time()
 
+        # Filter for each dataframe in eval_sets
         filter_factory = self.data_filter_factory
         if eval_sets.train is not None:
             eval_sets.train = filter_from_filter_passes(
