@@ -124,8 +124,7 @@ class ExperimentConfigParser:
                 experiment_datasets,
                 experiment_models,
                 experiment_evaluation,
-                experiment_name,
-                experiment_type
+                experiment_name
             )
         elif experiment_type == TYPE_RECOMMENDATION:
             parsed_config = RecommenderExperimentConfig(
@@ -133,7 +132,6 @@ class ExperimentConfigParser:
                 experiment_models,
                 experiment_evaluation,
                 experiment_name,
-                experiment_type,
                 self.parse_experiment_top_k(
                     experiment_config
                 ),

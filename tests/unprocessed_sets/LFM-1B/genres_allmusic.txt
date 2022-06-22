@@ -1,0 +1,20 @@
+rnb
+rap
+electronic
+rock
+new age
+classical
+reggae
+blues
+country
+world
+folk
+easy listening
+jazz
+vocal
+children's
+punk
+alternative
+spoken word
+pop
+heavy metal

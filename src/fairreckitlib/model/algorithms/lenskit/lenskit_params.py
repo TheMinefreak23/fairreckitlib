@@ -59,13 +59,10 @@ def create_params_knn() -> ConfigParameters:
     Returns:
         the configuration parameters of the algorithm.
     """
-    feedback = ['explicit', 'implicit']
-
     params = ConfigParameters()
     params.add_number('max_neighbors', int, 10, (1, 50))
     params.add_number('min_neighbors', int, 1, (1, 50))
     params.add_number('min_similarity', float, 1e-06, (0.0, 10.0))
-    params.add_single_option('feedback', str, feedback[0], feedback)
     return params
 
 

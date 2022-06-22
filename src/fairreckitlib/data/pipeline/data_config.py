@@ -33,6 +33,10 @@ class DataMatrixConfig(DataSubsetConfig):
     converter: Optional[ConvertConfig]
     splitting: SplitConfig
 
+    def get_data_matrix_name(self) -> str:
+        """Get the combined dataset and matrix name of the configuration."""
+        return self.dataset + '_' + self.matrix
+
     def to_yml_format(self) -> Dict[str, Any]:
         """Format data matrix configuration to a yml compatible dictionary.
 

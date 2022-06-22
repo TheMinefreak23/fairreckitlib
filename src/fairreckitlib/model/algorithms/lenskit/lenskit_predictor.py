@@ -165,15 +165,15 @@ def create_item_item(name: str, params: Dict[str, Any], **kwargs) -> LensKitPred
             max_neighbors(int): the maximum number of neighbors for scoring each item.
             min_neighbors(int): the minimum number of neighbors for scoring each item.
             min_similarity(float): minimum similarity threshold for considering a neighbor.
-            feedback(str): control how feedback should be interpreted ('explicit' or 'implicit').
 
     Keyword Args:
         num_threads(int): the max number of threads the algorithm can use.
+        rating_type(str): the rating type on how feedback should be interpreted.
 
     Returns:
         the LensKitPredictor wrapper of ItemItem.
     """
-    algo = lenskit_algorithms.create_item_item(params)
+    algo = lenskit_algorithms.create_item_item(params, kwargs['rating_type'])
     return LensKitPredictor(algo, name, params, **kwargs)
 
 
@@ -204,13 +204,13 @@ def create_user_user(name: str, params: Dict[str, Any], **kwargs) -> LensKitPred
             max_neighbors(int): the maximum number of neighbors for scoring each item.
             min_neighbors(int): the minimum number of neighbors for scoring each item.
             min_similarity(float): minimum similarity threshold for considering a neighbor.
-            feedback(str): control how feedback should be interpreted ('explicit' or 'implicit').
 
     Keyword Args:
         num_threads(int): the max number of threads the algorithm can use.
+        rating_type(str): the rating type on how feedback should be interpreted.
 
     Returns:
         the LensKitPredictor wrapper of UserUser.
     """
-    algo = lenskit_algorithms.create_user_user(params)
+    algo = lenskit_algorithms.create_user_user(params, kwargs['rating_type'])
     return LensKitPredictor(algo, name, params, **kwargs)

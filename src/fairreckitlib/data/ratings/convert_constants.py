@@ -17,4 +17,5 @@ KEY_RATING_CONVERTER = 'rating_converter'
 CONVERTER_RANGE = 'range'
 CONVERTER_KL = 'kl'
 
+# the external package 'Surprise' only works with explicit ratings below this threshold
 RATING_TYPE_THRESHOLD = 100.0

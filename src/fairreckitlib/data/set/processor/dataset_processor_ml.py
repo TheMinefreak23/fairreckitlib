@@ -92,8 +92,8 @@ class DatasetProcessorML(DatasetProcessorBase, metaclass=ABCMeta):
         return DatasetMatrixConfig(
             user_movie_matrix_table_config,
             RatingMatrixConfig(
-                user_movie_matrix[rating_column].min(),
-                user_movie_matrix[rating_column].max(),
+                float(user_movie_matrix[rating_column].min()),
+                float(user_movie_matrix[rating_column].max()),
                 DATASET_RATINGS_EXPLICIT
             ),
             DatasetIndexConfig(

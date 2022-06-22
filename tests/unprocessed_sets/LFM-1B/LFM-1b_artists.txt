@@ -1,0 +1,1000 @@
+1	Megadeth
+2	Lil Wayne
+3	Foo Fighters
+4	Porcupine Tree
+5	No-Man
+6	Airbag
+7	Dream Theater
+8	Amon Amarth
+9	Coma
+10	Orchestral Manoeuvres in the Dark
+11	a-ha
+12	Alter Bridge
+13	Limp Bizkit
+14	3 Inches of Blood
+15	Kabanos
+16	David Bowie
+17	Hey
+18	Faith No More
+19	Riverside
+20	Blackfield
+21	Anastacia
+22	Closterkeller
+23	Rootwater
+24	Pure Reason Revolution
+25	God Is An Astronaut
+26	The Bill
+27	Red Hot Chili Peppers
+28	Avril Lavigne
+29	Rage Against the Machine
+30	Steven Wilson
+31	Stevie Ray Vaughan
+32	The xx
+33	Arch Enemy
+34	Enslaved
+35	Virgin Snatch
+36	Machine Head
+37	Ozzy Osbourne
+38	Kreator
+39	Pidżama Porno
+40	Wintersun
+41	Iluzjon
+42	Budgie
+43	Slayer
+44	Hurts
+45	The Kooks
+46	Coldplay
+47	TesseracT
+48	Enigma
+49	Take That
+50	Xenn
+51	Lamb of God
+52	Judas Priest
+53	Kevin Ayers
+54	Pink Floyd
+55	Metallica
+56	Pantera
+57	Fall Out Boy
+58	Lunatic Soul
+59	Children of Bodom
+60	Exodus
+61	Rick Ross
+62	Frank Zappa
+63	Illusion
+64	Deep Purple
+65	Nine Lashes
+66	Eagles
+67	Anathema
+68	Indukti
+69	Korpiklaani
+70	Kobong
+71	Opeth
+72	John Petrucci
+73	Joe Satriani
+74	Genesis
+75	Van Halen
+76	Asheraah
+77	Stevie Ray Vaughan and Double Trouble
+78	Gazpacho
+79	Oasis
+80	Abigail's Ghost
+81	Quidam
+82	Myslovitz
+83	Wooh Da Kid
+84	Roxette
+85	Black Sabbath
+86	The Hives
+87	Disperse
+88	The Pineapple Thief
+89	Killswitch Engage
+90	Ananke
+91	Foghat
+92	Dio
+93	Alice in Chains
+94	Dokken
+95	AWOLNATION
+96	Dethklok
+97	Rainbow
+98	The Heavy
+99	The Black Keys
+100	Ray Wilson
+101	Кравц
+102	Believe
+103	Ronnie James Dio & Yngwie Malmsteen
+104	Amaranthe
+105	Avenged Sevenfold
+106	Annihilator
+107	Warren G
+108	Demians
+109	Maqama
+110	Dope
+111	Gamma Ray
+112	Sum 41 vs. Tenacious D
+113	Bastille
+114	Sum 41
+115	Tenacious D
+116	School of Rock
+117	Eddie, Mark
+118	Aeon
+119	Abraxas
+120	Foreigner
+121	Fish
+122	Marillion
+123	John Frusciante and Josh Klinghoffer
+124	Diamond Head
+125	Misery Index
+126	Bikini (polish punk)
+127	50 Cent
+128	Municipal Waste
+129	Tool
+130	Yngwie Malmsteen
+131	Electric Light Orchestra
+132	The White Stripes
+133	Racer X
+134	BodyRockers
+135	Nirvana
+136	Strachy Na Lachy
+137	Lady Gaga
+138	Kalmah
+139	Eminem
+140	Queen
+141	The Offspring
+142	Enrique Iglesias
+143	Jakub Żytecki
+144	Shout
+145	Moby
+146	Anberlin
+147	Sneaker Pimps
+148	Aerosmith
+149	Journey
+150	Savatage
+151	Pendragon
+152	Eurythmics
+153	Muse
+154	Tech N9ne
+155	Goo Goo Dolls
+156	MC5
+157	Chickenfoot
+158	Black River
+159	Anti Tank Nun
+160	Paul Gilbert
+161	SBB
+162	Simple Minds
+163	Guns N' Roses
+164	Grendel
+165	Jake E. Lee
+166	Ensiferum
+167	Steve Vai
+168	Arsis
+169	Death
+170	Gorilla Zoe
+171	In Flames
+172	Rammstein
+173	Kid Ink
+174	Nevermore
+175	The Reasoning
+176	Storm Corrosion
+177	Mike Oldfield
+178	Hunter
+179	Gym Class Heroes
+180	The Dear Hunter
+181	DMX
+182	Scorpions
+183	Liquid Tension Experiment
+184	Meshuggah
+185	Kings of Leon
+186	Symphony X
+187	Made of Hate
+188	Theory of a Deadman
+189	Forma
+190	Keane
+191	Brandon T. Jackson
+192	Kult
+193	Openspace
+194	Helloween
+195	Frost
+196	Hoobastank
+197	Fischerspooner
+198	Hammerfall
+199	Hellyeah
+200	Nas
+201	Incredible Expanding Mindfuck
+202	Roadrunner United
+203	Iced Earth
+204	Ghost Circus
+205	T.I. feat. Lil Wayne & Young Jeezy
+206	Tinie Tempah
+207	Fatboy Slim
+208	Tears for Fears
+209	Big Big Train
+210	Dżem
+211	Lady Pank
+212	Cansei de Ser Sexy
+213	Freddie Mercury
+214	Unheilig
+215	Helmet
+216	Fort Minor
+217	Lupe Fiasco
+218	Sabrina
+219	Sly & The Family Stone
+220	Accept
+221	Кино
+222	Decapitated
+223	Billy Idol
+224	Puddle of Mudd
+225	Alastor
+226	Emerson, Lake & Palmer
+227	Paramore
+228	Sweet Noise
+229	Kyuss
+230	Lil Eddie
+231	Grzegorz Turnau
+232	Puppet Show
+233	Hug me mum
+234	THE Dying Breed Feat. Tanaka Koyuki
+235	Nosound
+236	Andrew Lloyd Webber
+237	The Lollipops (no die zombies noise unit)
+238	The Rolling Stones
+239	Busta Rhymes
+240	Cat Power
+241	Whale Fall
+242	Włochaty
+243	Ayreon
+244	Joe Cocker
+245	Led Zeppelin
+246	Grip Plyaz
+247	George Michael
+248	Slipknot
+249	Korn
+250	Savage Garden
+251	Bravo unreal
+252	Beck Anime
+253	BEAT CRUSADERS
+254	Xanadu
+255	Frontside
+256	Saxon
+257	Riot
+258	Mr. Big
+259	R.E.M.
+260	Tr3nity
+261	Alex Gaudino feat. Taboo
+262	Shinedown
+263	Acid Drinkers
+264	Butelka
+265	Erida's Garden
+266	The Doors
+267	2TM2,3
+268	T.M. Stevens
+269	Archive
+270	Everlast
+271	Roscoe Dash
+272	Jimi Hendrix
+273	Ray Charles
+274	Joshua Radin and Schuyler Fisk
+275	John Frusciante
+276	Vangelis
+277	Duran Duran
+278	Dimmu Borgir
+279	AC/DC
+280	Gary Moore
+281	Black Label Society
+282	The Weeknd
+283	Iron Maiden
+284	Jeff Scott Soto and Others
+285	Era
+286	Adema
+287	Mr Gil
+288	Guru Josh Project
+289	Nine Inch Nails
+290	Michael Jackson
+291	Piotrek Gruszka
+292	Luxtorpeda
+293	One Love
+294	Stiltskin
+295	The Cure
+296	The Blues Brothers
+297	Svann
+298	Brad
+299	The Waterboys
+300	The Glove
+301	Linkin Park
+302	Karmakanic
+303	Grabaż i Strachy Na Lachy
+304	Roxy Music
+305	Stanisław Soyka
+306	Turbo
+307	+44
+308	The Cranberries
+309	Pride & Glory
+310	Michael Mind
+311	Dreamshade
+312	Elmore James
+313	Bass Communion
+314	Anthrax
+315	Anastasis
+316	Godsmack
+317	Unregistered version
+318	Derek and the Dominos
+319	Pitbull
+320	Daft Punk
+321	The Cheetah Girls
+322	Bonarges
+323	Jordan Rudess
+324	The Haunted
+325	lady-gaga (best-muzon.ru)
+326	Christina Aguilera
+327	Cinema Bizarre
+328	Nate Dogg
+329	The Clash
+330	Kanye West
+331	Ja Mmm Chyba Ściebie
+332	Psy
+333	4one
+334	Manowar
+335	Bliss n Eso
+336	Santana
+337	Cacophony
+338	Brocas Helm
+339	Jutro Wieczorem
+340	Anvil
+341	Äåöë
+342	Нюша
+343	ВИА Гра
+344	Krzysztof Maliszewski
+345	Trisomia 22
+346	Artinus
+347	My Chemical Romance
+348	Scatman John
+349	Mike Posner
+350	Madonna
+351	Fleetwood Mac
+352	Mangala Vallis
+353	Britney Spears
+354	Vader
+355	Rihanna
+356	Ky-Mani Marley
+357	The Merss
+358	A Step Behind
+359	Asia
+360	Skrillex
+361	Soilwork
+362	Deftones
+363	Airbourne
+364	Demons & Wizards
+365	Motörhead
+366	The Asteroids Galaxy Tour
+367	Gwen Stefani
+368	The Beatles
+369	Fergie
+370	Sylvan
+371	Kasia Nosowska & Czesław Niemen
+372	Chris Rea
+373	Angel Witch
+374	Apocalyptica
+375	Jelonek
+376	M.O.P.
+377	The Wishing Tree
+378	Steve Hackett
+379	Depeche Mode
+380	Lenny Kravitz
+381	Isme (Włocławek)
+382	Saitou San Band feat. Tanaka Koyuki & Minami Maho
+383	Behemoth
+384	Blind Guardian
+385	Panic Room
+386	Laid Back
+387	Mindala
+388	Killing Nullity
+389	Damageplan
+390	Prototype
+391	Eric Clapton
+392	Ninja Tune
+393	Emphatic
+394	Marty Friedman
+395	Static Cycle
+396	Tyler Ward
+397	Omega Lithium
+398	Paatos
+399	Allele
+400	GrubSon
+401	Typhoon24 feat.Tatsuzo of YKZ
+402	Lana Del Rey
+403	Simon Curtis
+404	Jeff Beck
+405	Yann Tiersen
+406	Joy Division
+407	Iggy Pop
+408	Army Of Anyone
+409	Dead Kennedys
+410	Iggy Pop & James Williamson
+411	Sensitive To Light
+412	Otep
+413	Sons Of A Witch
+414	Queen & David Bowie
+415	Life's Edge
+416	NOFX
+417	Enya
+418	Anubi
+419	Murderdolls
+420	Sting
+421	Sepultura
+422	Overkill
+423	Crash Test Dummies
+424	Bob Dylan
+425	Sigur Rós
+426	Black Fate
+427	RaptureFeast
+428	Mandragora
+429	Agalloch
+430	TSA
+431	Fueled by Fire
+432	Testament
+433	The Sold Outs
+434	The Analfists
+435	Demonical
+436	W.A.S.P.
+437	Pekla
+438	Rise Against
+439	Céline Dion
+440	Toro Bravo
+441	Southell
+442	Kampfar
+443	Autopsy
+444	Lake of Tears
+445	Burzum
+446	Various Artists
+447	Ankhagram
+448	Katedra
+449	Wizzard
+450	Alina Orlova
+451	Ozzy Osbóurne
+452	Carl Palmer
+453	Bob Marley
+454	Ðiaurës Kryptis
+455	Frost*
+456	Modern Talking
+457	Christ Agony
+458	Crematory
+459	Jason Becker
+460	Machinegun Majesty
+461	Arcade Fire
+462	Spock's Beard
+463	Cryhavoc
+464	Warbringer
+465	John Denver
+466	Simple Plan
+467	Dropkick Murphys
+468	Gauchos de Acero
+469	Liquid Vision
+470	System of a Down
+471	blink-182
+472	Hexvessel
+473	Noah and the Whale
+474	Europe
+475	Serj Tankian
+476	Mayhem
+477	In Vitro (gniewkowo)
+478	Pergalë
+479	Artillery
+480	Obtest
+481	Travis
+482	Kiss
+483	Corrosion of Conformity
+484	Mr. Zoob
+485	Metal Church
+486	At the Gates
+487	Thundertale
+488	Kobranocka
+489	Rush
+490	UFO
+491	Cloven Hoof
+492	The Grand Astoria
+493	The Police
+494	The Wombats
+495	Slash
+496	Nuclear Assault
+497	Shape of Despair
+498	Altorių Šešėliai
+499	The Smiths
+500	Up Hold
+501	Jefferson Airplane
+502	Tom Petty and The Heartbreakers
+503	Star Guard Muffin
+504	Adele
+505	Jieva
+506	Ovidijus ir Ieva
+507	Soundgarden
+508	Stone Sour
+509	Lynyrd Skynyrd
+510	Unexpect
+511	Glenn Tipton
+512	Mind's Eye
+513	Machinae Supremacy
+514	The Verve
+515	Creedence Clearwater Revival
+516	JerryC
+517	Stratovarius
+518	Martin Mcfly
+519	Hand To Hand
+520	Blur
+521	Guano Apes
+522	Voodoocult
+523	DragonForce
+524	Haddaway
+525	mix disco Polo By
+526	Obituary
+527	Underdog
+528	Paweł Kukiz & Piersi
+529	Tomasz Karolak
+530	Janis Joplin
+531	Enforcer
+532	Japanese Traditional Music
+533	Nagare
+534	Classical Japanese Koto Music
+535	ChameleonComposer
+536	Johann Pachelbel
+537	Butthole Surfers
+538	Gonin-Ish
+539	BUCK-TICK
+540	La'cryma Christi
+541	me-al art
+542	六合
+543	Band of Horses
+544	陰陽座
+545	上妻宏光
+546	COCK ROACH
+547	絶対無
+548	Garbage
+549	Fiona Apple
+550	F.T Island
+551	Epik High
+552	Dear Cloud
+553	Cloud Cuckoo Land
+554	Cherry Filter
+555	andymori
+556	Cherry Boom
+557	Cartel
+558	Boa
+559	Biuret
+560	U-zhaan × rei harakami
+561	Shintaro Sakamoto
+562	N'夙川boys
+563	Lama
+564	8otto
+565	the telephones
+566	OKAMOTO'S
+567	ムック
+568	スケッチBOOK
+569	a flood of circle
+570	Do As Infinity
+571	JAP
+572	ZAn
+573	ORANGE RANGE
+574	The Pillows
+575	99RadioService
+576	雅-MIYAVI-
+577	Monica Uranglass
+578	DIR EN GREY
+579	Kra
+580	Shocking Lemon
+581	VIDOLL
+582	MONKEY MAJIK
+583	Ｙｅｔｉ
+584	Psycho le Cému
+585	12012
+586	THE MICRO HEAD 4N'S
+587	LUNA SEA
+588	flumpool
+589	Primal Fear
+590	MINMI
+591	Tsutchie - fat jon
+592	平原綾香
+593	MIDICRONICA
+594	Pizzicato Five
+595	Sim
+596	Kagrra,
+597	摩天楼オペラ
+598	GOTCHAROCKA
+599	フジファブリック
+600	FOX LOCO PHANTOM
+601	Deadman
+602	Anli Pollicino
+603	KEYTALK
+604	Suck a Stew Dry
+605	borgkun
+606	ELLEGARDEN
+607	bin1085
+608	ã‚·ãƒ‰
+609	ONE OK ROCK
+610	THE BACK HORN
+611	fripSide
+612	Jiyuu no Tsubasa
+613	Tommy heavenly6
+614	Lia
+615	NICO Touches the Walls
+616	AZU
+617	ASIAN KUNG-FU GENERATION
+618	nobodyknows+
+619	Mocca
+620	Alice Nine
+621	Nicola
+622	Flipper's Guitar
+623	Hazel Nuts Chocolate
+624	COPTER4016882
+625	Hi-Posi
+626	Skeletonwitch
+627	The Animals
+628	モーモールルギャバン
+629	Maximum the Hormone
+630	曽我部恵一BAND
+631	L'Arc~en~Ciel
+632	サニーデイ・サービス
+633	毛皮のマリーズ
+634	サカナクション
+635	THEラブ人間
+636	Lulu
+637	-OZ-
+638	Moran
+639	ROACH
+640	cinema staff
+641	The Predators
+642	Camino
+643	LIPHLICH
+644	SRASH NOTES GARDEN
+645	9GOATS BLACK OUT
+646	TK from 凛として時雨
+647	Div
+648	Jaco Pastorius
+649	Jaco Pastorius & John Scofield
+650	Atika
+651	Phantasmagoria
+652	ダウト
+653	vistlip
+654	Sugar
+655	meth.
+656	ＧＯＬＩＡＴＨ
+657	音速ライン
+658	Dué le quartz
+659	hide
+660	LOST ASH
+661	Quaff
+662	브리즈
+663	Hoàng Nhân
+664	Pop Shuvit
+665	Bulsara
+666	November 24
+667	shiki∞project～志鬼陰謀～
+668	Linked Horizon
+669	椿屋四重奏
+670	tsubaki-VOICE
+671	Acma
+672	JAWEYE
+673	buddhistson
+674	SPYAIR
+675	Earls Court
+676	Frank Sinatra
+677	Godspeed You! Black Emperor
+678	Thin Lizzy
+679	James Brown
+680	Johann Sebastian Bach
+681	SECRET 7 LINE
+682	THE TEENAGE KISSERS
+683	coldrain
+684	Fear, and Loathing in Las Vegas
+685	ROTTENGRAFFTY
+686	Papa Roach
+687	WEAVER
+688	Piersi
+689	[unknown]
+690	五月天
+691	Green Day
+692	Adam and the Ants
+693	The Chordettes
+694	Cliff Richard
+695	heidi.
+696	Canned Heat
+697	Sex Pistols
+698	スピッツ
+699	LM.C
+700	Zigaz
+701	J-Rocks
+702	キュウソネコカミ
+703	キドリキドリ
+704	Andy Williams
+705	Suzi Quatro
+706	Gyvata
+707	Chris Farlowe
+708	The Hollies
+709	Talking Heads
+710	The Stranglers
+711	The Specials
+712	Peter Tosh
+713	Focus
+714	Scott Fitzgerald & Yvonne Keeley
+715	Frankie Miller
+716	Les Humphries Singers
+717	Racey
+718	George Baker Selection
+719	Hot Butter
+720	10cc
+721	Nick Gilder
+722	The Beach Boys
+723	Strawberry Alarm Clock
+724	Kat
+725	Large House Satisfaction
+726	安富祖貴子
+727	PP Arnold
+728	Carole King
+729	Cher
+730	The Move
+731	The Honeycombs
+732	Frank Ifield
+733	Procol Harum
+734	Paul Jones
+735	Herman's Hermits
+736	Tommy James & The Shondells
+737	The Fourmost
+738	Freddie & The Dreamers
+739	Gerry & The Pacemakers
+740	Plastic Tree
+741	Damian Marley
+742	GACKT
+743	d'Masiv
+744	卡奇社
+745	ガレージシャンソンショー
+746	Vodka Rain
+747	보드카레인
+748	8-eit
+749	Mohanik
+750	Microwave
+751	Omen
+752	2 Tone Runts
+753	DuelJewel
+754	LUCHe.
+755	The Flickers
+756	TOKIONE -東京音-
+757	Asaf Avidan & the Mojos
+758	Head Phones President
+759	C'rock54
+760	the rhedoric
+761	GReeeeN
+762	彼女 in the display
+763	中田裕二
+764	Spice Girls
+765	Cold War Kids
+766	D
+767	ゆず
+768	世界の終わり
+769	Drug Store Cowboy
+770	Equilibrium
+771	androp
+772	sukekiyo
+773	NAOKI (a.k.a. 女雅)
+774	Lä-ppisch
+775	Pretty Maids
+776	Waive
+777	Nega
+778	ネガ
+779	TETRA-FANG
+780	Fanarai
+781	Oz
+782	-OZ- (オズ)
+783	Zalo Reyes
+784	Pancho Puelma
+785	Claudio Reyes
+786	Buddy Richard
+787	Delfín hasta el Fin, La Tigresa del Oriente y Wendy Sulca
+788	Wendy Sulca
+789	MALICE MIZER
+790	Moi dix Mois
+791	Malice Mizer [PV]
+792	Versailles
+793	MALICE MIZER / Transylvania
+794	アンティック-珈琲店-
+795	[LIVE] Transylvania
+796	Ｌｕｌｕ
+797	RADWIMPS
+798	スキマスイッチ
+799	方大同
+800	周杰倫
+801	Pain
+802	Męskie granie
+803	Los Picantes
+804	Aqua
+805	Shaggy
+806	人格ラヂオ
+807	36481?
+808	Antonio Vivaldi
+809	plenty
+810	Nile
+811	Miles Davis
+812	Purple Days
+813	666
+814	Twentyfour Cylinders (24個シリンダー)
+815	[Champagne]
+816	オワリカラ
+817	Jake Stone Garage
+818	Dollis Marry
+819	JILS
+820	Rice
+821	Laputa
+822	Crimson Glory
+823	Ｒａｐｈａｅｌ
+824	Nookicky
+825	Nana Osaki
+826	Guniw Tools
+827	ドレミ團
+828	FAIRY FORE
+829	Truckfighters
+830	LAREINE
+831	Jupiter
+832	KAMIJO
+833	King Africa
+834	Los Cantantes
+835	Penso Positivo
+836	Jovanotti
+837	Niccolò Paganini
+838	VII ARC
+839	Sodom
+840	Ramones
+841	Miles Davis, Bill Evans, Marcus Miller & Mike Stern
+842	illion
+843	Amai Koibito
+844	The Who
+845	Simon Patterson
+846	Solarstone feat. Lemon
+847	Paul van Dyk
+848	ReOrder
+849	Zaxx
+850	Heatbeat
+851	Sean Tyas
+852	Jordan Suckley
+853	Thomas Bronzwaer
+854	Alex Larichev
+855	Harmonic Rush
+856	Lele Troniq vs. John Evans & Dyme
+857	Paul Oakenfold
+858	MC Hammer
+859	Lou Bega
+860	Melody
+861	GLAY
+862	Will Atkinson
+863	Wolfsbane
+864	Ikuo
+865	Three Lights Down Kings
+866	Proyecto Uno
+867	Tiro De Gracia
+868	K7
+869	New Order
+870	Tempo Giusto
+871	Alessandro Moreschi
+872	Imagine Dragons
+873	Neelix & Phaxe
+874	RHYMESTER
+875	Bissen
+876	Prague Ska Conspiracy
+877	John Askew
+878	Andain
+879	Christian Burns & Paul Van Dyk
+880	John O'Callaghan
+881	KICK THE CAN CREW
+882	White Ash
+883	東京事変
+884	アスタラビスタ
+885	The Beatmoss
+886	堂珍嘉邦
+887	Sneijder & Bryan Kearney
+888	Substate vs. Solarsky
+889	Sneijder
+890	Day.Din
+891	Giuseppe Ottaviani feat. Alana Aldea
+892	Rake feat. Emma Lock
+893	Adam Ellis & Jordan Suckley
+894	Will Atkinson, Darkboy
+895	John Newall
+896	Lee Osborne
+897	Ben Nicky
+898	Judge Jules feat. Christina Novelli
+899	Solar Movement
+900	Jordan Suckley & Eddie Bitar
+901	John O'Callaghan feat. Ria
+902	Giuseppe Ottaviani
+903	Rockabilly Mafia
+904	The Bones
+905	Foggy Mountain Rockers
+906	Restless
+907	Wild Rooster
+908	The Baboons
+909	シシド カフカ
+910	Aly & Fila vs. John O'Callaghan
+911	Ferry Corsten feat. Jenny Wahlstrom
+912	Driftmoon
+913	Rudimental
+914	Matt Bowdidge
+915	メレンゲ
+916	FoZZtone
+917	河村隆一
+918	TMR
+919	The Thrillseekers With York & Asheni
+920	Cold Rush
+921	Lostly
+922	Kyau vs. Albert
+923	Marc Marberg with Kyau & Albert
+924	The Killers
+925	T.M.Revolution
+926	Kyau & Albert with Ronski Speed
+927	Stoneface & Terminal, Kyau & Albert
+928	Giuseppe Ottaviani featuring Audrey Gallagher
+929	SADS
+930	Kinya
+931	Dead End
+932	Zilch
+933	コタニキンヤ
+934	Giuseppe Ottaviani featuring Alana Aldea
+935	Kyau & Albert with Adaja Black
+936	Hiperbolė
+937	FKN & Kraasm
+938	FKN
+939	Solarstone
+940	Arctic Motion
+941	Peter Santos
+942	Tom Colontonio, Amber Noel
+943	NéiL
+944	NOi'X
+945	Reverse
+946	Solarity
+947	Majera
+948	Spooky
+949	Space Rockerz
+950	Katy Rutkovski
+951	Slusnik Luna
+952	Klauss Goulart
+953	Arctic Moon
+954	Stoneface & Terminal
+955	Leibo & Kode
+956	Eliphas Levi
+957	Sun Decade feat. Emma Lock
+958	Jose Amnesia feat. Jennifer Rene
+959	Matt Lange
+960	Mike Koglin vs. Genix
+961	Luke Bond feat. Mark Frisch
+962	Nexus 3
+963	Ben Gold and Jonas Stenberg
+964	Beat Service
+965	M.I.K.E. vs Ben Nickey
+966	The Digital Blonde
+967	Estiva feat. Josie
+968	allure idea
+969	Mist of Rouge
+970	Stereopony
+971	ナイトメア
+972	The Thrillseekers
+973	ATB
+974	ATB and JES
+975	antillas and dankann
+976	ATB feat. Fade
+977	Paul Webster
+978	the GazettE
+979	Nightmare
+980	レゾンデートル
+981	Federation
+982	ATB Feat. Anova
+983	ATB feat. Stefan Erbe
+984	Lange
+985	Ricky＋Little Alien
+986	168 -one sixty eight-
+987	Sadie
+988	Mix Speaker's,Inc.
+989	SCREW
+990	Collective Soul
+991	Alanis Morissette
+992	Matt Darey
+993	Thomas Datt
+994	Kris Kross
+995	Cartoons
+996	The ROMEO
+997	Daishi Kajinaga
+998	DNS Project
+999	ATB and York feat. JES
+1000	ATB feat. Vanessa

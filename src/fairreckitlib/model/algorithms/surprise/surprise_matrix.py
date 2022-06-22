@@ -14,6 +14,7 @@ from typing import Tuple
 import numpy as np
 import surprise
 
+from ....data.ratings.convert_constants import RATING_TYPE_THRESHOLD
 from ..matrix import Matrix
 
 
@@ -30,8 +31,14 @@ class MatrixSurprise(Matrix):
         Args:
             file_path: the file path to where the matrix is stored.
             rating_scale: the minimum and maximum rating in the loaded set.
+
+        Raises:
+            RuntimeError: when the max of the rating scale is larger than the RATING_TYPE_THRESHOLD.
         """
         Matrix.__init__(self, file_path)
+        if rating_scale[1] > RATING_TYPE_THRESHOLD:
+            raise RuntimeError('Surprise only supports explicit ratings')
+
         reader = surprise.Reader(rating_scale=rating_scale)
         self.matrix = surprise.Dataset.load_from_df(self.matrix, reader)
         self.matrix = self.matrix.build_full_trainset()

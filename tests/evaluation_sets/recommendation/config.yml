@@ -1,0 +1,202 @@
+data:
+- dataset: ML-100K-Sample
+  matrix: user-movie-rating
+  splitting:
+    name: random
+    params:
+      seed: null
+    test_ratio: 0.2
+- dataset: ML-25M-Sample
+  matrix: user-movie-rating
+  splitting:
+    name: random
+    params:
+      seed: null
+    test_ratio: 0.2
+- dataset: LFM-360K-Sample
+  matrix: user-artist-count
+  rating_converter:
+    name: range
+    params:
+      upper_bound: 100.0
+  splitting:
+    name: random
+    params:
+      seed: null
+    test_ratio: 0.2
+- dataset: LFM-1B-Sample
+  matrix: user-artist-count
+  rating_converter:
+    name: range
+    params:
+      upper_bound: 100.0
+  splitting:
+    name: random
+    params:
+      seed: null
+    test_ratio: 0.2
+- dataset: LFM-2B-Sample
+  matrix: user-track-count
+  rating_converter:
+    name: range
+    params:
+      upper_bound: 100.0
+  splitting:
+    name: random
+    params:
+      seed: null
+    test_ratio: 0.2
+models:
+  Implicit:
+  - name: AlternatingLeastSquares
+    params:
+      calculate_training_loss: false
+      factors: 100
+      iterations: 15
+      random_seed: null
+      regularization: 0.01
+      use_cg: true
+      use_native: true
+  - name: BayesianPersonalizedRanking
+    params:
+      factors: 100
+      iterations: 100
+      learning_rate: 0.01
+      random_seed: null
+      regularization: 0.01
+      verify_negative_samples: true
+  - name: LogisticMatrixFactorization
+    params:
+      factors: 30
+      iterations: 30
+      learning_rate: 1.0
+      neg_prop: 30
+      random_seed: null
+      regularization: 0.6
+  LensKit:
+  - name: BiasedMF
+    params:
+      damping: 5.0
+      features: 10
+      item_reg: 0.1
+      iterations: 20
+      method: cd
+      seed: null
+      user_reg: 0.1
+  - name: ImplicitMF
+    params:
+      features: 3
+      iterations: 20
+      method: cg
+      reg: 0.1
+      seed: null
+      use_ratings: false
+      weight: 40.0
+  - name: ItemItem
+    params:
+      max_neighbors: 10
+      min_neighbors: 1
+      min_similarity: 1.0e-06
+  - name: PopScore
+    params:
+      score_method: quantile
+  - name: Random
+    params:
+      seed: null
+  - name: UserUser
+    params:
+      max_neighbors: 10
+      min_neighbors: 1
+      min_similarity: 1.0e-06
+  Surprise:
+  - name: BaselineOnlyALS
+    params:
+      epochs: 10
+      reg_i: 10
+      reg_u: 15
+  - name: BaselineOnlySGD
+    params:
+      epochs: 20
+      learning_rate: 0.005
+      regularization: 0.02
+  - name: CoClustering
+    params:
+      epochs: 20
+      item_clusters: 3
+      random_seed: null
+      user_clusters: 3
+  - name: KNNBasic
+    params:
+      max_k: 40
+      min_k: 1
+      min_support: 1
+      similarity: MSD
+      user_based: true
+  - name: KNNBaselineALS
+    params:
+      epochs: 10
+      max_k: 40
+      min_k: 1
+      min_support: 1
+      reg_i: 10
+      reg_u: 15
+      shrinkage: 100
+      user_based: true
+  - name: KNNBaselineSGD
+    params:
+      epochs: 20
+      learning_rate: 0.005
+      max_k: 40
+      min_k: 1
+      min_support: 1
+      regularization: 0.02
+      shrinkage: 100
+      user_based: true
+  - name: KNNWithMeans
+    params:
+      max_k: 40
+      min_k: 1
+      min_support: 1
+      similarity: MSD
+      user_based: true
+  - name: KNNWithZScore
+    params:
+      max_k: 40
+      min_k: 1
+      min_support: 1
+      similarity: MSD
+      user_based: true
+  - name: NMF
+    params:
+      epochs: 50
+      factors: 15
+      init_high: 1
+      init_low: 0
+      random_seed: null
+      reg_pu: 0.06
+      reg_qi: 0.06
+  - name: NormalPredictor
+  - name: SlopeOne
+  - name: SVD
+    params:
+      biased: true
+      epochs: 20
+      factors: 100
+      init_mean: 0
+      init_std_dev: 0.1
+      learning_rate: 0.005
+      random_seed: null
+      regularization: 0.02
+  - name: SVDpp
+    params:
+      epochs: 20
+      factors: 20
+      init_mean: 0
+      init_std_dev: 0.1
+      learning_rate: 0.007
+      random_seed: null
+      regularization: 0.02
+name: recommendation
+rated_items_filter: false
+top_K: 10
+type: recommendation

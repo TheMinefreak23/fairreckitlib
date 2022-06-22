@@ -284,6 +284,7 @@ class ModelPipeline(CorePipeline, metaclass=ABCMeta):
         ))
 
         # attempt to create model
+        kwargs['rating_type'] = self.data_transition.get_rating_type()
         model = self.algo_factory.create(
             model_name,
             model_params,
@@ -310,7 +311,7 @@ class ModelPipeline(CorePipeline, metaclass=ABCMeta):
         Returns:
             the path of the directory where the model's computed ratings can be stored.
         """
-        if self.tested_models.get(model_name, True):
+        if self.tested_models.get(model_name) is None:
             # initialize model name counter
             self.tested_models[model_name] = 0
 

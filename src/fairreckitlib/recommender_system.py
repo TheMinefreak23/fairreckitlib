@@ -52,14 +52,16 @@ class RecommenderSystem:
         """Construct the RecommenderSystem.
 
         Initializes the data registry with available datasets on which the
-        recommender system depends. It raises an IOError when the specified
-        data directory does not exist. The result directory however is
-        created when non-existing.
+        recommender system depends and therefore the data directory is expected to exist.
+        The result directory however is created when non-existing.
 
         Args:
             data_dir: path to the directory that contains the datasets.
             result_dir: path to the directory to store computation results.
             verbose: whether the data registry should give verbose output on startup.
+
+        Raises:
+            IOError: when the specified data directory does not exist.
         """
         try:
             self.data_registry = DataRegistry(data_dir, verbose=verbose)
@@ -111,10 +113,6 @@ class RecommenderSystem:
         models, only the evaluation is optional. If the configuration is invalidated
         this function will return False.
 
-        This functions raises an IOError when the result already exists or a TypeError
-        when the provided configuration is not a valid experiment configuration.
-        Lastly a KeyError is raised when a computation with the same name is already active.
-
         Args:
             events: the external events to dispatch during the experiment.
             config: the configuration of the experiment.
@@ -122,15 +120,20 @@ class RecommenderSystem:
             verbose: whether the internal events should give verbose output.
             validate_config: whether to validate the configuration beforehand.
 
+        Raises:
+            KeyError: when a computation with the same name is already active.
+            IOError: when the experiment result directory already exists.
+            TypeError: when the provided configuration is not a valid experiment configuration.
+
         Returns:
             whether the experiment successfully started.
         """
+        if not isinstance(config, (PredictorExperimentConfig, RecommenderExperimentConfig)):
+            raise TypeError('Invalid experiment configuration type.')
+
         result_dir = os.path.join(self.result_dir, config.name)
         if os.path.isdir(result_dir):
             raise IOError('Result already exists: ' + result_dir)
-
-        if not isinstance(config, (PredictorExperimentConfig, RecommenderExperimentConfig)):
-            raise TypeError('Invalid experiment configuration type.')
 
         if validate_config:
             parser = ExperimentConfigParser(verbose)
@@ -171,15 +174,16 @@ class RecommenderSystem:
         only the evaluation is optional.  If the configuration is invalidated
         this function will return False.
 
-        This function raises a FileNotFoundError when the specified yml file
-        is not found or an IOError when the result already exists. Lastly a KeyError
-        is raised when a computation with the same name is already active.
-
         Args:
             events: the external events to dispatch during the experiment.
             file_path: path to the yml file without extension.
             num_threads: the max number of threads the experiment can use.
             verbose: whether the internal events should give verbose output.
+
+        Raises:
+            FileNotFoundError: when the specified yml file does not exist.
+            KeyError: when a computation with the same name is already active.
+            IOError: when the experiment result directory already exists.
 
         Returns:
             whether the experiment successfully started.
@@ -212,15 +216,10 @@ class RecommenderSystem:
             verbose: bool = True) -> bool:
         """Validate an experiment for an additional number of runs.
 
+        It is not possible to validate an active experiment computation until it is done.
         The configuration file is expected to be stored in the specified result directory.
         Moreover, the configuration is validated before starting the experiment validation.
         If the configuration is invalidated this function will return False.
-
-        This functions raises an IOError when the result already exists or
-        a FileNotFoundError when the configuration file was not found in the
-        specified result directory. Lastly a KeyError is raised when a computation
-        with the same name is already active, meaning it is not possible to validate
-        an active experiment computation until it is done.
 
         Args:
             events: the external events to dispatch during the experiment.
@@ -228,6 +227,11 @@ class RecommenderSystem:
             num_runs: the number of runs to validate the experiment.
             num_threads: the max number of threads the experiment can use.
             verbose: whether the internal events should give verbose output.
+
+        Raises:
+            FileNotFoundError: when the configuration file does not exist in the result directory.
+            KeyError: when a computation with the same name is already active.
+            IOError: when the experiment result directory does not exist.
 
         Returns:
             whether the experiment successfully started.

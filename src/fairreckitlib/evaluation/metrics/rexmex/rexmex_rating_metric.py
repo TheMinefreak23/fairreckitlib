@@ -32,14 +32,20 @@ class RexmexRatingMetric(ColumnMetric):
         Args:
             eval_sets: the sets to use for computing the performance of the metric.
 
+        Raises:
+            ArithmeticError: when the merged test and rating set does not contain truth values.
+
         Returns:
             the evaluated performance.
         """
-        eval_sets.ratings.drop('rating', inplace=True, axis=1)
-        score_column = 'score' if 'score' in eval_sets.ratings else 'prediction'
-        scores = pd.merge(eval_sets.test, eval_sets.ratings, how='left', on=['user', 'item'])
+        rexmex_ratings = eval_sets.ratings.drop('rating', axis=1)
+        score_column = 'score' if 'score' in rexmex_ratings else 'prediction'
+        scores = pd.merge(eval_sets.test, rexmex_ratings, how='left', on=['user', 'item'])
         scores.dropna(subset=[score_column], axis=0, inplace=True)
-        return self.eval_func(scores['rating'], scores[score_column])
+        try:
+            return self.eval_func(scores['rating'], scores[score_column])
+        except ValueError as err:
+            raise ArithmeticError from err
 
 
 def create_mape(name: str, params: Dict[str, Any], **_) -> RexmexRatingMetric:

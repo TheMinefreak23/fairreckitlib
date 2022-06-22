@@ -12,6 +12,7 @@ Functions:
     create_algo_matrix: create matrices for all algorithm APIs.
     test_algo_matrix: test if the matrix is sufficient for testing.
     test_algo_matrix_interface: test matrices for all algorithm APIs.
+    test_surprise_matrix: test surprise matrix to only allow explicit ratings.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
@@ -24,6 +25,7 @@ import pandas as pd
 import pytest
 
 from src.fairreckitlib.core.core_constants import IMPLICIT_API, LENSKIT_API, SURPRISE_API
+from src.fairreckitlib.data.ratings.convert_constants import RATING_TYPE_THRESHOLD
 from src.fairreckitlib.model.algorithms.matrix import Matrix, MatrixCSR
 from src.fairreckitlib.model.algorithms.surprise.surprise_matrix import MatrixSurprise
 
@@ -156,3 +158,8 @@ def test_algo_matrix_interface(api_name: str) -> None:
     assert_algo_matrix_items(matrix)
     assert_algo_matrix_users(matrix)
     assert_algo_matrix_user_rated_items(matrix)
+
+
+def test_surprise_matrix() -> None:
+    """Test surprise matrix to raise an error when trying to use implicit ratings."""
+    pytest.raises(RuntimeError, MatrixSurprise, MATRIX_FILE, (1.0, RATING_TYPE_THRESHOLD + 0.0001))
