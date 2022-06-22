@@ -16,6 +16,7 @@ Utrecht University within the Software Project course.
 import time
 from typing import Callable, List, Optional
 
+
 from ...core.config.config_factories import Factory, GroupFactory, resolve_factory
 from ...core.events.event_dispatcher import EventDispatcher
 from ...core.events.event_error import ON_FAILURE_ERROR, ON_RAISE_ERROR, ErrorEventArgs
@@ -23,7 +24,9 @@ from ...core.io.io_create import create_json
 from ...core.io.io_utility import load_json, save_json
 from ...core.pipeline.core_pipeline import CorePipeline
 from ...data.filter.filter_config import DataSubsetConfig
+from ...data.filter.filter_constants import KEY_DATA_SUBSET
 from ...data.filter.filter_event import FilterDataframeEventArgs
+from ...data.filter.filter_passes import filter_from_filter_passes
 from ...data.set.dataset import Dataset
 from ..metrics.metric_base import BaseMetric
 from ..evaluation_sets import EvaluationSetPaths, EvaluationSets
@@ -199,6 +202,7 @@ class EvaluationPipeline(CorePipeline):
         )
 
         eval_sets = self.filter_set_rows(
+            output_path,
             eval_sets,
             metric_config.subgroup
         )
@@ -263,6 +267,7 @@ class EvaluationPipeline(CorePipeline):
 
     def filter_set_rows(
             self,
+            output_dir,
             eval_sets: EvaluationSets,
             subgroup: Optional[DataSubsetConfig]) -> EvaluationSets:
         """Filter the evaluation set rows for the specified subgroup.
@@ -288,6 +293,13 @@ class EvaluationPipeline(CorePipeline):
 
         start = time.time()
         # TODO filter sets using the given filters and dataset
+        filter_factory = self.data_factory.get_factory(KEY_DATA_SUBSET)
+        eval_sets.train = filter_from_filter_passes(
+                self, output_dir, eval_sets.train, subgroup, filter_factory)
+        eval_sets.test = filter_from_filter_passes(
+                self, output_dir, eval_sets.test, subgroup, filter_factory)
+        eval_sets.rating = filter_from_filter_passes( #??????
+                self, output_dir, eval_sets.rating, subgroup, filter_factory)
         end = time.time()
 
         self.event_dispatcher.dispatch(FilterDataframeEventArgs(
