@@ -247,7 +247,6 @@ class DataPipeline(CorePipeline):
 
         start = time.time()
         filter_factory = self.data_factory.get_factory(KEY_DATA_SUBSET)
-        # TODO aggregated the set using the given filters
         dataframe = filter_from_filter_passes(self, output_dir, dataframe, subset, filter_factory)
         end = time.time()
 

@@ -12,7 +12,6 @@ import os
 import random
 import pandas as pd
 
-from ...core.events.event_dispatcher import EventDispatcher
 from ...core.io.io_create import create_dir
 from ...core.io.io_delete import delete_dir
 
@@ -40,25 +39,30 @@ def filter_from_filter_passes(core_pipeline: CorePipeline,
         filter_factory: Factory containing filters.
 
     Returns:
-        An aggregation of filtered dataframes. 
+        An aggregation of filtered dataframes.
     """
-    # Create temp files and store base dataframe
-    random_num_str = str(random.randint(0, 100000))  # To prevent concurrency issues
-    dir_path = create_dir(os.path.join(output_dir, 'filter_passes_temp'), EventDispatcher())  # waht eventdispatche, where directory??? add path? add file.txt?
+    # Create temp files and store base dataframe.
+    random_num_str = str(random.randint(0, 100000))  # To prevent concurrency issues.
+    dir_path = create_dir(os.path.join(output_dir, 'filter_passes_temp'),
+        core_pipeline.event_dispatcher)
     og_df_path = os.path.join(dir_path, 'og_df' + random_num_str + '.tsv')
     core_pipeline.write_dataframe(og_df_path, dataframe, True)
+
+    # Apply filter passes.
     final_df = None
-    # Apply filter passes
     filter_dataset_factory = filter_factory.get_factory(subset.dataset).get_factory(subset.matrix)
-    for i, filter_pass_config in enumerate(subset.filter_passes):
-        dataframe = core_pipeline.read_dataframe(og_df_path, 'input_dataframe', 'start?', 'end?')  #???
+    for filter_pass_config in subset.filter_passes:
+        dataframe = core_pipeline.read_dataframe(
+            og_df_path,
+            'original_dataframe',
+            'filter_passes.on_begin_load_original_dataframe',
+            'filter_passes.on_end_load_original_dataframe')
         for _filter in filter_pass_config.filters:
             filterobj = filter_dataset_factory.create(_filter.name, _filter.params)
             dataframe = filterobj.run(dataframe)
-        if i == 0:  # Whether to include header
-            final_df = pd.concat([final_df, dataframe], copy=False).drop_duplicates().reset_index(drop=True)
-        else:
-            core_pipeline = pd.concat([final_df, dataframe], copy=False).drop_duplicates().reset_index(drop=True)
+        # Add to final dataframe and remove duplicates as well.
+        final_df = pd.concat(
+            [final_df, dataframe], copy=False).drop_duplicates().reset_index(drop=True)
 
-    delete_dir(dir_path, EventDispatcher())
+    delete_dir(dir_path, core_pipeline.event_dispatcher)
     return final_df
