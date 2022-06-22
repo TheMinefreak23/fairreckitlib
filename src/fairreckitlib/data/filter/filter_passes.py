@@ -60,6 +60,9 @@ def filter_from_filter_passes(core_pipeline: CorePipeline,
         for _filter in filter_pass_config.filters:
             filterobj = filter_dataset_factory.create(_filter.name, _filter.params)
             dataframe = filterobj.run(dataframe)
+        if len(dataframe) == 0:
+            raise RuntimeError(
+                'Filter pass generating empty dataset. Perhaps filters chosen too strictly.')
         # Add to final dataframe and remove duplicates as well.
         final_df = pd.concat(
             [final_df, dataframe], copy=False).drop_duplicates().reset_index(drop=True)

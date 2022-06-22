@@ -317,7 +317,7 @@ class EvaluationPipeline(CorePipeline):
         filter_factory = self.data_filter_factory
         if eval_sets.train is not None:
             eval_sets.train = filter_from_filter_passes(
-                    self, output_dir, eval_sets.train, subgroup, filter_factory)
+                self, output_dir, eval_sets.train, subgroup, filter_factory)
         if eval_sets.test is not None:
             eval_sets.test = filter_from_filter_passes(
                 self, output_dir, eval_sets.test, subgroup, filter_factory)
