@@ -53,7 +53,7 @@ class DatasetProcessorBase(metaclass=ABCMeta):
         """Construct the base DatasetProcessor.
 
         Args:
-            dataset_name: path of the dataset directory.
+            dataset_dir: path of the dataset directory.
             dataset_name: name of the dataset (processor).
         """
         self.dataset_dir = dataset_dir

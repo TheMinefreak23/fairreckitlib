@@ -13,6 +13,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+import os
 import time
 from typing import Callable, List, Optional
 
@@ -81,7 +82,7 @@ class EvaluationPipeline(CorePipeline):
         self.metric_category_factory = metric_category_factory
 
     def run(self,
-            output_path: str,
+            output_dir: str,
             eval_set_paths: EvaluationSetPaths,
             metrics: List[MetricConfig],
             is_running: Callable[[], bool]) -> None:
@@ -104,6 +105,7 @@ class EvaluationPipeline(CorePipeline):
         ))
 
         start = time.time()
+        output_path = os.path.join(output_dir, 'evaluations.json')
 
         # Create evaluations file
         create_json(
@@ -129,7 +131,7 @@ class EvaluationPipeline(CorePipeline):
                 continue
 
             try:
-                self.run_metric(output_path, metric_factory, eval_set_paths, metric_config)
+                self.run_metric(output_dir, output_path, metric_factory, eval_set_paths, metric_config)
             except ArithmeticError:
                 self.event_dispatcher.dispatch(ErrorEventArgs(
                     ON_RAISE_ERROR,
@@ -164,6 +166,7 @@ class EvaluationPipeline(CorePipeline):
 
     def run_metric(
             self,
+            output_dir: str,
             output_path: str,
             metric_factory: Factory,
             eval_set_paths: EvaluationSetPaths,
@@ -202,11 +205,11 @@ class EvaluationPipeline(CorePipeline):
         )
 
         eval_sets = self.filter_set_rows(
-            output_path,
+            output_dir,
             eval_sets,
             metric_config.subgroup
         )
-
+        print(eval_sets)
         evaluation = self.compute_metric_evaluation(
             metric,
             eval_sets,
@@ -293,15 +296,17 @@ class EvaluationPipeline(CorePipeline):
 
         start = time.time()
         # TODO filter sets using the given filters and dataset
-        filter_factory = self.data_factory.get_factory(KEY_DATA_SUBSET)
-        eval_sets.train = filter_from_filter_passes(
-                self, output_dir, eval_sets.train, subgroup, filter_factory)
-        eval_sets.test = filter_from_filter_passes(
+        
+        filter_factory = self.data_filter_factory
+        if eval_sets.train is not None:
+            eval_sets.train = filter_from_filter_passes(
+                    self, output_dir, eval_sets.train, subgroup, filter_factory)
+        if eval_sets.test is not None:
+            eval_sets.test = filter_from_filter_passes(
                 self, output_dir, eval_sets.test, subgroup, filter_factory)
-        eval_sets.rating = filter_from_filter_passes( #??????
-                self, output_dir, eval_sets.rating, subgroup, filter_factory)
+        eval_sets.ratings = filter_from_filter_passes(
+                self, output_dir, eval_sets.ratings, subgroup, filter_factory)
         end = time.time()
-
         self.event_dispatcher.dispatch(FilterDataframeEventArgs(
             ON_END_FILTER_RECS,
             subgroup

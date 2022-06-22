@@ -8,6 +8,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+import os
 import random
 import pandas as pd
 
@@ -43,26 +44,21 @@ def filter_from_filter_passes(core_pipeline: CorePipeline,
     """
     # Create temp files and store base dataframe
     random_num_str = str(random.randint(0, 100000))  # To prevent concurrency issues
-    dir_path = create_dir(output_dir + '/filter_passes_temp', EventDispatcher())  # waht eventdispatche, where directory??? add path? add file.txt?
-    og_df_path = dir_path + '/og_df' + random_num_str + '.tsv'
-    filter_pass_df_path = dir_path + '/filter_pass_df' + random_num_str +  '.tsv'
+    dir_path = create_dir(os.path.join(output_dir, 'filter_passes_temp'), EventDispatcher())  # waht eventdispatche, where directory??? add path? add file.txt?
+    og_df_path = os.path.join(dir_path, 'og_df' + random_num_str + '.tsv')
     core_pipeline.write_dataframe(og_df_path, dataframe, True)
-    core_pipeline.write_dataframe(filter_pass_df_path, dataframe, False)
-
+    final_df = None
+    # Apply filter passes
     filter_dataset_factory = filter_factory.get_factory(subset.dataset).get_factory(subset.matrix)
-    for i, filter_pass_config in enumerate(subset.filter_passes): # enumerate dict:??
-        # callable?  df
+    for i, filter_pass_config in enumerate(subset.filter_passes):
         dataframe = core_pipeline.read_dataframe(og_df_path, 'input_dataframe', 'start?', 'end?')  #???
-        for _filter in filter_pass_config:
+        for _filter in filter_pass_config.filters:
             filterobj = filter_dataset_factory.create(_filter.name, _filter.params)
             dataframe = filterobj.run(dataframe)
         if i == 0:  # Whether to include header
-            core_pipeline.write_dataframe(filter_pass_df_path, dataframe, True)
+            final_df = pd.concat([final_df, dataframe], copy=False).drop_duplicates().reset_index(drop=True)
         else:
-            core_pipeline.write_dataframe(filter_pass_df_path, dataframe, False)
+            core_pipeline = pd.concat([final_df, dataframe], copy=False).drop_duplicates().reset_index(drop=True)
 
-    # remove dir
-    dataframe = core_pipeline.read_dataframe(filter_pass_df_path, 'filtered_dataframe',
-        'idkbegin', 'idkend')
     delete_dir(dir_path, EventDispatcher())
-    return dataframe
+    return final_df

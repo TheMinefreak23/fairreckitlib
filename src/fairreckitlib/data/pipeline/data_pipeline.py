@@ -110,8 +110,6 @@ class DataPipeline(CorePipeline):
             return None
 
         # step 3
-        # if data_config:
-
         dataframe = self.filter_rows(output_dir, dataframe, data_config)
         if not is_running():
             return None
