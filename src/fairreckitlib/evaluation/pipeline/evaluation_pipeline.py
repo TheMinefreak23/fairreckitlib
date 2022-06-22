@@ -15,7 +15,7 @@ Utrecht University within the Software Project course.
 
 import os
 import time
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Tuple
 
 
 from ...core.config.config_factories import Factory, GroupFactory, resolve_factory
@@ -25,7 +25,6 @@ from ...core.io.io_create import create_json
 from ...core.io.io_utility import load_json, save_json
 from ...core.pipeline.core_pipeline import CorePipeline
 from ...data.filter.filter_config import DataSubsetConfig
-from ...data.filter.filter_constants import KEY_DATA_SUBSET
 from ...data.filter.filter_event import FilterDataframeEventArgs
 from ...data.filter.filter_passes import filter_from_filter_passes
 from ...data.set.dataset import Dataset
@@ -131,7 +130,8 @@ class EvaluationPipeline(CorePipeline):
                 continue
 
             try:
-                self.run_metric(output_dir, output_path, metric_factory, eval_set_paths, metric_config)
+                self.run_metric((output_dir, output_path),
+                    metric_factory, eval_set_paths, metric_config)
             except ArithmeticError:
                 self.event_dispatcher.dispatch(ErrorEventArgs(
                     ON_RAISE_ERROR,
@@ -166,8 +166,7 @@ class EvaluationPipeline(CorePipeline):
 
     def run_metric(
             self,
-            output_dir: str,
-            output_path: str,
+            output_paths: Tuple[str, str],
             metric_factory: Factory,
             eval_set_paths: EvaluationSetPaths,
             metric_config: MetricConfig) -> None:
@@ -189,6 +188,8 @@ class EvaluationPipeline(CorePipeline):
             ON_BEGIN_METRIC,
             metric_config
         ))
+
+        [output_dir, output_path] = output_paths
 
         start = time.time()
 
@@ -295,8 +296,7 @@ class EvaluationPipeline(CorePipeline):
         ))
 
         start = time.time()
-        # TODO filter sets using the given filters and dataset
-        
+
         filter_factory = self.data_filter_factory
         if eval_sets.train is not None:
             eval_sets.train = filter_from_filter_passes(
