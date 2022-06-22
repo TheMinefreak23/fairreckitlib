@@ -144,7 +144,7 @@ class TestFilterCountry:
         df_given = DataFrame({"id": [1, 2, 3, 4, 5], "play_count": [24, 0, -1, 45, 102]})
         df_result = self.filter_obj.filter(df_given, 'country', ['Sweden'])
         assert_frame_equal(df_result, self.filter_obj.__empty_df__(df_given))
-    
+
     def test_run_with_none(self):
         """Test run with given parameters."""
         df_result = self.filter_obj.filter(self.df_source, 'country', [None])
