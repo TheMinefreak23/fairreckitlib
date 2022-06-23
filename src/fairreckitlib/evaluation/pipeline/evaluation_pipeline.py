@@ -83,7 +83,7 @@ class EvaluationPipeline(CorePipeline):
         self.metric_category_factory = metric_category_factory
 
     def run(self,
-            output_dir: str,
+            output_path: str,
             eval_set_paths: EvaluationSetPaths,
             metric_config_list: List[MetricConfig],
             is_running: Callable[[], bool],
@@ -110,7 +110,6 @@ class EvaluationPipeline(CorePipeline):
         ))
 
         start = time.time()
-        output_path = os.path.join(output_dir, 'evaluations.json')
 
         # Create evaluations file
         create_json(
@@ -137,7 +136,7 @@ class EvaluationPipeline(CorePipeline):
 
             try:
                 self.run_metric(
-                    (output_dir, output_path),
+                    output_path,
                     metric_factory,
                     eval_set_paths,
                     metric_config,
@@ -177,7 +176,7 @@ class EvaluationPipeline(CorePipeline):
 
     def run_metric(
             self,
-            output_paths: Tuple[str, str],
+            output_path: str,
             metric_factory: Factory,
             eval_set_paths: EvaluationSetPaths,
             metric_config: MetricConfig,
@@ -204,8 +203,6 @@ class EvaluationPipeline(CorePipeline):
             metric_config
         ))
 
-        [output_dir, output_path] = output_paths
-
         start = time.time()
 
         metric = metric_factory.create(
@@ -222,7 +219,7 @@ class EvaluationPipeline(CorePipeline):
         )
 
         eval_sets = self.filter_set_rows(
-            output_dir,
+            os.path.split(output_path)[0],
             eval_sets,
             metric_config.subgroup
         )
@@ -287,7 +284,7 @@ class EvaluationPipeline(CorePipeline):
 
     def filter_set_rows(
             self,
-            output_dir,
+            output_dir: str,
             eval_sets: EvaluationSets,
             subgroup: Optional[DataSubsetConfig]) -> EvaluationSets:
         """Filter the evaluation set rows for the specified subgroup.

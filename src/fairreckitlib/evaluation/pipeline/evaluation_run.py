@@ -72,10 +72,11 @@ def run_evaluation_pipelines(
 
     for model_dir in pipeline_config.model_dirs:
         rating_set_path = os.path.join(model_dir, MODEL_RATINGS_FILE)
+        output_path = os.path.join(model_dir, 'evaluations.json')
 
         try:
             eval_pipeline.run(
-                model_dir,
+                output_path,
                 EvaluationSetPaths(
                     rating_set_path,
                     data_transition.train_set_path,
