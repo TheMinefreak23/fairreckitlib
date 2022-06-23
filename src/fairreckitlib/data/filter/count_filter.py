@@ -50,9 +50,9 @@ class CountFilter(DataFilter):
         """
         if column_name not in dataframe.columns:
             return self.__empty_df__(dataframe)
-        value_counts = dataframe[column_name].value_counts()
+        value_counts = dataframe[column_name].value_counts(dropna=False)
         key_dict = (value_counts >= threshold).to_dict()
-        df_filter = dataframe[column_name].map(key_dict)
+        df_filter = dataframe[column_name].replace(key_dict)
         return dataframe[df_filter].reset_index(drop=True)
 
     def _filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:

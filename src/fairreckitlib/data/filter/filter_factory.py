@@ -12,7 +12,7 @@ from ...core.config.config_factories import GroupFactory
 from ..set.dataset import Dataset
 from ..set.dataset_registry import DataRegistry
 from ..data_modifier import DataModifierFactory, create_data_modifier_factory
-from ..filter.filter_params import (
+from .filter_params import (
     create_params_categorical, create_params_numerical, create_params_count)
 from .filter_constants import KEY_DATA_SUBSET
 from .numerical_filter import create_numerical_filter
