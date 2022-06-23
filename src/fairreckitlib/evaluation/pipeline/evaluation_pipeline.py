@@ -15,8 +15,7 @@ Utrecht University within the Software Project course.
 
 import os
 import time
-from typing import Callable, List, Optional, Tuple
-
+from typing import Callable, List, Optional
 
 from ...core.config.config_factories import Factory, GroupFactory, resolve_factory
 from ...core.core_constants import KEY_NAME, KEY_PARAMS
