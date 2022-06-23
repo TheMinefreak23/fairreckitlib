@@ -271,15 +271,15 @@ Utrecht University within the Software Project course.
 </span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a><span class="sd">            max_neighbors(int): the maximum number of neighbors for scoring each item.</span>
 </span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="sd">            min_neighbors(int): the minimum number of neighbors for scoring each item.</span>
 </span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a><span class="sd">            min_similarity(float): minimum similarity threshold for considering a neighbor.</span>
-</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a><span class="sd">            feedback(str): control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
-</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a>
-</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a><span class="sd">    Keyword Args:</span>
-</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
+</span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>
+</span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="sd">    Keyword Args:</span>
+</span><span id="L-170"><a href="#L-170"><span class="linenos">170</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
+</span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="sd">        rating_type(str): the rating type on how feedback should be interpreted.</span>
 </span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a>
 </span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="sd">    Returns:</span>
 </span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="sd">        the LensKitPredictor wrapper of ItemItem.</span>
 </span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_item_item</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_item_item</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;rating_type&#39;</span><span class="p">])</span>
 </span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span><span id="L-178"><a href="#L-178"><span class="linenos">178</span></a>
 </span><span id="L-179"><a href="#L-179"><span class="linenos">179</span></a>
@@ -310,15 +310,15 @@ Utrecht University within the Software Project course.
 </span><span id="L-204"><a href="#L-204"><span class="linenos">204</span></a><span class="sd">            max_neighbors(int): the maximum number of neighbors for scoring each item.</span>
 </span><span id="L-205"><a href="#L-205"><span class="linenos">205</span></a><span class="sd">            min_neighbors(int): the minimum number of neighbors for scoring each item.</span>
 </span><span id="L-206"><a href="#L-206"><span class="linenos">206</span></a><span class="sd">            min_similarity(float): minimum similarity threshold for considering a neighbor.</span>
-</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a><span class="sd">            feedback(str): control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
-</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a>
-</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a><span class="sd">    Keyword Args:</span>
-</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
+</span><span id="L-207"><a href="#L-207"><span class="linenos">207</span></a>
+</span><span id="L-208"><a href="#L-208"><span class="linenos">208</span></a><span class="sd">    Keyword Args:</span>
+</span><span id="L-209"><a href="#L-209"><span class="linenos">209</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
+</span><span id="L-210"><a href="#L-210"><span class="linenos">210</span></a><span class="sd">        rating_type(str): the rating type on how feedback should be interpreted.</span>
 </span><span id="L-211"><a href="#L-211"><span class="linenos">211</span></a>
 </span><span id="L-212"><a href="#L-212"><span class="linenos">212</span></a><span class="sd">    Returns:</span>
 </span><span id="L-213"><a href="#L-213"><span class="linenos">213</span></a><span class="sd">        the LensKitPredictor wrapper of UserUser.</span>
 </span><span id="L-214"><a href="#L-214"><span class="linenos">214</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_user_user</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span id="L-215"><a href="#L-215"><span class="linenos">215</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_user_user</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;rating_type&#39;</span><span class="p">])</span>
 </span><span id="L-216"><a href="#L-216"><span class="linenos">216</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span></pre></div>
 
@@ -776,15 +776,15 @@ predicting ratings using multiple 'jobs'.</p>
 </span><span id="create_item_item-166"><a href="#create_item_item-166"><span class="linenos">166</span></a><span class="sd">            max_neighbors(int): the maximum number of neighbors for scoring each item.</span>
 </span><span id="create_item_item-167"><a href="#create_item_item-167"><span class="linenos">167</span></a><span class="sd">            min_neighbors(int): the minimum number of neighbors for scoring each item.</span>
 </span><span id="create_item_item-168"><a href="#create_item_item-168"><span class="linenos">168</span></a><span class="sd">            min_similarity(float): minimum similarity threshold for considering a neighbor.</span>
-</span><span id="create_item_item-169"><a href="#create_item_item-169"><span class="linenos">169</span></a><span class="sd">            feedback(str): control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
-</span><span id="create_item_item-170"><a href="#create_item_item-170"><span class="linenos">170</span></a>
-</span><span id="create_item_item-171"><a href="#create_item_item-171"><span class="linenos">171</span></a><span class="sd">    Keyword Args:</span>
-</span><span id="create_item_item-172"><a href="#create_item_item-172"><span class="linenos">172</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
+</span><span id="create_item_item-169"><a href="#create_item_item-169"><span class="linenos">169</span></a>
+</span><span id="create_item_item-170"><a href="#create_item_item-170"><span class="linenos">170</span></a><span class="sd">    Keyword Args:</span>
+</span><span id="create_item_item-171"><a href="#create_item_item-171"><span class="linenos">171</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
+</span><span id="create_item_item-172"><a href="#create_item_item-172"><span class="linenos">172</span></a><span class="sd">        rating_type(str): the rating type on how feedback should be interpreted.</span>
 </span><span id="create_item_item-173"><a href="#create_item_item-173"><span class="linenos">173</span></a>
 </span><span id="create_item_item-174"><a href="#create_item_item-174"><span class="linenos">174</span></a><span class="sd">    Returns:</span>
 </span><span id="create_item_item-175"><a href="#create_item_item-175"><span class="linenos">175</span></a><span class="sd">        the LensKitPredictor wrapper of ItemItem.</span>
 </span><span id="create_item_item-176"><a href="#create_item_item-176"><span class="linenos">176</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="create_item_item-177"><a href="#create_item_item-177"><span class="linenos">177</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_item_item</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span id="create_item_item-177"><a href="#create_item_item-177"><span class="linenos">177</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_item_item</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;rating_type&#39;</span><span class="p">])</span>
 </span><span id="create_item_item-178"><a href="#create_item_item-178"><span class="linenos">178</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span></pre></div>
 
@@ -796,11 +796,11 @@ predicting ratings using multiple 'jobs'.</p>
     params: containing the following name-value pairs:
         max_neighbors(int): the maximum number of neighbors for scoring each item.
         min_neighbors(int): the minimum number of neighbors for scoring each item.
-        min_similarity(float): minimum similarity threshold for considering a neighbor.
-        feedback(str): control how feedback should be interpreted ('explicit' or 'implicit').</p>
+        min_similarity(float): minimum similarity threshold for considering a neighbor.</p>
 
 <p>Keyword Args:
-    num_threads(int): the max number of threads the algorithm can use.</p>
+    num_threads(int): the max number of threads the algorithm can use.
+    rating_type(str): the rating type on how feedback should be interpreted.</p>
 
 <p>Returns:
     the LensKitPredictor wrapper of ItemItem.</p>
@@ -874,15 +874,15 @@ predicting ratings using multiple 'jobs'.</p>
 </span><span id="create_user_user-205"><a href="#create_user_user-205"><span class="linenos">205</span></a><span class="sd">            max_neighbors(int): the maximum number of neighbors for scoring each item.</span>
 </span><span id="create_user_user-206"><a href="#create_user_user-206"><span class="linenos">206</span></a><span class="sd">            min_neighbors(int): the minimum number of neighbors for scoring each item.</span>
 </span><span id="create_user_user-207"><a href="#create_user_user-207"><span class="linenos">207</span></a><span class="sd">            min_similarity(float): minimum similarity threshold for considering a neighbor.</span>
-</span><span id="create_user_user-208"><a href="#create_user_user-208"><span class="linenos">208</span></a><span class="sd">            feedback(str): control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
-</span><span id="create_user_user-209"><a href="#create_user_user-209"><span class="linenos">209</span></a>
-</span><span id="create_user_user-210"><a href="#create_user_user-210"><span class="linenos">210</span></a><span class="sd">    Keyword Args:</span>
-</span><span id="create_user_user-211"><a href="#create_user_user-211"><span class="linenos">211</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
+</span><span id="create_user_user-208"><a href="#create_user_user-208"><span class="linenos">208</span></a>
+</span><span id="create_user_user-209"><a href="#create_user_user-209"><span class="linenos">209</span></a><span class="sd">    Keyword Args:</span>
+</span><span id="create_user_user-210"><a href="#create_user_user-210"><span class="linenos">210</span></a><span class="sd">        num_threads(int): the max number of threads the algorithm can use.</span>
+</span><span id="create_user_user-211"><a href="#create_user_user-211"><span class="linenos">211</span></a><span class="sd">        rating_type(str): the rating type on how feedback should be interpreted.</span>
 </span><span id="create_user_user-212"><a href="#create_user_user-212"><span class="linenos">212</span></a>
 </span><span id="create_user_user-213"><a href="#create_user_user-213"><span class="linenos">213</span></a><span class="sd">    Returns:</span>
 </span><span id="create_user_user-214"><a href="#create_user_user-214"><span class="linenos">214</span></a><span class="sd">        the LensKitPredictor wrapper of UserUser.</span>
 </span><span id="create_user_user-215"><a href="#create_user_user-215"><span class="linenos">215</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="create_user_user-216"><a href="#create_user_user-216"><span class="linenos">216</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_user_user</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><span id="create_user_user-216"><a href="#create_user_user-216"><span class="linenos">216</span></a>    <span class="n">algo</span> <span class="o">=</span> <span class="n">lenskit_algorithms</span><span class="o">.</span><span class="n">create_user_user</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;rating_type&#39;</span><span class="p">])</span>
 </span><span id="create_user_user-217"><a href="#create_user_user-217"><span class="linenos">217</span></a>    <span class="k">return</span> <span class="n">LensKitPredictor</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </span></pre></div>
 
@@ -894,11 +894,11 @@ predicting ratings using multiple 'jobs'.</p>
     params: containing the following name-value pairs:
         max_neighbors(int): the maximum number of neighbors for scoring each item.
         min_neighbors(int): the minimum number of neighbors for scoring each item.
-        min_similarity(float): minimum similarity threshold for considering a neighbor.
-        feedback(str): control how feedback should be interpreted ('explicit' or 'implicit').</p>
+        min_similarity(float): minimum similarity threshold for considering a neighbor.</p>
 
 <p>Keyword Args:
-    num_threads(int): the max number of threads the algorithm can use.</p>
+    num_threads(int): the max number of threads the algorithm can use.
+    rating_type(str): the rating type on how feedback should be interpreted.</p>
 
 <p>Returns:
     the LensKitPredictor wrapper of UserUser.</p>

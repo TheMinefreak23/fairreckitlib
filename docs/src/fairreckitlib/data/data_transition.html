@@ -36,6 +36,9 @@
                         <li>
                                 <a class="function" href="#DataTransition.__init__">DataTransition</a>
                         </li>
+                        <li>
+                                <a class="function" href="#DataTransition.get_rating_type">get_rating_type</a>
+                        </li>
                 </ul>
 
             </li>
@@ -86,27 +89,38 @@ Utrecht University within the Software Project course.
 </span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>
 </span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="kn">from</span> <span class="nn">.set.dataset</span> <span class="kn">import</span> <span class="n">Dataset</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a><span class="nd">@dataclass</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="k">class</span> <span class="nc">DataTransition</span><span class="p">:</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="sd">&quot;&quot;&quot;Data Transition to transfer pipeline data.</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">    dataset: the dataset that was used for the data transition.</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">    matrix_name: the dataset matrix name that was used for the data transition.</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">    output_dir: the output directory of the data transition.</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">    train_set_path: the train set path in the output directory.</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">    test_set_path: the test set path in the output directory.</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">    rating_scale: the minimum and maximum rating in the train and test set combined.</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>    <span class="n">dataset</span> <span class="p">:</span> <span class="n">Dataset</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>    <span class="n">matrix_name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>    <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>    <span class="n">train_set_path</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="n">test_set_path</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="n">rating_scale</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a><span class="kn">from</span> <span class="nn">.ratings.convert_constants</span> <span class="kn">import</span> <span class="n">RATING_TYPE_THRESHOLD</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="kn">from</span> <span class="nn">.set.dataset</span> <span class="kn">import</span> <span class="n">Dataset</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="kn">from</span> <span class="nn">.set.dataset_config</span> <span class="kn">import</span> <span class="n">DATASET_RATINGS_EXPLICIT</span><span class="p">,</span> <span class="n">DATASET_RATINGS_IMPLICIT</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="nd">@dataclass</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a><span class="k">class</span> <span class="nc">DataTransition</span><span class="p">:</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="sd">&quot;&quot;&quot;Data Transition to transfer pipeline data.</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">    dataset: the dataset that was used for the data transition.</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">    matrix_name: the dataset matrix name that was used for the data transition.</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="sd">    output_dir: the output directory of the data transition.</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">    train_set_path: the train set path in the output directory.</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="sd">    test_set_path: the test set path in the output directory.</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">    rating_scale: the minimum and maximum rating in the train and test set combined.</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a>    <span class="n">dataset</span> <span class="p">:</span> <span class="n">Dataset</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>    <span class="n">matrix_name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>    <span class="n">train_set_path</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>    <span class="n">test_set_path</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>    <span class="n">rating_scale</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a>    <span class="k">def</span> <span class="nf">get_rating_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>        <span class="sd">&quot;&quot;&quot;Get the rating type of the data transition.</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="sd">        Returns:</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="sd">            the rating type (either &#39;explicit&#39; or &#39;implicit&#39;).</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>        <span class="k">return</span> <span class="n">DATASET_RATINGS_IMPLICIT</span> \
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rating_scale</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">RATING_TYPE_THRESHOLD</span> <span class="k">else</span> <span class="n">DATASET_RATINGS_EXPLICIT</span>
 </span></pre></div>
 
 
@@ -123,24 +137,33 @@ Utrecht University within the Software Project course.
 
     </div>
     <a class="headerlink" href="#DataTransition"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DataTransition-20"><a href="#DataTransition-20"><span class="linenos">20</span></a><span class="nd">@dataclass</span>
-</span><span id="DataTransition-21"><a href="#DataTransition-21"><span class="linenos">21</span></a><span class="k">class</span> <span class="nc">DataTransition</span><span class="p">:</span>
-</span><span id="DataTransition-22"><a href="#DataTransition-22"><span class="linenos">22</span></a>    <span class="sd">&quot;&quot;&quot;Data Transition to transfer pipeline data.</span>
-</span><span id="DataTransition-23"><a href="#DataTransition-23"><span class="linenos">23</span></a>
-</span><span id="DataTransition-24"><a href="#DataTransition-24"><span class="linenos">24</span></a><span class="sd">    dataset: the dataset that was used for the data transition.</span>
-</span><span id="DataTransition-25"><a href="#DataTransition-25"><span class="linenos">25</span></a><span class="sd">    matrix_name: the dataset matrix name that was used for the data transition.</span>
-</span><span id="DataTransition-26"><a href="#DataTransition-26"><span class="linenos">26</span></a><span class="sd">    output_dir: the output directory of the data transition.</span>
-</span><span id="DataTransition-27"><a href="#DataTransition-27"><span class="linenos">27</span></a><span class="sd">    train_set_path: the train set path in the output directory.</span>
-</span><span id="DataTransition-28"><a href="#DataTransition-28"><span class="linenos">28</span></a><span class="sd">    test_set_path: the test set path in the output directory.</span>
-</span><span id="DataTransition-29"><a href="#DataTransition-29"><span class="linenos">29</span></a><span class="sd">    rating_scale: the minimum and maximum rating in the train and test set combined.</span>
-</span><span id="DataTransition-30"><a href="#DataTransition-30"><span class="linenos">30</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="DataTransition-31"><a href="#DataTransition-31"><span class="linenos">31</span></a>
-</span><span id="DataTransition-32"><a href="#DataTransition-32"><span class="linenos">32</span></a>    <span class="n">dataset</span> <span class="p">:</span> <span class="n">Dataset</span>
-</span><span id="DataTransition-33"><a href="#DataTransition-33"><span class="linenos">33</span></a>    <span class="n">matrix_name</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="DataTransition-34"><a href="#DataTransition-34"><span class="linenos">34</span></a>    <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="DataTransition-35"><a href="#DataTransition-35"><span class="linenos">35</span></a>    <span class="n">train_set_path</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="DataTransition-36"><a href="#DataTransition-36"><span class="linenos">36</span></a>    <span class="n">test_set_path</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="DataTransition-37"><a href="#DataTransition-37"><span class="linenos">37</span></a>    <span class="n">rating_scale</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DataTransition-22"><a href="#DataTransition-22"><span class="linenos">22</span></a><span class="nd">@dataclass</span>
+</span><span id="DataTransition-23"><a href="#DataTransition-23"><span class="linenos">23</span></a><span class="k">class</span> <span class="nc">DataTransition</span><span class="p">:</span>
+</span><span id="DataTransition-24"><a href="#DataTransition-24"><span class="linenos">24</span></a>    <span class="sd">&quot;&quot;&quot;Data Transition to transfer pipeline data.</span>
+</span><span id="DataTransition-25"><a href="#DataTransition-25"><span class="linenos">25</span></a>
+</span><span id="DataTransition-26"><a href="#DataTransition-26"><span class="linenos">26</span></a><span class="sd">    dataset: the dataset that was used for the data transition.</span>
+</span><span id="DataTransition-27"><a href="#DataTransition-27"><span class="linenos">27</span></a><span class="sd">    matrix_name: the dataset matrix name that was used for the data transition.</span>
+</span><span id="DataTransition-28"><a href="#DataTransition-28"><span class="linenos">28</span></a><span class="sd">    output_dir: the output directory of the data transition.</span>
+</span><span id="DataTransition-29"><a href="#DataTransition-29"><span class="linenos">29</span></a><span class="sd">    train_set_path: the train set path in the output directory.</span>
+</span><span id="DataTransition-30"><a href="#DataTransition-30"><span class="linenos">30</span></a><span class="sd">    test_set_path: the test set path in the output directory.</span>
+</span><span id="DataTransition-31"><a href="#DataTransition-31"><span class="linenos">31</span></a><span class="sd">    rating_scale: the minimum and maximum rating in the train and test set combined.</span>
+</span><span id="DataTransition-32"><a href="#DataTransition-32"><span class="linenos">32</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="DataTransition-33"><a href="#DataTransition-33"><span class="linenos">33</span></a>
+</span><span id="DataTransition-34"><a href="#DataTransition-34"><span class="linenos">34</span></a>    <span class="n">dataset</span> <span class="p">:</span> <span class="n">Dataset</span>
+</span><span id="DataTransition-35"><a href="#DataTransition-35"><span class="linenos">35</span></a>    <span class="n">matrix_name</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="DataTransition-36"><a href="#DataTransition-36"><span class="linenos">36</span></a>    <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="DataTransition-37"><a href="#DataTransition-37"><span class="linenos">37</span></a>    <span class="n">train_set_path</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="DataTransition-38"><a href="#DataTransition-38"><span class="linenos">38</span></a>    <span class="n">test_set_path</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="DataTransition-39"><a href="#DataTransition-39"><span class="linenos">39</span></a>    <span class="n">rating_scale</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+</span><span id="DataTransition-40"><a href="#DataTransition-40"><span class="linenos">40</span></a>
+</span><span id="DataTransition-41"><a href="#DataTransition-41"><span class="linenos">41</span></a>    <span class="k">def</span> <span class="nf">get_rating_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="DataTransition-42"><a href="#DataTransition-42"><span class="linenos">42</span></a>        <span class="sd">&quot;&quot;&quot;Get the rating type of the data transition.</span>
+</span><span id="DataTransition-43"><a href="#DataTransition-43"><span class="linenos">43</span></a>
+</span><span id="DataTransition-44"><a href="#DataTransition-44"><span class="linenos">44</span></a><span class="sd">        Returns:</span>
+</span><span id="DataTransition-45"><a href="#DataTransition-45"><span class="linenos">45</span></a><span class="sd">            the rating type (either &#39;explicit&#39; or &#39;implicit&#39;).</span>
+</span><span id="DataTransition-46"><a href="#DataTransition-46"><span class="linenos">46</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DataTransition-47"><a href="#DataTransition-47"><span class="linenos">47</span></a>        <span class="k">return</span> <span class="n">DATASET_RATINGS_IMPLICIT</span> \
+</span><span id="DataTransition-48"><a href="#DataTransition-48"><span class="linenos">48</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rating_scale</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">RATING_TYPE_THRESHOLD</span> <span class="k">else</span> <span class="n">DATASET_RATINGS_EXPLICIT</span>
 </span></pre></div>
 
 
@@ -165,6 +188,36 @@ rating_scale: the minimum and maximum rating in the train and test set combined.
     <a class="headerlink" href="#DataTransition.__init__"></a>
     
     
+
+                            </div>
+                            <div id="DataTransition.get_rating_type" class="classattr">
+                                        <input id="DataTransition.get_rating_type-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">get_rating_type</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+
+                <label class="view-source-button" for="DataTransition.get_rating_type-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#DataTransition.get_rating_type"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DataTransition.get_rating_type-41"><a href="#DataTransition.get_rating_type-41"><span class="linenos">41</span></a>    <span class="k">def</span> <span class="nf">get_rating_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="DataTransition.get_rating_type-42"><a href="#DataTransition.get_rating_type-42"><span class="linenos">42</span></a>        <span class="sd">&quot;&quot;&quot;Get the rating type of the data transition.</span>
+</span><span id="DataTransition.get_rating_type-43"><a href="#DataTransition.get_rating_type-43"><span class="linenos">43</span></a>
+</span><span id="DataTransition.get_rating_type-44"><a href="#DataTransition.get_rating_type-44"><span class="linenos">44</span></a><span class="sd">        Returns:</span>
+</span><span id="DataTransition.get_rating_type-45"><a href="#DataTransition.get_rating_type-45"><span class="linenos">45</span></a><span class="sd">            the rating type (either &#39;explicit&#39; or &#39;implicit&#39;).</span>
+</span><span id="DataTransition.get_rating_type-46"><a href="#DataTransition.get_rating_type-46"><span class="linenos">46</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="DataTransition.get_rating_type-47"><a href="#DataTransition.get_rating_type-47"><span class="linenos">47</span></a>        <span class="k">return</span> <span class="n">DATASET_RATINGS_IMPLICIT</span> \
+</span><span id="DataTransition.get_rating_type-48"><a href="#DataTransition.get_rating_type-48"><span class="linenos">48</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rating_scale</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">RATING_TYPE_THRESHOLD</span> <span class="k">else</span> <span class="n">DATASET_RATINGS_EXPLICIT</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Get the rating type of the data transition.</p>
+
+<p>Returns:
+    the rating type (either 'explicit' or 'implicit').</p>
+</div>
+
 
                             </div>
                 </section>
