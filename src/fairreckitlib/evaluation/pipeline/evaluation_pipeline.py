@@ -13,6 +13,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+import os
 import time
 from typing import Callable, List, Optional
 
@@ -25,6 +26,7 @@ from ...core.io.io_utility import load_json, save_json
 from ...core.pipeline.core_pipeline import CorePipeline
 from ...data.filter.filter_config import DataSubsetConfig
 from ...data.filter.filter_event import FilterDataframeEventArgs
+from ...data.filter.filter_passes import filter_from_filter_passes
 from ...data.set.dataset import Dataset
 from ..metrics.metric_base import BaseMetric
 from ..metrics.metric_constants import KEY_METRIC_EVALUATION, KEY_METRIC_SUBGROUP
@@ -216,6 +218,7 @@ class EvaluationPipeline(CorePipeline):
         )
 
         eval_sets = self.filter_set_rows(
+            os.path.split(output_path)[0],
             eval_sets,
             metric_config.subgroup
         )
@@ -280,6 +283,7 @@ class EvaluationPipeline(CorePipeline):
 
     def filter_set_rows(
             self,
+            output_dir: str,
             eval_sets: EvaluationSets,
             subgroup: Optional[DataSubsetConfig]) -> EvaluationSets:
         """Filter the evaluation set rows for the specified subgroup.
@@ -294,7 +298,7 @@ class EvaluationPipeline(CorePipeline):
         Returns:
             the filtered evaluation sets.
         """
-        # early exit, because no filtering is needed
+        # Early exit, because no filtering is needed.
         if subgroup is None or len(subgroup.filter_passes) == 0:
             return eval_sets
 
@@ -304,9 +308,18 @@ class EvaluationPipeline(CorePipeline):
         ))
 
         start = time.time()
-        # TODO filter sets using the given filters and dataset
-        end = time.time()
 
+        # Filter for each dataframe in eval_sets.
+        filter_factory = self.data_filter_factory
+        if eval_sets.train is not None:
+            eval_sets.train = filter_from_filter_passes(
+                self, output_dir, eval_sets.train, subgroup, filter_factory)
+        if eval_sets.test is not None:
+            eval_sets.test = filter_from_filter_passes(
+                self, output_dir, eval_sets.test, subgroup, filter_factory)
+        eval_sets.ratings = filter_from_filter_passes(
+                self, output_dir, eval_sets.ratings, subgroup, filter_factory)
+        end = time.time()
         self.event_dispatcher.dispatch(FilterDataframeEventArgs(
             ON_END_FILTER_RECS,
             subgroup

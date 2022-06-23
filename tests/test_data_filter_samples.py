@@ -76,7 +76,7 @@ def test_numerical_filter(dataset_name, matrix_name):
         if col_name.split('_')[-1] not in ['age', 'rating', 'timestamp']:
             continue
         default_vals = data_config['params']['values'][0]['default']
-        filterobj = filter_dataset_factory.create(col_name, {'values': default_vals})
+        filterobj = filter_dataset_factory.create(col_name, {'range': default_vals})
         df_x = filterobj.run(og_dataframe)
         df_x_with_col = add_dataset_columns(dataset_registry.get_set(dataset_name),
                                             matrix_name,
