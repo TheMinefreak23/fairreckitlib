@@ -62,10 +62,16 @@ def filter_from_filter_passes(core_pipeline: CorePipeline,
             dataframe = filterobj.run(dataframe)
         if len(dataframe) == 0:
             raise RuntimeError(
-                'Filter pass generating empty dataset. Perhaps filters chosen too strictly.')
+                'Filter pass generating empty dataset. Perhaps filters chosen too strictly.'
+            )
         # Add to final dataframe and remove duplicates as well.
         final_df = pd.concat(
             [final_df, dataframe], copy=False).drop_duplicates().reset_index(drop=True)
 
     delete_dir(dir_path, core_pipeline.event_dispatcher)
+    if len(final_df) == 0:
+        raise RuntimeError(
+            'Wholly filtered dataframe is empty. All filter passes too strict or initial \
+            dataframe missing.'
+        )
     return final_df
