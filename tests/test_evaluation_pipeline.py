@@ -108,8 +108,7 @@ def test_evaluation_pipeline_metric_errors(
         # test failure for unknown metric
         print('\nEvaluationPipeline: construction warning')
         warning_json_path = os.path.join(
-            io_tmp_dir[:-6],  # Removing .json
-            eval_type + '_' + metric_category_name + '_CreateWarning' + '.json'
+            io_tmp_dir, eval_type + '_' + metric_category_name + '_CreateWarning' + '.json'
         )
         eval_pipeline.run(
             warning_json_path,
