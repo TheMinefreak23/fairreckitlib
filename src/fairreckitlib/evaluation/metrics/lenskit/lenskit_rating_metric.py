@@ -35,9 +35,9 @@ class LensKitRatingMetric(ColumnMetric):
         Returns:
             the evaluated performance.
         """
-        eval_sets.ratings.drop('rating', inplace=True, axis=1)
-        score_column = 'score' if 'score' in eval_sets.ratings else 'prediction'
-        scores = pd.merge(eval_sets.test, eval_sets.ratings, how='left', on=['user', 'item'])
+        lenskit_ratings = eval_sets.ratings.drop('rating', axis=1)
+        score_column = 'score' if 'score' in lenskit_ratings else 'prediction'
+        scores = pd.merge(eval_sets.test, lenskit_ratings, how='left', on=['user', 'item'])
         return predict.user_metric(scores, score_column=score_column, metric=self.eval_func)
 
 

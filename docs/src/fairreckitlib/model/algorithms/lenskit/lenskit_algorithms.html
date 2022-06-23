@@ -203,7 +203,7 @@ Utrecht University within the Software Project course.
 </span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>    <span class="p">)</span>
 </span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>
 </span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="k">def</span> <span class="nf">create_item_item</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ItemItem</span><span class="p">:</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="k">def</span> <span class="nf">create_item_item</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">feedback</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ItemItem</span><span class="p">:</span>
 </span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a>    <span class="sd">&quot;&quot;&quot;Create the lenskit ItemItem algorithm.</span>
 </span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>
 </span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">    Args:</span>
@@ -211,7 +211,7 @@ Utrecht University within the Software Project course.
 </span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">            max_neighbors(int): the maximum number of neighbors for scoring each item.</span>
 </span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">            min_neighbors(int): the minimum number of neighbors for scoring each item.</span>
 </span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">            min_similarity(float): minimum similarity threshold for considering a neighbor.</span>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">            feedback(str): control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">        feedback: control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
 </span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a>
 </span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">    Returns:</span>
 </span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">        the lenskit ItemItem algorithm.</span>
@@ -221,7 +221,7 @@ Utrecht University within the Software Project course.
 </span><span id="L-124"><a href="#L-124"><span class="linenos">124</span></a>        <span class="n">min_nbrs</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;min_neighbors&#39;</span><span class="p">],</span>
 </span><span id="L-125"><a href="#L-125"><span class="linenos">125</span></a>        <span class="n">min_sim</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;min_similarity&#39;</span><span class="p">],</span>
 </span><span id="L-126"><a href="#L-126"><span class="linenos">126</span></a>        <span class="n">save_nbrs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>        <span class="n">feedback</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;feedback&#39;</span><span class="p">]</span>
+</span><span id="L-127"><a href="#L-127"><span class="linenos">127</span></a>        <span class="n">feedback</span><span class="o">=</span><span class="n">feedback</span>
 </span><span id="L-128"><a href="#L-128"><span class="linenos">128</span></a>    <span class="p">)</span>
 </span><span id="L-129"><a href="#L-129"><span class="linenos">129</span></a>
 </span><span id="L-130"><a href="#L-130"><span class="linenos">130</span></a>
@@ -260,7 +260,7 @@ Utrecht University within the Software Project course.
 </span><span id="L-163"><a href="#L-163"><span class="linenos">163</span></a>    <span class="p">)</span>
 </span><span id="L-164"><a href="#L-164"><span class="linenos">164</span></a>
 </span><span id="L-165"><a href="#L-165"><span class="linenos">165</span></a>
-</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="k">def</span> <span class="nf">create_user_user</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">UserUser</span><span class="p">:</span>
+</span><span id="L-166"><a href="#L-166"><span class="linenos">166</span></a><span class="k">def</span> <span class="nf">create_user_user</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">feedback</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserUser</span><span class="p">:</span>
 </span><span id="L-167"><a href="#L-167"><span class="linenos">167</span></a>    <span class="sd">&quot;&quot;&quot;Create the lenskit UserUser algorithm.</span>
 </span><span id="L-168"><a href="#L-168"><span class="linenos">168</span></a>
 </span><span id="L-169"><a href="#L-169"><span class="linenos">169</span></a><span class="sd">    Args:</span>
@@ -268,7 +268,7 @@ Utrecht University within the Software Project course.
 </span><span id="L-171"><a href="#L-171"><span class="linenos">171</span></a><span class="sd">            max_neighbors(int): the maximum number of neighbors for scoring each item.</span>
 </span><span id="L-172"><a href="#L-172"><span class="linenos">172</span></a><span class="sd">            min_neighbors(int): the minimum number of neighbors for scoring each item.</span>
 </span><span id="L-173"><a href="#L-173"><span class="linenos">173</span></a><span class="sd">            min_similarity(float): minimum similarity threshold for considering a neighbor.</span>
-</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="sd">            feedback(str): control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
+</span><span id="L-174"><a href="#L-174"><span class="linenos">174</span></a><span class="sd">        feedback: control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
 </span><span id="L-175"><a href="#L-175"><span class="linenos">175</span></a>
 </span><span id="L-176"><a href="#L-176"><span class="linenos">176</span></a><span class="sd">    Returns:</span>
 </span><span id="L-177"><a href="#L-177"><span class="linenos">177</span></a><span class="sd">        the lenskit UserUser algorithm.</span>
@@ -277,7 +277,7 @@ Utrecht University within the Software Project course.
 </span><span id="L-180"><a href="#L-180"><span class="linenos">180</span></a>        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;max_neighbors&#39;</span><span class="p">],</span>
 </span><span id="L-181"><a href="#L-181"><span class="linenos">181</span></a>        <span class="n">min_nbrs</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;min_neighbors&#39;</span><span class="p">],</span>
 </span><span id="L-182"><a href="#L-182"><span class="linenos">182</span></a>        <span class="n">min_sim</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;min_similarity&#39;</span><span class="p">],</span>
-</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>        <span class="n">feedback</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;feedback&#39;</span><span class="p">]</span>
+</span><span id="L-183"><a href="#L-183"><span class="linenos">183</span></a>        <span class="n">feedback</span><span class="o">=</span><span class="n">feedback</span>
 </span><span id="L-184"><a href="#L-184"><span class="linenos">184</span></a>    <span class="p">)</span>
 </span></pre></div>
 
@@ -414,13 +414,13 @@ Utrecht University within the Software Project course.
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">create_item_item</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n">lenskit</span><span class="o">.</span><span class="n">algorithms</span><span class="o">.</span><span class="n">item_knn</span><span class="o">.</span><span class="n">ItemItem</span>:</span></span>
+        <span class="name">create_item_item</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>,</span><span class="param">	<span class="n">feedback</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">lenskit</span><span class="o">.</span><span class="n">algorithms</span><span class="o">.</span><span class="n">item_knn</span><span class="o">.</span><span class="n">ItemItem</span>:</span></span>
 
                 <label class="view-source-button" for="create_item_item-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#create_item_item"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="create_item_item-110"><a href="#create_item_item-110"><span class="linenos">110</span></a><span class="k">def</span> <span class="nf">create_item_item</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ItemItem</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="create_item_item-110"><a href="#create_item_item-110"><span class="linenos">110</span></a><span class="k">def</span> <span class="nf">create_item_item</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">feedback</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ItemItem</span><span class="p">:</span>
 </span><span id="create_item_item-111"><a href="#create_item_item-111"><span class="linenos">111</span></a>    <span class="sd">&quot;&quot;&quot;Create the lenskit ItemItem algorithm.</span>
 </span><span id="create_item_item-112"><a href="#create_item_item-112"><span class="linenos">112</span></a>
 </span><span id="create_item_item-113"><a href="#create_item_item-113"><span class="linenos">113</span></a><span class="sd">    Args:</span>
@@ -428,7 +428,7 @@ Utrecht University within the Software Project course.
 </span><span id="create_item_item-115"><a href="#create_item_item-115"><span class="linenos">115</span></a><span class="sd">            max_neighbors(int): the maximum number of neighbors for scoring each item.</span>
 </span><span id="create_item_item-116"><a href="#create_item_item-116"><span class="linenos">116</span></a><span class="sd">            min_neighbors(int): the minimum number of neighbors for scoring each item.</span>
 </span><span id="create_item_item-117"><a href="#create_item_item-117"><span class="linenos">117</span></a><span class="sd">            min_similarity(float): minimum similarity threshold for considering a neighbor.</span>
-</span><span id="create_item_item-118"><a href="#create_item_item-118"><span class="linenos">118</span></a><span class="sd">            feedback(str): control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
+</span><span id="create_item_item-118"><a href="#create_item_item-118"><span class="linenos">118</span></a><span class="sd">        feedback: control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
 </span><span id="create_item_item-119"><a href="#create_item_item-119"><span class="linenos">119</span></a>
 </span><span id="create_item_item-120"><a href="#create_item_item-120"><span class="linenos">120</span></a><span class="sd">    Returns:</span>
 </span><span id="create_item_item-121"><a href="#create_item_item-121"><span class="linenos">121</span></a><span class="sd">        the lenskit ItemItem algorithm.</span>
@@ -438,7 +438,7 @@ Utrecht University within the Software Project course.
 </span><span id="create_item_item-125"><a href="#create_item_item-125"><span class="linenos">125</span></a>        <span class="n">min_nbrs</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;min_neighbors&#39;</span><span class="p">],</span>
 </span><span id="create_item_item-126"><a href="#create_item_item-126"><span class="linenos">126</span></a>        <span class="n">min_sim</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;min_similarity&#39;</span><span class="p">],</span>
 </span><span id="create_item_item-127"><a href="#create_item_item-127"><span class="linenos">127</span></a>        <span class="n">save_nbrs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-</span><span id="create_item_item-128"><a href="#create_item_item-128"><span class="linenos">128</span></a>        <span class="n">feedback</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;feedback&#39;</span><span class="p">]</span>
+</span><span id="create_item_item-128"><a href="#create_item_item-128"><span class="linenos">128</span></a>        <span class="n">feedback</span><span class="o">=</span><span class="n">feedback</span>
 </span><span id="create_item_item-129"><a href="#create_item_item-129"><span class="linenos">129</span></a>    <span class="p">)</span>
 </span></pre></div>
 
@@ -450,7 +450,7 @@ Utrecht University within the Software Project course.
         max_neighbors(int): the maximum number of neighbors for scoring each item.
         min_neighbors(int): the minimum number of neighbors for scoring each item.
         min_similarity(float): minimum similarity threshold for considering a neighbor.
-        feedback(str): control how feedback should be interpreted ('explicit' or 'implicit').</p>
+    feedback: control how feedback should be interpreted ('explicit' or 'implicit').</p>
 
 <p>Returns:
     the lenskit ItemItem algorithm.</p>
@@ -547,13 +547,13 @@ Utrecht University within the Software Project course.
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">create_user_user</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n">lenskit</span><span class="o">.</span><span class="n">algorithms</span><span class="o">.</span><span class="n">user_knn</span><span class="o">.</span><span class="n">UserUser</span>:</span></span>
+        <span class="name">create_user_user</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>,</span><span class="param">	<span class="n">feedback</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">lenskit</span><span class="o">.</span><span class="n">algorithms</span><span class="o">.</span><span class="n">user_knn</span><span class="o">.</span><span class="n">UserUser</span>:</span></span>
 
                 <label class="view-source-button" for="create_user_user-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#create_user_user"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="create_user_user-167"><a href="#create_user_user-167"><span class="linenos">167</span></a><span class="k">def</span> <span class="nf">create_user_user</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">UserUser</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="create_user_user-167"><a href="#create_user_user-167"><span class="linenos">167</span></a><span class="k">def</span> <span class="nf">create_user_user</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">feedback</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">UserUser</span><span class="p">:</span>
 </span><span id="create_user_user-168"><a href="#create_user_user-168"><span class="linenos">168</span></a>    <span class="sd">&quot;&quot;&quot;Create the lenskit UserUser algorithm.</span>
 </span><span id="create_user_user-169"><a href="#create_user_user-169"><span class="linenos">169</span></a>
 </span><span id="create_user_user-170"><a href="#create_user_user-170"><span class="linenos">170</span></a><span class="sd">    Args:</span>
@@ -561,7 +561,7 @@ Utrecht University within the Software Project course.
 </span><span id="create_user_user-172"><a href="#create_user_user-172"><span class="linenos">172</span></a><span class="sd">            max_neighbors(int): the maximum number of neighbors for scoring each item.</span>
 </span><span id="create_user_user-173"><a href="#create_user_user-173"><span class="linenos">173</span></a><span class="sd">            min_neighbors(int): the minimum number of neighbors for scoring each item.</span>
 </span><span id="create_user_user-174"><a href="#create_user_user-174"><span class="linenos">174</span></a><span class="sd">            min_similarity(float): minimum similarity threshold for considering a neighbor.</span>
-</span><span id="create_user_user-175"><a href="#create_user_user-175"><span class="linenos">175</span></a><span class="sd">            feedback(str): control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
+</span><span id="create_user_user-175"><a href="#create_user_user-175"><span class="linenos">175</span></a><span class="sd">        feedback: control how feedback should be interpreted (&#39;explicit&#39; or &#39;implicit&#39;).</span>
 </span><span id="create_user_user-176"><a href="#create_user_user-176"><span class="linenos">176</span></a>
 </span><span id="create_user_user-177"><a href="#create_user_user-177"><span class="linenos">177</span></a><span class="sd">    Returns:</span>
 </span><span id="create_user_user-178"><a href="#create_user_user-178"><span class="linenos">178</span></a><span class="sd">        the lenskit UserUser algorithm.</span>
@@ -570,7 +570,7 @@ Utrecht University within the Software Project course.
 </span><span id="create_user_user-181"><a href="#create_user_user-181"><span class="linenos">181</span></a>        <span class="n">params</span><span class="p">[</span><span class="s1">&#39;max_neighbors&#39;</span><span class="p">],</span>
 </span><span id="create_user_user-182"><a href="#create_user_user-182"><span class="linenos">182</span></a>        <span class="n">min_nbrs</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;min_neighbors&#39;</span><span class="p">],</span>
 </span><span id="create_user_user-183"><a href="#create_user_user-183"><span class="linenos">183</span></a>        <span class="n">min_sim</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;min_similarity&#39;</span><span class="p">],</span>
-</span><span id="create_user_user-184"><a href="#create_user_user-184"><span class="linenos">184</span></a>        <span class="n">feedback</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;feedback&#39;</span><span class="p">]</span>
+</span><span id="create_user_user-184"><a href="#create_user_user-184"><span class="linenos">184</span></a>        <span class="n">feedback</span><span class="o">=</span><span class="n">feedback</span>
 </span><span id="create_user_user-185"><a href="#create_user_user-185"><span class="linenos">185</span></a>    <span class="p">)</span>
 </span></pre></div>
 
@@ -582,7 +582,7 @@ Utrecht University within the Software Project course.
         max_neighbors(int): the maximum number of neighbors for scoring each item.
         min_neighbors(int): the minimum number of neighbors for scoring each item.
         min_similarity(float): minimum similarity threshold for considering a neighbor.
-        feedback(str): control how feedback should be interpreted ('explicit' or 'implicit').</p>
+    feedback: control how feedback should be interpreted ('explicit' or 'implicit').</p>
 
 <p>Returns:
     the lenskit UserUser algorithm.</p>

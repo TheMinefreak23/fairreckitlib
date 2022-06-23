@@ -78,11 +78,15 @@ class BaseMetric(metaclass=ABCMeta):
         Raises:
             ArithmeticError: possibly raised by a metric on evaluation.
             MemoryError: possibly raised by a metric on evaluation.
-            RuntimeError: possibly raised by a metric on evaluation.
+            RuntimeError: when one of the required evaluation sets is None.
 
         Returns:
             the evaluated performance.
         """
+        if self.requires_train_set and eval_sets.train is None or \
+                self.requires_test_set and eval_sets.test is None:
+            raise RuntimeError()
+
         return self.on_evaluate(eval_sets)
 
     def get_name(self):

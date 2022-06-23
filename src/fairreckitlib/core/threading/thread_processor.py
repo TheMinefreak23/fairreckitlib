@@ -9,6 +9,7 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+import time
 from typing import List
 
 from .thread_base import ThreadBase
@@ -85,6 +86,8 @@ class ThreadProcessor:
         self.threads[thread_name] = thread
 
         thread.start(self.remove)
+        # delay so the thread can start up
+        time.sleep(0.05)
 
     def stop(self, thread_name: str) -> None:
         """Stop the thread with the specified name.

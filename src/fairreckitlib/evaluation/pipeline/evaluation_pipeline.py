@@ -13,10 +13,12 @@ Utrecht University within the Software Project course.
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 """
 
+import os
 import time
 from typing import Callable, List, Optional
 
 from ...core.config.config_factories import Factory, GroupFactory, resolve_factory
+from ...core.core_constants import KEY_NAME, KEY_PARAMS
 from ...core.events.event_dispatcher import EventDispatcher
 from ...core.events.event_error import ON_FAILURE_ERROR, ON_RAISE_ERROR, ErrorEventArgs
 from ...core.io.io_create import create_json
@@ -24,8 +26,10 @@ from ...core.io.io_utility import load_json, save_json
 from ...core.pipeline.core_pipeline import CorePipeline
 from ...data.filter.filter_config import DataSubsetConfig
 from ...data.filter.filter_event import FilterDataframeEventArgs
+from ...data.filter.filter_passes import filter_from_filter_passes
 from ...data.set.dataset import Dataset
 from ..metrics.metric_base import BaseMetric
+from ..metrics.metric_constants import KEY_METRIC_EVALUATION, KEY_METRIC_SUBGROUP
 from ..evaluation_sets import EvaluationSetPaths, EvaluationSets
 from .evaluation_config import MetricConfig
 from .evaluation_event import EvaluationPipelineEventArgs, MetricEventArgs
@@ -80,8 +84,9 @@ class EvaluationPipeline(CorePipeline):
     def run(self,
             output_path: str,
             eval_set_paths: EvaluationSetPaths,
-            metrics: List[MetricConfig],
-            is_running: Callable[[], bool]) -> None:
+            metric_config_list: List[MetricConfig],
+            is_running: Callable[[], bool],
+            **kwargs) -> None:
         """Run the entire pipeline from beginning to end.
 
         Effectively running all computations of the specified metrics.
@@ -91,13 +96,16 @@ class EvaluationPipeline(CorePipeline):
         Args:
             output_path: the path of the json file to store the output.
             eval_set_paths: the file paths of the evaluation sets.
-            metrics: list of MetricConfig objects to compute.
+            metric_config_list: list of MetricConfig objects to compute.
             is_running: function that returns whether the pipeline
                 is still running. Stops early when False is returned.
+
+        Keyword Args:
+            reserved for future use
         """
         self.event_dispatcher.dispatch(EvaluationPipelineEventArgs(
             ON_BEGIN_EVAL_PIPELINE,
-            metrics
+            metric_config_list
         ))
 
         start = time.time()
@@ -110,7 +118,7 @@ class EvaluationPipeline(CorePipeline):
             indent=4
         )
 
-        for metric_config in metrics:
+        for metric_config in metric_config_list:
             if not is_running():
                 return
 
@@ -121,12 +129,18 @@ class EvaluationPipeline(CorePipeline):
             if metric_factory is None:
                 self.event_dispatcher.dispatch(ErrorEventArgs(
                     ON_FAILURE_ERROR,
-                    'Failure: to resolve metric factory for metric ' + metric_config.name
+                    'Failure: to resolve metric factory for metric \'' + metric_config.name + '\''
                 ))
                 continue
 
             try:
-                self.run_metric(output_path, metric_factory, eval_set_paths, metric_config)
+                self.run_metric(
+                    output_path,
+                    metric_factory,
+                    eval_set_paths,
+                    metric_config,
+                    **kwargs
+                )
             except ArithmeticError:
                 self.event_dispatcher.dispatch(ErrorEventArgs(
                     ON_RAISE_ERROR,
@@ -156,7 +170,7 @@ class EvaluationPipeline(CorePipeline):
 
         self.event_dispatcher.dispatch(EvaluationPipelineEventArgs(
             ON_END_EVAL_PIPELINE,
-            metrics
+            metric_config_list
         ), elapsed_time=end - start)
 
     def run_metric(
@@ -164,7 +178,8 @@ class EvaluationPipeline(CorePipeline):
             output_path: str,
             metric_factory: Factory,
             eval_set_paths: EvaluationSetPaths,
-            metric_config: MetricConfig) -> None:
+            metric_config: MetricConfig,
+            **kwargs) -> None:
         """Run the evaluation computation for the specified metric configuration.
 
         Args:
@@ -178,6 +193,9 @@ class EvaluationPipeline(CorePipeline):
             MemoryError: possibly raised by a metric on construction or evaluation.
             RuntimeError: possibly raised by a metric on construction or evaluation.
             FileNotFoundError: when the file of one of the evaluation sets does not exist.
+
+        Keyword Args:
+            reserved for future use
         """
         self.event_dispatcher.dispatch(MetricEventArgs(
             ON_BEGIN_METRIC,
@@ -188,7 +206,8 @@ class EvaluationPipeline(CorePipeline):
 
         metric = metric_factory.create(
             metric_config.name,
-            metric_config.params
+            metric_config.params,
+            **kwargs
         )
 
         # this can raise a FileNotFoundError, effectively aborting the pipeline
@@ -199,6 +218,7 @@ class EvaluationPipeline(CorePipeline):
         )
 
         eval_sets = self.filter_set_rows(
+            os.path.split(output_path)[0],
             eval_sets,
             metric_config.subgroup
         )
@@ -236,6 +256,13 @@ class EvaluationPipeline(CorePipeline):
         Returns:
             the loaded evaluation sets.
         """
+        rating_set = self.read_dataframe(
+            eval_set_paths.ratings_path,
+            'rating set',
+            ON_BEGIN_LOAD_RATING_SET,
+            ON_END_LOAD_RATING_SET,
+        )
+
         train_set = None if not train_set_required else self.read_dataframe(
             eval_set_paths.train_path,
             'train set',
@@ -252,17 +279,11 @@ class EvaluationPipeline(CorePipeline):
             names=['user', 'item', 'rating']
         )
 
-        rating_set = self.read_dataframe(
-            eval_set_paths.ratings_path,
-            'rating set',
-            ON_BEGIN_LOAD_RATING_SET,
-            ON_END_LOAD_RATING_SET,
-        )
-
-        return EvaluationSets(train_set, test_set, rating_set)
+        return EvaluationSets(rating_set, train_set, test_set)
 
     def filter_set_rows(
             self,
+            output_dir: str,
             eval_sets: EvaluationSets,
             subgroup: Optional[DataSubsetConfig]) -> EvaluationSets:
         """Filter the evaluation set rows for the specified subgroup.
@@ -277,7 +298,7 @@ class EvaluationPipeline(CorePipeline):
         Returns:
             the filtered evaluation sets.
         """
-        # early exit, because no filtering is needed
+        # Early exit, because no filtering is needed.
         if subgroup is None or len(subgroup.filter_passes) == 0:
             return eval_sets
 
@@ -287,9 +308,18 @@ class EvaluationPipeline(CorePipeline):
         ))
 
         start = time.time()
-        # TODO filter sets using the given filters and dataset
-        end = time.time()
 
+        # Filter for each dataframe in eval_sets.
+        filter_factory = self.data_filter_factory
+        if eval_sets.train is not None:
+            eval_sets.train = filter_from_filter_passes(
+                self, output_dir, eval_sets.train, subgroup, filter_factory)
+        if eval_sets.test is not None:
+            eval_sets.test = filter_from_filter_passes(
+                self, output_dir, eval_sets.test, subgroup, filter_factory)
+        eval_sets.ratings = filter_from_filter_passes(
+                self, output_dir, eval_sets.ratings, subgroup, filter_factory)
+        end = time.time()
         self.event_dispatcher.dispatch(FilterDataframeEventArgs(
             ON_END_FILTER_RECS,
             subgroup
@@ -348,9 +378,9 @@ def add_evaluation_to_file(
         metric_config: the metric configuration used for the evaluation.
     """
     subgroup = {} if metric_config.subgroup is None else metric_config.subgroup.to_yml_format()
-    evaluation = {'name': metric_config.name,
-                  'params': metric_config.params,
-                  'evaluation': {'value': str(evaluation_value), 'subgroup': subgroup}}
+    evaluation = {KEY_NAME: metric_config.name,
+                  KEY_PARAMS: metric_config.params,
+                  KEY_METRIC_EVALUATION:{'value': evaluation_value, KEY_METRIC_SUBGROUP: subgroup}}
 
     evaluations = load_json(file_path)
     evaluations['evaluations'].append(evaluation)

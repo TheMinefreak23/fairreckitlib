@@ -208,18 +208,18 @@ def create_item_item(name: str, params: Dict[str, Any], **kwargs) -> LensKitReco
             max_neighbors(int): the maximum number of neighbors for scoring each item.
             min_neighbors(int): the minimum number of neighbors for scoring each item.
             min_similarity(float): minimum similarity threshold for considering a neighbor.
-            feedback(str): control how feedback should be interpreted ('explicit' or 'implicit').
 
     Keyword Args:
         num_threads(int): the max number of threads the algorithm can use.
         rated_items_filter(bool): whether to filter already rated items when
             producing item recommendations.
+        rating_type(str): the rating type on how feedback should be interpreted.
 
     Returns:
         the LensKitRecommender wrapper of ItemItem.
     """
     algo = TopN(
-        lenskit_algorithms.create_item_item(params),
+        lenskit_algorithms.create_item_item(params, kwargs['rating_type']),
         create_candidate_selector(kwargs['rated_items_filter'])
     )
 
@@ -283,18 +283,18 @@ def create_user_user(name: str, params: Dict[str, Any], **kwargs) -> LensKitReco
             max_neighbors(int): the maximum number of neighbors for scoring each item.
             min_neighbors(int): the minimum number of neighbors for scoring each item.
             min_similarity(float): minimum similarity threshold for considering a neighbor.
-            feedback(str): control how feedback should be interpreted ('explicit' or 'implicit').
 
     Keyword Args:
         num_threads(int): the max number of threads the algorithm can use.
         rated_items_filter(bool): whether to filter already rated items when
             producing item recommendations.
+        rating_type(str): the rating type on how feedback should be interpreted.
 
     Returns:
         the LensKitRecommender wrapper of UserUser.
     """
     algo = TopN(
-        lenskit_algorithms.create_user_user(params),
+        lenskit_algorithms.create_user_user(params, kwargs['rating_type']),
         create_candidate_selector(kwargs['rated_items_filter'])
     )
 

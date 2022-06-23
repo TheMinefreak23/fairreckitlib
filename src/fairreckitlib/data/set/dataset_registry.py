@@ -51,9 +51,12 @@ class DataRegistry:
         Args:
             data_dir: path to the directory that contains the datasets.
             verbose: whether the dataset parser should give verbose output.
+
+        Raises:
+            IOError: when the specified data directory does not exist.
         """
         if not os.path.isdir(data_dir):
-            raise IOError()
+            raise IOError('Unable to construct data registry from an unknown directory')
 
         self.registry = {}
         self.processors = {

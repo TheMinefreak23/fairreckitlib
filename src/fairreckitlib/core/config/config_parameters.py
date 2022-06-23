@@ -71,7 +71,7 @@ class ConfigParameters:
             options: List[str]) -> None:
         """Add a multi option parameter.
 
-        The default_value and all the options are expected to be strings.
+        The default_value and all the options are expected to be strings or None.
         The default_value list is expected to have at least one entry.
         The default_value list is expected to be present in the list of available options.
         Raises a KeyError when the name of the parameter is already present.

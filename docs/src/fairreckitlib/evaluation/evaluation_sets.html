@@ -103,28 +103,28 @@ Utrecht University within the Software Project course.
 </span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="k">class</span> <span class="nc">EvaluationSetPaths</span><span class="p">:</span>
 </span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>    <span class="sd">&quot;&quot;&quot;Evaluation set file paths.</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">    train_path: the train set file path.</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">    test_path: the test set file path.</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">    ratings_path: the computed rating set file path.</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="sd">    ratings_path: the computed rating set file path.</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">    train_path: the train set file path.</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">    test_path: the test set file path.</span>
 </span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>    <span class="n">train_path</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>    <span class="n">test_path</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>    <span class="n">ratings_path</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>    <span class="n">ratings_path</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>    <span class="n">train_path</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a>    <span class="n">test_path</span><span class="p">:</span> <span class="nb">str</span>
 </span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>
 </span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a>
 </span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="nd">@dataclass</span>
 </span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="k">class</span> <span class="nc">EvaluationSets</span><span class="p">:</span>
 </span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="sd">&quot;&quot;&quot;Evaluation set dataframes.</span>
 </span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">    train: the train set or None when not needed for evaluation.</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="sd">    test: the test set or None when not needed for evaluation.</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">    ratings: the computed ratings set.</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">    ratings: the computed ratings set.</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="sd">    train: the train set or None when not needed for evaluation.</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">    test: the test set or None when not needed for evaluation.</span>
 </span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="n">train</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="n">test</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="n">ratings</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a>    <span class="n">ratings</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a>    <span class="n">train</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>    <span class="n">test</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>
 </span></pre></div>
 
 
@@ -145,29 +145,29 @@ Utrecht University within the Software Project course.
 </span><span id="EvaluationSetPaths-21"><a href="#EvaluationSetPaths-21"><span class="linenos">21</span></a><span class="k">class</span> <span class="nc">EvaluationSetPaths</span><span class="p">:</span>
 </span><span id="EvaluationSetPaths-22"><a href="#EvaluationSetPaths-22"><span class="linenos">22</span></a>    <span class="sd">&quot;&quot;&quot;Evaluation set file paths.</span>
 </span><span id="EvaluationSetPaths-23"><a href="#EvaluationSetPaths-23"><span class="linenos">23</span></a>
-</span><span id="EvaluationSetPaths-24"><a href="#EvaluationSetPaths-24"><span class="linenos">24</span></a><span class="sd">    train_path: the train set file path.</span>
-</span><span id="EvaluationSetPaths-25"><a href="#EvaluationSetPaths-25"><span class="linenos">25</span></a><span class="sd">    test_path: the test set file path.</span>
-</span><span id="EvaluationSetPaths-26"><a href="#EvaluationSetPaths-26"><span class="linenos">26</span></a><span class="sd">    ratings_path: the computed rating set file path.</span>
+</span><span id="EvaluationSetPaths-24"><a href="#EvaluationSetPaths-24"><span class="linenos">24</span></a><span class="sd">    ratings_path: the computed rating set file path.</span>
+</span><span id="EvaluationSetPaths-25"><a href="#EvaluationSetPaths-25"><span class="linenos">25</span></a><span class="sd">    train_path: the train set file path.</span>
+</span><span id="EvaluationSetPaths-26"><a href="#EvaluationSetPaths-26"><span class="linenos">26</span></a><span class="sd">    test_path: the test set file path.</span>
 </span><span id="EvaluationSetPaths-27"><a href="#EvaluationSetPaths-27"><span class="linenos">27</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="EvaluationSetPaths-28"><a href="#EvaluationSetPaths-28"><span class="linenos">28</span></a>
-</span><span id="EvaluationSetPaths-29"><a href="#EvaluationSetPaths-29"><span class="linenos">29</span></a>    <span class="n">train_path</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="EvaluationSetPaths-30"><a href="#EvaluationSetPaths-30"><span class="linenos">30</span></a>    <span class="n">test_path</span><span class="p">:</span> <span class="nb">str</span>
-</span><span id="EvaluationSetPaths-31"><a href="#EvaluationSetPaths-31"><span class="linenos">31</span></a>    <span class="n">ratings_path</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="EvaluationSetPaths-29"><a href="#EvaluationSetPaths-29"><span class="linenos">29</span></a>    <span class="n">ratings_path</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="EvaluationSetPaths-30"><a href="#EvaluationSetPaths-30"><span class="linenos">30</span></a>    <span class="n">train_path</span><span class="p">:</span> <span class="nb">str</span>
+</span><span id="EvaluationSetPaths-31"><a href="#EvaluationSetPaths-31"><span class="linenos">31</span></a>    <span class="n">test_path</span><span class="p">:</span> <span class="nb">str</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>Evaluation set file paths.</p>
 
-<p>train_path: the train set file path.
-test_path: the test set file path.
-ratings_path: the computed rating set file path.</p>
+<p>ratings_path: the computed rating set file path.
+train_path: the train set file path.
+test_path: the test set file path.</p>
 </div>
 
 
                             <div id="EvaluationSetPaths.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">EvaluationSetPaths</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">train_path</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">test_path</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">ratings_path</span><span class="p">:</span> <span class="nb">str</span></span>)</span>
+        <span class="name">EvaluationSetPaths</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">ratings_path</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">train_path</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">test_path</span><span class="p">:</span> <span class="nb">str</span></span>)</span>
 
         
     </div>
@@ -193,29 +193,29 @@ ratings_path: the computed rating set file path.</p>
 </span><span id="EvaluationSets-35"><a href="#EvaluationSets-35"><span class="linenos">35</span></a><span class="k">class</span> <span class="nc">EvaluationSets</span><span class="p">:</span>
 </span><span id="EvaluationSets-36"><a href="#EvaluationSets-36"><span class="linenos">36</span></a>    <span class="sd">&quot;&quot;&quot;Evaluation set dataframes.</span>
 </span><span id="EvaluationSets-37"><a href="#EvaluationSets-37"><span class="linenos">37</span></a>
-</span><span id="EvaluationSets-38"><a href="#EvaluationSets-38"><span class="linenos">38</span></a><span class="sd">    train: the train set or None when not needed for evaluation.</span>
-</span><span id="EvaluationSets-39"><a href="#EvaluationSets-39"><span class="linenos">39</span></a><span class="sd">    test: the test set or None when not needed for evaluation.</span>
-</span><span id="EvaluationSets-40"><a href="#EvaluationSets-40"><span class="linenos">40</span></a><span class="sd">    ratings: the computed ratings set.</span>
+</span><span id="EvaluationSets-38"><a href="#EvaluationSets-38"><span class="linenos">38</span></a><span class="sd">    ratings: the computed ratings set.</span>
+</span><span id="EvaluationSets-39"><a href="#EvaluationSets-39"><span class="linenos">39</span></a><span class="sd">    train: the train set or None when not needed for evaluation.</span>
+</span><span id="EvaluationSets-40"><a href="#EvaluationSets-40"><span class="linenos">40</span></a><span class="sd">    test: the test set or None when not needed for evaluation.</span>
 </span><span id="EvaluationSets-41"><a href="#EvaluationSets-41"><span class="linenos">41</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="EvaluationSets-42"><a href="#EvaluationSets-42"><span class="linenos">42</span></a>
-</span><span id="EvaluationSets-43"><a href="#EvaluationSets-43"><span class="linenos">43</span></a>    <span class="n">train</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>
-</span><span id="EvaluationSets-44"><a href="#EvaluationSets-44"><span class="linenos">44</span></a>    <span class="n">test</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>
-</span><span id="EvaluationSets-45"><a href="#EvaluationSets-45"><span class="linenos">45</span></a>    <span class="n">ratings</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+</span><span id="EvaluationSets-43"><a href="#EvaluationSets-43"><span class="linenos">43</span></a>    <span class="n">ratings</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+</span><span id="EvaluationSets-44"><a href="#EvaluationSets-44"><span class="linenos">44</span></a>    <span class="n">train</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>
+</span><span id="EvaluationSets-45"><a href="#EvaluationSets-45"><span class="linenos">45</span></a>    <span class="n">test</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>Evaluation set dataframes.</p>
 
-<p>train: the train set or None when not needed for evaluation.
-test: the test set or None when not needed for evaluation.
-ratings: the computed ratings set.</p>
+<p>ratings: the computed ratings set.
+train: the train set or None when not needed for evaluation.
+test: the test set or None when not needed for evaluation.</p>
 </div>
 
 
                             <div id="EvaluationSets.__init__" class="classattr">
                                 <div class="attr function">
             
-        <span class="name">EvaluationSets</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">train</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>,</span><span class="param">	<span class="n">test</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>,</span><span class="param">	<span class="n">ratings</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span></span>)</span>
+        <span class="name">EvaluationSets</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">ratings</span><span class="p">:</span> <span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span>,</span><span class="param">	<span class="n">train</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>,</span><span class="param">	<span class="n">test</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span></span>)</span>
 
         
     </div>

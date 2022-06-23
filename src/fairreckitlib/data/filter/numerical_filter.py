@@ -55,7 +55,7 @@ class NumericalFilter(DataFilter):
 
     def _filter(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """Private filter used in run(). Requires configuration file."""
-        numerical_range = self.params['values']
+        numerical_range = self.params['range']
         return self.filter(dataframe, self.get_name(),
                            numerical_range["min"], numerical_range["max"])
 

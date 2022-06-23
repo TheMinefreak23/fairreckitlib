@@ -12,7 +12,8 @@ Functions:
     test_run_model_pipelines: test the model pipeline (run) integration.
     assert_model_run_error: assert the model pipeline to run into an error.
     create_data_transition: create data transition for a dataset-matrix pair.
-    create_model_type_config: Create several model configuration for each API.
+    create_model_type_config_coverage: create model configurations that cover each API.
+    create_model_type_config_duplicates: create model configurations with duplicate models.
 
 This program has been developed by students from the bachelor Computer Science at
 Utrecht University within the Software Project course.
@@ -198,9 +199,6 @@ def test_run_model_pipelines(
 
     # test model pipeline for several dataset-matrix pairs and API models
     for dataset_name in data_registry.get_available_sets():
-        if not 'Sample' in dataset_name:
-            continue
-
         for matrix_name in data_registry.get_set(dataset_name).get_available_matrices():
             output_dir = os.path.join(io_tmp_dir, dataset_name + '_' + matrix_name)
             create_dir(output_dir, model_event_dispatcher)
@@ -211,7 +209,7 @@ def test_run_model_pipelines(
                 (dataset_name, matrix_name)
             )
 
-            models_config, num_models = create_model_type_config(model_type_factory)
+            models_config, num_models = create_model_type_config_coverage(model_type_factory)
             model_dirs = run_model_pipelines(
                 ModelPipelineConfig(
                     output_dir,
@@ -238,6 +236,9 @@ def test_run_model_pipelines(
                 if 'score' in rating_set:
                     assert len(test_set['user'].unique()) * DEFAULT_TOP_K == len(rating_set), \
                         'expected item recommendations for every user in the test set'
+                elif 'prediction' in rating_set:
+                    assert len(test_set) == len(rating_set), \
+                        'expected user-item prediction for every pair in the test set'
 
 
 def assert_model_run_error(
@@ -275,9 +276,9 @@ def create_data_transition(
     )
 
 
-def create_model_type_config(
+def create_model_type_config_coverage(
         model_type_factory: GroupFactory) -> Tuple[Dict[str, List[ModelConfig]], int]:
-    """Create several model configuration for each API from the model type factory."""
+    """Create several model configuration that covers each API from the model type factory."""
     models_config = {}
     num_models = 0
 
@@ -308,7 +309,25 @@ def create_model_type_config(
                 ))
 
     # lenskit_algorithm.RANDOM is not a predictor
+    # and therefore also tests model discarding for prediction
     if model_type_factory.get_name() == TYPE_PREDICTION:
         num_models -= 1
 
     return models_config, num_models
+
+
+def create_model_type_config_duplicates(
+        model_type_factory: GroupFactory,
+        num_duplicates: int=2) -> Dict[str, List[ModelConfig]]:
+    """Create model configuration with duplicate models of one algorithm."""
+    lenskit_model = lenskit_algorithms.POP_SCORE # both predictor and recommender
+    lenskit_factory = model_type_factory.get_factory(LENSKIT_API)
+
+    models_config = {LENSKIT_API: []}
+    for _ in range(num_duplicates):
+        models_config[LENSKIT_API].append(ModelConfig(
+            lenskit_model,
+            lenskit_factory.create_params(lenskit_model).get_defaults()
+        ))
+
+    return models_config

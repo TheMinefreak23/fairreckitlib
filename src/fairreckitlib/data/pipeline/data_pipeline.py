@@ -22,7 +22,9 @@ from ...core.io.io_create import create_dir
 from ...core.pipeline.core_pipeline import CorePipeline
 from ..data_transition import DataTransition
 from ..filter.filter_config import DataSubsetConfig
+from ..filter.filter_constants import KEY_DATA_SUBSET
 from ..filter.filter_event import FilterDataframeEventArgs
+from ..filter.filter_passes import filter_from_filter_passes
 from ..ratings.convert_config import ConvertConfig
 from ..ratings.convert_event import ConvertRatingsEventArgs
 from ..ratings.rating_converter_factory import KEY_RATING_CONVERTER
@@ -87,11 +89,15 @@ class DataPipeline(CorePipeline):
 
         Raises:
             FileNotFoundError: when the dataset matrix file does not exist.
+            IOError: when the specified output directory does not exist.
             RuntimeError: when any data modifiers are not found in their respective factories.
 
         Returns:
             the data transition output of the pipeline.
         """
+        if not os.path.isdir(output_dir):
+            raise IOError('Unknown data output directory')
+
         self.event_dispatcher.dispatch(DatasetEventArgs(
             ON_BEGIN_DATA_PIPELINE,
             dataset.get_name()
@@ -108,7 +114,7 @@ class DataPipeline(CorePipeline):
             return None
 
         # step 3
-        dataframe = self.filter_rows(dataframe, data_config)
+        dataframe = self.filter_rows(output_dir, dataframe, data_config)
         if not is_running():
             return None
 
@@ -127,6 +133,9 @@ class DataPipeline(CorePipeline):
 
         # step 6
         train_set_path, test_set_path = self.save_sets(data_dir, train_set, test_set)
+
+        # update data matrix counter
+        self.split_datasets[data_config.get_data_matrix_name()] += 1
 
         end = time.time()
 
@@ -156,12 +165,11 @@ class DataPipeline(CorePipeline):
         Returns:
             the path of the directory where the output data can be stored.
         """
-        dataset_matrix_name = data_config.dataset + '_' + data_config.matrix
+        dataset_matrix_name = data_config.get_data_matrix_name()
         if not self.split_datasets.get(dataset_matrix_name):
             self.split_datasets[dataset_matrix_name] = 0
 
         index = self.split_datasets[dataset_matrix_name]
-        self.split_datasets[dataset_matrix_name] += 1
 
         data_dir = os.path.join(output_dir, dataset_matrix_name + '_' + str(index))
         return create_dir(data_dir, self.event_dispatcher)
@@ -213,6 +221,7 @@ class DataPipeline(CorePipeline):
         return dataframe
 
     def filter_rows(self,
+                    output_dir: str,
                     dataframe: pd.DataFrame,
                     subset: DataSubsetConfig) -> pd.DataFrame:
         """Apply the specified subset filters to the dataframe.
@@ -237,7 +246,8 @@ class DataPipeline(CorePipeline):
         ))
 
         start = time.time()
-        # TODO aggregated the set using the given filters
+        filter_factory = self.data_factory.get_factory(KEY_DATA_SUBSET)
+        dataframe = filter_from_filter_passes(self, output_dir, dataframe, subset, filter_factory)
         end = time.time()
 
         self.event_dispatcher.dispatch(FilterDataframeEventArgs(

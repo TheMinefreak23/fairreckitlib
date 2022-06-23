@@ -192,7 +192,7 @@ Utrecht University within the Software Project course.
 </span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>            <span class="n">options</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>        <span class="sd">&quot;&quot;&quot;Add a multi option parameter.</span>
 </span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">        The default_value and all the options are expected to be strings.</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a><span class="sd">        The default_value and all the options are expected to be strings or None.</span>
 </span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="sd">        The default_value list is expected to have at least one entry.</span>
 </span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="sd">        The default_value list is expected to be present in the list of available options.</span>
 </span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">        Raises a KeyError when the name of the parameter is already present.</span>
@@ -473,7 +473,7 @@ Utrecht University within the Software Project course.
 </span><span id="ConfigParameters-72"><a href="#ConfigParameters-72"><span class="linenos"> 72</span></a>            <span class="n">options</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="ConfigParameters-73"><a href="#ConfigParameters-73"><span class="linenos"> 73</span></a>        <span class="sd">&quot;&quot;&quot;Add a multi option parameter.</span>
 </span><span id="ConfigParameters-74"><a href="#ConfigParameters-74"><span class="linenos"> 74</span></a>
-</span><span id="ConfigParameters-75"><a href="#ConfigParameters-75"><span class="linenos"> 75</span></a><span class="sd">        The default_value and all the options are expected to be strings.</span>
+</span><span id="ConfigParameters-75"><a href="#ConfigParameters-75"><span class="linenos"> 75</span></a><span class="sd">        The default_value and all the options are expected to be strings or None.</span>
 </span><span id="ConfigParameters-76"><a href="#ConfigParameters-76"><span class="linenos"> 76</span></a><span class="sd">        The default_value list is expected to have at least one entry.</span>
 </span><span id="ConfigParameters-77"><a href="#ConfigParameters-77"><span class="linenos"> 77</span></a><span class="sd">        The default_value list is expected to be present in the list of available options.</span>
 </span><span id="ConfigParameters-78"><a href="#ConfigParameters-78"><span class="linenos"> 78</span></a><span class="sd">        Raises a KeyError when the name of the parameter is already present.</span>
@@ -779,7 +779,7 @@ Raises a KeyError when the name of the parameter is already present.</p>
 </span><span id="ConfigParameters.add_multi_option-72"><a href="#ConfigParameters.add_multi_option-72"><span class="linenos">72</span></a>            <span class="n">options</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="ConfigParameters.add_multi_option-73"><a href="#ConfigParameters.add_multi_option-73"><span class="linenos">73</span></a>        <span class="sd">&quot;&quot;&quot;Add a multi option parameter.</span>
 </span><span id="ConfigParameters.add_multi_option-74"><a href="#ConfigParameters.add_multi_option-74"><span class="linenos">74</span></a>
-</span><span id="ConfigParameters.add_multi_option-75"><a href="#ConfigParameters.add_multi_option-75"><span class="linenos">75</span></a><span class="sd">        The default_value and all the options are expected to be strings.</span>
+</span><span id="ConfigParameters.add_multi_option-75"><a href="#ConfigParameters.add_multi_option-75"><span class="linenos">75</span></a><span class="sd">        The default_value and all the options are expected to be strings or None.</span>
 </span><span id="ConfigParameters.add_multi_option-76"><a href="#ConfigParameters.add_multi_option-76"><span class="linenos">76</span></a><span class="sd">        The default_value list is expected to have at least one entry.</span>
 </span><span id="ConfigParameters.add_multi_option-77"><a href="#ConfigParameters.add_multi_option-77"><span class="linenos">77</span></a><span class="sd">        The default_value list is expected to be present in the list of available options.</span>
 </span><span id="ConfigParameters.add_multi_option-78"><a href="#ConfigParameters.add_multi_option-78"><span class="linenos">78</span></a><span class="sd">        Raises a KeyError when the name of the parameter is already present.</span>
@@ -802,7 +802,7 @@ Raises a KeyError when the name of the parameter is already present.</p>
 
             <div class="docstring"><p>Add a multi option parameter.</p>
 
-<p>The default_value and all the options are expected to be strings.
+<p>The default_value and all the options are expected to be strings or None.
 The default_value list is expected to have at least one entry.
 The default_value list is expected to be present in the list of available options.
 Raises a KeyError when the name of the parameter is already present.</p>

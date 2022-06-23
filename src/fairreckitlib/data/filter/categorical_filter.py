@@ -65,7 +65,6 @@ class CategoricalFilter(DataFilter):
             return []
         if None in conditions:
             conditions.append(numpy.NaN)
-            conditions.remove(None)
         return conditions
 
 

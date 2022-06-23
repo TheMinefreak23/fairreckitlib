@@ -52,6 +52,7 @@ class Dataset:
     Public methods:
 
     get_available_columns
+    get_available_event_tables
     get_available_matrices
     get_available_tables
     get_matrices_info
@@ -72,8 +73,11 @@ class Dataset:
 
         Args:
             data_dir: directory where the dataset is stored.
-            config: data configuration dictionary.
+            config: the dataset configuration.
         """
+        if not os.path.isdir(data_dir):
+            raise IOError('Unknown dataset directory: ' + data_dir)
+
         self.data_dir = data_dir
         self.config = config
 
@@ -88,6 +92,19 @@ class Dataset:
 
         """
         return self.config.get_available_columns(matrix_name)
+
+    def get_available_event_tables(self) -> List[str]:
+        """Get the available event table names in the dataset.
+
+        Returns:
+            a list of event table names.
+        """
+        event_table_names = []
+
+        for table_name, _ in self.config.events.items():
+            event_table_names.append(table_name)
+
+        return event_table_names
 
     def get_available_matrices(self) -> List[str]:
         """Get the available matrix names in the dataset.
@@ -212,14 +229,17 @@ class Dataset:
         Args:
             matrix_name: the name of the matrix to load the item indices of.
 
+        Raises:
+            KeyError: when the matrix with the specified name does not exist.
+
         Returns:
             the indirection array or None when not needed.
         """
-        matrix = self.config.matrices.get(matrix_name)
-        if not matrix:
-            return None
+        matrix_config = self.get_matrix_config(matrix_name)
+        if not matrix_config:
+            raise KeyError('Unknown matrix configuration to load item indices from')
 
-        return matrix.item.load_indices(self.data_dir)
+        return matrix_config.item.load_indices(self.data_dir)
 
     def load_user_indices(self, matrix_name: str) -> Optional[List[int]]:
         """Load the user indices.
@@ -230,14 +250,17 @@ class Dataset:
         Args:
             matrix_name: the name of the matrix to load the user indices of.
 
+        Raises:
+            KeyError: when the matrix with the specified name does not exist.
+
         Returns:
             the indirection array or None when not needed.
         """
-        matrix = self.config.matrices.get(matrix_name)
-        if not matrix:
-            return None
+        matrix_config = self.get_matrix_config(matrix_name)
+        if not matrix_config:
+            raise KeyError('Unknown matrix configuration to load item indices from')
 
-        return matrix.user.load_indices(self.data_dir)
+        return matrix_config.user.load_indices(self.data_dir)
 
     def read_matrix(
             self,
@@ -301,6 +324,9 @@ class Dataset:
             matrix_name: the name of the matrix to resolve the item indices of.
             items: source ID(s) to convert.
 
+        Raises:
+            KeyError: when the matrix with the specified name does not exist.
+
         Returns:
             the resolved item ID(s).
         """
@@ -322,6 +348,9 @@ class Dataset:
         Args:
             matrix_name: the name of the matrix to resolve the user indices of.
             users: source ID(s) to convert.
+
+        Raises:
+            KeyError: when the matrix with the specified name does not exist.
 
         Returns:
             the resolved user ID(s).

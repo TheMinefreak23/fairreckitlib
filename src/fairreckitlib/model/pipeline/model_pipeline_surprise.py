@@ -24,6 +24,7 @@ class PredictionPipelineSurprise(PredictionPipeline):
 
         Raises:
             FileNotFoundError: when the train set file is not found.
+            RuntimeError: when the max of the rating scale is larger than the RATING_TYPE_THRESHOLD.
 
         Returns:
             the loaded surprise train set matrix.
@@ -42,6 +43,7 @@ class RecommendationPipelineSurprise(RecommendationPipeline):
 
         Raises:
             FileNotFoundError: when the train set file is not found.
+            RuntimeError: when the max of the rating scale is larger than the RATING_TYPE_THRESHOLD.
 
         Returns:
             the loaded surprise train set matrix.

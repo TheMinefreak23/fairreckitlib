@@ -106,7 +106,7 @@ def create_implicit_mf(params: Dict[str, Any]) -> ImplicitMF:
     )
 
 
-def create_item_item(params: Dict[str, Any]) -> ItemItem:
+def create_item_item(params: Dict[str, Any], feedback: str) -> ItemItem:
     """Create the lenskit ItemItem algorithm.
 
     Args:
@@ -114,7 +114,7 @@ def create_item_item(params: Dict[str, Any]) -> ItemItem:
             max_neighbors(int): the maximum number of neighbors for scoring each item.
             min_neighbors(int): the minimum number of neighbors for scoring each item.
             min_similarity(float): minimum similarity threshold for considering a neighbor.
-            feedback(str): control how feedback should be interpreted ('explicit' or 'implicit').
+        feedback: control how feedback should be interpreted ('explicit' or 'implicit').
 
     Returns:
         the lenskit ItemItem algorithm.
@@ -124,7 +124,7 @@ def create_item_item(params: Dict[str, Any]) -> ItemItem:
         min_nbrs=params['min_neighbors'],
         min_sim=params['min_similarity'],
         save_nbrs=None,
-        feedback=params['feedback']
+        feedback=feedback
     )
 
 
@@ -163,7 +163,7 @@ def create_random(params: Dict[str, Any], selector: CandidateSelector) -> Random
     )
 
 
-def create_user_user(params: Dict[str, Any]) -> UserUser:
+def create_user_user(params: Dict[str, Any], feedback: str) -> UserUser:
     """Create the lenskit UserUser algorithm.
 
     Args:
@@ -171,7 +171,7 @@ def create_user_user(params: Dict[str, Any]) -> UserUser:
             max_neighbors(int): the maximum number of neighbors for scoring each item.
             min_neighbors(int): the minimum number of neighbors for scoring each item.
             min_similarity(float): minimum similarity threshold for considering a neighbor.
-            feedback(str): control how feedback should be interpreted ('explicit' or 'implicit').
+        feedback: control how feedback should be interpreted ('explicit' or 'implicit').
 
     Returns:
         the lenskit UserUser algorithm.
@@ -180,5 +180,5 @@ def create_user_user(params: Dict[str, Any]) -> UserUser:
         params['max_neighbors'],
         min_nbrs=params['min_neighbors'],
         min_sim=params['min_similarity'],
-        feedback=params['feedback']
+        feedback=feedback
     )

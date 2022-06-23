@@ -105,21 +105,30 @@ def resolve_experiment_start_run(result_dir: str) -> int:
     Args:
         result_dir: path to the result directory to look into.
 
+    Raises:
+        IOError: when the specified result directory does not exist.
+
     Returns:
         the next run index for this result directory.
     """
-    start_run = 0
+    if not os.path.isdir(result_dir):
+        raise IOError('Unknown result directory')
 
-    for file in os.listdir(result_dir):
-        file_name = os.fsdecode(file)
-        run_dir = os.path.join(result_dir, file_name)
-        if not os.path.isdir(run_dir):
+    directories = []
+    for dir_name in os.listdir(result_dir):
+        if not os.path.isdir(os.path.join(result_dir, dir_name)):
             continue
 
-        run_split = file_name.split('_')
-        if len(run_split) != 2:
+        if not dir_name.startswith('run_'):
             continue
 
-        start_run = max(start_run, int(run_split[1]))
+        run_split = dir_name.split('_')
+        try:
+            directories.append(int(run_split[1]))
+        except ValueError:
+            continue
 
-    return start_run + 1
+    if len(directories) == 0:
+        return 0
+
+    return max(directories) + 1

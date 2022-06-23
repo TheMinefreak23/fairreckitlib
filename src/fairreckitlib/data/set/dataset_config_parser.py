@@ -33,10 +33,14 @@ from .dataset_constants import KEY_MATRIX, KEY_IDX_ITEM, KEY_IDX_USER
 from .dataset_constants import KEY_RATING_MIN, KEY_RATING_MAX, KEY_RATING_TYPE
 from .dataset_constants import TABLE_KEY, TABLE_PRIMARY_KEY, TABLE_FOREIGN_KEYS, TABLE_COLUMNS
 from .dataset_constants import TABLE_FILE, TABLE_COMPRESSION, TABLE_ENCODING
-from .dataset_constants import TABLE_HEADER, TABLE_INDEXED, TABLE_NUM_RECORDS, TABLE_SEP
+from .dataset_constants import TABLE_HEADER, TABLE_NUM_RECORDS, TABLE_SEP
 from .dataset_config import DatasetIndexConfig, DatasetMatrixConfig, RatingMatrixConfig
 from .dataset_config import DatasetConfig, DatasetFileConfig, DatasetTableConfig, FileOptionsConfig
+from .dataset_config import DATASET_RATINGS_EXPLICIT, DATASET_RATINGS_IMPLICIT
 
+VALID_SEPARATORS = [',', '|']
+VALID_COMPRESSIONS = ['bz2']
+VALID_ENCODINGS = ['utf-8', 'ISO-8859-1']
 
 class DatasetConfigParser:
     """Dataset Configuration Parser.
@@ -93,37 +97,13 @@ class DatasetConfigParser:
             return None
 
         # attempt to parse the dataset (event) tables
-        events = {}
-        if dataset_config.get(KEY_EVENTS) is not None:
-            for table_name, table_config in dataset_config[KEY_EVENTS].items():
-                config = self.parse_dataset_table_config(data_dir, table_config)
-                if config is None:
-                    continue
-
-                events[table_name] = config
+        events = self.parse_dataset_events(data_dir, dataset_config)
 
         # attempt to parse the dataset (matrix) tables
-        matrices = {}
-        if dataset_config.get(KEY_MATRICES) is not None:
-            for matrix_name, matrix_config in dataset_config[KEY_MATRICES].items():
-                config = self.parse_dataset_matrix_config(
-                    data_dir,
-                    matrix_config
-                )
-                if config is None:
-                    continue
-
-                matrices[matrix_name] = config
+        matrices = self.parse_dataset_matrices(data_dir, dataset_config)
 
         # attempt to parse the dataset (other) tables
-        tables = {}
-        if dataset_config.get(KEY_TABLES) is not None:
-            for table_name, table_config in dataset_config[KEY_TABLES].items():
-                config = self.parse_dataset_table_config(data_dir, table_config)
-                if config is None:
-                    continue
-
-                tables[table_name] = config
+        tables = self.parse_dataset_tables(data_dir, dataset_config)
 
         return DatasetConfig(
             dataset_name,
@@ -141,7 +121,7 @@ class DatasetConfigParser:
 
         Args:
             data_dir: the directory where the dataset is stored.
-            file_name: the name of the yml file without extension.
+            file_name: the name of the yml file with extension.
             available_datasets: a list of already available datasets.
 
         Returns:
@@ -152,6 +132,99 @@ class DatasetConfigParser:
             load_yml(os.path.join(data_dir, file_name)),
             available_datasets
         )
+
+    def parse_dataset_events(
+            self,
+            data_dir: str,
+            dataset_config: Dict[str, Any],) -> Dict[str, DatasetTableConfig]:
+        """Parse dataset event tables from the configuration.
+
+        Args:
+            data_dir: the directory where the dataset is stored.
+            dataset_config: the dataset configuration.
+
+        Returns:
+            a dictionary with parsed event table configurations.
+        """
+        events = {}
+        if dataset_config.get(KEY_EVENTS) is not None:
+            if assert_is_type(
+                dataset_config[KEY_EVENTS],
+                dict,
+                self.event_dispatcher,
+                'PARSE WARNING: dataset events invalid value'
+            ):
+                for table_name, table_config in dataset_config[KEY_EVENTS].items():
+                    config = self.parse_dataset_table_config(data_dir, table_config)
+                    if config is None:
+                        continue
+
+                    events[table_name] = config
+
+        return events
+
+    def parse_dataset_matrices(
+            self,
+            data_dir: str,
+            dataset_config: Dict[str, Any]) -> Dict[str, DatasetMatrixConfig]:
+        """Parse dataset matrices from the configuration.
+
+        Args:
+            data_dir: the directory where the dataset is stored.
+            dataset_config: the dataset configuration.
+
+        Returns:
+            a dictionary with parsed matrix configurations.
+        """
+        matrices = {}
+        if dataset_config.get(KEY_MATRICES) is not None:
+            if assert_is_type(
+                dataset_config[KEY_MATRICES],
+                dict,
+                self.event_dispatcher,
+                'PARSE WARNING: dataset matrices invalid value'
+            ):
+                for matrix_name, matrix_config in dataset_config[KEY_MATRICES].items():
+                    config = self.parse_dataset_matrix_config(
+                        data_dir,
+                        matrix_config
+                    )
+                    if config is None:
+                        continue
+
+                    matrices[matrix_name] = config
+
+        return matrices
+
+    def parse_dataset_tables(
+            self,
+            data_dir: str,
+            dataset_config: Dict[str, Any],) -> Dict[str, DatasetTableConfig]:
+        """Parse dataset tables from the configuration.
+
+        Args:
+            data_dir: the directory where the dataset is stored.
+            dataset_config: the dataset configuration.
+
+        Returns:
+            a dictionary with parsed table configurations.
+        """
+        tables = {}
+        if dataset_config.get(KEY_TABLES) is not None:
+            if assert_is_type(
+                dataset_config[KEY_TABLES],
+                dict,
+                self.event_dispatcher,
+                'PARSE WARNING: dataset tables invalid value'
+            ):
+                for table_name, table_config in dataset_config[KEY_TABLES].items():
+                    config = self.parse_dataset_table_config(data_dir, table_config)
+                    if config is None:
+                        continue
+
+                    tables[table_name] = config
+
+        return tables
 
     def parse_file_options_config(
             self,
@@ -168,7 +241,7 @@ class DatasetConfigParser:
         success, file_sep = parse_optional_string(
             file_config,
             TABLE_SEP,
-            [',', '|'],
+            VALID_SEPARATORS,
             self.event_dispatcher
         )
         if not success:
@@ -178,7 +251,7 @@ class DatasetConfigParser:
         success, file_compression = parse_optional_string(
             file_config,
             TABLE_COMPRESSION,
-            ['bz2'],
+            VALID_COMPRESSIONS,
             self.event_dispatcher
         )
         if not success:
@@ -188,7 +261,7 @@ class DatasetConfigParser:
         success, file_encoding = parse_optional_string(
             file_config,
             TABLE_ENCODING,
-            ['utf-8', 'ISO-8859-1'],
+            VALID_ENCODINGS,
             self.event_dispatcher
         )
         if not success:
@@ -203,21 +276,11 @@ class DatasetConfigParser:
         if not success:
             return None
 
-        # attempt to parse the optional indexed boolean
-        success, file_indexed = parse_optional_bool(
-            file_config,
-            TABLE_INDEXED,
-            self.event_dispatcher
-        )
-        if not success:
-            return None
-
         return FileOptionsConfig(
             file_sep,
             file_compression,
             file_encoding,
-            file_header,
-            file_indexed
+            file_header
         )
 
     def parse_dataset_file_config(
@@ -360,6 +423,7 @@ class DatasetConfigParser:
         table_primary_key = parse_string_list(
             table_config,
             TABLE_PRIMARY_KEY,
+            1,
             self.event_dispatcher
         )
         if table_primary_key is None:
@@ -370,14 +434,14 @@ class DatasetConfigParser:
             table_foreign_keys = parse_string_list(
                 table_config,
                 TABLE_FOREIGN_KEYS,
+                0,
                 self.event_dispatcher
             )
-            if table_foreign_keys is None:
-                return None
 
         table_columns = parse_string_list(
             table_config,
             TABLE_COLUMNS,
+            1,
             self.event_dispatcher
         )
         if table_columns is None:
@@ -430,6 +494,12 @@ def parse_file_name(
     ): return False, None
 
     file_name = file_config.get(file_key)
+    if required and file_name is None:
+        event_dispatcher.dispatch(ParseEventArgs(
+            ON_PARSE,
+            'PARSE ERROR: file configuration missing value for \'' + file_key + '\''
+        ))
+        return False, None
 
     if file_name is not None:
         if not assert_is_type(
@@ -489,6 +559,8 @@ def parse_int(
         event_dispatcher: EventDispatcher) -> Optional[int]:
     """Parse an integer value from the configuration.
 
+    The integer is expected to be greater than zero to be parsed successfully.
+
     Args:
         config: the configuration dictionary to parse from.
         int_key: the key in the configuration that contains the integer value.
@@ -506,12 +578,28 @@ def parse_int(
 
     int_value = config[int_key]
 
+    if isinstance(int_value, bool):
+        event_dispatcher.dispatch(ParseEventArgs(
+            ON_PARSE,
+            'PARSE ERROR: configuration contains invalid \'' + int_key + '\'',
+            expected_type=int,
+            actual_type=bool
+        ))
+        return None
+
     if not assert_is_type(
         int_value,
         int,
         event_dispatcher,
         'PARSE ERROR: configuration contains invalid \'' + int_key + '\''
     ): return None
+
+    if int_value <= 0:
+        event_dispatcher.dispatch(ParseEventArgs(
+            ON_PARSE,
+        'PARSE ERROR: configuration contains invalid \'' + int_key + '\' less than or equal to zero'
+        ))
+        return None
 
     return int_value
 
@@ -596,7 +684,14 @@ def parse_rating_matrix(
         KEY_RATING_MIN,
         event_dispatcher
     )
-    if not rating_min:
+    if rating_min is None:
+        return None
+
+    if rating_min <= 0.0:
+        event_dispatcher.dispatch(ParseEventArgs(
+            ON_PARSE,
+            'PARSE ERROR: matrix configuration contains minimum rating greater than zero'
+        ))
         return None
 
     rating_max = parse_float(
@@ -604,15 +699,24 @@ def parse_rating_matrix(
         KEY_RATING_MAX,
         event_dispatcher
     )
-    if not rating_max:
+    if rating_max is None:
+        return None
+
+    if rating_max < rating_min:
+        event_dispatcher.dispatch(ParseEventArgs(
+            ON_PARSE,
+            'PARSE ERROR: matrix configuration contains maximum rating less than minimum rating'
+        ))
         return None
 
     rating_type = parse_string(
         matrix_config,
         KEY_RATING_TYPE,
-        event_dispatcher
+        event_dispatcher,
+        one_of_list=[DATASET_RATINGS_EXPLICIT, DATASET_RATINGS_IMPLICIT]
     )
-    if not rating_type:
+
+    if rating_type is None:
         return None
 
     return RatingMatrixConfig(rating_min, rating_max, rating_type)
@@ -621,13 +725,16 @@ def parse_rating_matrix(
 def parse_string(
         config: Dict[str, Any],
         string_key: str,
-        event_dispatcher: EventDispatcher) -> Optional[str]:
+        event_dispatcher: EventDispatcher,
+        *,
+        one_of_list: List[str]=None) -> Optional[str]:
     """Parse a string from the configuration.
 
     Args:
         config: the configuration dictionary to parse from.
         string_key: the key in the configuration that contains the string.
         event_dispatcher: to dispatch the parse event on failure.
+        one_of_list: when not None the string is to be expected one of the specified list.
 
     Returns:
         the parsed string or None on failure.
@@ -648,18 +755,28 @@ def parse_string(
         'PARSE ERROR: configuration contains invalid \'' + string_key + '\''
     ): return None
 
+    if one_of_list is not None:
+        if not assert_is_one_of_list(
+            string_value,
+            one_of_list,
+            event_dispatcher,
+            'PARSE ERROR: configuration contains invalid \'' + string_key + '\''
+        ): return None
+
     return string_value
 
 
 def parse_string_list(
         config: Dict[str, Any],
         string_list_key: str,
+        min_list_length: int,
         event_dispatcher: EventDispatcher) -> Optional[List[str]]:
     """Parse a list of strings from the configuration.
 
     Args:
         config: the configuration dictionary to parse from.
         string_list_key: the key in the configuration that contains the string list.
+        min_list_length: the minimum length of the list to succeed.
         event_dispatcher: to dispatch the parse event on failure.
 
     Returns:
@@ -691,5 +808,12 @@ def parse_string_list(
         ): return None
 
         result_strings.append(string)
+
+    if len(result_strings) < min_list_length:
+        event_dispatcher.dispatch(ParseEventArgs(
+            ON_PARSE,
+            'PARSE ERROR: configuration list \'' + string_list_key + '\' contains too few values'
+        ))
+        return None
 
     return result_strings
