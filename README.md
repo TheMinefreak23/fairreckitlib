@@ -24,4 +24,4 @@ Meeting these requirements, you can install FairRecKitLib like any PyPI package,
 `conda install fairreckitlib`
 
 # Documentation
-Please check out the [FairRecKitLib Wiki](https://github.com/TheMinefreak23/fairreckitlib/wiki) and [FairRecKitLib API](https://theminefreak23.github.io/fairreckitlib/src/fairreckitlib) for instructions and guides on how to utilise the library or add new functionality.
+Please check out the [FairRecKitLib Wiki](https://github.com/FairRecKit/FairRecKitLib/wiki) and [FairRecKitLib API](https://FairRecKit.github.io/FairRecKitLib/src/fairreckitlib) for instructions and guides on how to utilise the library or add new functionality.
