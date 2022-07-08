@@ -8,8 +8,10 @@
 
 FairRecKitLib is a library that functions as a combinatory interface between a set of existing recommender libraries, such as [Lenskit](https://pypi.org/project/lenskit/), [Implicit](https://pypi.org/project/implicit/), and [Surprise](https://pypi.org/project/scikit-surprise/). It was made to accompany the [FairRecKit application](https://github.com/FairRecKit/FairRecKitApp).
 
-This program has been developed by students from the bachelor Computer Science at
-Utrecht University within the Software Project course.  
+This program has been developed by students from the bachelor Computer Science program at Utrecht University within the Software Project course, commissioned by Christine Bauer.
+
+Lennard Chung, Aleksej Cornelissen, Isabelle van Driessel, Diede van der Hoorn, Yme de Jong, Lan Le, Sanaz Najiyan Tabriz, Roderick Spaans, Casper Thijsen, Robert Verbeeten, Vos Wesseling, Fern Wieland
+
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 
 # Installation Requirements
