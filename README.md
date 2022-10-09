@@ -6,10 +6,12 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/TheMinefreak23/fairreckitlib?label=Release)
 
-FairRecKitLib is a library that functions as a combinatory interface between a set of existing recommender libraries, such as [Lenskit](https://pypi.org/project/lenskit/), [Implicit](https://pypi.org/project/implicit/), and [Surprise](https://pypi.org/project/scikit-surprise/). It was made to accompany the [FairRecKit application](https://github.com/TheMinefreak23/fair-rec-kit-app).
+FairRecKitLib is a library that functions as a combinatory interface between a set of existing recommender libraries, such as [Lenskit](https://pypi.org/project/lenskit/), [Implicit](https://pypi.org/project/implicit/), and [Surprise](https://pypi.org/project/scikit-surprise/). It was made to accompany the [FairRecKit application (FairRecKitApp)](https://github.com/FairRecKit/FairRecKitApp).
 
-This program has been developed by students from the bachelor Computer Science at
-Utrecht University within the Software Project course.  
+This program has been developed by students from the bachelor Computer Science program at Utrecht University within the Software Project course, commissioned by Christine Bauer.
+
+Lennard Chung, Aleksej Cornelissen, Isabelle van Driessel, Diede van der Hoorn, Yme de Jong, Lan Le, Sanaz Najiyan Tabriz, Roderick Spaans, Casper Thijsen, Robert Verbeeten, Vos Wesseling, Fern Wieland
+
 © Copyright Utrecht University (Department of Information and Computing Sciences)
 
 # Installation Requirements
@@ -24,4 +26,4 @@ Meeting these requirements, you can install FairRecKitLib like any PyPI package,
 `conda install fairreckitlib`
 
 # Documentation
-Please check out the [FairRecKitLib Wiki](https://github.com/TheMinefreak23/fairreckitlib/wiki) and [FairRecKitLib API](https://theminefreak23.github.io/fairreckitlib/src/fairreckitlib) for instructions and guides on how to utilise the library or add new functionality.
+Please check out the [FairRecKitLib Wiki](https://github.com/FairRecKit/FairRecKitLib/wiki) and [FairRecKitLib API](https://FairRecKit.github.io/FairRecKitLib/src/fairreckitlib) for instructions and guides on how to utilise the library or add new functionality.
